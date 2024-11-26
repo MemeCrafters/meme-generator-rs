@@ -1,0 +1,8 @@
+[package]
+name = "meme-generator"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+skia-safe = { version = "0.80.1", features = ["default", "textlayout"] }
+gif = "0.13.1"
