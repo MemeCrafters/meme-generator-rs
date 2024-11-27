@@ -11,19 +11,20 @@ use tokio::{
     task,
 };
 
-use crate::{error::Error, utils::meme_home};
+use crate::{error::Error, utils::meme_home, version::VERSION};
 
 #[derive(Deserialize)]
-struct Assets {
-    assets: HashMap<String, String>,
+struct Resources {
+    files: HashMap<String, String>,
 }
 
-pub async fn check_and_download_assets(base_url: &str) {
-    let assets_dir = meme_home().join("assets");
+fn resource_url(base_url: &str, name: &str) -> String {
+    format!("{}v{}/{}", base_url, VERSION, name)
+}
 
+pub async fn check_resources(base_url: &str) {
     let client = Client::new();
-
-    let url = format!("{}/assets.json", base_url);
+    let url = resource_url(base_url, "resources.json");
     let resp = match client.get(&url).send().await {
         Ok(resp) => resp,
         Err(e) => {
@@ -31,15 +32,15 @@ pub async fn check_and_download_assets(base_url: &str) {
             return;
         }
     };
-    let assets: Assets = match resp.json().await {
-        Ok(assets) => assets,
+    let resources: Resources = match resp.json().await {
+        Ok(resources) => resources,
         Err(e) => {
-            warn!("Failed to parse assets.json: {}", e);
+            warn!("Failed to parse resources.json: {}", e);
             return;
         }
     };
 
-    let total_files = assets.assets.len();
+    let total_files = resources.files.len();
     let pb = ProgressBar::new(total_files as u64);
     pb.set_style(
         ProgressStyle::default_bar()
@@ -49,9 +50,10 @@ pub async fn check_and_download_assets(base_url: &str) {
             .progress_chars("#>-"),
     );
 
+    let resources_dir = meme_home().join("resources");
     let mut tasks = vec![];
-    for (file, hash) in assets.assets.into_iter() {
-        let file_path = assets_dir.join(file.clone());
+    for (file, hash) in resources.files.into_iter() {
+        let file_path = resources_dir.join(file.clone());
         let client = client.clone();
         let pb = pb.clone();
         let base_url = base_url.to_string();
@@ -77,7 +79,7 @@ pub async fn check_and_download_assets(base_url: &str) {
             }
         }
     }
-    pb.finish_with_message("Assets updated successfully.");
+    pb.finish_with_message("Resources updated successfully.");
 }
 
 async fn is_file_hash_equal(file_path: &Path, expected_hash: &str) -> bool {

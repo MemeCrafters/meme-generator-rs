@@ -9,9 +9,9 @@ use crate::utils::meme_home;
 #[derive(Deserialize, Debug, Clone)]
 pub struct Config {
     pub meme: MemeConfig,
-    pub assets: AssetsConfig,
-    pub encoder: EncoderConfig,
-    pub service: ServiceConfig,
+    pub resource: ResourceConfig,
+    pub gif: GifConfig,
+    pub translate: TranslatorConfig,
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -20,18 +20,18 @@ pub struct MemeConfig {
 }
 
 #[derive(Deserialize, Debug, Clone)]
-pub struct AssetsConfig {
-    pub assets_urls: Vec<String>,
+pub struct ResourceConfig {
+    pub resource_url: String,
 }
 
 #[derive(Deserialize, Debug, Clone)]
-pub struct EncoderConfig {
+pub struct GifConfig {
     pub gif_max_size: f64,
     pub gif_max_frames: u32,
 }
 
 #[derive(Deserialize, Debug, Clone)]
-pub struct ServiceConfig {
+pub struct TranslatorConfig {
     pub baidu_trans_appid: String,
     pub baidu_trans_apikey: String,
 }
@@ -42,20 +42,16 @@ impl Default for Config {
             meme: MemeConfig {
                 meme_disabled_list: vec![],
             },
-            assets: AssetsConfig {
-                assets_urls: vec![
-                    "https://raw.githubusercontent.com/MeetWq/meme-generator/".to_string(),
-                    "https://mirror.ghproxy.com/https://raw.githubusercontent.com/MeetWq/meme-generator/".to_string(),
-                    "https://cdn.jsdelivr.net/gh/MeetWq/meme-generator@".to_string(),
-                    "https://fastly.jsdelivr.net/gh/MeetWq/meme-generator@".to_string(),
-                    "https://raw.gitmirror.com/MeetWq/meme-generator/".to_string(),
-                ],
+            resource: ResourceConfig {
+                resource_url:
+                    "https://ghp.ci/https://raw.githubusercontent.com/MeetWq/meme-generator/"
+                        .to_string(),
             },
-            encoder: EncoderConfig {
+            gif: GifConfig {
                 gif_max_size: 20.0,
                 gif_max_frames: 200,
             },
-            service: ServiceConfig {
+            translate: TranslatorConfig {
                 baidu_trans_appid: "".to_string(),
                 baidu_trans_apikey: "".to_string(),
             },
