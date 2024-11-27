@@ -1,4 +1,4 @@
-use std::{collections::HashMap, path::Path};
+use std::{collections::HashMap, fs, path::Path};
 
 use indicatif::{ProgressBar, ProgressStyle};
 use log::warn;
@@ -19,7 +19,7 @@ struct Resources {
 }
 
 fn resource_url(base_url: &str, name: &str) -> String {
-    format!("{}v{}/{}", base_url, VERSION, name)
+    format!("{}v{}/resources/{}", base_url, VERSION, name)
 }
 
 pub async fn check_resources(base_url: &str) {
@@ -56,15 +56,10 @@ pub async fn check_resources(base_url: &str) {
         let file_path = resources_dir.join(file.clone());
         let client = client.clone();
         let pb = pb.clone();
-        let base_url = base_url.to_string();
+        let file_url = resource_url(base_url, &file);
         tasks.push(task::spawn(async move {
             if !file_path.exists() || !is_file_hash_equal(&file_path, &hash).await {
-                download_file(
-                    &client,
-                    &format!("{}/{}", base_url, file.clone()),
-                    &file_path,
-                )
-                .await;
+                download_file(&client, &file_url, &file_path).await;
             }
             pb.inc(1);
             Ok::<(), Error>(())
@@ -79,7 +74,7 @@ pub async fn check_resources(base_url: &str) {
             }
         }
     }
-    pb.finish_with_message("Resources updated successfully.");
+    pb.finish();
 }
 
 async fn is_file_hash_equal(file_path: &Path, expected_hash: &str) -> bool {
@@ -114,6 +109,14 @@ async fn is_file_hash_equal(file_path: &Path, expected_hash: &str) -> bool {
 }
 
 async fn download_file(client: &Client, url: &str, file_path: &Path) {
+    if !file_path.exists() {
+        if let Some(parent) = file_path.parent() {
+            fs::create_dir_all(parent).unwrap_or_else(|_| {
+                warn!("Failed to create directory {}", parent.display());
+                return;
+            });
+        }
+    }
     let mut resp = match client.get(url).send().await {
         Ok(resp) => resp,
         Err(e) => {

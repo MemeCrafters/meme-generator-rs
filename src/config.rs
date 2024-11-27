@@ -61,6 +61,16 @@ impl Default for Config {
 
 fn load_config() -> Config {
     let config_path = meme_home().join("config.toml");
+    if !config_path.exists() {
+        if let Some(parent) = config_path.parent() {
+            fs::create_dir_all(parent).unwrap_or_else(|_| {
+                warn!("Failed to create config directory");
+            });
+            fs::write(&config_path, "").unwrap_or_else(|_| {
+                warn!("Failed to create config file");
+            });
+        }
+    }
     if config_path.exists() {
         let config_content = fs::read_to_string(config_path).unwrap_or_else(|_| {
             warn!("Failed to read config file, using default config");
