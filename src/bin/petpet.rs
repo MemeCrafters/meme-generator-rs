@@ -2,14 +2,10 @@ use std::fs::File;
 use std::io::Write;
 
 use meme_generator::{
-    canvas::{CanvasExt, Fit},
-    decoder::load_image,
-    encoder::encode_gif,
-    error::Error,
-    utils::new_surface,
+    decoder::load_image, encoder::encode_gif, error::Error, image::ImageExt, utils::new_surface,
 };
 
-use skia_safe::{Image, Rect};
+use skia_safe::Image;
 
 fn petpet(images: &Vec<Image>, _: &Vec<String>) -> Result<Vec<u8>, Error> {
     let image = &images[0];
@@ -24,14 +20,11 @@ fn petpet(images: &Vec<Image>, _: &Vec<String>) -> Result<Vec<u8>, Error> {
     let mut frames: Vec<Image> = Vec::new();
     for i in 0..5 {
         let hand = load_image(format!("data/petpet/{}.png", i))?;
-        let mut surface = new_surface(hand.dimensions())?;
+        let mut surface = new_surface(hand.dimensions());
         let canvas = surface.canvas();
         let (x, y, w, h) = locs[i];
-        canvas.draw_image_rect_fit(
-            &image,
-            Rect::from_xywh(x as f32, y as f32, w as f32, h as f32),
-            Fit::Fill,
-        );
+        let image = image.resize_exact((w, h));
+        canvas.draw_image(&image, (x, y), None);
         canvas.draw_image(&hand, (0, 0), None);
         let frame = surface.image_snapshot();
         frames.push(frame);

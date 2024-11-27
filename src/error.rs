@@ -11,7 +11,6 @@ pub enum EncodeError {
 pub enum Error {
     ImageDecodeError(Option<codec::Result>),
     ImageEncodeError(EncodeError),
-    InternalError,
     IOError(io::Error),
 }
 

@@ -1,8 +1,7 @@
 use gif::{DisposalMethod, Encoder, Frame, Repeat};
-use skia_safe::{EncodedImageFormat, Image};
+use skia_safe::{image::CachingHint, AlphaType, ColorType, EncodedImageFormat, Image, ImageInfo};
 
 use crate::error::{EncodeError, Error};
-use crate::utils::get_image_pixels;
 
 pub fn encode_gif(images: &Vec<Image>, duration: f32) -> Result<Vec<u8>, Error> {
     let mut bytes = Vec::new();
@@ -16,7 +15,22 @@ pub fn encode_gif(images: &Vec<Image>, duration: f32) -> Result<Vec<u8>, Error> 
         )?;
         encoder.set_repeat(Repeat::Infinite)?;
         for image in images {
-            let mut data = get_image_pixels(image)?;
+            let image_info = ImageInfo::new(
+                image.dimensions(),
+                ColorType::RGBA8888,
+                AlphaType::Unpremul,
+                None,
+            );
+            let row_bytes = image_info.min_row_bytes();
+            let data_size = image_info.compute_min_byte_size();
+            let mut data = vec![0u8; data_size];
+            image.read_pixels(
+                &image_info,
+                &mut data,
+                row_bytes,
+                (0, 0),
+                CachingHint::Allow,
+            );
             let mut frame =
                 Frame::from_rgba_speed(image.width() as u16, image.height() as u16, &mut data, 10);
             frame.delay = delay;

@@ -1,9 +1,8 @@
-use skia_safe::codec;
-use skia_safe::{AlphaType, Codec, ColorType, Data, ISize, Image, ImageInfo};
+use std::{fs::read, path::Path};
+
+use skia_safe::{codec, AlphaType, Codec, ColorType, Data, ISize, Image, ImageInfo};
 
 use crate::error::Error;
-use std::fs::read;
-use std::path::Path;
 
 pub struct Decoder<'a> {
     codec: Codec<'a>,
