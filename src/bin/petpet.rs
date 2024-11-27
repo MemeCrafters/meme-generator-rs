@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::Write;
 
 use meme_generator::{
-    decoder::load_image, encoder::encode_gif, error::Error, image::ImageExt, utils::new_surface,
+    decoder::load_image, encoder::{encode_gif, encode_png}, error::Error, image::ImageExt, utils::new_surface,
 };
 
 use skia_safe::Image;
@@ -34,7 +34,11 @@ fn petpet(images: &Vec<Image>, _: &Vec<String>) -> Result<Vec<u8>, Error> {
 
 fn main() {
     let avatar = load_image("data/avatar.jpg").unwrap();
-    let result = petpet(&vec![avatar], &vec![]).unwrap();
-    let mut file = File::create("result.gif").unwrap();
+    // let result = petpet(&vec![avatar], &vec![]).unwrap();
+    // let mut file = File::create("result.gif").unwrap();
+    // file.write_all(result.as_slice()).unwrap();
+    let image = avatar.flip_horizontal();
+    let result = encode_png(&image).unwrap();
+    let mut file = File::create("result.png").unwrap();
     file.write_all(result.as_slice()).unwrap();
 }

@@ -23,7 +23,7 @@ impl<'a> Decoder<'a> {
         self.codec.dimensions()
     }
 
-    pub fn is_animated(&mut self) -> bool {
+    pub fn is_multi_frame(&mut self) -> bool {
         self.get_frame_count() > 1
     }
 

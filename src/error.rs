@@ -1,5 +1,6 @@
+use std::{error, fmt, io};
+
 use skia_safe::codec;
-use std::io;
 
 #[derive(Debug)]
 pub enum EncodeError {
@@ -12,6 +13,22 @@ pub enum Error {
     ImageDecodeError(Option<codec::Result>),
     ImageEncodeError(EncodeError),
     IOError(io::Error),
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Error::ImageDecodeError(Some(err)) => write!(f, "Failed to decode image: {:?}", err),
+            Error::ImageDecodeError(None) => write!(f, "Failed to decode image"),
+            Error::ImageEncodeError(EncodeError::GifEncodeError(err)) => {
+                write!(f, "Failed to encode image as GIF: {:?}", err)
+            }
+            Error::ImageEncodeError(EncodeError::SkiaEncodeError) => {
+                write!(f, "Failed to encode image")
+            }
+            Error::IOError(err) => write!(f, "IO error: {}", err),
+        }
+    }
 }
 
 impl From<codec::Result> for Error {
@@ -37,3 +54,5 @@ impl From<io::Error> for Error {
         Error::IOError(err)
     }
 }
+
+impl error::Error for Error {}
