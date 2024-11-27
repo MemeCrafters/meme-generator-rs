@@ -31,6 +31,10 @@ pub trait ImageExt {
 
     fn rotate(&self, degrees: f32) -> Image;
 
+    fn flip_vertical(&self) -> Image;
+
+    fn flip_horizontal(&self) -> Image;
+
     fn perspective(
         &self,
         top_left: impl Into<Point>,
@@ -142,8 +146,10 @@ impl ImageExt for Image {
     }
 
     fn circle(&self) -> Image {
-        let radius = self.width() as f32 / 2.0;
-        let path = Path::circle((radius, radius), radius, None);
+        let width = self.width() as f32;
+        let height = self.height() as f32;
+        let radius = width.min(height) / 2.0;
+        let path = Path::circle((width / 2.0, height / 2.0), radius, None);
         self.clip_path(&path, ClipOp::Intersect)
     }
 
@@ -174,6 +180,24 @@ impl ImageExt for Image {
         canvas.rotate(degrees, None);
         canvas.translate((-self.width() as f32 / 2.0, -self.height() as f32 / 2.0));
         canvas.draw_image_with_sampling_options(self, (0, 0), default_sampling_options(), None);
+        surface.image_snapshot()
+    }
+
+    fn flip_vertical(&self) -> Image {
+        let mut surface = new_surface(self.dimensions());
+        let canvas = surface.canvas();
+        canvas.translate((0, self.height()));
+        canvas.scale((1.0, -1.0));
+        canvas.draw_image(self, (0, 0), None);
+        surface.image_snapshot()
+    }
+
+    fn flip_horizontal(&self) -> Image {
+        let mut surface = new_surface(self.dimensions());
+        let canvas = surface.canvas();
+        canvas.translate((self.width(), 0));
+        canvas.scale((-1.0, 1.0));
+        canvas.draw_image(self, (0, 0), None);
         surface.image_snapshot()
     }
 
