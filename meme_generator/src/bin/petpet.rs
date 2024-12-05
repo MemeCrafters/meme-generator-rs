@@ -2,7 +2,11 @@ use std::fs::File;
 use std::io::Write;
 
 use meme_generator::{
-    decoder::load_image, encoder::{encode_gif, encode_png}, error::Error, image::ImageExt, utils::new_surface,
+    decoder::load_image,
+    encoder::{encode_gif, encode_png},
+    error::Error,
+    image::ImageExt,
+    utils::new_surface,
 };
 
 use skia_safe::Image;
