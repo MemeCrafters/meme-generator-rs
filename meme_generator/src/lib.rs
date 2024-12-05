@@ -3,6 +3,7 @@ pub mod decoder;
 pub mod encoder;
 pub mod error;
 pub mod image;
+pub mod meme;
 pub mod resources;
 pub mod text;
 pub mod utils;
