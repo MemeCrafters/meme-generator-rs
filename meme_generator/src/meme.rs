@@ -6,6 +6,8 @@ use skia_safe::Image;
 
 use crate::error::Error;
 
+pub use meme_options_derive::MemeOptions;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ArgType {

@@ -964,6 +964,7 @@ dependencies = [
  "indicatif",
  "lazy_static",
  "log",
+ "meme_options_derive",
  "reqwest",
  "serde",
  "serde_json",
@@ -971,6 +972,15 @@ dependencies = [
  "skia-safe",
  "tokio",
  "toml",
+]
+
+[[package]]
+name = "meme_options_derive"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
