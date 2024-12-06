@@ -12,7 +12,7 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
             fields
                 .named
                 .iter()
-                .map(generate_option)
+                .map(parse_option)
                 .collect::<Result<Vec<_>, Error>>()?
         } else {
             return Err(Error::new_spanned(&input, "Unsupported fields"));
@@ -34,9 +34,24 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
     Ok(TokenStream::from(expanded))
 }
 
-fn generate_option(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error> {
+enum ArgType {
+    String,
+    Integer,
+    Float,
+    Boolean,
+}
+
+fn parse_option(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error> {
     let field_name = field.ident.as_ref().unwrap();
     let field_type = &field.ty;
+    let arg_type = match quote!(#field_type).to_string().as_str() {
+        "String" => ArgType::String,
+        "i32" => ArgType::Integer,
+        "f32" => ArgType::Float,
+        "bool" => ArgType::Boolean,
+        _ => return Err(Error::new_spanned(field, "Unsupported field type")),
+    };
+
     let mut default = quote!(None);
     let mut maximum = quote!(None);
     let mut minimum = quote!(None);
@@ -79,31 +94,49 @@ fn generate_option(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error
                 }
                 Meta::NameValue(MetaNameValue { path, value, .. }) => {
                     if path.is_ident("default") {
-                        default = parse_value(&value)?;
+                        default = parse_value(&value, &arg_type)?;
                     } else if path.is_ident("maximum") {
-                        maximum = parse_value(&value)?;
+                        maximum = match arg_type {
+                            ArgType::Integer => parse_value(&value, &arg_type)?,
+                            ArgType::Float => parse_value(&value, &arg_type)?,
+                            _ => {
+                                return Err(Error::new_spanned(
+                                    path,
+                                    "Maximum value is not supported for this type",
+                                ))
+                            }
+                        };
                     } else if path.is_ident("minimum") {
-                        minimum = parse_value(&value)?;
+                        minimum = match arg_type {
+                            ArgType::Integer => parse_value(&value, &arg_type)?,
+                            ArgType::Float => parse_value(&value, &arg_type)?,
+                            _ => {
+                                return Err(Error::new_spanned(
+                                    path,
+                                    "Minimum value is not supported for this type",
+                                ))
+                            }
+                        };
                     } else if path.is_ident("choices") {
-                        choices = parse_choices(&value)?;
+                        choices = match arg_type {
+                            ArgType::String => parse_string_array(&value)?,
+                            _ => {
+                                return Err(Error::new_spanned(
+                                    path,
+                                    "Choices are not supported for this type",
+                                ))
+                            }
+                        };
                     } else if path.is_ident("short_aliases") {
-                        short_aliases = parse_short_aliases(&value)?;
+                        short_aliases = parse_char_array(&value)?;
                     } else if path.is_ident("long_aliases") {
-                        long_aliases = parse_long_aliases(&value)?;
+                        long_aliases = parse_string_array(&value)?;
                     }
                 }
                 _ => return Err(Error::new_spanned(attr, "Unsupported attribute format")),
             }
         }
     }
-
-    let arg_type = match quote!(#field_type).to_string().as_str() {
-        "String" => quote!(ArgType::String),
-        "i32" => quote!(ArgType::Integer),
-        "f32" => quote!(ArgType::Float),
-        "bool" => quote!(ArgType::Boolean),
-        _ => panic!("Unsupported type"),
-    };
 
     let parser_flags = quote! {
         ParserFlags {
@@ -114,59 +147,97 @@ fn generate_option(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error
         }
     };
 
-    Ok(quote! {
-        MemeOption {
-            name: stringify!(#field_name).to_string(),
-            r#type: #arg_type,
-            default: #default,
-            maximum: #maximum,
-            minimum: #minimum,
-            choices: #choices,
-            description: #description,
-            parser_flags: #parser_flags,
-        }
-    })
-}
-
-fn parse_value(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
-    match expr {
-        Expr::Lit(lit) => Ok(match &lit.lit {
-            Lit::Str(s) => quote!(Some(ArgValue::String(#s.to_string()))),
-            Lit::Int(i) => quote!(Some(ArgValue::Integer(#i))),
-            Lit::Float(f) => quote!(Some(ArgValue::Float(#f))),
-            Lit::Bool(b) => quote!(Some(ArgValue::Boolean(#b))),
-            _ => return Err(Error::new_spanned(lit, "Unsupported ArgValue type")),
+    match arg_type {
+        ArgType::Boolean => Ok(quote! {
+            MemeOption::Boolean {
+                name: stringify!(#field_name).to_string(),
+                default: #default,
+                description: #description,
+                parser_flags: #parser_flags,
+            }
         }),
-        _ => Ok(quote!(Some(#expr))),
+        ArgType::String => Ok(quote! {
+            MemeOption::String {
+                name: stringify!(#field_name).to_string(),
+                default: #default,
+                choices: #choices,
+                description: #description,
+                parser_flags: #parser_flags,
+            }
+        }),
+        ArgType::Integer => Ok(quote! {
+            MemeOption::Integer {
+                name: stringify!(#field_name).to_string(),
+                default: #default,
+                maximum: #maximum,
+                minimum: #minimum,
+                description: #description,
+                parser_flags: #parser_flags,
+            }
+        }),
+        ArgType::Float => Ok(quote! {
+            MemeOption::Float {
+                name: stringify!(#field_name).to_string(),
+                default: #default,
+                maximum: #maximum,
+                minimum: #minimum,
+                description: #description,
+                parser_flags: #parser_flags,
+            }
+        }),
     }
 }
 
-fn parse_choices(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
+fn parse_value(expr: &Expr, arg_type: &ArgType) -> Result<proc_macro2::TokenStream, Error> {
+    match arg_type {
+        ArgType::String => parse_string(expr),
+        ArgType::Integer => parse_integer(expr),
+        ArgType::Float => parse_float(expr),
+        ArgType::Boolean => parse_boolean(expr),
+    }
+}
+
+fn parse_string(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
     match expr {
-        Expr::Array(array) => {
-            let values = array
-                .elems
-                .iter()
-                .map(|expr| {
-                    Ok(match expr {
-                        Expr::Lit(lit) => match &lit.lit {
-                            Lit::Str(s) => quote!(ArgValue::String(#s.to_string())),
-                            Lit::Int(i) => quote!(ArgValue::Integer(#i)),
-                            Lit::Float(f) => quote!(ArgValue::Float(#f)),
-                            Lit::Bool(b) => quote!(ArgValue::Boolean(#b)),
-                            _ => return Err(Error::new_spanned(lit, "Unsupported ArgValue type")),
-                        },
-                        _ => quote!(#expr),
-                    })
-                })
-                .collect::<Result<Vec<_>, Error>>()?;
-            Ok(quote!(Some(Vec::from([#(#values),*]))))
-        }
+        Expr::Lit(lit) => match &lit.lit {
+            Lit::Str(s) => Ok(quote!(Some(#s.to_string()))),
+            _ => Err(Error::new_spanned(lit, "Expected string")),
+        },
         _ => Ok(quote!(Some(#expr))),
     }
 }
 
-fn parse_long_aliases(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
+fn parse_integer(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
+    match expr {
+        Expr::Lit(lit) => match &lit.lit {
+            Lit::Int(i) => Ok(quote!(Some(#i))),
+            _ => Err(Error::new_spanned(lit, "Expected integer")),
+        },
+        _ => Ok(quote!(Some(#expr))),
+    }
+}
+
+fn parse_float(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
+    match expr {
+        Expr::Lit(lit) => match &lit.lit {
+            Lit::Float(f) => Ok(quote!(Some(#f))),
+            _ => Err(Error::new_spanned(lit, "Expected float")),
+        },
+        _ => Ok(quote!(Some(#expr))),
+    }
+}
+
+fn parse_boolean(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
+    match expr {
+        Expr::Lit(lit) => match &lit.lit {
+            Lit::Bool(b) => Ok(quote!(Some(#b))),
+            _ => Err(Error::new_spanned(lit, "Expected boolean")),
+        },
+        _ => Ok(quote!(Some(#expr))),
+    }
+}
+
+fn parse_string_array(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
     match expr {
         Expr::Array(array) => {
             let values = array
@@ -188,7 +259,7 @@ fn parse_long_aliases(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
     }
 }
 
-fn parse_short_aliases(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
+fn parse_char_array(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
     match expr {
         Expr::Array(array) => {
             let values = array

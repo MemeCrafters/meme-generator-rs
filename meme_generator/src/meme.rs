@@ -9,24 +9,6 @@ use crate::error::Error;
 pub use meme_options_derive::MemeOptions;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum ArgType {
-    Boolean,
-    String,
-    Integer,
-    Float,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum ArgValue {
-    Boolean(bool),
-    String(String),
-    Integer(i32),
-    Float(f64),
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ParserFlags {
     pub short: bool,
     pub long: bool,
@@ -46,30 +28,37 @@ impl Default for ParserFlags {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct MemeOption {
-    pub name: String,
-    pub r#type: ArgType,
-    pub default: Option<ArgValue>,
-    pub maximum: Option<ArgValue>,
-    pub minimum: Option<ArgValue>,
-    pub choices: Option<Vec<ArgValue>>,
-    pub description: Option<String>,
-    pub parser_flags: ParserFlags,
-}
-
-impl Default for MemeOption {
-    fn default() -> Self {
-        MemeOption {
-            name: String::new(),
-            r#type: ArgType::Boolean,
-            default: None,
-            maximum: None,
-            minimum: None,
-            choices: None,
-            description: None,
-            parser_flags: ParserFlags::default(),
-        }
-    }
+#[serde(tag = "type", rename_all = "snake_case")]
+pub enum MemeOption {
+    Boolean {
+        name: String,
+        default: Option<bool>,
+        description: Option<String>,
+        parser_flags: ParserFlags,
+    },
+    String {
+        name: String,
+        default: Option<String>,
+        choices: Option<Vec<String>>,
+        description: Option<String>,
+        parser_flags: ParserFlags,
+    },
+    Integer {
+        name: String,
+        default: Option<i32>,
+        minimum: Option<i32>,
+        maximum: Option<i32>,
+        description: Option<String>,
+        parser_flags: ParserFlags,
+    },
+    Float {
+        name: String,
+        default: Option<f64>,
+        minimum: Option<f64>,
+        maximum: Option<f64>,
+        description: Option<String>,
+        parser_flags: ParserFlags,
+    },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -113,7 +102,7 @@ impl Default for MemeShortcut {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Meme {
+pub struct MemeInfo {
     pub key: String,
     pub params: MemeParams,
     pub keywords: Vec<String>,
@@ -123,9 +112,9 @@ pub struct Meme {
     pub date_modified: DateTime<Local>,
 }
 
-impl Default for Meme {
+impl Default for MemeInfo {
     fn default() -> Self {
-        Meme {
+        MemeInfo {
             key: String::new(),
             params: MemeParams::default(),
             keywords: Vec::new(),
