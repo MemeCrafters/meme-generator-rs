@@ -7,13 +7,20 @@ use syn::{
 
 pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
     let name = &input.ident;
-    let options = if let Data::Struct(data) = &input.data {
+
+    let (options, default_values): (Vec<_>, Vec<_>) = if let Data::Struct(data) = &input.data {
         if let Fields::Named(fields) = &data.fields {
             fields
                 .named
                 .iter()
-                .map(parse_option)
+                .map(|field| {
+                    let option = parse_option(field)?;
+                    let default = parse_default_value(field)?;
+                    Ok((option, default))
+                })
                 .collect::<Result<Vec<_>, Error>>()?
+                .into_iter()
+                .unzip()
         } else {
             return Err(Error::new_spanned(&input, "Unsupported fields"));
         }
@@ -21,7 +28,7 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
         return Err(Error::new_spanned(&input, "Unsupported data type"));
     };
 
-    let expanded = quote! {
+    let into_options_impl = quote! {
         impl IntoMemeOptions for #name {
             fn into_options(&self) -> Vec<MemeOption> {
                 Vec::from([
@@ -29,6 +36,21 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
                 ])
             }
         }
+    };
+
+    let default_impl = quote! {
+        impl Default for #name {
+            fn default() -> Self {
+                Self {
+                    #(#default_values),*
+                }
+            }
+        }
+    };
+
+    let expanded = quote! {
+        #into_options_impl
+        #default_impl
     };
 
     Ok(TokenStream::from(expanded))
@@ -41,16 +63,52 @@ enum ArgType {
     Boolean,
 }
 
+fn parse_arg_type(field: &Field) -> Result<ArgType, Error> {
+    let field_type = &field.ty;
+    match quote!(#field_type).to_string().as_str() {
+        "String" => Ok(ArgType::String),
+        "i32" => Ok(ArgType::Integer),
+        "f32" => Ok(ArgType::Float),
+        "bool" => Ok(ArgType::Boolean),
+        _ => Err(Error::new_spanned(field, "Unsupported field type")),
+    }
+}
+
+fn parse_default_value(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error> {
+    let field_name = field.ident.as_ref().unwrap();
+    let arg_type = parse_arg_type(field)?;
+
+    for attr in &field.attrs {
+        if attr.path().is_ident("option") {
+            for attr in attr.parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)? {
+                if let Meta::NameValue(MetaNameValue { path, value, .. }) = attr {
+                    if path.is_ident("default") {
+                        return match value {
+                            Expr::Lit(lit) => match &lit.lit {
+                                Lit::Str(s) => Ok(quote!(#field_name: #s.to_string())),
+                                _ => Ok(quote!(#field_name: #lit)),
+                            },
+                            _ => Ok(quote!(#field_name: #value)),
+                        };
+                    }
+                }
+            }
+        }
+    }
+
+    let default_value = match arg_type {
+        ArgType::Boolean => quote!(false),
+        ArgType::String => quote!(String::new()),
+        ArgType::Integer => quote!(0),
+        ArgType::Float => quote!(0.0),
+    };
+
+    Ok(quote!(#field_name: #default_value))
+}
+
 fn parse_option(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error> {
     let field_name = field.ident.as_ref().unwrap();
-    let field_type = &field.ty;
-    let arg_type = match quote!(#field_type).to_string().as_str() {
-        "String" => ArgType::String,
-        "i32" => ArgType::Integer,
-        "f32" => ArgType::Float,
-        "bool" => ArgType::Boolean,
-        _ => return Err(Error::new_spanned(field, "Unsupported field type")),
-    };
+    let arg_type = parse_arg_type(field)?;
 
     let mut default = quote!(None);
     let mut maximum = quote!(None);
