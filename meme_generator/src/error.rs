@@ -13,6 +13,7 @@ pub enum Error {
     ImageDecodeError(Option<codec::Result>),
     ImageEncodeError(EncodeError),
     IOError(io::Error),
+    DeserializeError(serde_json::Error),
 }
 
 impl fmt::Display for Error {
@@ -27,6 +28,7 @@ impl fmt::Display for Error {
                 write!(f, "Failed to encode image")
             }
             Error::IOError(err) => write!(f, "IO error: {}", err),
+            Error::DeserializeError(err) => write!(f, "Failed to deserialize: {}", err),
         }
     }
 }
@@ -52,6 +54,12 @@ impl From<EncodeError> for Error {
 impl From<io::Error> for Error {
     fn from(err: io::Error) -> Self {
         Error::IOError(err)
+    }
+}
+
+impl From<serde_json::Error> for Error {
+    fn from(err: serde_json::Error) -> Self {
+        Error::DeserializeError(err)
     }
 }
 

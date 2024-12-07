@@ -5,6 +5,7 @@ use skia_safe::{
 
 use crate::utils::{default_sampling_options, new_surface};
 
+#[derive(PartialEq)]
 pub enum Fit {
     Contain,
     Cover,

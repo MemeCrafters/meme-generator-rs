@@ -1,5 +1,3 @@
-use std::{fs::read, path::Path};
-
 use skia_safe::{codec, AlphaType, Codec, ColorType, Data, ISize, Image, ImageInfo};
 
 use crate::error::Error;
@@ -68,6 +66,6 @@ impl<'a> Decoder<'a> {
     }
 }
 
-pub fn load_image<P: AsRef<Path>>(path: P) -> Result<Image, Error> {
-    Decoder::from_data(&read(path)?)?.first_image()
+pub fn decode_image(data: &Vec<u8>) -> Result<Image, Error> {
+    Decoder::from_data(data)?.first_image()
 }

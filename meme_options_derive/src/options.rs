@@ -22,15 +22,19 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
                 .into_iter()
                 .unzip()
         } else {
-            return Err(Error::new_spanned(&input, "Unsupported fields"));
+            return Err(Error::new_spanned(
+                &input,
+                "Only named fields are supported",
+            ));
         }
     } else {
-        return Err(Error::new_spanned(&input, "Unsupported data type"));
+        return Err(Error::new_spanned(&input, "Only structs are supported"));
     };
 
-    let into_options_impl = quote! {
-        impl IntoMemeOptions for #name {
-            fn into_options(&self) -> Vec<MemeOption> {
+    let meme_options_impl = quote! {
+        #[automatically_derived]
+        impl crate::meme::MemeOptions for #name {
+            fn into_options(&self) -> Vec<crate::meme::MemeOption> {
                 Vec::from([
                     #(#options),*
                 ])
@@ -39,6 +43,7 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
     };
 
     let default_impl = quote! {
+        #[automatically_derived]
         impl Default for #name {
             fn default() -> Self {
                 Self {
@@ -49,7 +54,7 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
     };
 
     let expanded = quote! {
-        #into_options_impl
+        #meme_options_impl
         #default_impl
     };
 
@@ -197,7 +202,7 @@ fn parse_option(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error> {
     }
 
     let parser_flags = quote! {
-        ParserFlags {
+        crate::meme::ParserFlags {
             short: #short,
             long: #long,
             short_aliases: #short_aliases,
@@ -207,7 +212,7 @@ fn parse_option(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error> {
 
     match arg_type {
         ArgType::Boolean => Ok(quote! {
-            MemeOption::Boolean {
+            crate::meme::MemeOption::Boolean {
                 name: stringify!(#field_name).to_string(),
                 default: #default,
                 description: #description,
@@ -215,7 +220,7 @@ fn parse_option(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error> {
             }
         }),
         ArgType::String => Ok(quote! {
-            MemeOption::String {
+            crate::meme::MemeOption::String {
                 name: stringify!(#field_name).to_string(),
                 default: #default,
                 choices: #choices,
@@ -224,7 +229,7 @@ fn parse_option(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error> {
             }
         }),
         ArgType::Integer => Ok(quote! {
-            MemeOption::Integer {
+            crate::meme::MemeOption::Integer {
                 name: stringify!(#field_name).to_string(),
                 default: #default,
                 maximum: #maximum,
@@ -234,7 +239,7 @@ fn parse_option(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error> {
             }
         }),
         ArgType::Float => Ok(quote! {
-            MemeOption::Float {
+            crate::meme::MemeOption::Float {
                 name: stringify!(#field_name).to_string(),
                 default: #default,
                 maximum: #maximum,

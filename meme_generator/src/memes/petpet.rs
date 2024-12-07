@@ -1,26 +1,29 @@
-use std::fs::File;
-use std::io::Write;
+use serde::Deserialize;
+use skia_safe::Image;
 
-use meme_generator::{
-    decoder::load_image,
+use crate::{
     encoder::encode_gif,
     error::Error,
     image::ImageExt,
-    meme::{IntoMemeOptions, MemeOption, MemeOptions, ParserFlags},
-    utils::new_surface,
+    meme::{DecodedImage, MemeOptions},
+    register_meme,
+    utils::{load_image, local_date, new_surface},
 };
 
-use skia_safe::Image;
-
-#[derive(Debug, Clone, MemeOptions)]
+#[derive(MemeOptions, Deserialize)]
+#[serde(default)]
 struct Options {
     /// 是否将图片变为圆形
     #[option(short, long, short_aliases = ['圆'])]
     circle: bool,
 }
 
-fn petpet(images: &Vec<Image>, texts: &Vec<String>, options: &Options) -> Result<Vec<u8>, Error> {
-    let image = &images[0];
+fn petpet(
+    images: &Vec<DecodedImage>,
+    _: &Vec<String>,
+    options: &Options,
+) -> Result<Vec<u8>, Error> {
+    let image = &images[0].image;
     let mut image = image.square();
     if options.circle {
         image = image.circle();
@@ -35,7 +38,7 @@ fn petpet(images: &Vec<Image>, texts: &Vec<String>, options: &Options) -> Result
 
     let mut frames: Vec<Image> = Vec::new();
     for i in 0..5 {
-        let hand = load_image(format!("../resources/images/petpet/{}.png", i))?;
+        let hand = load_image(format!("petpet/{i}.png").as_str())?;
         let mut surface = new_surface(hand.dimensions());
         let canvas = surface.canvas();
         let (x, y, w, h) = locs[i];
@@ -48,9 +51,15 @@ fn petpet(images: &Vec<Image>, texts: &Vec<String>, options: &Options) -> Result
     encode_gif(&frames, 0.06)
 }
 
-fn main() {
-    let avatar = load_image("../avatar.jpg").unwrap();
-    let result = petpet(&vec![avatar], &vec![], &Options { circle: true }).unwrap();
-    let mut file = File::create("result.gif").unwrap();
-    file.write_all(result.as_slice()).unwrap();
+register_meme! {
+    "petpet",
+    petpet,
+    min_images = 1,
+    max_images = 1,
+    min_texts = 0,
+    max_texts = 0,
+    options = Options::default(),
+    keywords = vec!["摸", "摸摸", "摸头", "rua"],
+    date_created = local_date(2021, 8, 1),
+    date_modified = local_date(2021, 8, 1),
 }

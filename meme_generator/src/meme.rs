@@ -2,9 +2,8 @@ use std::collections::HashSet;
 
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
-use skia_safe::Image;
 
-use crate::error::Error;
+use crate::{decoder::decode_image, error::Error};
 
 pub use meme_options_derive::MemeOptions;
 
@@ -126,15 +125,180 @@ impl Default for MemeInfo {
     }
 }
 
-pub trait IntoMemeOptions {
+pub trait MemeOptions: Send {
     fn into_options(&self) -> Vec<MemeOption>;
 }
 
-pub trait MemeGenerate {
+pub struct Image {
+    pub name: String,
+    pub data: Vec<u8>,
+}
+
+pub struct DecodedImage {
+    pub name: String,
+    pub image: skia_safe::Image,
+}
+
+impl Image {
+    pub fn decode(&self) -> Result<DecodedImage, Error> {
+        let image = decode_image(&self.data)?;
+        Ok(DecodedImage {
+            name: self.name.clone(),
+            image,
+        })
+    }
+}
+
+#[derive(MemeOptions, Deserialize)]
+pub struct NoOptions {}
+
+type MemeFunction<T> = fn(&Vec<DecodedImage>, &Vec<String>, &T) -> Result<Vec<u8>, Error>;
+
+pub struct Meme<T>
+where
+    T: MemeOptions + for<'de> Deserialize<'de> + Default,
+{
+    pub key: String,
+    pub min_images: u8,
+    pub max_images: u8,
+    pub min_texts: u8,
+    pub max_texts: u8,
+    pub default_texts: Vec<String>,
+    pub options: T,
+    pub keywords: Vec<String>,
+    pub shortcuts: Vec<MemeShortcut>,
+    pub tags: HashSet<String>,
+    pub date_created: DateTime<Local>,
+    pub date_modified: DateTime<Local>,
+    pub function: MemeFunction<T>,
+}
+
+impl<T> Default for Meme<T>
+where
+    T: MemeOptions + for<'de> Deserialize<'de> + Default,
+{
+    fn default() -> Self {
+        Meme {
+            key: String::new(),
+            min_images: 0,
+            max_images: 0,
+            min_texts: 0,
+            max_texts: 0,
+            default_texts: Vec::new(),
+            options: T::default(),
+            keywords: Vec::new(),
+            shortcuts: Vec::new(),
+            tags: HashSet::new(),
+            date_created: Local::now(),
+            date_modified: Local::now(),
+            function: |_, _, _| Ok(Vec::new()),
+        }
+    }
+}
+
+pub mod meme_setters {
+    use crate::meme::{MemeOptions, MemeShortcut};
+    use chrono::{DateTime, Local};
+    use serde::Deserialize;
+    use std::collections::HashSet;
+
+    pub fn min_images(min_images: u8) -> u8 {
+        min_images
+    }
+
+    pub fn max_images(max_images: u8) -> u8 {
+        max_images
+    }
+
+    pub fn min_texts(min_texts: u8) -> u8 {
+        min_texts
+    }
+
+    pub fn max_texts(max_texts: u8) -> u8 {
+        max_texts
+    }
+
+    pub fn default_texts(default_texts: &Vec<&str>) -> Vec<String> {
+        default_texts.iter().map(|text| text.to_string()).collect()
+    }
+
+    pub fn options<T>(options: T) -> T
+    where
+        T: MemeOptions + for<'de> Deserialize<'de> + Default,
+    {
+        options
+    }
+
+    pub fn keywords(keywords: Vec<&str>) -> Vec<String> {
+        keywords.iter().map(|keyword| keyword.to_string()).collect()
+    }
+
+    pub fn shortcuts(shortcuts: Vec<MemeShortcut>) -> Vec<MemeShortcut> {
+        shortcuts
+    }
+
+    pub fn tags(tags: Vec<&str>) -> HashSet<String> {
+        tags.iter().map(|tag| tag.to_string()).collect()
+    }
+
+    pub fn date_created(date_created: DateTime<Local>) -> DateTime<Local> {
+        date_created
+    }
+
+    pub fn date_modified(date_modified: DateTime<Local>) -> DateTime<Local> {
+        date_modified
+    }
+}
+
+pub trait MemeTrait: Send {
+    fn key(&self) -> String;
+    fn info(&self) -> MemeInfo;
     fn generate(
         &self,
         images: &Vec<Image>,
         texts: &Vec<String>,
-        options: &impl IntoMemeOptions,
+        options: String,
     ) -> Result<Vec<u8>, Error>;
+}
+
+impl<T> MemeTrait for Meme<T>
+where
+    T: MemeOptions + for<'de> Deserialize<'de> + Default,
+{
+    fn key(&self) -> String {
+        self.key.clone()
+    }
+
+    fn info(&self) -> MemeInfo {
+        MemeInfo {
+            key: self.key.clone(),
+            params: MemeParams {
+                min_images: self.min_images,
+                max_images: self.max_images,
+                min_texts: self.min_texts,
+                max_texts: self.max_texts,
+                default_texts: self.default_texts.clone(),
+                options: self.options.into_options(),
+            },
+            keywords: self.keywords.clone(),
+            shortcuts: self.shortcuts.clone(),
+            tags: self.tags.clone(),
+            date_created: self.date_created.clone(),
+            date_modified: self.date_modified.clone(),
+        }
+    }
+
+    fn generate(
+        &self,
+        images: &Vec<Image>,
+        texts: &Vec<String>,
+        options: String,
+    ) -> Result<Vec<u8>, Error> {
+        let options = &serde_json::from_str(&options)?;
+        let images = images
+            .iter()
+            .map(|image| image.decode())
+            .collect::<Result<Vec<DecodedImage>, Error>>()?;
+        (self.function)(&images, texts, options)
+    }
 }
