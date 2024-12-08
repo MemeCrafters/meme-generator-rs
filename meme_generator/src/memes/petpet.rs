@@ -2,8 +2,7 @@ use serde::Deserialize;
 use skia_safe::Image;
 
 use crate::{
-    decoder::CodecExt,
-    encoder::encode_gif,
+    encoder::{make_gif_or_combined_gif, GifInfo},
     error::Error,
     image::ImageExt,
     meme::{DecodedImage, MemeOptions},
@@ -24,11 +23,6 @@ fn petpet(
     _: &Vec<String>,
     options: &Options,
 ) -> Result<Vec<u8>, Error> {
-    let image = &images[0].codec.first_frame()?;
-    let mut image = image.square();
-    if options.circle {
-        image = image.circle();
-    }
     let locs = [
         (14, 20, 98, 98),
         (12, 33, 101, 85),
@@ -37,19 +31,32 @@ fn petpet(
         (12, 20, 98, 98),
     ];
 
-    let mut frames: Vec<Image> = Vec::new();
-    for i in 0..5 {
+    let func = |i: u32, images: &Vec<Image>| {
+        let mut image = images[0].square();
+        if options.circle {
+            image = image.circle();
+        }
+
         let hand = load_image(format!("petpet/{i}.png").as_str())?;
         let mut surface = new_surface(hand.dimensions());
         let canvas = surface.canvas();
-        let (x, y, w, h) = locs[i];
+        let (x, y, w, h) = locs[i as usize];
         let image = image.resize_exact((w, h));
         canvas.draw_image(&image, (x, y), None);
         canvas.draw_image(&hand, (0, 0), None);
-        let frame = surface.image_snapshot();
-        frames.push(frame);
-    }
-    encode_gif(&frames, 0.06)
+        Ok(surface.image_snapshot())
+    };
+
+    let images = vec![&mut images[0].codec];
+    make_gif_or_combined_gif(
+        images,
+        func,
+        GifInfo {
+            frame_num: 5,
+            duration: 0.06,
+        },
+        None,
+    )
 }
 
 register_meme! {

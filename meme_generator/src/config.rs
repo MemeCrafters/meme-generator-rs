@@ -10,6 +10,7 @@ use crate::utils::meme_home;
 pub struct Config {
     pub meme: MemeConfig,
     pub resource: ResourceConfig,
+    pub gif: GifConfig,
     pub translate: TranslatorConfig,
 }
 
@@ -21,6 +22,11 @@ pub struct MemeConfig {
 #[derive(Debug, Clone, Deserialize)]
 pub struct ResourceConfig {
     pub resource_url: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct GifConfig {
+    pub gif_max_frames: u32,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -39,6 +45,9 @@ impl Default for Config {
                 resource_url:
                     "https://ghp.ci/https://raw.githubusercontent.com/MeetWq/meme-generator/"
                         .to_string(),
+            },
+            gif: GifConfig {
+                gif_max_frames: 200,
             },
             translate: TranslatorConfig {
                 baidu_trans_appid: "".to_string(),

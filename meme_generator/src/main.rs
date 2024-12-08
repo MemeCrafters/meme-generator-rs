@@ -11,7 +11,7 @@ fn main() {
     );
     let image = InputImage {
         name: "avatar".to_string(),
-        data: read("../avatar.jpg").unwrap(),
+        data: read("../test.gif").unwrap(),
     };
     let options = r#"
     {
