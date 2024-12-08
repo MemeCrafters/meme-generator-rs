@@ -11,8 +11,8 @@ pub use meme_options_derive::MemeOptions;
 pub struct ParserFlags {
     pub short: bool,
     pub long: bool,
-    pub short_aliases: Option<Vec<char>>,
-    pub long_aliases: Option<Vec<String>>,
+    pub short_aliases: Vec<char>,
+    pub long_aliases: Vec<String>,
 }
 
 impl Default for ParserFlags {
@@ -20,8 +20,8 @@ impl Default for ParserFlags {
         ParserFlags {
             short: false,
             long: false,
-            short_aliases: None,
-            long_aliases: None,
+            short_aliases: Vec::new(),
+            long_aliases: Vec::new(),
         }
     }
 }
@@ -129,7 +129,7 @@ pub trait MemeOptions: Send {
     fn into_options(&self) -> Vec<MemeOption>;
 }
 
-pub struct Image {
+pub struct InputImage {
     pub name: String,
     pub data: Vec<u8>,
 }
@@ -139,7 +139,7 @@ pub struct DecodedImage {
     pub image: skia_safe::Image,
 }
 
-impl Image {
+impl InputImage {
     pub fn decode(&self) -> Result<DecodedImage, Error> {
         let image = decode_image(&self.data)?;
         Ok(DecodedImage {
@@ -154,9 +154,9 @@ pub struct NoOptions {}
 
 type MemeFunction<T> = fn(&Vec<DecodedImage>, &Vec<String>, &T) -> Result<Vec<u8>, Error>;
 
-pub struct Meme<T>
+pub struct MemeBuilder<T>
 where
-    T: MemeOptions + for<'de> Deserialize<'de> + Default,
+    T: MemeOptions + for<'de> Deserialize<'de> + Default + Sync,
 {
     pub key: String,
     pub min_images: u8,
@@ -173,12 +173,12 @@ where
     pub function: MemeFunction<T>,
 }
 
-impl<T> Default for Meme<T>
+impl<T> Default for MemeBuilder<T>
 where
-    T: MemeOptions + for<'de> Deserialize<'de> + Default,
+    T: MemeOptions + for<'de> Deserialize<'de> + Default + Sync,
 {
     fn default() -> Self {
-        Meme {
+        MemeBuilder {
             key: String::new(),
             min_images: 0,
             max_images: 0,
@@ -197,9 +197,8 @@ where
 }
 
 pub mod meme_setters {
-    use crate::meme::{MemeOptions, MemeShortcut};
+    use crate::meme::MemeShortcut;
     use chrono::{DateTime, Local};
-    use serde::Deserialize;
     use std::collections::HashSet;
 
     pub fn min_images(min_images: u8) -> u8 {
@@ -220,13 +219,6 @@ pub mod meme_setters {
 
     pub fn default_texts(default_texts: &Vec<&str>) -> Vec<String> {
         default_texts.iter().map(|text| text.to_string()).collect()
-    }
-
-    pub fn options<T>(options: T) -> T
-    where
-        T: MemeOptions + for<'de> Deserialize<'de> + Default,
-    {
-        options
     }
 
     pub fn keywords(keywords: Vec<&str>) -> Vec<String> {
@@ -250,20 +242,20 @@ pub mod meme_setters {
     }
 }
 
-pub trait MemeTrait: Send {
+pub trait Meme: Send + Sync {
     fn key(&self) -> String;
     fn info(&self) -> MemeInfo;
     fn generate(
         &self,
-        images: &Vec<Image>,
+        images: &Vec<InputImage>,
         texts: &Vec<String>,
         options: String,
     ) -> Result<Vec<u8>, Error>;
 }
 
-impl<T> MemeTrait for Meme<T>
+impl<T> Meme for MemeBuilder<T>
 where
-    T: MemeOptions + for<'de> Deserialize<'de> + Default,
+    T: MemeOptions + for<'de> Deserialize<'de> + Default + Sync,
 {
     fn key(&self) -> String {
         self.key.clone()
@@ -290,7 +282,7 @@ where
 
     fn generate(
         &self,
-        images: &Vec<Image>,
+        images: &Vec<InputImage>,
         texts: &Vec<String>,
         options: String,
     ) -> Result<Vec<u8>, Error> {

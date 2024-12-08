@@ -10,7 +10,7 @@ use crate::{
     utils::{load_image, local_date, new_surface},
 };
 
-#[derive(MemeOptions, Deserialize)]
+#[derive(Debug, Clone, MemeOptions, Deserialize)]
 #[serde(default)]
 struct Options {
     /// 是否将图片变为圆形
@@ -58,7 +58,6 @@ register_meme! {
     max_images = 1,
     min_texts = 0,
     max_texts = 0,
-    options = Options::default(),
     keywords = vec!["摸", "摸摸", "摸头", "rua"],
     date_created = local_date(2021, 8, 1),
     date_modified = local_date(2021, 8, 1),

@@ -1,13 +1,15 @@
-use meme_generator::{meme::Image, registry::MEME_REGISTRY};
+use meme_generator::{manager::get_meme, meme::InputImage};
 use std::fs::{read, write};
 
 fn main() {
-    let registry = MEME_REGISTRY.lock().unwrap();
-
-    let petpet = registry.get("petpet").unwrap();
+    let petpet = get_meme("petpet").unwrap();
     println!("Loaded meme: {}", petpet.key());
     println!("Meme info: {:?}", petpet.info());
-    let image = Image {
+    println!(
+        "Meme info json: {}",
+        serde_json::to_string(&petpet.info()).unwrap()
+    );
+    let image = InputImage {
         name: "avatar".to_string(),
         data: read("../avatar.jpg").unwrap(),
     };

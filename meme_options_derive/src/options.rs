@@ -73,7 +73,7 @@ fn parse_arg_type(field: &Field) -> Result<ArgType, Error> {
     match quote!(#field_type).to_string().as_str() {
         "String" => Ok(ArgType::String),
         "i32" => Ok(ArgType::Integer),
-        "f32" => Ok(ArgType::Float),
+        "f64" => Ok(ArgType::Float),
         "bool" => Ok(ArgType::Boolean),
         _ => Err(Error::new_spanned(field, "Unsupported field type")),
     }
@@ -115,7 +115,12 @@ fn parse_option(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error> {
     let field_name = field.ident.as_ref().unwrap();
     let arg_type = parse_arg_type(field)?;
 
-    let mut default = quote!(None);
+    let mut default = match arg_type {
+        ArgType::Boolean => quote!(Some(false)),
+        ArgType::String => quote!(Some(String::new())),
+        ArgType::Integer => quote!(Some(0)),
+        ArgType::Float => quote!(Some(0.0)),
+    };
     let mut maximum = quote!(None);
     let mut minimum = quote!(None);
     let mut choices = quote!(None);
@@ -123,8 +128,8 @@ fn parse_option(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error> {
 
     let mut short = quote!(false);
     let mut long = quote!(false);
-    let mut short_aliases = quote!(None);
-    let mut long_aliases = quote!(None);
+    let mut short_aliases = quote!(Vec::new());
+    let mut long_aliases = quote!(Vec::new());
 
     for attr in &field.attrs {
         if !(attr.path().is_ident("option") || attr.path().is_ident("doc")) {
@@ -182,7 +187,7 @@ fn parse_option(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error> {
                         };
                     } else if path.is_ident("choices") {
                         choices = match arg_type {
-                            ArgType::String => parse_string_array(&value)?,
+                            ArgType::String => parse_choices(&value)?,
                             _ => {
                                 return Err(Error::new_spanned(
                                     path,
@@ -300,7 +305,7 @@ fn parse_boolean(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
     }
 }
 
-fn parse_string_array(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
+fn parse_choices(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
     match expr {
         Expr::Array(array) => {
             let values = array
@@ -322,6 +327,28 @@ fn parse_string_array(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
     }
 }
 
+fn parse_string_array(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
+    match expr {
+        Expr::Array(array) => {
+            let values = array
+                .elems
+                .iter()
+                .map(|expr| {
+                    Ok(match expr {
+                        Expr::Lit(lit) => match &lit.lit {
+                            Lit::Str(s) => quote!(String::from(#s)),
+                            _ => return Err(Error::new_spanned(lit, "Expected string")),
+                        },
+                        _ => quote!(#expr),
+                    })
+                })
+                .collect::<Result<Vec<_>, Error>>()?;
+            Ok(quote!(Vec::from([#(#values),*])))
+        }
+        _ => Ok(quote!(#expr)),
+    }
+}
+
 fn parse_char_array(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
     match expr {
         Expr::Array(array) => {
@@ -338,8 +365,8 @@ fn parse_char_array(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
                     })
                 })
                 .collect::<Result<Vec<_>, Error>>()?;
-            Ok(quote!(Some(Vec::from([#(#values),*]))))
+            Ok(quote!(Vec::from([#(#values),*])))
         }
-        _ => Ok(quote!(Some(#expr))),
+        _ => Ok(quote!(#expr)),
     }
 }
