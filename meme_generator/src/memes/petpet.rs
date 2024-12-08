@@ -2,6 +2,7 @@ use serde::Deserialize;
 use skia_safe::Image;
 
 use crate::{
+    decoder::CodecExt,
     encoder::encode_gif,
     error::Error,
     image::ImageExt,
@@ -10,7 +11,7 @@ use crate::{
     utils::{load_image, local_date, new_surface},
 };
 
-#[derive(Debug, Clone, MemeOptions, Deserialize)]
+#[derive(MemeOptions, Deserialize)]
 #[serde(default)]
 struct Options {
     /// 是否将图片变为圆形
@@ -19,11 +20,11 @@ struct Options {
 }
 
 fn petpet(
-    images: &Vec<DecodedImage>,
+    images: &mut Vec<DecodedImage>,
     _: &Vec<String>,
     options: &Options,
 ) -> Result<Vec<u8>, Error> {
-    let image = &images[0].image;
+    let image = &images[0].codec.first_frame()?;
     let mut image = image.square();
     if options.circle {
         image = image.circle();

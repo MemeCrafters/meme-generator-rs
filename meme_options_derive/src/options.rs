@@ -73,7 +73,7 @@ fn parse_arg_type(field: &Field) -> Result<ArgType, Error> {
     match quote!(#field_type).to_string().as_str() {
         "String" => Ok(ArgType::String),
         "i32" => Ok(ArgType::Integer),
-        "f64" => Ok(ArgType::Float),
+        "f32" => Ok(ArgType::Float),
         "bool" => Ok(ArgType::Boolean),
         _ => Err(Error::new_spanned(field, "Unsupported field type")),
     }

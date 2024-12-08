@@ -6,31 +6,24 @@ use serde::Deserialize;
 
 use crate::utils::meme_home;
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct Config {
     pub meme: MemeConfig,
     pub resource: ResourceConfig,
-    pub gif: GifConfig,
     pub translate: TranslatorConfig,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct MemeConfig {
     pub meme_disabled_list: Vec<String>,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct ResourceConfig {
     pub resource_url: String,
 }
 
-#[derive(Deserialize, Debug, Clone)]
-pub struct GifConfig {
-    pub gif_max_size: f64,
-    pub gif_max_frames: u32,
-}
-
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct TranslatorConfig {
     pub baidu_trans_appid: String,
     pub baidu_trans_apikey: String,
@@ -46,10 +39,6 @@ impl Default for Config {
                 resource_url:
                     "https://ghp.ci/https://raw.githubusercontent.com/MeetWq/meme-generator/"
                         .to_string(),
-            },
-            gif: GifConfig {
-                gif_max_size: 20.0,
-                gif_max_frames: 200,
             },
             translate: TranslatorConfig {
                 baidu_trans_appid: "".to_string(),

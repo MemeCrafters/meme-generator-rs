@@ -2,8 +2,9 @@ use std::collections::HashSet;
 
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
+use skia_safe::{Codec, Data};
 
-use crate::{decoder::decode_image, error::Error};
+use crate::error::Error;
 
 pub use meme_options_derive::MemeOptions;
 
@@ -52,9 +53,9 @@ pub enum MemeOption {
     },
     Float {
         name: String,
-        default: Option<f64>,
-        minimum: Option<f64>,
-        maximum: Option<f64>,
+        default: Option<f32>,
+        minimum: Option<f32>,
+        maximum: Option<f32>,
         description: Option<String>,
         parser_flags: ParserFlags,
     },
@@ -134,17 +135,18 @@ pub struct InputImage {
     pub data: Vec<u8>,
 }
 
-pub struct DecodedImage {
+pub struct DecodedImage<'a> {
     pub name: String,
-    pub image: skia_safe::Image,
+    pub codec: Codec<'a>,
 }
 
-impl InputImage {
-    pub fn decode(&self) -> Result<DecodedImage, Error> {
-        let image = decode_image(&self.data)?;
+impl<'a> DecodedImage<'a> {
+    pub fn from(input: &InputImage) -> Result<DecodedImage<'static>, Error> {
+        let data = Data::new_copy(&input.data);
+        let codec = Codec::from_data(data).ok_or(Error::ImageDecodeError(None))?;
         Ok(DecodedImage {
-            name: self.name.clone(),
-            image,
+            name: input.name.clone(),
+            codec: codec,
         })
     }
 }
@@ -152,7 +154,7 @@ impl InputImage {
 #[derive(MemeOptions, Deserialize)]
 pub struct NoOptions {}
 
-type MemeFunction<T> = fn(&Vec<DecodedImage>, &Vec<String>, &T) -> Result<Vec<u8>, Error>;
+type MemeFunction<T> = fn(&mut Vec<DecodedImage>, &Vec<String>, &T) -> Result<Vec<u8>, Error>;
 
 pub struct MemeBuilder<T>
 where
@@ -287,10 +289,10 @@ where
         options: String,
     ) -> Result<Vec<u8>, Error> {
         let options = &serde_json::from_str(&options)?;
-        let images = images
+        let mut images = images
             .iter()
-            .map(|image| image.decode())
+            .map(|image| DecodedImage::from(image))
             .collect::<Result<Vec<DecodedImage>, Error>>()?;
-        (self.function)(&images, texts, options)
+        (self.function)(&mut images, texts, options)
     }
 }
