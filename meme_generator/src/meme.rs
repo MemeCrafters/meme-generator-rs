@@ -151,9 +151,6 @@ impl<'a> DecodedImage<'a> {
     }
 }
 
-#[derive(MemeOptions, Deserialize)]
-pub struct NoOptions {}
-
 type MemeFunction<T> = fn(&mut Vec<DecodedImage>, &Vec<String>, &T) -> Result<Vec<u8>, Error>;
 
 pub struct MemeBuilder<T>

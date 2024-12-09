@@ -1,27 +1,19 @@
-use serde::Deserialize;
 use skia_safe::Image;
 
 use crate::{
     encoder::{make_gif_or_combined_gif, GifInfo},
     error::Error,
     image::ImageExt,
-    meme::{DecodedImage, MemeOptions},
+    meme::DecodedImage,
+    options::common_used_options::Circle,
     register_meme,
     utils::{load_image, local_date, new_surface},
 };
 
-#[derive(MemeOptions, Deserialize)]
-#[serde(default)]
-struct Options {
-    /// 是否将图片变为圆形
-    #[option(short, long, short_aliases = ['圆'])]
-    circle: bool,
-}
-
 fn petpet(
     images: &mut Vec<DecodedImage>,
     _: &Vec<String>,
-    options: &Options,
+    options: &Circle,
 ) -> Result<Vec<u8>, Error> {
     let locs = [
         (14, 20, 98, 98),

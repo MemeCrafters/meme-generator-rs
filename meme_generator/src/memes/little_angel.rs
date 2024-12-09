@@ -1,4 +1,3 @@
-use serde::Deserialize;
 use skia_safe::{textlayout::TextAlign, Color, FontStyle, IRect, Image};
 
 use crate::{
@@ -6,24 +5,17 @@ use crate::{
     encoder::make_png_or_gif,
     error::Error,
     image::ImageExt,
-    meme::{DecodedImage, MemeOptions},
+    meme::DecodedImage,
+    options::common_used_options::Gender,
     register_meme,
     text::TextParams,
     utils::{local_date, new_surface},
 };
 
-#[derive(MemeOptions, Deserialize)]
-#[serde(default)]
-struct Options {
-    /// 性别
-    #[option(short, long, default = "unknown", choices = ["male", "female", "unknown"])]
-    gender: String,
-}
-
 fn little_angel(
     images: &mut Vec<DecodedImage>,
     _: &Vec<String>,
-    options: &Options,
+    options: &Gender,
 ) -> Result<Vec<u8>, Error> {
     let img_size = images[0].codec.dimensions();
     let img_w = 500;
@@ -34,8 +26,7 @@ fn little_angel(
 
     let ta = match options.gender.as_str() {
         "male" => "他",
-        "female" => "她",
-        _ => "它",
+        _ => "她",
     };
     let mut name = images[0].name.as_str();
     if name.is_empty() {
