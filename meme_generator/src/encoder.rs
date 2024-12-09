@@ -4,7 +4,7 @@ use skia_safe::{
 };
 
 use crate::{
-    config::get_config,
+    config::CONFIG,
     decoder::CodecExt,
     error::{EncodeError, Error},
 };
@@ -63,6 +63,7 @@ pub fn encode_png(image: &Image) -> Result<Vec<u8>, Error> {
 }
 
 /// gif 对齐方式
+#[derive(PartialEq)]
 pub enum FrameAlign {
     /// 以循环方式延长
     ExtendLoop,
@@ -130,7 +131,7 @@ pub fn get_aligned_gif_indexes(
             }
             FrameAlign::ExtendLoop => {
                 let mut total_frame_num = target_gif_info.frame_num;
-                let max_frame_num = get_config().gif.gif_max_frames;
+                let max_frame_num = CONFIG.gif.gif_max_frames;
                 while total_frame_num + target_gif_info.frame_num <= max_frame_num {
                     total_frame_num += target_gif_info.frame_num;
                     let mut append_frame_indexes = (0..target_gif_info.frame_num).collect();

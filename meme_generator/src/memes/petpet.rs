@@ -37,7 +37,7 @@ fn petpet(
             image = image.circle();
         }
 
-        let hand = load_image(format!("petpet/{i}.png").as_str())?;
+        let hand = load_image(format!("petpet/{i}.png"))?;
         let mut surface = new_surface(hand.dimensions());
         let canvas = surface.canvas();
         let (x, y, w, h) = locs[i as usize];

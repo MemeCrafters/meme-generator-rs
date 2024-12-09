@@ -14,6 +14,7 @@ pub enum Error {
     ImageEncodeError(EncodeError),
     IOError(io::Error),
     DeserializeError(serde_json::Error),
+    TextOverLength(String),
 }
 
 impl fmt::Display for Error {
@@ -29,6 +30,7 @@ impl fmt::Display for Error {
             }
             Error::IOError(err) => write!(f, "IO error: {}", err),
             Error::DeserializeError(err) => write!(f, "Failed to deserialize: {}", err),
+            Error::TextOverLength(text) => write!(f, "Text is too long: {}", text),
         }
     }
 }

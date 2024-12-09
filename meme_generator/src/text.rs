@@ -1,78 +1,164 @@
-// use skia_safe::{
-//     surfaces,
-//     textlayout::{
-//         Decoration, FontCollection, ParagraphBuilder, ParagraphStyle, TextDecoration, TextStyle,
-//         TypefaceFontProvider,
-//     },
-//     Color, EncodedImageFormat, FontMgr, FontStyle, Paint, Point,
-// };
-// use std::{fs::File, io::Write};
+use skia_safe::{
+    scalar,
+    textlayout::{
+        FontCollection, Paragraph, ParagraphBuilder, ParagraphStyle, TextAlign, TextStyle,
+    },
+    Canvas, Color, Color4f, FontMgr, FontStyle, Image, Paint, Point, Rect,
+};
 
-// fn test() {
-//     let mut font_collection = FontCollection::new();
-//     font_collection.set_default_font_manager(FontMgr::new(), None);
+use crate::utils::new_surface;
 
-//     let para_style = ParagraphStyle::new();
-//     let mut builder = ParagraphBuilder::new(&para_style, &font_collection);
+const DEFAULT_FONT_FAMILIES: [&str; 15] = [
+    "Arial",
+    "Tahoma",
+    "Helvetica Neue",
+    "Segoe UI",
+    "PingFang SC",
+    "Hiragino Sans GB",
+    "Microsoft YaHei",
+    "Source Han Sans SC",
+    "Noto Sans SC",
+    "Noto Sans CJK SC",
+    "WenQuanYi Micro Hei",
+    "Apple Color Emoji",
+    "Noto Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
+];
 
-//     let mut paint = Paint::default();
-//     paint.set_anti_alias(true);
-//     paint.set_color(Color::BLACK);
+struct ParagraphWithStroke {
+    paragraph: Paragraph,
+    stroke_paragraph: Option<Paragraph>,
+}
 
-//     let mut style = TextStyle::new();
-//     style.set_font_size(30.0);
-//     style.set_foreground_paint(&paint);
-//     style.set_font_families(&["times", "georgia", "serif"]);
-//     builder.push_style(&style);
+pub struct Text2Image {
+    paragraph: ParagraphWithStroke,
+}
 
-//     let mut style_bold = style.clone();
-//     style_bold.set_font_style(FontStyle::bold());
-//     builder.push_style(&style_bold);
-//     builder.add_text("Typography");
-//     builder.pop();
+pub struct TextParams {
+    pub font_style: FontStyle,
+    pub font_families: Vec<String>,
+    pub text_align: TextAlign,
+    pub paint: Paint,
+    pub stroke_paint: Option<Paint>,
+}
 
-//     builder.add_text(" is the ");
+impl Default for TextParams {
+    fn default() -> Self {
+        Self {
+            font_style: FontStyle::default(),
+            font_families: Vec::new(),
+            text_align: TextAlign::Left,
+            paint: Paint::new(Color4f::from(Color::BLACK), None),
+            stroke_paint: None,
+        }
+    }
+}
 
-//     let mut style_italic = style.clone();
-//     style_italic.set_font_style(FontStyle::italic());
-//     builder.push_style(&style_italic);
-//     builder.add_text("art and technique");
-//     builder.pop();
+impl Text2Image {
+    pub fn from_text(text: impl Into<String>, font_size: scalar, text_params: &TextParams) -> Self {
+        let text: String = text.into();
+        let mut font_families: Vec<&str> = text_params
+            .font_families
+            .iter()
+            .map(|s| s.as_str())
+            .collect();
+        font_families.extend_from_slice(&DEFAULT_FONT_FAMILIES);
 
-//     builder.add_text(" of arranging type to make written language ");
+        let mut font_collection = FontCollection::new();
+        font_collection.set_default_font_manager(FontMgr::new(), None);
+        let mut paragraph_style = ParagraphStyle::new();
+        paragraph_style.set_text_align(text_params.text_align);
 
-//     let mut style_underline = style.clone();
-//     let mut decoration = Decoration::default();
-//     decoration.ty = TextDecoration::UNDERLINE;
-//     decoration.color = Color::BLACK;
-//     decoration.thickness_multiplier = 1.5;
-//     style_underline.set_decoration(&decoration);
-//     builder.push_style(&style_underline);
-//     builder.add_text("legible, readable, and appealing");
-//     builder.pop();
+        let mut builder = ParagraphBuilder::new(&paragraph_style, &font_collection);
+        let mut style = TextStyle::new();
+        style.set_font_size(font_size);
+        style.set_font_style(text_params.font_style);
+        style.set_foreground_paint(&text_params.paint);
+        style.set_font_families(&font_families);
+        builder.push_style(&style);
+        builder.add_text(text.clone());
+        let mut paragraph = builder.build();
+        paragraph.layout(scalar::INFINITY);
 
-//     builder.add_text(" when displayed. The arrangement of type involves selecting typefaces, point sizes, line lengths, line-spacing (leading), and letter-spacing (tracking), and adjusting the space between pairs of letters (kerning). The term typography is also applied to the style, arrangement, and appearance of the letters, numbers, and symbols created by the process.");
+        let stroke_paragraph = match &text_params.stroke_paint {
+            Some(stroke_paint) => {
+                let mut stroke_builder = ParagraphBuilder::new(&paragraph_style, &font_collection);
+                let mut stroke_style = TextStyle::new();
+                stroke_style.set_font_size(font_size);
+                stroke_style.set_font_style(text_params.font_style);
+                stroke_style.set_foreground_paint(&stroke_paint);
+                stroke_style.set_font_families(&font_families);
+                stroke_builder.push_style(&stroke_style);
+                stroke_builder.add_text(text);
+                let mut stroke_paragraph = stroke_builder.build();
+                stroke_paragraph.layout(scalar::INFINITY);
+                Some(stroke_paragraph)
+            }
+            None => None,
+        };
 
-//     builder.add_text(" Furthermore, العربية نص جميل. द क्विक ब्राउन फ़ॉक्स jumps over the lazy 🐕.");
+        Self {
+            paragraph: ParagraphWithStroke {
+                paragraph,
+                stroke_paragraph,
+            },
+        }
+    }
 
-//     let mut paragraph = builder.build();
-//     paragraph.layout(1000.0);
+    pub fn longest_line(&self) -> scalar {
+        self.paragraph.paragraph.longest_line()
+    }
 
-//     let width = paragraph.longest_line();
-//     let height = paragraph.height();
-//     let mut surface =
-//         surfaces::raster_n32_premul((width.ceil() as i32, height.ceil() as i32)).unwrap();
+    pub fn height(&self) -> scalar {
+        self.paragraph.paragraph.height()
+    }
 
-//     let canvas = surface.canvas();
-//     canvas.clear(Color::WHITE);
-//     paragraph.paint(&canvas, Point::default());
+    pub fn layout(&mut self, width: scalar) {
+        self.paragraph.paragraph.layout(width);
+        if let Some(stroke_paragraph) = &mut self.paragraph.stroke_paragraph {
+            stroke_paragraph.layout(width);
+        }
+    }
 
-//     let image = surface.image_snapshot();
-//     let mut context = surface.direct_context();
-//     let data = image
-//         .encode(context.as_mut(), EncodedImageFormat::PNG, None)
-//         .unwrap();
-//     let mut file = File::create("test.png").unwrap();
-//     let bytes = data.as_bytes();
-//     file.write_all(bytes).unwrap();
-// }
+    pub fn to_image(
+        &mut self,
+        max_width: impl Into<Option<scalar>>,
+        padding: impl Into<Option<Rect>>,
+    ) -> Image {
+        let max_width: scalar = max_width.into().unwrap_or(self.longest_line().ceil());
+        self.layout(max_width);
+
+        let padding: Rect = padding.into().unwrap_or(Rect::default());
+        let image_width = (max_width + padding.left + padding.right).ceil() as i32;
+        let image_height = (self.height() + padding.top + padding.bottom).ceil() as i32;
+
+        let mut surface = new_surface((image_width, image_height));
+        let canvas = surface.canvas();
+
+        let x = padding.left;
+        let y = padding.top;
+        if let Some(stroke_paragraph) = &self.paragraph.stroke_paragraph {
+            stroke_paragraph.paint(&canvas, (x, y));
+        }
+        self.paragraph.paragraph.paint(&canvas, (x, y));
+
+        surface.image_snapshot()
+    }
+
+    pub fn draw_on_canvas(
+        &mut self,
+        canvas: &Canvas,
+        origin: impl Into<Point>,
+        max_width: impl Into<Option<scalar>>,
+    ) {
+        let max_width: scalar = max_width.into().unwrap_or(self.longest_line().ceil());
+        self.layout(max_width);
+
+        let origin: Point = origin.into();
+        if let Some(stroke_paragraph) = &self.paragraph.stroke_paragraph {
+            stroke_paragraph.paint(canvas, origin);
+        }
+        self.paragraph.paragraph.paint(canvas, origin);
+    }
+}

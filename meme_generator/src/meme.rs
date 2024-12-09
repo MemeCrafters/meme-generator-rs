@@ -130,7 +130,7 @@ pub trait MemeOptions: Send {
     fn into_options(&self) -> Vec<MemeOption>;
 }
 
-pub struct InputImage {
+pub struct RawImage {
     pub name: String,
     pub data: Vec<u8>,
 }
@@ -141,7 +141,7 @@ pub struct DecodedImage<'a> {
 }
 
 impl<'a> DecodedImage<'a> {
-    pub fn from(input: &InputImage) -> Result<DecodedImage<'static>, Error> {
+    pub fn from(input: &RawImage) -> Result<DecodedImage<'static>, Error> {
         let data = Data::new_copy(&input.data);
         let codec = Codec::from_data(data).ok_or(Error::ImageDecodeError(None))?;
         Ok(DecodedImage {
@@ -249,7 +249,7 @@ pub trait Meme: Send + Sync {
     fn info(&self) -> MemeInfo;
     fn generate(
         &self,
-        images: &Vec<InputImage>,
+        images: &Vec<RawImage>,
         texts: &Vec<String>,
         options: String,
     ) -> Result<Vec<u8>, Error>;
@@ -284,7 +284,7 @@ where
 
     fn generate(
         &self,
-        images: &Vec<InputImage>,
+        images: &Vec<RawImage>,
         texts: &Vec<String>,
         options: String,
     ) -> Result<Vec<u8>, Error> {

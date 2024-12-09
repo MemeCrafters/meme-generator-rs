@@ -1,7 +1,7 @@
-use std::{fs, sync::RwLock};
+use std::fs;
 
-use lazy_static::lazy_static;
 use log::warn;
+use once_cell::sync::Lazy;
 use serde::Deserialize;
 
 use crate::utils::meme_home;
@@ -83,10 +83,4 @@ fn load_config() -> Config {
     }
 }
 
-lazy_static! {
-    static ref CONFIG: RwLock<Config> = RwLock::new(load_config());
-}
-
-pub fn get_config() -> Config {
-    CONFIG.read().unwrap().clone()
-}
+pub static CONFIG: Lazy<Config> = Lazy::new(|| load_config());

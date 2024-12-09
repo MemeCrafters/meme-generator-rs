@@ -3,7 +3,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use lazy_static::lazy_static;
+use once_cell::sync::Lazy;
 
 use crate::meme::Meme;
 
@@ -23,9 +23,7 @@ impl MemeRegistry {
     }
 }
 
-lazy_static! {
-    pub static ref MEME_REGISTRY: Mutex<MemeRegistry> = Mutex::new(MemeRegistry::new());
-}
+pub static MEME_REGISTRY: Lazy<Mutex<MemeRegistry>> = Lazy::new(|| Mutex::new(MemeRegistry::new()));
 
 #[macro_export]
 macro_rules! register_meme {
