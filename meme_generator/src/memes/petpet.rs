@@ -5,7 +5,7 @@ use crate::{
     error::Error,
     image::ImageExt,
     meme::DecodedImage,
-    options::common_used_options::Circle,
+    options::Circle,
     register_meme,
     utils::{load_image, local_date, new_surface},
 };

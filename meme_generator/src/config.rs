@@ -1,8 +1,8 @@
 use std::fs;
 
 use log::warn;
-use once_cell::sync::Lazy;
 use serde::Deserialize;
+use std::sync::LazyLock;
 
 use crate::utils::meme_home;
 
@@ -11,6 +11,7 @@ pub struct Config {
     pub meme: MemeConfig,
     pub resource: ResourceConfig,
     pub gif: GifConfig,
+    pub font: FontConfig,
     pub translate: TranslatorConfig,
 }
 
@@ -27,6 +28,11 @@ pub struct ResourceConfig {
 #[derive(Debug, Clone, Deserialize)]
 pub struct GifConfig {
     pub gif_max_frames: u32,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct FontConfig {
+    pub default_font_families: Vec<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -48,6 +54,28 @@ impl Default for Config {
             },
             gif: GifConfig {
                 gif_max_frames: 200,
+            },
+            font: FontConfig {
+                default_font_families: vec![
+                    "Arial",
+                    "Tahoma",
+                    "Helvetica Neue",
+                    "Segoe UI",
+                    "PingFang SC",
+                    "Hiragino Sans GB",
+                    "Microsoft YaHei",
+                    "Source Han Sans SC",
+                    "Noto Sans SC",
+                    "Noto Sans CJK SC",
+                    "WenQuanYi Micro Hei",
+                    "Apple Color Emoji",
+                    "Noto Color Emoji",
+                    "Segoe UI Emoji",
+                    "Segoe UI Symbol",
+                ]
+                .into_iter()
+                .map(|s| s.to_string())
+                .collect(),
             },
             translate: TranslatorConfig {
                 baidu_trans_appid: "".to_string(),
@@ -83,4 +111,4 @@ fn load_config() -> Config {
     }
 }
 
-pub static CONFIG: Lazy<Config> = Lazy::new(|| load_config());
+pub static CONFIG: LazyLock<Config> = LazyLock::new(load_config);

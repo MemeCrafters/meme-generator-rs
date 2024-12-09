@@ -6,7 +6,7 @@ use crate::{
     error::Error,
     image::ImageExt,
     meme::DecodedImage,
-    options::common_used_options::Gender,
+    options::Gender,
     register_meme,
     text::TextParams,
     utils::{local_date, new_surface},

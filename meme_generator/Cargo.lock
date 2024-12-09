@@ -873,7 +873,6 @@ dependencies = [
  "indicatif",
  "log",
  "meme_options_derive",
- "once_cell",
  "reqwest",
  "serde",
  "serde_json",

@@ -1,9 +1,7 @@
 use std::{
     collections::HashMap,
-    sync::{Arc, Mutex},
+    sync::{Arc, LazyLock, Mutex},
 };
-
-use once_cell::sync::Lazy;
 
 use crate::meme::Meme;
 
@@ -23,7 +21,8 @@ impl MemeRegistry {
     }
 }
 
-pub static MEME_REGISTRY: Lazy<Mutex<MemeRegistry>> = Lazy::new(|| Mutex::new(MemeRegistry::new()));
+pub static MEME_REGISTRY: LazyLock<Mutex<MemeRegistry>> =
+    LazyLock::new(|| Mutex::new(MemeRegistry::new()));
 
 #[macro_export]
 macro_rules! register_meme {

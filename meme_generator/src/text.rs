@@ -1,3 +1,5 @@
+use std::sync::{LazyLock, Mutex};
+
 use skia_safe::{
     scalar,
     textlayout::{
@@ -6,25 +8,30 @@ use skia_safe::{
     Canvas, Color, Color4f, FontMgr, FontStyle, Image, Paint, Point, Rect,
 };
 
-use crate::utils::new_surface;
+use crate::{config::CONFIG, utils::new_surface};
 
-const DEFAULT_FONT_FAMILIES: [&str; 15] = [
-    "Arial",
-    "Tahoma",
-    "Helvetica Neue",
-    "Segoe UI",
-    "PingFang SC",
-    "Hiragino Sans GB",
-    "Microsoft YaHei",
-    "Source Han Sans SC",
-    "Noto Sans SC",
-    "Noto Sans CJK SC",
-    "WenQuanYi Micro Hei",
-    "Apple Color Emoji",
-    "Noto Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-];
+static FONT_MANAGER: LazyLock<Mutex<FontManager>> =
+    LazyLock::new(|| Mutex::new(FontManager::init()));
+
+pub struct FontManager {
+    font_collection: FontCollection,
+}
+
+impl FontManager {
+    pub fn init() -> Self {
+        let mut font_collection = FontCollection::new();
+        font_collection.set_default_font_manager(FontMgr::new(), None);
+        Self {
+            font_collection: font_collection,
+        }
+    }
+
+    pub fn font_collection(&self) -> &FontCollection {
+        &self.font_collection
+    }
+}
+
+unsafe impl Send for FontManager {}
 
 struct ParagraphWithStroke {
     paragraph: Paragraph,
@@ -58,19 +65,16 @@ impl Default for TextParams {
 impl Text2Image {
     pub fn from_text(text: impl Into<String>, font_size: scalar, text_params: &TextParams) -> Self {
         let text: String = text.into();
-        let mut font_families: Vec<&str> = text_params
-            .font_families
-            .iter()
-            .map(|s| s.as_str())
-            .collect();
-        font_families.extend_from_slice(&DEFAULT_FONT_FAMILIES);
+        let mut font_families = text_params.font_families.clone();
+        font_families.append(&mut CONFIG.font.default_font_families.clone());
 
         let mut font_collection = FontCollection::new();
         font_collection.set_default_font_manager(FontMgr::new(), None);
         let mut paragraph_style = ParagraphStyle::new();
         paragraph_style.set_text_align(text_params.text_align);
 
-        let mut builder = ParagraphBuilder::new(&paragraph_style, &font_collection);
+        let font_manager = FONT_MANAGER.lock().unwrap();
+        let mut builder = ParagraphBuilder::new(&paragraph_style, font_manager.font_collection());
         let mut style = TextStyle::new();
         style.set_font_size(font_size);
         style.set_font_style(text_params.font_style);
