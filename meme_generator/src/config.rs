@@ -1,11 +1,16 @@
-use std::{fs, path::PathBuf, sync::LazyLock};
+use std::{env, fs, path::PathBuf, sync::LazyLock};
 
 use directories::UserDirs;
 use serde::Deserialize;
 
 pub fn meme_home() -> PathBuf {
-    let user_dirs = UserDirs::new().unwrap();
-    user_dirs.home_dir().join(".meme_generator")
+    match env::var("MEME_HOME") {
+        Ok(value) => PathBuf::from(value),
+        Err(_) => {
+            let user_dirs = UserDirs::new().unwrap();
+            user_dirs.home_dir().join(".meme_generator")
+        }
+    }
 }
 
 pub static MEME_HOME: LazyLock<PathBuf> = LazyLock::new(meme_home);
