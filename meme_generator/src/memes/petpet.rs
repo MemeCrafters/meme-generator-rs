@@ -1,13 +1,15 @@
 use skia_safe::Image;
 
 use crate::{
-    encoder::{make_gif_or_combined_gif, GifInfo},
     error::Error,
-    image::ImageExt,
     meme::DecodedImage,
-    options::Circle,
     register_meme,
-    utils::{load_image, local_date, new_surface},
+    utils::{
+        encoder::{make_gif_or_combined_gif, GifInfo},
+        image::ImageExt,
+        load_image, local_date, new_surface,
+        options::Circle,
+    },
 };
 
 fn petpet(

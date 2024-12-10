@@ -11,7 +11,7 @@ use tokio::{
     task,
 };
 
-use crate::{error::Error, utils::meme_home, version::VERSION};
+use crate::{config::MEME_HOME, error::Error, version::VERSION};
 
 #[derive(Deserialize)]
 struct Resources {
@@ -50,7 +50,7 @@ pub async fn check_resources(base_url: &str) {
             .progress_chars("#>-"),
     );
 
-    let resources_dir = meme_home().join("resources");
+    let resources_dir = MEME_HOME.join("resources");
     let mut tasks = vec![];
     for (file, hash) in resources.files.into_iter() {
         let file_path = resources_dir.join(file.clone());

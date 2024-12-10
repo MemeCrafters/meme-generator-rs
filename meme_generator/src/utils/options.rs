@@ -1,11 +1,11 @@
-use crate::meme::MemeOptions;
+use crate::meme::ToMemeOptions;
 use serde::Deserialize;
 
-#[derive(MemeOptions, Deserialize)]
+#[derive(ToMemeOptions, Deserialize)]
 #[serde(default)]
 pub struct NoOptions {}
 
-#[derive(MemeOptions, Deserialize)]
+#[derive(ToMemeOptions, Deserialize)]
 #[serde(default)]
 pub struct Circle {
     /// 是否将图片变为圆形
@@ -13,7 +13,7 @@ pub struct Circle {
     pub circle: bool,
 }
 
-#[derive(MemeOptions, Deserialize)]
+#[derive(ToMemeOptions, Deserialize)]
 #[serde(default)]
 pub struct Gender {
     /// 性别

@@ -33,8 +33,8 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
 
     let meme_options_impl = quote! {
         #[automatically_derived]
-        impl crate::meme::MemeOptions for #name {
-            fn into_options(&self) -> Vec<crate::meme::MemeOption> {
+        impl crate::meme::ToMemeOptions for #name {
+            fn to_options(&self) -> Vec<crate::meme::MemeOption> {
                 Vec::from([
                     #(#options),*
                 ])

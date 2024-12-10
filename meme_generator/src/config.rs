@@ -1,10 +1,15 @@
-use std::fs;
+use std::{fs, path::PathBuf, sync::LazyLock};
 
+use directories::UserDirs;
 use log::warn;
 use serde::Deserialize;
-use std::sync::LazyLock;
 
-use crate::utils::meme_home;
+pub fn meme_home() -> PathBuf {
+    let user_dirs = UserDirs::new().unwrap();
+    user_dirs.home_dir().join(".meme_generator")
+}
+
+pub static MEME_HOME: LazyLock<PathBuf> = LazyLock::new(meme_home);
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
@@ -86,7 +91,7 @@ impl Default for Config {
 }
 
 fn load_config() -> Config {
-    let config_path = meme_home().join("config.toml");
+    let config_path = MEME_HOME.join("config.toml");
     if !config_path.exists() {
         if let Some(parent) = config_path.parent() {
             fs::create_dir_all(parent).unwrap_or_else(|_| {
@@ -111,4 +116,4 @@ fn load_config() -> Config {
     }
 }
 
-pub static CONFIG: LazyLock<Config> = LazyLock::new(load_config);
+pub static MEME_CONFIG: LazyLock<Config> = LazyLock::new(load_config);

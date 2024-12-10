@@ -2,7 +2,7 @@ use skia_safe::{scalar, Canvas, Point, Rect};
 
 use crate::{
     error::Error,
-    text::{Text2Image, TextParams},
+    utils::text::{Text2Image, TextParams},
 };
 
 pub trait CanvasExt {

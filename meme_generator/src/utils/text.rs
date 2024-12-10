@@ -8,7 +8,7 @@ use skia_safe::{
     Canvas, Color, Color4f, FontMgr, FontStyle, Image, Paint, Point, Rect,
 };
 
-use crate::{config::CONFIG, utils::new_surface};
+use crate::{config::MEME_CONFIG, utils::new_surface};
 
 static FONT_MANAGER: LazyLock<Mutex<FontManager>> =
     LazyLock::new(|| Mutex::new(FontManager::init()));
@@ -66,10 +66,8 @@ impl Text2Image {
     pub fn from_text(text: impl Into<String>, font_size: scalar, text_params: &TextParams) -> Self {
         let text: String = text.into();
         let mut font_families = text_params.font_families.clone();
-        font_families.append(&mut CONFIG.font.default_font_families.clone());
+        font_families.append(&mut MEME_CONFIG.font.default_font_families.clone());
 
-        let mut font_collection = FontCollection::new();
-        font_collection.set_default_font_manager(FontMgr::new(), None);
         let mut paragraph_style = ParagraphStyle::new();
         paragraph_style.set_text_align(text_params.text_align);
 
@@ -87,7 +85,8 @@ impl Text2Image {
 
         let stroke_paragraph = match &text_params.stroke_paint {
             Some(stroke_paint) => {
-                let mut stroke_builder = ParagraphBuilder::new(&paragraph_style, &font_collection);
+                let mut stroke_builder =
+                    ParagraphBuilder::new(&paragraph_style, font_manager.font_collection());
                 let mut stroke_style = TextStyle::new();
                 stroke_style.set_font_size(font_size);
                 stroke_style.set_font_style(text_params.font_style);

@@ -4,9 +4,9 @@ use skia_safe::{
 };
 
 use crate::{
-    config::CONFIG,
-    decoder::CodecExt,
+    config::MEME_CONFIG,
     error::{EncodeError, Error},
+    utils::decoder::CodecExt,
 };
 
 pub fn encode_gif(images: &Vec<Image>, duration: f32) -> Result<Vec<u8>, Error> {
@@ -131,7 +131,7 @@ pub fn get_aligned_gif_indexes(
             }
             FrameAlign::ExtendLoop => {
                 let mut total_frame_num = target_gif_info.frame_num;
-                let max_frame_num = CONFIG.gif.gif_max_frames;
+                let max_frame_num = MEME_CONFIG.gif.gif_max_frames;
                 while total_frame_num + target_gif_info.frame_num <= max_frame_num {
                     total_frame_num += target_gif_info.frame_num;
                     let mut append_frame_indexes = (0..target_gif_info.frame_num).collect();

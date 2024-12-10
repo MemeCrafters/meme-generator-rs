@@ -6,7 +6,7 @@ use skia_safe::{Codec, Data};
 
 use crate::error::Error;
 
-pub use meme_options_derive::MemeOptions;
+pub use meme_options_derive::ToMemeOptions;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ParserFlags {
@@ -126,8 +126,8 @@ impl Default for MemeInfo {
     }
 }
 
-pub trait MemeOptions: Send {
-    fn into_options(&self) -> Vec<MemeOption>;
+pub trait ToMemeOptions: Send {
+    fn to_options(&self) -> Vec<MemeOption>;
 }
 
 pub struct RawImage {
@@ -155,7 +155,7 @@ type MemeFunction<T> = fn(&mut Vec<DecodedImage>, &Vec<String>, &T) -> Result<Ve
 
 pub struct MemeBuilder<T>
 where
-    T: MemeOptions + for<'de> Deserialize<'de> + Default + Sync,
+    T: ToMemeOptions + for<'de> Deserialize<'de> + Default + Sync,
 {
     pub key: String,
     pub min_images: u8,
@@ -174,7 +174,7 @@ where
 
 impl<T> Default for MemeBuilder<T>
 where
-    T: MemeOptions + for<'de> Deserialize<'de> + Default + Sync,
+    T: ToMemeOptions + for<'de> Deserialize<'de> + Default + Sync,
 {
     fn default() -> Self {
         MemeBuilder {
@@ -254,7 +254,7 @@ pub trait Meme: Send + Sync {
 
 impl<T> Meme for MemeBuilder<T>
 where
-    T: MemeOptions + for<'de> Deserialize<'de> + Default + Sync,
+    T: ToMemeOptions + for<'de> Deserialize<'de> + Default + Sync,
 {
     fn key(&self) -> String {
         self.key.clone()
@@ -269,7 +269,7 @@ where
                 min_texts: self.min_texts,
                 max_texts: self.max_texts,
                 default_texts: self.default_texts.clone(),
-                options: self.options.into_options(),
+                options: self.options.to_options(),
             },
             keywords: self.keywords.clone(),
             shortcuts: self.shortcuts.clone(),

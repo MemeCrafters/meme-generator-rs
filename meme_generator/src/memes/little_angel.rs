@@ -1,15 +1,13 @@
 use skia_safe::{textlayout::TextAlign, Color, FontStyle, IRect, Image};
 
 use crate::{
-    canvas::CanvasExt,
-    encoder::make_png_or_gif,
     error::Error,
-    image::ImageExt,
     meme::DecodedImage,
-    options::Gender,
     register_meme,
-    text::TextParams,
-    utils::{local_date, new_surface},
+    utils::{
+        canvas::CanvasExt, encoder::make_png_or_gif, image::ImageExt, local_date, new_surface,
+        options::Gender, text::TextParams,
+    },
 };
 
 fn little_angel(
