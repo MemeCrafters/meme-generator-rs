@@ -5,15 +5,15 @@ use skia_safe::{
     textlayout::{
         FontCollection, Paragraph, ParagraphBuilder, ParagraphStyle, TextAlign, TextStyle,
     },
-    Canvas, Color, Color4f, FontMgr, FontStyle, Image, Paint, Point, Rect,
+    Canvas, Color, FontMgr, FontStyle, Paint, Point,
 };
 
-use crate::{config::MEME_CONFIG, utils::new_surface};
+use crate::{config::MEME_CONFIG, utils::new_paint};
 
 static FONT_MANAGER: LazyLock<Mutex<FontManager>> =
     LazyLock::new(|| Mutex::new(FontManager::init()));
 
-pub struct FontManager {
+struct FontManager {
     font_collection: FontCollection,
 }
 
@@ -33,16 +33,7 @@ impl FontManager {
 
 unsafe impl Send for FontManager {}
 
-struct ParagraphWithStroke {
-    paragraph: Paragraph,
-    stroke_paragraph: Option<Paragraph>,
-}
-
-pub struct Text2Image {
-    paragraph: ParagraphWithStroke,
-}
-
-pub struct TextParams {
+pub(crate) struct TextParams {
     pub font_style: FontStyle,
     pub font_families: Vec<String>,
     pub text_align: TextAlign,
@@ -55,11 +46,16 @@ impl Default for TextParams {
         Self {
             font_style: FontStyle::default(),
             font_families: Vec::new(),
-            text_align: TextAlign::Left,
-            paint: Paint::new(Color4f::from(Color::BLACK), None),
+            text_align: TextAlign::Center,
+            paint: new_paint(Color::BLACK),
             stroke_paint: None,
         }
     }
+}
+
+pub(crate) struct Text2Image {
+    paragraph: Paragraph,
+    stroke_paragraph: Option<Paragraph>,
 }
 
 impl Text2Image {
@@ -102,51 +98,24 @@ impl Text2Image {
         };
 
         Self {
-            paragraph: ParagraphWithStroke {
-                paragraph,
-                stroke_paragraph,
-            },
+            paragraph,
+            stroke_paragraph,
         }
     }
 
     pub fn longest_line(&self) -> scalar {
-        self.paragraph.paragraph.longest_line()
+        self.paragraph.longest_line()
     }
 
     pub fn height(&self) -> scalar {
-        self.paragraph.paragraph.height()
+        self.paragraph.height()
     }
 
     pub fn layout(&mut self, width: scalar) {
-        self.paragraph.paragraph.layout(width);
-        if let Some(stroke_paragraph) = &mut self.paragraph.stroke_paragraph {
+        self.paragraph.layout(width);
+        if let Some(stroke_paragraph) = &mut self.stroke_paragraph {
             stroke_paragraph.layout(width);
         }
-    }
-
-    pub fn to_image(
-        &mut self,
-        max_width: impl Into<Option<scalar>>,
-        padding: impl Into<Option<Rect>>,
-    ) -> Image {
-        let max_width: scalar = max_width.into().unwrap_or(self.longest_line().ceil());
-        self.layout(max_width);
-
-        let padding: Rect = padding.into().unwrap_or(Rect::default());
-        let image_width = (max_width + padding.left + padding.right).ceil() as i32;
-        let image_height = (self.height() + padding.top + padding.bottom).ceil() as i32;
-
-        let mut surface = new_surface((image_width, image_height));
-        let canvas = surface.canvas();
-
-        let x = padding.left;
-        let y = padding.top;
-        if let Some(stroke_paragraph) = &self.paragraph.stroke_paragraph {
-            stroke_paragraph.paint(&canvas, (x, y));
-        }
-        self.paragraph.paragraph.paint(&canvas, (x, y));
-
-        surface.image_snapshot()
     }
 
     pub fn draw_on_canvas(
@@ -159,9 +128,9 @@ impl Text2Image {
         self.layout(max_width);
 
         let origin: Point = origin.into();
-        if let Some(stroke_paragraph) = &self.paragraph.stroke_paragraph {
+        if let Some(stroke_paragraph) = &self.stroke_paragraph {
             stroke_paragraph.paint(canvas, origin);
         }
-        self.paragraph.paragraph.paint(canvas, origin);
+        self.paragraph.paint(canvas, origin);
     }
 }

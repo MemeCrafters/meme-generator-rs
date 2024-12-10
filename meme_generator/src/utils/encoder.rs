@@ -9,7 +9,7 @@ use crate::{
     utils::decoder::CodecExt,
 };
 
-pub fn encode_gif(images: &Vec<Image>, duration: f32) -> Result<Vec<u8>, Error> {
+pub(crate) fn encode_gif(images: &Vec<Image>, duration: f32) -> Result<Vec<u8>, Error> {
     let mut bytes = Vec::new();
     let delay = (duration * 100.0) as u16;
     {
@@ -58,13 +58,13 @@ fn encode_image(
     Ok(data.as_bytes().to_vec())
 }
 
-pub fn encode_png(image: &Image) -> Result<Vec<u8>, Error> {
+pub(crate) fn encode_png(image: &Image) -> Result<Vec<u8>, Error> {
     encode_image(image, EncodedImageFormat::PNG, None)
 }
 
 /// gif 对齐方式
 #[derive(PartialEq)]
-pub enum FrameAlign {
+pub(crate) enum FrameAlign {
     /// 以循环方式延长
     ExtendLoop,
 
@@ -79,7 +79,7 @@ pub enum FrameAlign {
 }
 
 #[derive(Debug, Clone)]
-pub struct GifInfo {
+pub(crate) struct GifInfo {
     /// 帧数
     pub frame_num: u32,
 
@@ -100,7 +100,7 @@ impl GifInfo {
 /// - `frame_align` gif 对齐方式
 ///
 /// 返回值：每个 gif 的帧索引列表和目标 gif 的帧索引列表
-pub fn get_aligned_gif_indexes(
+pub(crate) fn get_aligned_gif_indexes(
     gif_infos: &Vec<GifInfo>,
     target_gif_info: &GifInfo,
     frame_align: impl Into<Option<FrameAlign>>,
@@ -185,7 +185,7 @@ pub fn get_aligned_gif_indexes(
 /// - `images` 图片列表
 /// - `func`: 图片处理函数，传入图片列表，返回处理后的图片
 ///
-pub fn make_png_or_gif<F>(mut images: Vec<&mut Codec>, func: F) -> Result<Vec<u8>, Error>
+pub(crate) fn make_png_or_gif<F>(mut images: Vec<&mut Codec>, func: F) -> Result<Vec<u8>, Error>
 where
     F: Fn(&Vec<Image>) -> Result<Image, Error>,
 {
@@ -269,7 +269,7 @@ where
 /// - `target_gif_info` 目标 gif 的帧数和时间间隔
 /// - `frame_align` gif 对齐方式
 ///
-pub fn make_gif_or_combined_gif<F>(
+pub(crate) fn make_gif_or_combined_gif<F>(
     mut images: Vec<&mut Codec>,
     func: F,
     target_gif_info: GifInfo,

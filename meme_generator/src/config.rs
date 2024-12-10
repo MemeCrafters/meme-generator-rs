@@ -1,7 +1,6 @@
 use std::{fs, path::PathBuf, sync::LazyLock};
 
 use directories::UserDirs;
-use log::warn;
 use serde::Deserialize;
 
 pub fn meme_home() -> PathBuf {
@@ -95,22 +94,26 @@ fn load_config() -> Config {
     if !config_path.exists() {
         if let Some(parent) = config_path.parent() {
             fs::create_dir_all(parent).unwrap_or_else(|_| {
-                warn!("Failed to create config directory");
+                eprintln!("Failed to create config directory");
             });
             fs::write(&config_path, "").unwrap_or_else(|_| {
-                warn!("Failed to create config file");
+                eprintln!("Failed to create config file");
             });
         }
     }
     if config_path.exists() {
         let config_content = fs::read_to_string(config_path).unwrap_or_else(|_| {
-            warn!("Failed to read config file, using default config");
+            eprintln!("Failed to read config file, using default config");
             String::new()
         });
-        toml::from_str(&config_content).unwrap_or_else(|_| {
-            warn!("Failed to parse config file, using default config");
+        if config_content.is_empty() {
             Config::default()
-        })
+        } else {
+            toml::from_str(&config_content).unwrap_or_else(|_| {
+                eprintln!("Failed to parse config file, using default config");
+                Config::default()
+            })
+        }
     } else {
         Config::default()
     }

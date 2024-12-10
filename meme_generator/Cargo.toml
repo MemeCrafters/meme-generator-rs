@@ -1,21 +1,25 @@
 [package]
 name = "meme_generator"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+edition.workspace = true
 
 [dependencies]
-skia-safe = { version = "0.80", features = ["default", "textlayout"] }
-gif = "0.13"
+chrono = { version = "0.4", features = ["serde"] }
+ctor = "0.2"
 directories = "5.0"
-tokio = { version = "1.41", features = ["full"] }
+gif = "0.13"
+indicatif = "0.16"
+rand = "0.8"
 reqwest = { version = "0.11", features = ["json", "stream"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-clap = "4.5"
 sha2 = "0.9"
-indicatif = "0.16"
+skia-safe = { version = "0.80", features = ["default", "textlayout"] }
+tokio = { version = "1.41", features = ["full"] }
 toml = "0.8"
-ctor = "0.2"
-log = "0.4"
-chrono = { version = "0.4", features = ["serde"] }
+
 meme_options_derive = { path = "../meme_options_derive" }

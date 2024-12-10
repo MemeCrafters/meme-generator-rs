@@ -2,7 +2,7 @@ use skia_safe::{codec, AlphaType, Codec, ColorType, Image, ImageInfo};
 
 use crate::error::Error;
 
-pub trait CodecExt {
+pub(crate) trait CodecExt {
     fn is_multi_frame(&mut self) -> bool;
 
     fn get_average_duration(&mut self) -> Result<f32, Error>;

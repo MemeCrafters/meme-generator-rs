@@ -1,7 +1,6 @@
 use std::{collections::HashMap, fs, path::Path};
 
 use indicatif::{ProgressBar, ProgressStyle};
-use log::warn;
 use reqwest::Client;
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
@@ -28,14 +27,14 @@ pub async fn check_resources(base_url: &str) {
     let resp = match client.get(&url).send().await {
         Ok(resp) => resp,
         Err(e) => {
-            warn!("Failed to download {}: {}", url, e);
+            eprintln!("Failed to download {}: {}", url, e);
             return;
         }
     };
     let resources: Resources = match resp.json().await {
         Ok(resources) => resources,
         Err(e) => {
-            warn!("Failed to parse resources.json: {}", e);
+            eprintln!("Failed to parse resources.json: {}", e);
             return;
         }
     };
@@ -70,7 +69,7 @@ pub async fn check_resources(base_url: &str) {
         match task.await {
             Ok(_) => {}
             Err(e) => {
-                warn!("Failed to download file: {}", e);
+                eprintln!("Failed to download file: {}", e);
             }
         }
     }
@@ -84,7 +83,7 @@ async fn is_file_hash_equal(file_path: &Path, expected_hash: &str) -> bool {
     let mut file = match File::open(file_path).await {
         Ok(file) => file,
         Err(e) => {
-            warn!("Failed to open file {}: {}", file_path.display(), e);
+            eprintln!("Failed to open file {}: {}", file_path.display(), e);
             return false;
         }
     };
@@ -94,7 +93,7 @@ async fn is_file_hash_equal(file_path: &Path, expected_hash: &str) -> bool {
         let n = match file.read(&mut buffer).await {
             Ok(n) => n,
             Err(e) => {
-                warn!("Failed to read file {}: {}", file_path.display(), e);
+                eprintln!("Failed to read file {}: {}", file_path.display(), e);
                 return false;
             }
         };
@@ -112,7 +111,7 @@ async fn download_file(client: &Client, url: &str, file_path: &Path) {
     if !file_path.exists() {
         if let Some(parent) = file_path.parent() {
             fs::create_dir_all(parent).unwrap_or_else(|_| {
-                warn!("Failed to create directory {}", parent.display());
+                eprintln!("Failed to create directory {}", parent.display());
                 return;
             });
         }
@@ -120,28 +119,28 @@ async fn download_file(client: &Client, url: &str, file_path: &Path) {
     let mut resp = match client.get(url).send().await {
         Ok(resp) => resp,
         Err(e) => {
-            warn!("Failed to download {}: {}", url, e);
+            eprintln!("Failed to download {}: {}", url, e);
             return;
         }
     };
     let mut file = match File::create(file_path).await {
         Ok(file) => file,
         Err(e) => {
-            warn!("Failed to create file {}: {}", file_path.display(), e);
+            eprintln!("Failed to create file {}: {}", file_path.display(), e);
             return;
         }
     };
     while let Some(chunk) = match resp.chunk().await {
         Ok(chunk) => chunk,
         Err(e) => {
-            warn!("Failed to download {}: {}", url, e);
+            eprintln!("Failed to download {}: {}", url, e);
             return;
         }
     } {
         match file.write_all(&chunk).await {
             Ok(_) => {}
             Err(e) => {
-                warn!("Failed to write file {}: {}", file_path.display(), e);
+                eprintln!("Failed to write file {}: {}", file_path.display(), e);
                 return;
             }
         }

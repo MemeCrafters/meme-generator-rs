@@ -5,7 +5,7 @@ use std::{
 
 use crate::meme::Meme;
 
-pub struct MemeRegistry {
+pub(crate) struct MemeRegistry {
     memes: HashMap<String, Arc<dyn Meme>>,
 }
 
@@ -17,11 +17,14 @@ impl MemeRegistry {
     }
 
     pub fn register(&mut self, name: String, meme: Arc<dyn Meme>) {
+        if self.memes.contains_key(&name) {
+            panic!("Meme `{name}` is already registered");
+        }
         self.memes.insert(name, meme);
     }
 }
 
-pub static MEME_REGISTRY: LazyLock<Mutex<MemeRegistry>> =
+pub(crate) static MEME_REGISTRY: LazyLock<Mutex<MemeRegistry>> =
     LazyLock::new(|| Mutex::new(MemeRegistry::new()));
 
 #[macro_export]
@@ -50,10 +53,14 @@ pub fn get_meme(key: &str) -> Option<Arc<dyn Meme>> {
 
 pub fn get_memes() -> Vec<Arc<dyn Meme>> {
     let registry = MEME_REGISTRY.lock().unwrap();
-    registry.memes.values().cloned().collect()
+    let mut memes = registry.memes.values().cloned().collect::<Vec<_>>();
+    memes.sort_by_key(|meme| meme.key());
+    memes
 }
 
 pub fn get_meme_keys() -> Vec<String> {
     let registry = MEME_REGISTRY.lock().unwrap();
-    registry.memes.keys().cloned().collect()
+    let mut keys = registry.memes.keys().cloned().collect::<Vec<_>>();
+    keys.sort();
+    keys
 }

@@ -6,12 +6,12 @@ use skia_safe::{
 use crate::utils::{default_sampling_options, new_surface};
 
 #[derive(PartialEq)]
-pub enum Fit {
+pub(crate) enum Fit {
     Contain,
     Cover,
 }
 
-pub trait ImageExt {
+pub(crate) trait ImageExt {
     fn resize_exact(&self, size: impl Into<ISize>) -> Image;
 
     fn resize_fit(&self, size: impl Into<ISize>, fit: Fit) -> Image;

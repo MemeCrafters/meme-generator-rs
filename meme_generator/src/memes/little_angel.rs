@@ -1,4 +1,4 @@
-use skia_safe::{textlayout::TextAlign, Color, FontStyle, IRect, Image};
+use skia_safe::{Color, FontStyle, IRect, Image};
 
 use crate::{
     error::Error,
@@ -32,7 +32,6 @@ fn little_angel(
     }
     let text_params = TextParams {
         font_style: FontStyle::bold(),
-        text_align: TextAlign::Center,
         ..Default::default()
     };
     canvas.draw_text_area_auto_font_size(

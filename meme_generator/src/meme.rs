@@ -153,7 +153,7 @@ impl<'a> DecodedImage<'a> {
 
 type MemeFunction<T> = fn(&mut Vec<DecodedImage>, &Vec<String>, &T) -> Result<Vec<u8>, Error>;
 
-pub struct MemeBuilder<T>
+pub(crate) struct MemeBuilder<T>
 where
     T: ToMemeOptions + for<'de> Deserialize<'de> + Default + Sync,
 {
@@ -195,7 +195,7 @@ where
     }
 }
 
-pub mod meme_setters {
+pub(crate) mod meme_setters {
     use crate::meme::MemeShortcut;
     use chrono::{DateTime, Local};
     use std::collections::HashSet;
@@ -216,7 +216,7 @@ pub mod meme_setters {
         max_texts
     }
 
-    pub fn default_texts(default_texts: &Vec<&str>) -> Vec<String> {
+    pub fn default_texts(default_texts: Vec<&str>) -> Vec<String> {
         default_texts.iter().map(|text| text.to_string()).collect()
     }
 
@@ -285,6 +285,25 @@ where
         texts: &Vec<String>,
         options: String,
     ) -> Result<Vec<u8>, Error> {
+        let info = self.info();
+        if images.len() < info.params.min_images as usize
+            || images.len() > info.params.max_images as usize
+        {
+            return Err(Error::ImageNumberMismatch(
+                info.params.min_images,
+                info.params.max_images,
+                images.len() as u8,
+            ));
+        }
+        if texts.len() < info.params.min_texts as usize
+            || texts.len() > info.params.max_texts as usize
+        {
+            return Err(Error::TextNumberMismatch(
+                info.params.min_texts,
+                info.params.max_texts,
+                texts.len() as u8,
+            ));
+        }
         let options = &serde_json::from_str(&options)?;
         let mut images = images
             .iter()

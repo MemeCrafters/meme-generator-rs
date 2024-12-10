@@ -14,7 +14,10 @@ pub enum Error {
     ImageEncodeError(EncodeError),
     IOError(io::Error),
     DeserializeError(serde_json::Error),
+    ImageNumberMismatch(u8, u8, u8),
+    TextNumberMismatch(u8, u8, u8),
     TextOverLength(String),
+    MemeFeedback(String),
 }
 
 impl fmt::Display for Error {
@@ -30,7 +33,16 @@ impl fmt::Display for Error {
             }
             Error::IOError(err) => write!(f, "IO error: {}", err),
             Error::DeserializeError(err) => write!(f, "Failed to deserialize: {}", err),
+            Error::ImageNumberMismatch(min, max, actual) => write!(
+                f,
+                "Image number mismatch: expected between {min} and {max}, got {actual}",
+            ),
+            Error::TextNumberMismatch(min, max, actual) => write!(
+                f,
+                "Text number mismatch: expected between {min} and {max}, got {actual}",
+            ),
             Error::TextOverLength(text) => write!(f, "Text is too long: {}", text),
+            Error::MemeFeedback(feedback) => write!(f, "{}", feedback),
         }
     }
 }

@@ -5,7 +5,7 @@ use crate::{
     utils::text::{Text2Image, TextParams},
 };
 
-pub trait CanvasExt {
+pub(crate) trait CanvasExt {
     fn draw_text(
         &self,
         origin: impl Into<Point>,
