@@ -23,7 +23,7 @@ fn build_arg(option: MemeOption) -> Arg {
             description,
             parser_flags,
         } => {
-            let mut arg = Arg::new(string_to_static_str(name.clone()));
+            let mut arg = Arg::new(&name);
             if let Some(default) = default {
                 if default {
                     arg = arg.action(ArgAction::SetFalse);
@@ -38,13 +38,13 @@ fn build_arg(option: MemeOption) -> Arg {
                 arg = arg.short(name.chars().next().unwrap());
             }
             if parser_flags.long {
-                arg = arg.long(string_to_static_str(name));
+                arg = arg.long(&name);
             }
             for alias in parser_flags.short_aliases {
                 arg = arg.short_alias(alias);
             }
             for alias in parser_flags.long_aliases {
-                arg = arg.alias(string_to_static_str(alias));
+                arg = arg.alias(alias);
             }
             arg
         }
@@ -55,16 +55,15 @@ fn build_arg(option: MemeOption) -> Arg {
             description,
             parser_flags,
         } => {
-            let mut arg = Arg::new(string_to_static_str(name.clone()))
-                .value_name(string_to_static_str(name.to_uppercase()));
+            let mut arg = Arg::new(&name).value_name(name.to_uppercase());
             if let Some(default) = default {
-                arg = arg.default_value(string_to_static_str(default));
+                arg = arg.default_value(default);
             }
             if let Some(choices) = choices {
                 arg = arg.value_parser(
                     choices
                         .into_iter()
-                        .map(|s| PossibleValue::new(string_to_static_str(s)))
+                        .map(|s| PossibleValue::new(s))
                         .collect::<Vec<PossibleValue>>(),
                 );
             }
@@ -75,13 +74,13 @@ fn build_arg(option: MemeOption) -> Arg {
                 arg = arg.short(name.chars().next().unwrap());
             }
             if parser_flags.long {
-                arg = arg.long(string_to_static_str(name));
+                arg = arg.long(&name);
             }
             for alias in parser_flags.short_aliases {
                 arg = arg.short_alias(alias);
             }
             for alias in parser_flags.long_aliases {
-                arg = arg.alias(string_to_static_str(alias));
+                arg = arg.alias(alias);
             }
             arg
         }
@@ -93,10 +92,9 @@ fn build_arg(option: MemeOption) -> Arg {
             description,
             parser_flags,
         } => {
-            let mut arg = Arg::new(string_to_static_str(name.clone()))
-                .value_name(string_to_static_str(name.to_uppercase()));
+            let mut arg = Arg::new(&name).value_name(name.to_uppercase());
             if let Some(default) = default {
-                arg = arg.default_value(string_to_static_str(default.to_string()));
+                arg = arg.default_value(default.to_string());
             }
             let mut parser = value_parser!(i32);
             if let Some(minimum) = minimum {
@@ -116,13 +114,13 @@ fn build_arg(option: MemeOption) -> Arg {
                 arg = arg.short(name.chars().next().unwrap());
             }
             if parser_flags.long {
-                arg = arg.long(string_to_static_str(name));
+                arg = arg.long(&name);
             }
             for alias in parser_flags.short_aliases {
                 arg = arg.short_alias(alias);
             }
             for alias in parser_flags.long_aliases {
-                arg = arg.alias(string_to_static_str(alias));
+                arg = arg.alias(alias);
             }
             arg
         }
@@ -134,10 +132,9 @@ fn build_arg(option: MemeOption) -> Arg {
             description,
             parser_flags,
         } => {
-            let mut arg = Arg::new(string_to_static_str(name.clone()))
-                .value_name(string_to_static_str(name.to_uppercase()));
+            let mut arg = Arg::new(&name).value_name(name.to_uppercase());
             if let Some(default) = default {
-                arg = arg.default_value(string_to_static_str(default.to_string()));
+                arg = arg.default_value(default.to_string());
             }
             let parser = ValueParser::new(move |s: &str| {
                 let value: f32 = s.parse().map_err(|_| {
@@ -179,21 +176,17 @@ fn build_arg(option: MemeOption) -> Arg {
                 arg = arg.short(name.chars().next().unwrap());
             }
             if parser_flags.long {
-                arg = arg.long(string_to_static_str(name));
+                arg = arg.long(&name);
             }
             for alias in parser_flags.short_aliases {
                 arg = arg.short_alias(alias);
             }
             for alias in parser_flags.long_aliases {
-                arg = arg.alias(string_to_static_str(alias));
+                arg = arg.alias(alias);
             }
             arg
         }
     }
-}
-
-fn string_to_static_str(s: String) -> &'static str {
-    Box::leak(s.into_boxed_str())
 }
 
 fn cli() -> Command {
@@ -203,7 +196,7 @@ fn cli() -> Command {
         let info = meme.info();
         let options = info.params.options;
         let keywords = info.keywords.join("/");
-        let mut command = Command::new(string_to_static_str(key))
+        let mut command = Command::new(key)
             .about(keywords)
             .arg(
                 arg!(--images [IMAGES] "图片路径")
@@ -232,7 +225,7 @@ fn cli() -> Command {
                     arg!(<KEY> "表情名").value_parser(
                         get_meme_keys()
                             .into_iter()
-                            .map(|s| PossibleValue::new(string_to_static_str(s)))
+                            .map(|s| PossibleValue::new(s))
                             .collect::<Vec<PossibleValue>>(),
                     ),
                 )
