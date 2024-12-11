@@ -38,7 +38,7 @@ fn little_angel(
         IRect::from_ltrb(20, 0, 580, 110),
         format!("请问你们看到{name}了吗?"),
         70.0,
-        25.0,
+        40.0,
         &text_params,
     )?;
     canvas.draw_text_area_auto_font_size(
