@@ -168,7 +168,7 @@ impl Default for MemeInfo {
     }
 }
 
-pub trait ToMemeOptions: Send {
+pub trait ToMemeOptions: Default + Send {
     fn to_options(&self) -> Vec<MemeOption>;
 }
 
@@ -197,7 +197,7 @@ type MemeFunction<T> = fn(&mut Vec<DecodedImage>, &Vec<String>, &T) -> Result<Ve
 
 pub(crate) struct MemeBuilder<T>
 where
-    T: ToMemeOptions + for<'de> Deserialize<'de> + Default + Sync,
+    T: ToMemeOptions + for<'de> Deserialize<'de> + Sync,
 {
     pub key: String,
     pub min_images: u8,
@@ -216,7 +216,7 @@ where
 
 impl<T> Default for MemeBuilder<T>
 where
-    T: ToMemeOptions + for<'de> Deserialize<'de> + Default + Sync,
+    T: ToMemeOptions + for<'de> Deserialize<'de> + Sync,
 {
     fn default() -> Self {
         MemeBuilder {
@@ -296,7 +296,7 @@ pub trait Meme: Send + Sync {
 
 impl<T> Meme for MemeBuilder<T>
 where
-    T: ToMemeOptions + for<'de> Deserialize<'de> + Default + Sync,
+    T: ToMemeOptions + for<'de> Deserialize<'de> + Sync,
 {
     fn key(&self) -> String {
         self.key.clone()

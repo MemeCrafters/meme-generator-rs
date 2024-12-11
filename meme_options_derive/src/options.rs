@@ -26,7 +26,6 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
     };
 
     let meme_options_impl = quote! {
-        #[automatically_derived]
         impl crate::meme::ToMemeOptions for #name {
             fn to_options(&self) -> Vec<crate::meme::MemeOption> {
                 Vec::from([
@@ -74,7 +73,6 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
         }
     });
     let default_impl = quote! {
-        #[automatically_derived]
         impl Default for #name {
             fn default() -> Self {
                 Self {
