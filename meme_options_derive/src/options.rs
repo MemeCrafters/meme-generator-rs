@@ -1,26 +1,20 @@
 use proc_macro::TokenStream;
-use quote::quote;
+use quote::{quote, ToTokens};
 use syn::{
-    punctuated::Punctuated, Data, DeriveInput, Error, Expr, Field, Fields, Lit, Meta,
-    MetaNameValue, Token,
+    punctuated::Punctuated, Data, DeriveInput, Error, Expr, ExprLit, Field, Fields, Ident, Lit,
+    Meta, MetaNameValue, Token,
 };
 
 pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
     let name = &input.ident;
 
-    let (options, default_values): (Vec<_>, Vec<_>) = if let Data::Struct(data) = &input.data {
+    let options = if let Data::Struct(data) = &input.data {
         if let Fields::Named(fields) = &data.fields {
             fields
                 .named
                 .iter()
-                .map(|field| {
-                    let option = parse_option(field)?;
-                    let default = parse_default_value(field)?;
-                    Ok((option, default))
-                })
+                .map(|field| Ok(parse_option(field)?))
                 .collect::<Result<Vec<_>, Error>>()?
-                .into_iter()
-                .unzip()
         } else {
             return Err(Error::new_spanned(
                 &input,
@@ -42,6 +36,43 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
         }
     };
 
+    let default_values = options.iter().map(|option| {
+        if let MemeOption::Boolean {
+            field_name,
+            default,
+            ..
+        } = option
+        {
+            let default = default.unwrap_or(false);
+            quote! {#field_name: #default}
+        } else if let MemeOption::String {
+            field_name,
+            default,
+            ..
+        } = option
+        {
+            let default = default.clone().unwrap_or(String::new());
+            quote! {#field_name: #default.to_string()}
+        } else if let MemeOption::Integer {
+            field_name,
+            default,
+            ..
+        } = option
+        {
+            let default = default.unwrap_or(0);
+            quote! {#field_name: #default}
+        } else if let MemeOption::Float {
+            field_name,
+            default,
+            ..
+        } = option
+        {
+            let default = default.unwrap_or(0.0);
+            quote! {#field_name: #default}
+        } else {
+            unreachable!()
+        }
+    });
     let default_impl = quote! {
         #[automatically_derived]
         impl Default for #name {
@@ -61,11 +92,433 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
     Ok(TokenStream::from(expanded))
 }
 
+fn parse_option(field: &Field) -> Result<MemeOption, Error> {
+    let field_name = field.ident.as_ref().unwrap();
+    let arg_type = parse_arg_type(field)?;
+    let mut description = None;
+    let mut parser_flags = ParserFlags::default();
+    let mut default_lit = None;
+    let mut minimum_lit = None;
+    let mut maximum_lit = None;
+    let mut choices = None;
+
+    for attr in &field.attrs {
+        if !(attr.path().is_ident("option") || attr.path().is_ident("doc")) {
+            continue;
+        }
+        if attr.path().is_ident("doc") {
+            match &attr.meta {
+                Meta::NameValue(MetaNameValue {
+                    value:
+                        Expr::Lit(ExprLit {
+                            lit: Lit::Str(s), ..
+                        }),
+                    ..
+                }) => {
+                    description = Some(s.value().trim().to_string());
+                }
+                _ => {}
+            }
+            continue;
+        }
+        for attr in attr.parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)? {
+            match attr {
+                Meta::Path(path) => {
+                    if path.is_ident("short") {
+                        parser_flags.short = true;
+                    } else if path.is_ident("long") {
+                        parser_flags.long = true;
+                    }
+                }
+                Meta::NameValue(MetaNameValue { path, value, .. }) => {
+                    if path.is_ident("short_aliases") {
+                        parser_flags.short_aliases = parse_char_array(&value)?;
+                    } else if path.is_ident("long_aliases") {
+                        parser_flags.long_aliases = parse_string_array(&value)?;
+                    } else if path.is_ident("default") {
+                        match value {
+                            Expr::Lit(lit) => default_lit = Some(lit.lit),
+                            _ => return Err(Error::new_spanned(value, "Expected literal")),
+                        }
+                    } else if path.is_ident("minimum") {
+                        if arg_type != ArgType::Integer && arg_type != ArgType::Float {
+                            return Err(Error::new_spanned(
+                                path,
+                                "Minimum is only supported for integer and float types",
+                            ));
+                        }
+                        match value {
+                            Expr::Lit(lit) => minimum_lit = Some(lit.lit),
+                            _ => return Err(Error::new_spanned(value, "Expected literal")),
+                        }
+                    } else if path.is_ident("maximum") {
+                        if arg_type != ArgType::Integer && arg_type != ArgType::Float {
+                            return Err(Error::new_spanned(
+                                path,
+                                "Maximum is only supported for integer and float types",
+                            ));
+                        }
+                        match value {
+                            Expr::Lit(lit) => maximum_lit = Some(lit.lit),
+                            _ => return Err(Error::new_spanned(value, "Expected literal")),
+                        }
+                    } else if path.is_ident("choices") {
+                        if arg_type != ArgType::String {
+                            return Err(Error::new_spanned(
+                                path,
+                                "Choices are only supported for string types",
+                            ));
+                        }
+                        choices = Some(parse_string_array(&value)?);
+                    }
+                }
+                _ => return Err(Error::new_spanned(attr, "Unsupported attribute format")),
+            }
+        }
+    }
+
+    match arg_type {
+        ArgType::Boolean => {
+            let mut default = Some(false);
+            if let Some(lit) = default_lit {
+                match &lit {
+                    Lit::Bool(b) => {
+                        default = Some(b.value);
+                    }
+                    _ => return Err(Error::new_spanned(lit, "Expected boolean")),
+                }
+            }
+            Ok(MemeOption::Boolean {
+                field_name: field_name.clone(),
+                default,
+                description,
+                parser_flags,
+            })
+        }
+        ArgType::String => {
+            let mut default = Some(String::new());
+            if let Some(lit) = default_lit {
+                match &lit {
+                    Lit::Str(s) => {
+                        default = Some(s.value());
+                    }
+                    _ => return Err(Error::new_spanned(lit, "Expected string")),
+                }
+            }
+            Ok(MemeOption::String {
+                field_name: field_name.clone(),
+                default,
+                choices,
+                description,
+                parser_flags,
+            })
+        }
+        ArgType::Integer => {
+            let mut default = Some(0);
+            if let Some(lit) = default_lit {
+                match &lit {
+                    Lit::Int(i) => {
+                        default = Some(i.base10_parse()?);
+                    }
+                    _ => return Err(Error::new_spanned(lit, "Expected integer")),
+                }
+            }
+            let mut minimum = None;
+            if let Some(lit) = minimum_lit {
+                match &lit {
+                    Lit::Int(i) => {
+                        minimum = Some(i.base10_parse()?);
+                    }
+                    _ => return Err(Error::new_spanned(lit, "Expected integer")),
+                }
+            }
+            let mut maximum = None;
+            if let Some(lit) = maximum_lit {
+                match &lit {
+                    Lit::Int(i) => {
+                        maximum = Some(i.base10_parse()?);
+                    }
+                    _ => return Err(Error::new_spanned(lit, "Expected integer")),
+                }
+            }
+            Ok(MemeOption::Integer {
+                field_name: field_name.clone(),
+                default,
+                minimum,
+                maximum,
+                description,
+                parser_flags,
+            })
+        }
+        ArgType::Float => {
+            let mut default = Some(0.0);
+            if let Some(lit) = default_lit {
+                match &lit {
+                    Lit::Float(f) => {
+                        default = Some(f.base10_parse()?);
+                    }
+                    _ => return Err(Error::new_spanned(lit, "Expected float")),
+                }
+            }
+            let mut minimum = None;
+            if let Some(lit) = minimum_lit {
+                match &lit {
+                    Lit::Float(f) => {
+                        minimum = Some(f.base10_parse()?);
+                    }
+                    _ => return Err(Error::new_spanned(lit, "Expected float")),
+                }
+            }
+            let mut maximum = None;
+            if let Some(lit) = maximum_lit {
+                match &lit {
+                    Lit::Float(f) => {
+                        maximum = Some(f.base10_parse()?);
+                    }
+                    _ => return Err(Error::new_spanned(lit, "Expected float")),
+                }
+            }
+            Ok(MemeOption::Float {
+                field_name: field_name.clone(),
+                default,
+                minimum,
+                maximum,
+                description,
+                parser_flags,
+            })
+        }
+    }
+}
+
+#[derive(PartialEq)]
 enum ArgType {
     String,
     Integer,
     Float,
     Boolean,
+}
+
+struct ParserFlags {
+    pub short: bool,
+    pub long: bool,
+    pub short_aliases: Vec<char>,
+    pub long_aliases: Vec<String>,
+}
+
+impl Default for ParserFlags {
+    fn default() -> Self {
+        ParserFlags {
+            short: false,
+            long: false,
+            short_aliases: Vec::new(),
+            long_aliases: Vec::new(),
+        }
+    }
+}
+
+enum MemeOption {
+    Boolean {
+        field_name: Ident,
+        default: Option<bool>,
+        description: Option<String>,
+        parser_flags: ParserFlags,
+    },
+    String {
+        field_name: Ident,
+        default: Option<String>,
+        choices: Option<Vec<String>>,
+        description: Option<String>,
+        parser_flags: ParserFlags,
+    },
+    Integer {
+        field_name: Ident,
+        default: Option<i32>,
+        minimum: Option<i32>,
+        maximum: Option<i32>,
+        description: Option<String>,
+        parser_flags: ParserFlags,
+    },
+    Float {
+        field_name: Ident,
+        default: Option<f32>,
+        minimum: Option<f32>,
+        maximum: Option<f32>,
+        description: Option<String>,
+        parser_flags: ParserFlags,
+    },
+}
+
+impl ToTokens for MemeOption {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        match self {
+            MemeOption::Boolean {
+                field_name,
+                default,
+                description,
+                parser_flags:
+                    ParserFlags {
+                        short,
+                        long,
+                        short_aliases,
+                        long_aliases,
+                    },
+            } => {
+                let default = match default {
+                    Some(default) => quote!(Some(#default)),
+                    None => quote!(None),
+                };
+                let description = match description {
+                    Some(description) => quote!(Some(#description.to_string())),
+                    None => quote!(None),
+                };
+                tokens.extend(quote! {
+                    crate::meme::MemeOption::Boolean {
+                        name: stringify!(#field_name).to_string(),
+                        default: #default,
+                        description: #description,
+                        parser_flags: crate::meme::ParserFlags {
+                            short: #short,
+                            long: #long,
+                            short_aliases: Vec::from([#(#short_aliases),*]),
+                            long_aliases: Vec::from([#(#long_aliases.to_string()),*]),
+                        },
+                    }
+                });
+            }
+            MemeOption::String {
+                field_name,
+                default,
+                choices,
+                description,
+                parser_flags:
+                    ParserFlags {
+                        short,
+                        long,
+                        short_aliases,
+                        long_aliases,
+                    },
+            } => {
+                let default = match default {
+                    Some(default) => quote!(Some(#default.to_string())),
+                    None => quote!(None),
+                };
+                let description = match description {
+                    Some(description) => quote!(Some(#description.to_string())),
+                    None => quote!(None),
+                };
+                let choices = match choices {
+                    Some(choices) => quote!(Some(Vec::from([#(#choices.to_string()),*]))),
+                    None => quote!(None),
+                };
+                tokens.extend(quote! {
+                    crate::meme::MemeOption::String {
+                        name: stringify!(#field_name).to_string(),
+                        default: #default,
+                        choices: #choices,
+                        description: #description,
+                        parser_flags: crate::meme::ParserFlags {
+                            short: #short,
+                            long: #long,
+                            short_aliases: Vec::from([#(#short_aliases),*]),
+                            long_aliases: Vec::from([#(#long_aliases.to_string()),*]),
+                        },
+                    }
+                });
+            }
+            MemeOption::Integer {
+                field_name,
+                default,
+                minimum,
+                maximum,
+                description,
+                parser_flags:
+                    ParserFlags {
+                        short,
+                        long,
+                        short_aliases,
+                        long_aliases,
+                    },
+            } => {
+                let default = match default {
+                    Some(default) => quote!(Some(#default)),
+                    None => quote!(None),
+                };
+                let description = match description {
+                    Some(description) => quote!(Some(#description.to_string())),
+                    None => quote!(None),
+                };
+                let minimum = match minimum {
+                    Some(minimum) => quote!(Some(#minimum)),
+                    None => quote!(None),
+                };
+                let maximum = match maximum {
+                    Some(maximum) => quote!(Some(#maximum)),
+                    None => quote!(None),
+                };
+                tokens.extend(quote! {
+                    crate::meme::MemeOption::Integer {
+                        name: stringify!(#field_name).to_string(),
+                        default: #default,
+                        minimum: #minimum,
+                        maximum: #maximum,
+                        description: #description,
+                        parser_flags: crate::meme::ParserFlags {
+                            short: #short,
+                            long: #long,
+                            short_aliases: Vec::from([#(#short_aliases),*]),
+                            long_aliases: Vec::from([#(#long_aliases.to_string()),*]),
+                        },
+                    }
+                });
+            }
+            MemeOption::Float {
+                field_name,
+                default,
+                minimum,
+                maximum,
+                description,
+                parser_flags:
+                    ParserFlags {
+                        short,
+                        long,
+                        short_aliases,
+                        long_aliases,
+                    },
+            } => {
+                let default = match default {
+                    Some(default) => quote!(Some(#default)),
+                    None => quote!(None),
+                };
+                let description = match description {
+                    Some(description) => quote!(Some(#description.to_string())),
+                    None => quote!(None),
+                };
+                let minimum = match minimum {
+                    Some(minimum) => quote!(Some(#minimum)),
+                    None => quote!(None),
+                };
+                let maximum = match maximum {
+                    Some(maximum) => quote!(Some(#maximum)),
+                    None => quote!(None),
+                };
+                tokens.extend(quote! {
+                    crate::meme::MemeOption::Float {
+                        name: stringify!(#field_name).to_string(),
+                        default: #default,
+                        minimum: #minimum,
+                        maximum: #maximum,
+                        description: #description,
+                        parser_flags: crate::meme::ParserFlags {
+                            short: #short,
+                            long: #long,
+                            short_aliases: Vec::from([#(#short_aliases),*]),
+                            long_aliases: Vec::from([#(#long_aliases.to_string()),*]),
+                        },
+                    }
+                });
+            }
+        }
+    }
 }
 
 fn parse_arg_type(field: &Field) -> Result<ArgType, Error> {
@@ -79,294 +532,40 @@ fn parse_arg_type(field: &Field) -> Result<ArgType, Error> {
     }
 }
 
-fn parse_default_value(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error> {
-    let field_name = field.ident.as_ref().unwrap();
-    let arg_type = parse_arg_type(field)?;
-
-    for attr in &field.attrs {
-        if attr.path().is_ident("option") {
-            for attr in attr.parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)? {
-                if let Meta::NameValue(MetaNameValue { path, value, .. }) = attr {
-                    if path.is_ident("default") {
-                        return match value {
-                            Expr::Lit(lit) => match &lit.lit {
-                                Lit::Str(s) => Ok(quote!(#field_name: #s.to_string())),
-                                _ => Ok(quote!(#field_name: #lit)),
-                            },
-                            _ => Ok(quote!(#field_name: #value)),
-                        };
+fn parse_string_array(expr: &Expr) -> Result<Vec<String>, Error> {
+    if let Expr::Array(array) = expr {
+        array
+            .elems
+            .iter()
+            .map(|expr| {
+                if let Expr::Lit(lit) = expr {
+                    if let Lit::Str(s) = &lit.lit {
+                        return Ok(s.value());
                     }
                 }
-            }
-        }
+                Err(Error::new_spanned(expr, "Expected string"))
+            })
+            .collect::<Result<Vec<_>, Error>>()
+    } else {
+        Err(Error::new_spanned(expr, "Expected array"))
     }
-
-    let default_value = match arg_type {
-        ArgType::Boolean => quote!(false),
-        ArgType::String => quote!(String::new()),
-        ArgType::Integer => quote!(0),
-        ArgType::Float => quote!(0.0),
-    };
-
-    Ok(quote!(#field_name: #default_value))
 }
 
-fn parse_option(field: &Field) -> Result<proc_macro2::TokenStream, syn::Error> {
-    let field_name = field.ident.as_ref().unwrap();
-    let arg_type = parse_arg_type(field)?;
-
-    let mut default = match arg_type {
-        ArgType::Boolean => quote!(Some(false)),
-        ArgType::String => quote!(Some(String::new())),
-        ArgType::Integer => quote!(Some(0)),
-        ArgType::Float => quote!(Some(0.0)),
-    };
-    let mut maximum = quote!(None);
-    let mut minimum = quote!(None);
-    let mut choices = quote!(None);
-    let mut description = quote!(None);
-
-    let mut short = quote!(false);
-    let mut long = quote!(false);
-    let mut short_aliases = quote!(Vec::new());
-    let mut long_aliases = quote!(Vec::new());
-
-    for attr in &field.attrs {
-        if !(attr.path().is_ident("option") || attr.path().is_ident("doc")) {
-            continue;
-        }
-        if attr.path().is_ident("doc") {
-            match &attr.meta {
-                Meta::NameValue(MetaNameValue {
-                    value:
-                        syn::Expr::Lit(syn::ExprLit {
-                            lit: syn::Lit::Str(s),
-                            ..
-                        }),
-                    ..
-                }) => {
-                    description = quote!(Some(#s.trim().to_string()));
-                }
-                _ => {}
-            }
-            continue;
-        }
-        for attr in attr.parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)? {
-            match attr {
-                Meta::Path(path) => {
-                    if path.is_ident("short") {
-                        short = quote!(true);
-                    } else if path.is_ident("long") {
-                        long = quote!(true);
+fn parse_char_array(expr: &Expr) -> Result<Vec<char>, Error> {
+    if let Expr::Array(array) = expr {
+        array
+            .elems
+            .iter()
+            .map(|expr| {
+                if let Expr::Lit(lit) = expr {
+                    if let Lit::Char(c) = &lit.lit {
+                        return Ok(c.value());
                     }
                 }
-                Meta::NameValue(MetaNameValue { path, value, .. }) => {
-                    if path.is_ident("default") {
-                        default = parse_value(&value, &arg_type)?;
-                    } else if path.is_ident("maximum") {
-                        maximum = match arg_type {
-                            ArgType::Integer => parse_value(&value, &arg_type)?,
-                            ArgType::Float => parse_value(&value, &arg_type)?,
-                            _ => {
-                                return Err(Error::new_spanned(
-                                    path,
-                                    "Maximum value is not supported for this type",
-                                ))
-                            }
-                        };
-                    } else if path.is_ident("minimum") {
-                        minimum = match arg_type {
-                            ArgType::Integer => parse_value(&value, &arg_type)?,
-                            ArgType::Float => parse_value(&value, &arg_type)?,
-                            _ => {
-                                return Err(Error::new_spanned(
-                                    path,
-                                    "Minimum value is not supported for this type",
-                                ))
-                            }
-                        };
-                    } else if path.is_ident("choices") {
-                        choices = match arg_type {
-                            ArgType::String => parse_choices(&value)?,
-                            _ => {
-                                return Err(Error::new_spanned(
-                                    path,
-                                    "Choices are not supported for this type",
-                                ))
-                            }
-                        };
-                    } else if path.is_ident("short_aliases") {
-                        short_aliases = parse_char_array(&value)?;
-                    } else if path.is_ident("long_aliases") {
-                        long_aliases = parse_string_array(&value)?;
-                    }
-                }
-                _ => return Err(Error::new_spanned(attr, "Unsupported attribute format")),
-            }
-        }
-    }
-
-    let parser_flags = quote! {
-        crate::meme::ParserFlags {
-            short: #short,
-            long: #long,
-            short_aliases: #short_aliases,
-            long_aliases: #long_aliases,
-        }
-    };
-
-    match arg_type {
-        ArgType::Boolean => Ok(quote! {
-            crate::meme::MemeOption::Boolean {
-                name: stringify!(#field_name).to_string(),
-                default: #default,
-                description: #description,
-                parser_flags: #parser_flags,
-            }
-        }),
-        ArgType::String => Ok(quote! {
-            crate::meme::MemeOption::String {
-                name: stringify!(#field_name).to_string(),
-                default: #default,
-                choices: #choices,
-                description: #description,
-                parser_flags: #parser_flags,
-            }
-        }),
-        ArgType::Integer => Ok(quote! {
-            crate::meme::MemeOption::Integer {
-                name: stringify!(#field_name).to_string(),
-                default: #default,
-                maximum: #maximum,
-                minimum: #minimum,
-                description: #description,
-                parser_flags: #parser_flags,
-            }
-        }),
-        ArgType::Float => Ok(quote! {
-            crate::meme::MemeOption::Float {
-                name: stringify!(#field_name).to_string(),
-                default: #default,
-                maximum: #maximum,
-                minimum: #minimum,
-                description: #description,
-                parser_flags: #parser_flags,
-            }
-        }),
-    }
-}
-
-fn parse_value(expr: &Expr, arg_type: &ArgType) -> Result<proc_macro2::TokenStream, Error> {
-    match arg_type {
-        ArgType::String => parse_string(expr),
-        ArgType::Integer => parse_integer(expr),
-        ArgType::Float => parse_float(expr),
-        ArgType::Boolean => parse_boolean(expr),
-    }
-}
-
-fn parse_string(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
-    match expr {
-        Expr::Lit(lit) => match &lit.lit {
-            Lit::Str(s) => Ok(quote!(Some(#s.to_string()))),
-            _ => Err(Error::new_spanned(lit, "Expected string")),
-        },
-        _ => Ok(quote!(Some(#expr))),
-    }
-}
-
-fn parse_integer(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
-    match expr {
-        Expr::Lit(lit) => match &lit.lit {
-            Lit::Int(i) => Ok(quote!(Some(#i))),
-            _ => Err(Error::new_spanned(lit, "Expected integer")),
-        },
-        _ => Ok(quote!(Some(#expr))),
-    }
-}
-
-fn parse_float(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
-    match expr {
-        Expr::Lit(lit) => match &lit.lit {
-            Lit::Float(f) => Ok(quote!(Some(#f))),
-            _ => Err(Error::new_spanned(lit, "Expected float")),
-        },
-        _ => Ok(quote!(Some(#expr))),
-    }
-}
-
-fn parse_boolean(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
-    match expr {
-        Expr::Lit(lit) => match &lit.lit {
-            Lit::Bool(b) => Ok(quote!(Some(#b))),
-            _ => Err(Error::new_spanned(lit, "Expected boolean")),
-        },
-        _ => Ok(quote!(Some(#expr))),
-    }
-}
-
-fn parse_choices(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
-    match expr {
-        Expr::Array(array) => {
-            let values = array
-                .elems
-                .iter()
-                .map(|expr| {
-                    Ok(match expr {
-                        Expr::Lit(lit) => match &lit.lit {
-                            Lit::Str(s) => quote!(String::from(#s)),
-                            _ => return Err(Error::new_spanned(lit, "Expected string")),
-                        },
-                        _ => quote!(#expr),
-                    })
-                })
-                .collect::<Result<Vec<_>, Error>>()?;
-            Ok(quote!(Some(Vec::from([#(#values),*]))))
-        }
-        _ => Ok(quote!(Some(#expr))),
-    }
-}
-
-fn parse_string_array(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
-    match expr {
-        Expr::Array(array) => {
-            let values = array
-                .elems
-                .iter()
-                .map(|expr| {
-                    Ok(match expr {
-                        Expr::Lit(lit) => match &lit.lit {
-                            Lit::Str(s) => quote!(String::from(#s)),
-                            _ => return Err(Error::new_spanned(lit, "Expected string")),
-                        },
-                        _ => quote!(#expr),
-                    })
-                })
-                .collect::<Result<Vec<_>, Error>>()?;
-            Ok(quote!(Vec::from([#(#values),*])))
-        }
-        _ => Ok(quote!(#expr)),
-    }
-}
-
-fn parse_char_array(expr: &Expr) -> Result<proc_macro2::TokenStream, Error> {
-    match expr {
-        Expr::Array(array) => {
-            let values = array
-                .elems
-                .iter()
-                .map(|expr| {
-                    Ok(match expr {
-                        Expr::Lit(lit) => match &lit.lit {
-                            Lit::Char(c) => quote!(#c),
-                            _ => return Err(Error::new_spanned(lit, "Expected char")),
-                        },
-                        _ => quote!(#expr),
-                    })
-                })
-                .collect::<Result<Vec<_>, Error>>()?;
-            Ok(quote!(Vec::from([#(#values),*])))
-        }
-        _ => Ok(quote!(#expr)),
+                Err(Error::new_spanned(expr, "Expected char"))
+            })
+            .collect::<Result<Vec<_>, Error>>()
+    } else {
+        Err(Error::new_spanned(expr, "Expected array"))
     }
 }
