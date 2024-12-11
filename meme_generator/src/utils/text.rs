@@ -97,10 +97,12 @@ impl Text2Image {
             None => None,
         };
 
-        Self {
+        let mut text2image = Self {
             paragraph,
             stroke_paragraph,
-        }
+        };
+        text2image.layout(text2image.longest_line().ceil());
+        text2image
     }
 
     pub fn longest_line(&self) -> scalar {
@@ -118,15 +120,7 @@ impl Text2Image {
         }
     }
 
-    pub fn draw_on_canvas(
-        &mut self,
-        canvas: &Canvas,
-        origin: impl Into<Point>,
-        max_width: impl Into<Option<scalar>>,
-    ) {
-        let max_width: scalar = max_width.into().unwrap_or(self.longest_line().ceil());
-        self.layout(max_width);
-
+    pub fn draw_on_canvas(&self, canvas: &Canvas, origin: impl Into<Point>) {
         let origin: Point = origin.into();
         if let Some(stroke_paragraph) = &self.stroke_paragraph {
             stroke_paragraph.paint(canvas, origin);

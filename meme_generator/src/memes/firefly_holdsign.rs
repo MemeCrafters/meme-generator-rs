@@ -6,6 +6,7 @@ use crate::{
     error::Error,
     meme::{DecodedImage, ToMemeOptions},
     register_meme,
+    tags::MemeTags,
     utils::{
         canvas::CanvasExt, color_from_hex_code, encoder::encode_png, image::ImageExt, load_image,
         local_date, new_paint, new_surface, text::TextParams,
@@ -170,13 +171,14 @@ fn firefly_holdsign(
     Ok(encode_png(&surface.image_snapshot())?)
 }
 
-register_meme! {
+register_meme!(
     "firefly_holdsign",
     firefly_holdsign,
-    min_texts=1,
-    max_texts=1,
-    default_texts=vec!["我超爱你"],
-    keywords=vec!["流萤举牌"],
-    date_created=local_date(2024, 5, 5),
-    date_modified=local_date(2024, 5, 6),
-}
+    min_texts = 1,
+    max_texts = 1,
+    default_texts = &["我超爱你"],
+    keywords = &["流萤举牌"],
+    tags = MemeTags::firefly(),
+    date_created = local_date(2024, 5, 5),
+    date_modified = local_date(2024, 5, 6),
+);

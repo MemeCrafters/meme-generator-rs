@@ -73,15 +73,15 @@ fn look_flat(
     make_png_or_gif(images, func)
 }
 
-register_meme! {
+register_meme!(
     "look_flat",
     look_flat,
     min_images = 1,
     max_images = 1,
     min_texts = 0,
     max_texts = 1,
-    default_texts = vec![DEFAULT_TEXT],
-    keywords = vec!["看扁"],
+    default_texts = &[DEFAULT_TEXT],
+    keywords = &["看扁"],
     date_created = local_date(2022, 10, 6),
     date_modified = local_date(2023, 2, 14),
-}
+);

@@ -67,14 +67,14 @@ fn little_angel(
     make_png_or_gif(images, func)
 }
 
-register_meme! {
+register_meme!(
     "little_angel",
     little_angel,
     min_images = 1,
     max_images = 1,
     min_texts = 0,
     max_texts = 0,
-    keywords = vec!["小天使"],
+    keywords = &["小天使"],
     date_created = local_date(2022, 1, 1),
     date_modified = local_date(2023, 2, 14),
-}
+);

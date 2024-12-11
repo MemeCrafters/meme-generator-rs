@@ -2,6 +2,7 @@ use std::collections::HashSet;
 
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
+use serde_json::{Map, Value};
 use skia_safe::{Codec, Data};
 
 use crate::error::Error;
@@ -87,17 +88,58 @@ impl Default for MemeParams {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MemeShortcut {
     pub pattern: String,
-    pub args: Vec<String>,
     pub humanized: Option<String>,
+    pub names: Vec<String>,
+    pub texts: Vec<String>,
+    pub options: Map<String, Value>,
 }
 
 impl Default for MemeShortcut {
     fn default() -> Self {
         MemeShortcut {
             pattern: String::new(),
-            args: Vec::new(),
             humanized: None,
+            names: Vec::new(),
+            texts: Vec::new(),
+            options: Map::new(),
         }
+    }
+}
+
+#[macro_export]
+macro_rules! shortcut {
+    ($pattern:expr, $($field:ident = $value:expr),* $(,)?) => {
+        crate::meme::MemeShortcut {
+            pattern: $pattern.to_string(),
+            $(
+                $field: crate::meme::shortcut_setters::$field($value),
+            )*
+            ..Default::default()
+        }
+    };
+}
+
+pub mod shortcut_setters {
+    use serde_json::{Map, Value};
+
+    pub fn humanized(humanized: &str) -> Option<String> {
+        Some(humanized.to_string())
+    }
+
+    pub fn names(names: &[&str]) -> Vec<String> {
+        names.iter().map(|name| name.to_string()).collect()
+    }
+
+    pub fn texts(texts: &[&str]) -> Vec<String> {
+        texts.iter().map(|text| text.to_string()).collect()
+    }
+
+    pub fn options(options: &[(&str, Value)]) -> Map<String, Value> {
+        let mut map = Map::new();
+        for &(key, ref value) in options {
+            map.insert(key.to_string(), value.clone());
+        }
+        map
     }
 }
 
@@ -216,20 +258,20 @@ pub(crate) mod meme_setters {
         max_texts
     }
 
-    pub fn default_texts(default_texts: Vec<&str>) -> Vec<String> {
+    pub fn default_texts(default_texts: &[&str]) -> Vec<String> {
         default_texts.iter().map(|text| text.to_string()).collect()
     }
 
-    pub fn keywords(keywords: Vec<&str>) -> Vec<String> {
+    pub fn keywords(keywords: &[&str]) -> Vec<String> {
         keywords.iter().map(|keyword| keyword.to_string()).collect()
     }
 
-    pub fn shortcuts(shortcuts: Vec<MemeShortcut>) -> Vec<MemeShortcut> {
-        shortcuts
+    pub fn shortcuts(shortcuts: &[MemeShortcut]) -> Vec<MemeShortcut> {
+        shortcuts.to_vec()
     }
 
-    pub fn tags(tags: Vec<&str>) -> HashSet<String> {
-        tags.iter().map(|tag| tag.to_string()).collect()
+    pub fn tags(tags: HashSet<String>) -> HashSet<String> {
+        tags
     }
 
     pub fn date_created(date_created: DateTime<Local>) -> DateTime<Local> {
@@ -248,7 +290,7 @@ pub trait Meme: Send + Sync {
         &self,
         images: &Vec<RawImage>,
         texts: &Vec<String>,
-        options: String,
+        options: &Map<String, Value>,
     ) -> Result<Vec<u8>, Error>;
 }
 
@@ -283,7 +325,7 @@ where
         &self,
         images: &Vec<RawImage>,
         texts: &Vec<String>,
-        options: String,
+        options: &Map<String, Value>,
     ) -> Result<Vec<u8>, Error> {
         let info = self.info();
         if images.len() < info.params.min_images as usize
@@ -304,7 +346,7 @@ where
                 texts.len() as u8,
             ));
         }
-        let options = &serde_json::from_str(&options)?;
+        let options = &serde_json::from_value(Value::Object(options.clone()))?;
         let mut images = images
             .iter()
             .map(|image| DecodedImage::from(image))

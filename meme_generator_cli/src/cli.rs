@@ -207,6 +207,7 @@ pub(crate) fn build_command() -> Command {
                     .value_parser(value_parser!(PathBuf))
                     .num_args(1..),
             )
+            .arg(arg!(--names [NAMES] "图片名").num_args(1..))
             .arg(arg!(--texts [TEXTS] "文字").num_args(1..))
             .arg_required_else_help(true);
         for option in options {
@@ -277,7 +278,7 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
             } => {
                 let default = default.map(|b| b.to_string()).unwrap_or("无".to_string());
                 let description = description.clone().unwrap_or("".to_string());
-                format!("  * {name}：{description} (默认值：{default})")
+                format!(" * {name}：{description} (默认值：{default})")
             }
             MemeOption::String {
                 name,
@@ -295,7 +296,7 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
                     .map(|choices| choices.join("、"))
                     .unwrap_or("无".to_string());
                 let description = description.clone().unwrap_or("".to_string());
-                format!("  * {name}：{description} （默认值：{default}）（可选项：{choices}）")
+                format!(" * {name}：{description} （默认值：{default}）（可选项：{choices}）")
             }
             MemeOption::Integer {
                 name,
@@ -313,7 +314,7 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
                     _ => "无".to_string(),
                 };
                 let description = description.clone().unwrap_or("".to_string());
-                format!("  * {name}：{description} （默认值：{default}）（范围：{range}）")
+                format!(" * {name}：{description} （默认值：{default}）（范围：{range}）")
             }
             MemeOption::Float {
                 name,
@@ -333,7 +334,7 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
                     _ => "无".to_string(),
                 };
                 let description = description.clone().unwrap_or("".to_string());
-                format!("  * {name}：{description} （默认值：{default}）（范围：{range}）")
+                format!(" * {name}：{description} （默认值：{default}）（范围：{range}）")
             }
         })
         .collect::<Vec<_>>()
@@ -344,9 +345,7 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
         .iter()
         .map(|shortcut| {
             let pattern = shortcut.pattern.clone();
-            let args = shortcut.args.join(" ");
-            let humanized = shortcut.humanized.clone().unwrap_or("".to_string());
-            format!("  * {pattern} （{humanized}）（参数：{args}）")
+            format!(" * {pattern} ")
         })
         .collect::<Vec<_>>()
         .join("\n");
@@ -393,7 +392,7 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
 pub(crate) fn handle_generate(sub_matches: &ArgMatches) {
     let (key, sub_matches) = sub_matches.subcommand().unwrap();
     let meme = get_meme(key).unwrap();
-    let images = sub_matches
+    let mut images = sub_matches
         .get_many::<PathBuf>("images")
         .into_iter()
         .flatten()
@@ -407,6 +406,17 @@ pub(crate) fn handle_generate(sub_matches: &ArgMatches) {
             RawImage { name, data }
         })
         .collect::<Vec<_>>();
+    let names = sub_matches
+        .get_many::<String>("names")
+        .into_iter()
+        .flatten()
+        .map(|text| text.to_string())
+        .collect::<Vec<_>>();
+    for (i, name) in names.into_iter().enumerate() {
+        if i < images.len() {
+            images[i].name = name;
+        }
+    }
     let texts = sub_matches
         .get_many::<String>("texts")
         .into_iter()
@@ -441,10 +451,7 @@ pub(crate) fn handle_generate(sub_matches: &ArgMatches) {
             }
         }
     }
-    match {
-        let options = serde_json::to_string(&options).unwrap();
-        meme.generate(&images, &texts, options)
-    } {
+    match meme.generate(&images, &texts, &options) {
         Err(Error::ImageDecodeError(err)) => {
             if let Some(err) = err {
                 eprintln!("图片解码失败：{err:?}");

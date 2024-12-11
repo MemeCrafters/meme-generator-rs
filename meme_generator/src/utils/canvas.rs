@@ -5,6 +5,7 @@ use crate::{
     utils::text::{Text2Image, TextParams},
 };
 
+#[allow(dead_code)]
 pub(crate) trait CanvasExt {
     fn draw_text(
         &self,
@@ -41,8 +42,8 @@ impl CanvasExt for Canvas {
         text_params: &TextParams,
     ) {
         let origin: Point = origin.into();
-        let mut text2image = Text2Image::from_text(text, font_size, text_params);
-        text2image.draw_on_canvas(self, origin, None);
+        let text2image = Text2Image::from_text(text, font_size, text_params);
+        text2image.draw_on_canvas(self, origin);
     }
 
     fn draw_text_area(
@@ -60,7 +61,7 @@ impl CanvasExt for Canvas {
             return Err(Error::TextOverLength(text));
         }
         let top = rect.top() + (rect.height() - text2image.height()) / 2.0;
-        text2image.draw_on_canvas(self, (rect.left(), top), rect.width());
+        text2image.draw_on_canvas(self, (rect.left(), top));
         Ok(())
     }
 
@@ -80,7 +81,7 @@ impl CanvasExt for Canvas {
             text2image.layout(rect.width());
             if text2image.height() <= rect.height() {
                 let top = rect.top() + (rect.height() - text2image.height()) / 2.0;
-                text2image.draw_on_canvas(self, (rect.left(), top), rect.width());
+                text2image.draw_on_canvas(self, (rect.left(), top));
                 return Ok(());
             }
             font_size -= 1.0;

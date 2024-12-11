@@ -25,6 +25,7 @@ pub(crate) fn new_paint(color: impl Into<Color4f>) -> Paint {
     paint
 }
 
+#[allow(dead_code)]
 pub(crate) fn new_stroke_paint(color: impl Into<Color4f>, stroke_width: scalar) -> Paint {
     let mut paint = Paint::new(color.into(), None);
     paint.set_anti_alias(true);

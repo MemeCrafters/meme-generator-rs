@@ -97,14 +97,9 @@ async fn meme_generate(
         }
     }
     let texts = payload.texts;
-    let options = match serde_json::to_string(&payload.options) {
-        Ok(options) => options,
-        Err(err) => {
-            return (StatusCode::BAD_REQUEST, format!("Invalid options: {err}")).into_response();
-        }
-    };
+    let options = payload.options;
 
-    let result = spawn_blocking(move || meme.generate(&images, &texts, options))
+    let result = spawn_blocking(move || meme.generate(&images, &texts, &options))
         .await
         .unwrap()
         .unwrap(); // TODO
