@@ -58,8 +58,6 @@ register_meme!(
     petpet,
     min_images = 1,
     max_images = 1,
-    min_texts = 0,
-    max_texts = 0,
     keywords = &["摸", "摸摸", "摸头", "rua"],
     date_created = local_date(2021, 8, 1),
     date_modified = local_date(2021, 8, 1),

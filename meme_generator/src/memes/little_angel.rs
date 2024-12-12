@@ -72,8 +72,6 @@ register_meme!(
     little_angel,
     min_images = 1,
     max_images = 1,
-    min_texts = 0,
-    max_texts = 0,
     keywords = &["小天使"],
     date_created = local_date(2022, 1, 1),
     date_modified = local_date(2023, 2, 14),
