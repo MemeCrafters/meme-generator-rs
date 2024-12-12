@@ -237,6 +237,19 @@ pub(crate) fn build_command() -> Command {
                 .arg_required_else_help(true),
         )
         .subcommand(
+            Command::new("preview")
+                .about("生成表情预览")
+                .arg(
+                    arg!(<KEY> "表情名").value_parser(
+                        get_meme_keys()
+                            .into_iter()
+                            .map(|s| PossibleValue::new(s))
+                            .collect::<Vec<PossibleValue>>(),
+                    ),
+                )
+                .arg_required_else_help(true),
+        )
+        .subcommand(
             Command::new("generate")
                 .alias("make")
                 .about("制作表情")
@@ -389,6 +402,13 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
     println!("{output}");
 }
 
+pub(crate) fn handle_preview(sub_matches: &ArgMatches) {
+    let key = sub_matches.get_one::<String>("KEY").unwrap();
+    let meme = get_meme(key).expect(format!("表情 `{key}` 不存在").as_str());
+    let result = meme.generate_preview();
+    handle_result(result)
+}
+
 pub(crate) fn handle_generate(sub_matches: &ArgMatches) {
     let (key, sub_matches) = sub_matches.subcommand().unwrap();
     let meme = get_meme(key).unwrap();
@@ -451,7 +471,12 @@ pub(crate) fn handle_generate(sub_matches: &ArgMatches) {
             }
         }
     }
-    match meme.generate(&images, &texts, &options) {
+    let result = meme.generate(&images, &texts, &options);
+    handle_result(result)
+}
+
+fn handle_result(result: Result<Vec<u8>, Error>) {
+    match result {
         Err(Error::ImageDecodeError(err)) => {
             if let Some(err) = err {
                 eprintln!("图片解码失败：{err:?}");

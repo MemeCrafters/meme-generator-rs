@@ -4,6 +4,7 @@ pub mod encoder;
 pub mod image;
 pub mod options;
 pub mod text;
+pub mod tools;
 
 use std::fs::read;
 

@@ -5,7 +5,10 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use skia_safe::{Codec, Data};
 
-use crate::error::Error;
+use crate::{
+    error::Error,
+    utils::{encoder::encode_png, tools::empty_image},
+};
 
 pub use meme_options_derive::MemeOptions;
 
@@ -286,6 +289,7 @@ pub trait Meme: Send + Sync {
         texts: &Vec<String>,
         options: &Map<String, Value>,
     ) -> Result<Vec<u8>, Error>;
+    fn generate_preview(&self) -> Result<Vec<u8>, Error>;
 }
 
 impl<T> Meme for MemeBuilder<T>
@@ -346,5 +350,34 @@ where
             .map(|image| DecodedImage::from(image))
             .collect::<Result<Vec<DecodedImage>, Error>>()?;
         (self.function)(&mut images, texts, options)
+    }
+
+    fn generate_preview(&self) -> Result<Vec<u8>, Error> {
+        let mut images = Vec::new();
+        if self.min_images > 0 {
+            let image = encode_png(&empty_image())?;
+            for i in 0..self.min_images {
+                let name = if self.min_images == 1 {
+                    "{name}".to_string()
+                } else {
+                    format!("{{name{}}}", i + 1)
+                };
+                images.push(RawImage {
+                    name: name,
+                    data: image.clone(),
+                });
+            }
+        }
+        let mut texts = Vec::new();
+        for i in 0..self.min_texts {
+            let text = if self.min_texts == 1 {
+                "{text}".to_string()
+            } else {
+                format!("{{text{}}}", i + 1)
+            };
+            texts.push(text);
+        }
+        let options = Map::new();
+        self.generate(&images, &texts, &options)
     }
 }

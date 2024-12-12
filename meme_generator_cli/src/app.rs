@@ -17,6 +17,7 @@ use meme_generator::{
     error::{EncodeError, Error},
     manager::{get_meme, get_meme_keys},
     meme::RawImage,
+    version::VERSION,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -62,6 +63,28 @@ async fn meme_info(Path(key): Path<String>) -> impl IntoResponse {
         Json(meme.info()).into_response()
     } else {
         (StatusCode::NOT_FOUND, "Meme not found").into_response()
+    }
+}
+
+async fn meme_preview(Path(key): Path<String>) -> impl IntoResponse {
+    let meme = match get_meme(&key) {
+        Some(meme) => meme,
+        None => return (StatusCode::NOT_FOUND, "Meme not found").into_response(),
+    };
+
+    match spawn_blocking(move || meme.generate_preview())
+        .await
+        .unwrap()
+    {
+        Ok(result) => {
+            let kind = infer::get(&result).unwrap();
+            Response::builder()
+                .status(StatusCode::OK)
+                .header("Content-Type", kind.mime_type())
+                .body(Body::from(result))
+                .unwrap()
+        }
+        Err(error) => handle_error(error).into_response(),
     }
 }
 
@@ -120,80 +143,74 @@ async fn meme_generate(
                 .body(Body::from(result))
                 .unwrap()
         }
-        Err(error) => {
-            let message = format!("{error}");
-            match error {
-                Error::ImageDecodeError(Some(err)) => ErrorResponse {
-                    err_code: 510,
-                    message,
-                    data: Some(json!({ "error": format!("{err:?}") })),
-                }
-                .into_response(),
-                Error::ImageDecodeError(None) => ErrorResponse {
-                    err_code: 510,
-                    message,
-                    data: None,
-                }
-                .into_response(),
-                Error::ImageEncodeError(encode_err) => match encode_err {
-                    EncodeError::GifEncodeError(err) => ErrorResponse {
-                        err_code: 520,
-                        message,
-                        data: Some(json!({ "error": format!("{err}") })),
-                    }
-                    .into_response(),
-                    EncodeError::SkiaEncodeError => ErrorResponse {
-                        err_code: 521,
-                        message,
-                        data: None,
-                    }
-                    .into_response(),
-                },
-                Error::IOError(err) => ErrorResponse {
-                    err_code: 530,
-                    message,
-                    data: Some(json!({ "error": format!("{err}") })),
-                }
-                .into_response(),
-                Error::DeserializeError(err) => ErrorResponse {
-                    err_code: 540,
-                    message,
-                    data: Some(json!({ "error": format!("{err}") })),
-                }
-                .into_response(),
-                Error::ImageNumberMismatch(min, max, actual) => ErrorResponse {
-                    err_code: 550,
-                    message,
-                    data: Some(json!({ "min": min, "max": max, "actual": actual })),
-                }
-                .into_response(),
-                Error::TextNumberMismatch(min, max, actual) => ErrorResponse {
-                    err_code: 551,
-                    message,
-                    data: Some(json!({ "min": min, "max": max, "actual": actual })),
-                }
-                .into_response(),
-                Error::TextOverLength(text) => ErrorResponse {
-                    err_code: 560,
-                    message,
-                    data: Some(json!({ "text": text })),
-                }
-                .into_response(),
-                Error::MemeFeedback(feedback) => ErrorResponse {
-                    err_code: 570,
-                    message,
-                    data: Some(json!({ "feedback": feedback })),
-                }
-                .into_response(),
-            }
-        }
+        Err(error) => handle_error(error).into_response(),
+    }
+}
+
+fn handle_error(error: Error) -> ErrorResponse {
+    let message = format!("{error}");
+    match error {
+        Error::ImageDecodeError(Some(err)) => ErrorResponse {
+            err_code: 510,
+            message,
+            data: Some(json!({ "error": format!("{err:?}") })),
+        },
+        Error::ImageDecodeError(None) => ErrorResponse {
+            err_code: 510,
+            message,
+            data: None,
+        },
+        Error::ImageEncodeError(encode_err) => match encode_err {
+            EncodeError::GifEncodeError(err) => ErrorResponse {
+                err_code: 520,
+                message,
+                data: Some(json!({ "error": format!("{err}") })),
+            },
+            EncodeError::SkiaEncodeError => ErrorResponse {
+                err_code: 521,
+                message,
+                data: None,
+            },
+        },
+        Error::IOError(err) => ErrorResponse {
+            err_code: 530,
+            message,
+            data: Some(json!({ "error": format!("{err}") })),
+        },
+        Error::DeserializeError(err) => ErrorResponse {
+            err_code: 540,
+            message,
+            data: Some(json!({ "error": format!("{err}") })),
+        },
+        Error::ImageNumberMismatch(min, max, actual) => ErrorResponse {
+            err_code: 550,
+            message,
+            data: Some(json!({ "min": min, "max": max, "actual": actual })),
+        },
+        Error::TextNumberMismatch(min, max, actual) => ErrorResponse {
+            err_code: 551,
+            message,
+            data: Some(json!({ "min": min, "max": max, "actual": actual })),
+        },
+        Error::TextOverLength(text) => ErrorResponse {
+            err_code: 560,
+            message,
+            data: Some(json!({ "text": text })),
+        },
+        Error::MemeFeedback(feedback) => ErrorResponse {
+            err_code: 570,
+            message,
+            data: Some(json!({ "feedback": feedback })),
+        },
     }
 }
 
 pub(crate) async fn run() {
     let app = Router::new()
-        .route("/memes/keys", get(meme_keys))
+        .route("/meme/version", get(|| async { VERSION }))
+        .route("/meme/keys", get(meme_keys))
         .route("/memes/:key/info", get(meme_info))
+        .route("/memes/:key/preview", get(meme_preview))
         .route("/memes/:key", post(meme_generate));
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 2233));
