@@ -19,7 +19,7 @@ use meme_generator::{
     meme::RawImage,
 };
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ImageData {
     id: String,
     base64_data: String,

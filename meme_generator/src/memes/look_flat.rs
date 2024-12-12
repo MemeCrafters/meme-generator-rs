@@ -27,11 +27,6 @@ fn look_flat(
     let default_text = DEFAULT_TEXT.to_string();
     let text = texts.get(0).unwrap_or(&default_text);
     let ratio = options.ratio;
-    if ratio < 1.0 || ratio > 10.0 {
-        return Err(Error::MemeFeedback(
-            "图片“压扁”比例错误，请选择 1.0~10.0".to_string(),
-        ));
-    }
 
     let img_w = 500;
     let text_h = 80;

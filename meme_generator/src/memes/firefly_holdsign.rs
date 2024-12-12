@@ -25,15 +25,10 @@ fn firefly_holdsign(
     options: &Number,
 ) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
-    let total_num = 21;
     let mut num = options.number;
     if num == 0 {
         let mut rng = rand::thread_rng();
-        num = rng.gen_range(1..=total_num);
-    } else if num < 0 || num > total_num {
-        return Err(Error::MemeFeedback(format!(
-            "图片编号错误，请选择 1~{total_num}"
-        )));
+        num = rng.gen_range(1..=21);
     }
 
     let params = [
