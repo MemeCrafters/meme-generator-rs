@@ -1,9 +1,8 @@
-use serde::Deserialize;
 use skia_safe::{Color, FontStyle, IRect, Image};
 
 use crate::{
     error::Error,
-    meme::{DecodedImage, ToMemeOptions},
+    meme::{DecodedImage, MemeOptions},
     register_meme,
     utils::{
         canvas::CanvasExt, encoder::make_png_or_gif, image::ImageExt, local_date, new_surface,
@@ -11,8 +10,7 @@ use crate::{
     },
 };
 
-#[derive(ToMemeOptions, Deserialize)]
-#[serde(default)]
+#[derive(MemeOptions)]
 struct Ratio {
     /// 图片“压扁”比例
     #[option(short, long, minimum = 1.0, maximum = 10.0, default = 2.0)]

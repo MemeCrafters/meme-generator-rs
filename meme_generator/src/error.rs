@@ -23,16 +23,16 @@ pub enum Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Error::ImageDecodeError(Some(err)) => write!(f, "Failed to decode image: {:?}", err),
+            Error::ImageDecodeError(Some(err)) => write!(f, "Failed to decode image: {err:?}"),
             Error::ImageDecodeError(None) => write!(f, "Failed to decode image"),
             Error::ImageEncodeError(EncodeError::GifEncodeError(err)) => {
-                write!(f, "Failed to encode image as GIF: {:?}", err)
+                write!(f, "Failed to encode image as GIF: {err}")
             }
             Error::ImageEncodeError(EncodeError::SkiaEncodeError) => {
                 write!(f, "Failed to encode image")
             }
-            Error::IOError(err) => write!(f, "IO error: {}", err),
-            Error::DeserializeError(err) => write!(f, "Failed to deserialize: {}", err),
+            Error::IOError(err) => write!(f, "IO error: {err}"),
+            Error::DeserializeError(err) => write!(f, "Failed to deserialize: {err}"),
             Error::ImageNumberMismatch(min, max, actual) => write!(
                 f,
                 "Image number mismatch: expected between {min} and {max}, got {actual}",
@@ -41,8 +41,8 @@ impl fmt::Display for Error {
                 f,
                 "Text number mismatch: expected between {min} and {max}, got {actual}",
             ),
-            Error::TextOverLength(text) => write!(f, "Text is too long: {}", text),
-            Error::MemeFeedback(feedback) => write!(f, "{}", feedback),
+            Error::TextOverLength(text) => write!(f, "Text is too long: {text}"),
+            Error::MemeFeedback(feedback) => write!(f, "{feedback}"),
         }
     }
 }

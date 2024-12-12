@@ -1,10 +1,9 @@
 use rand::Rng;
-use serde::Deserialize;
 use skia_safe::IRect;
 
 use crate::{
     error::Error,
-    meme::{DecodedImage, ToMemeOptions},
+    meme::{DecodedImage, MemeOptions},
     register_meme,
     tags::MemeTags,
     utils::{
@@ -13,8 +12,7 @@ use crate::{
     },
 };
 
-#[derive(ToMemeOptions, Deserialize)]
-#[serde(default)]
+#[derive(MemeOptions)]
 struct Number {
     /// 图片编号
     #[option(short, long, minimum = 0, maximum = 21)]

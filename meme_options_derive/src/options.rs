@@ -2,7 +2,7 @@ use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{
     punctuated::Punctuated, Data, DeriveInput, Error, Expr, ExprLit, Field, Fields, Ident, Lit,
-    Meta, MetaNameValue, Token,
+    Meta, MetaNameValue, Token, Type,
 };
 
 pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
@@ -26,7 +26,7 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
     };
 
     let meme_options_impl = quote! {
-        impl crate::meme::ToMemeOptions for #name {
+        impl crate::meme::MemeOptions for #name {
             fn to_options(&self) -> Vec<crate::meme::MemeOption> {
                 Vec::from([
                     #(#options),*
@@ -35,43 +35,7 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
         }
     };
 
-    let default_values = options.iter().map(|option| {
-        if let MemeOption::Boolean {
-            field_name,
-            default,
-            ..
-        } = option
-        {
-            let default = default.unwrap_or(false);
-            quote! {#field_name: #default}
-        } else if let MemeOption::String {
-            field_name,
-            default,
-            ..
-        } = option
-        {
-            let default = default.clone().unwrap_or(String::new());
-            quote! {#field_name: #default.to_string()}
-        } else if let MemeOption::Integer {
-            field_name,
-            default,
-            ..
-        } = option
-        {
-            let default = default.unwrap_or(0);
-            quote! {#field_name: #default}
-        } else if let MemeOption::Float {
-            field_name,
-            default,
-            ..
-        } = option
-        {
-            let default = default.unwrap_or(0.0);
-            quote! {#field_name: #default}
-        } else {
-            unreachable!()
-        }
-    });
+    let default_values = default_value_tokens(&options);
     let default_impl = quote! {
         impl Default for #name {
             fn default() -> Self {
@@ -82,9 +46,49 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
         }
     };
 
+    let fields = field_tokens(&options);
+    let wrapper_name = Ident::new(&format!("{}Wrapper", name), name.span());
+    let struct_wrapper = quote! {
+        #[derive(serde::Deserialize)]
+        #[serde(default)]
+        struct #wrapper_name {
+            #(#fields),*
+        }
+    };
+
+    let default_impl_wrapper = quote! {
+        impl Default for #wrapper_name {
+            fn default() -> Self {
+                Self {
+                    #(#default_values),*
+                }
+            }
+        }
+    };
+
+    let checkers = checker_tokens(&options);
+    let setters = setter_tokens(&options);
+    let deserialize_impl = quote! {
+        impl<'de> serde::Deserialize<'de> for #name {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: serde::de::Deserializer<'de>,
+            {
+                let wrapper = #wrapper_name::deserialize(deserializer)?;
+                #(#checkers)*
+                Ok(Self {
+                    #(#setters),*
+                })
+            }
+        }
+    };
+
     let expanded = quote! {
         #meme_options_impl
         #default_impl
+        #struct_wrapper
+        #default_impl_wrapper
+        #deserialize_impl
     };
 
     Ok(TokenStream::from(expanded))
@@ -92,7 +96,9 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
 
 fn parse_option(field: &Field) -> Result<MemeOption, Error> {
     let field_name = field.ident.as_ref().unwrap();
-    let arg_type = parse_arg_type(field)?;
+    let field_type = &field.ty;
+    let field_type_string = quote!(#field_type).to_string();
+    let field_type_str = field_type_string.as_str();
     let mut description = None;
     let mut parser_flags = ParserFlags::default();
     let mut default_lit = None;
@@ -139,7 +145,7 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                             _ => return Err(Error::new_spanned(value, "Expected literal")),
                         }
                     } else if path.is_ident("minimum") {
-                        if arg_type != ArgType::Integer && arg_type != ArgType::Float {
+                        if field_type_str != "i32" && field_type_str != "f32" {
                             return Err(Error::new_spanned(
                                 path,
                                 "Minimum is only supported for integer and float types",
@@ -150,7 +156,7 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                             _ => return Err(Error::new_spanned(value, "Expected literal")),
                         }
                     } else if path.is_ident("maximum") {
-                        if arg_type != ArgType::Integer && arg_type != ArgType::Float {
+                        if field_type_str != "i32" && field_type_str != "f32" {
                             return Err(Error::new_spanned(
                                 path,
                                 "Maximum is only supported for integer and float types",
@@ -161,7 +167,7 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                             _ => return Err(Error::new_spanned(value, "Expected literal")),
                         }
                     } else if path.is_ident("choices") {
-                        if arg_type != ArgType::String {
+                        if field_type_str != "String" {
                             return Err(Error::new_spanned(
                                 path,
                                 "Choices are only supported for string types",
@@ -175,8 +181,8 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
         }
     }
 
-    match arg_type {
-        ArgType::Boolean => {
+    match field_type_str {
+        "bool" => {
             let mut default = Some(false);
             if let Some(lit) = default_lit {
                 match &lit {
@@ -188,12 +194,13 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
             }
             Ok(MemeOption::Boolean {
                 field_name: field_name.clone(),
+                field_type: field_type.clone(),
                 default,
                 description,
                 parser_flags,
             })
         }
-        ArgType::String => {
+        "String" => {
             let mut default = Some(String::new());
             if let Some(lit) = default_lit {
                 match &lit {
@@ -205,13 +212,14 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
             }
             Ok(MemeOption::String {
                 field_name: field_name.clone(),
+                field_type: field_type.clone(),
                 default,
                 choices,
                 description,
                 parser_flags,
             })
         }
-        ArgType::Integer => {
+        "i32" => {
             let mut default = Some(0);
             if let Some(lit) = default_lit {
                 match &lit {
@@ -241,6 +249,7 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
             }
             Ok(MemeOption::Integer {
                 field_name: field_name.clone(),
+                field_type: field_type.clone(),
                 default,
                 minimum,
                 maximum,
@@ -248,7 +257,7 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                 parser_flags,
             })
         }
-        ArgType::Float => {
+        "f32" => {
             let mut default = Some(0.0);
             if let Some(lit) = default_lit {
                 match &lit {
@@ -278,6 +287,7 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
             }
             Ok(MemeOption::Float {
                 field_name: field_name.clone(),
+                field_type: field_type.clone(),
                 default,
                 minimum,
                 maximum,
@@ -285,15 +295,8 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                 parser_flags,
             })
         }
+        _ => Err(Error::new_spanned(field, "Unsupported field type")),
     }
-}
-
-#[derive(PartialEq)]
-enum ArgType {
-    String,
-    Integer,
-    Float,
-    Boolean,
 }
 
 struct ParserFlags {
@@ -317,12 +320,14 @@ impl Default for ParserFlags {
 enum MemeOption {
     Boolean {
         field_name: Ident,
+        field_type: Type,
         default: Option<bool>,
         description: Option<String>,
         parser_flags: ParserFlags,
     },
     String {
         field_name: Ident,
+        field_type: Type,
         default: Option<String>,
         choices: Option<Vec<String>>,
         description: Option<String>,
@@ -330,6 +335,7 @@ enum MemeOption {
     },
     Integer {
         field_name: Ident,
+        field_type: Type,
         default: Option<i32>,
         minimum: Option<i32>,
         maximum: Option<i32>,
@@ -338,6 +344,7 @@ enum MemeOption {
     },
     Float {
         field_name: Ident,
+        field_type: Type,
         default: Option<f32>,
         minimum: Option<f32>,
         maximum: Option<f32>,
@@ -346,11 +353,50 @@ enum MemeOption {
     },
 }
 
+fn parse_string_array(expr: &Expr) -> Result<Vec<String>, Error> {
+    if let Expr::Array(array) = expr {
+        array
+            .elems
+            .iter()
+            .map(|expr| {
+                if let Expr::Lit(lit) = expr {
+                    if let Lit::Str(s) = &lit.lit {
+                        return Ok(s.value());
+                    }
+                }
+                Err(Error::new_spanned(expr, "Expected string"))
+            })
+            .collect::<Result<Vec<_>, Error>>()
+    } else {
+        Err(Error::new_spanned(expr, "Expected array"))
+    }
+}
+
+fn parse_char_array(expr: &Expr) -> Result<Vec<char>, Error> {
+    if let Expr::Array(array) = expr {
+        array
+            .elems
+            .iter()
+            .map(|expr| {
+                if let Expr::Lit(lit) = expr {
+                    if let Lit::Char(c) = &lit.lit {
+                        return Ok(c.value());
+                    }
+                }
+                Err(Error::new_spanned(expr, "Expected char"))
+            })
+            .collect::<Result<Vec<_>, Error>>()
+    } else {
+        Err(Error::new_spanned(expr, "Expected array"))
+    }
+}
+
 impl ToTokens for MemeOption {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
         match self {
             MemeOption::Boolean {
                 field_name,
+                field_type: _,
                 default,
                 description,
                 parser_flags:
@@ -385,6 +431,7 @@ impl ToTokens for MemeOption {
             }
             MemeOption::String {
                 field_name,
+                field_type: _,
                 default,
                 choices,
                 description,
@@ -425,6 +472,7 @@ impl ToTokens for MemeOption {
             }
             MemeOption::Integer {
                 field_name,
+                field_type: _,
                 default,
                 minimum,
                 maximum,
@@ -471,6 +519,7 @@ impl ToTokens for MemeOption {
             }
             MemeOption::Float {
                 field_name,
+                field_type: _,
                 default,
                 minimum,
                 maximum,
@@ -519,51 +568,215 @@ impl ToTokens for MemeOption {
     }
 }
 
-fn parse_arg_type(field: &Field) -> Result<ArgType, Error> {
-    let field_type = &field.ty;
-    match quote!(#field_type).to_string().as_str() {
-        "String" => Ok(ArgType::String),
-        "i32" => Ok(ArgType::Integer),
-        "f32" => Ok(ArgType::Float),
-        "bool" => Ok(ArgType::Boolean),
-        _ => Err(Error::new_spanned(field, "Unsupported field type")),
-    }
+fn default_value_tokens(options: &Vec<MemeOption>) -> Vec<proc_macro2::TokenStream> {
+    options
+        .iter()
+        .map(|option| {
+            if let MemeOption::Boolean {
+                field_name,
+                default,
+                ..
+            } = option
+            {
+                let default = default.unwrap_or(false);
+                quote! {#field_name: #default}
+            } else if let MemeOption::String {
+                field_name,
+                default,
+                ..
+            } = option
+            {
+                let default = default.clone().unwrap_or(String::new());
+                quote! {#field_name: #default.to_string()}
+            } else if let MemeOption::Integer {
+                field_name,
+                default,
+                ..
+            } = option
+            {
+                let default = default.unwrap_or(0);
+                quote! {#field_name: #default}
+            } else if let MemeOption::Float {
+                field_name,
+                default,
+                ..
+            } = option
+            {
+                let default = default.unwrap_or(0.0);
+                quote! {#field_name: #default}
+            } else {
+                unreachable!()
+            }
+        })
+        .collect::<Vec<_>>()
 }
 
-fn parse_string_array(expr: &Expr) -> Result<Vec<String>, Error> {
-    if let Expr::Array(array) = expr {
-        array
-            .elems
-            .iter()
-            .map(|expr| {
-                if let Expr::Lit(lit) = expr {
-                    if let Lit::Str(s) = &lit.lit {
-                        return Ok(s.value());
-                    }
-                }
-                Err(Error::new_spanned(expr, "Expected string"))
-            })
-            .collect::<Result<Vec<_>, Error>>()
-    } else {
-        Err(Error::new_spanned(expr, "Expected array"))
-    }
+fn field_tokens(options: &Vec<MemeOption>) -> Vec<proc_macro2::TokenStream> {
+    options
+        .iter()
+        .map(|option| {
+            if let MemeOption::Boolean {
+                field_name,
+                field_type,
+                ..
+            } = option
+            {
+                quote! {#field_name: #field_type}
+            } else if let MemeOption::String {
+                field_name,
+                field_type,
+                ..
+            } = option
+            {
+                quote! {#field_name: #field_type}
+            } else if let MemeOption::Integer {
+                field_name,
+                field_type,
+                ..
+            } = option
+            {
+                quote! {#field_name: #field_type}
+            } else if let MemeOption::Float {
+                field_name,
+                field_type,
+                ..
+            } = option
+            {
+                quote! {#field_name: #field_type}
+            } else {
+                unreachable!()
+            }
+        })
+        .collect::<Vec<_>>()
 }
 
-fn parse_char_array(expr: &Expr) -> Result<Vec<char>, Error> {
-    if let Expr::Array(array) = expr {
-        array
-            .elems
-            .iter()
-            .map(|expr| {
-                if let Expr::Lit(lit) = expr {
-                    if let Lit::Char(c) = &lit.lit {
-                        return Ok(c.value());
+fn checker_tokens(options: &Vec<MemeOption>) -> Vec<proc_macro2::TokenStream> {
+    options
+        .iter()
+        .map(|option| {
+            if let MemeOption::String {
+                field_name,
+                choices,
+                ..
+            } = option
+            {
+                if let Some(choices) = choices {
+                    let choices = choices.iter().map(|choice| quote!(#choice));
+                    return quote! {
+                        if !Vec::from([#(#choices),*]).contains(&wrapper.#field_name.as_str()) {
+                            return Err(serde::de::Error::custom(format!(
+                                "Invalid value for {}: {}",
+                                stringify!(#field_name),
+                                wrapper.#field_name
+                            )));
+                        }
+                    };
+                }
+            } else if let MemeOption::Integer {
+                field_name,
+                minimum,
+                maximum,
+                ..
+            } = option
+            {
+                if let Some(minimum) = minimum {
+                    if let Some(maximum) = maximum {
+                        return quote! {
+                            if wrapper.#field_name < #minimum || wrapper.#field_name > #maximum {
+                                return Err(serde::de::Error::custom(format!(
+                                    "Value for {} must be between {} and {}",
+                                    stringify!(#field_name),
+                                    #minimum,
+                                    #maximum
+                                )));
+                            }
+                        };
+                    } else {
+                        return quote! {
+                            if wrapper.#field_name < #minimum {
+                                return Err(serde::de::Error::custom(format!(
+                                    "Value for {} must be greater than or equal to {}",
+                                    stringify!(#field_name),
+                                    #minimum
+                                )));
+                            }
+                        };
                     }
                 }
-                Err(Error::new_spanned(expr, "Expected char"))
-            })
-            .collect::<Result<Vec<_>, Error>>()
-    } else {
-        Err(Error::new_spanned(expr, "Expected array"))
-    }
+                if let Some(maximum) = maximum {
+                    return quote! {
+                        if wrapper.#field_name > #maximum {
+                            return Err(serde::de::Error::custom(format!(
+                                "Value for {} must be less than or equal to {}",
+                                stringify!(#field_name),
+                                #maximum
+                            )));
+                        }
+                    };
+                }
+            } else if let MemeOption::Float {
+                field_name,
+                minimum,
+                maximum,
+                ..
+            } = option
+            {
+                if let Some(minimum) = minimum {
+                    if let Some(maximum) = maximum {
+                        return quote! {
+                            if wrapper.#field_name < #minimum || wrapper.#field_name > #maximum {
+                                return Err(serde::de::Error::custom(format!(
+                                    "Value for {} must be between {} and {}",
+                                    stringify!(#field_name),
+                                    #minimum,
+                                    #maximum
+                                )));
+                            }
+                        };
+                    } else {
+                        return quote! {
+                            if wrapper.#field_name < #minimum {
+                                return Err(serde::de::Error::custom(format!(
+                                    "Value for {} must be greater than or equal to {}",
+                                    stringify!(#field_name),
+                                    #minimum
+                                )));
+                            }
+                        };
+                    }
+                }
+                if let Some(maximum) = maximum {
+                    return quote! {
+                        if wrapper.#field_name > #maximum {
+                            return Err(serde::de::Error::custom(format!(
+                                "Value for {} must be less than or equal to {}",
+                                stringify!(#field_name),
+                                #maximum
+                            )));
+                        }
+                    };
+                }
+            }
+            quote! {}
+        })
+        .collect::<Vec<_>>()
+}
+
+fn setter_tokens(options: &Vec<MemeOption>) -> Vec<proc_macro2::TokenStream> {
+    options
+        .iter()
+        .map(|option| {
+            if let MemeOption::Boolean { field_name, .. } = option {
+                quote! {#field_name: wrapper.#field_name}
+            } else if let MemeOption::String { field_name, .. } = option {
+                quote! {#field_name: wrapper.#field_name}
+            } else if let MemeOption::Integer { field_name, .. } = option {
+                quote! {#field_name: wrapper.#field_name}
+            } else if let MemeOption::Float { field_name, .. } = option {
+                quote! {#field_name: wrapper.#field_name}
+            } else {
+                unreachable!()
+            }
+        })
+        .collect::<Vec<_>>()
 }

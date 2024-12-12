@@ -7,7 +7,7 @@ use skia_safe::{Codec, Data};
 
 use crate::error::Error;
 
-pub use meme_options_derive::ToMemeOptions;
+pub use meme_options_derive::MemeOptions;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ParserFlags {
@@ -162,7 +162,7 @@ impl Default for MemeInfo {
     }
 }
 
-pub trait ToMemeOptions: Default + Send {
+pub trait MemeOptions: Default + for<'de> Deserialize<'de> + Send + Sync {
     fn to_options(&self) -> Vec<MemeOption>;
 }
 
@@ -191,7 +191,7 @@ type MemeFunction<T> = fn(&mut Vec<DecodedImage>, &Vec<String>, &T) -> Result<Ve
 
 pub(crate) struct MemeBuilder<T>
 where
-    T: ToMemeOptions + for<'de> Deserialize<'de> + Sync,
+    T: MemeOptions,
 {
     pub key: String,
     pub min_images: u8,
@@ -210,7 +210,7 @@ where
 
 impl<T> Default for MemeBuilder<T>
 where
-    T: ToMemeOptions + for<'de> Deserialize<'de> + Sync,
+    T: MemeOptions,
 {
     fn default() -> Self {
         MemeBuilder {
@@ -290,7 +290,7 @@ pub trait Meme: Send + Sync {
 
 impl<T> Meme for MemeBuilder<T>
 where
-    T: ToMemeOptions + for<'de> Deserialize<'de> + Sync,
+    T: MemeOptions,
 {
     fn key(&self) -> String {
         self.key.clone()

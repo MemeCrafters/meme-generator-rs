@@ -139,7 +139,7 @@ async fn meme_generate(
                     EncodeError::GifEncodeError(err) => ErrorResponse {
                         err_code: 520,
                         message,
-                        data: Some(json!({ "error": format!("{err:?}") })),
+                        data: Some(json!({ "error": format!("{err}") })),
                     }
                     .into_response(),
                     EncodeError::SkiaEncodeError => ErrorResponse {
@@ -152,13 +152,13 @@ async fn meme_generate(
                 Error::IOError(err) => ErrorResponse {
                     err_code: 530,
                     message,
-                    data: Some(json!({ "error": format!("{err:?}") })),
+                    data: Some(json!({ "error": format!("{err}") })),
                 }
                 .into_response(),
                 Error::DeserializeError(err) => ErrorResponse {
                     err_code: 540,
                     message,
-                    data: Some(json!({ "error": format!("{err:?}") })),
+                    data: Some(json!({ "error": format!("{err}") })),
                 }
                 .into_response(),
                 Error::ImageNumberMismatch(min, max, actual) => ErrorResponse {
