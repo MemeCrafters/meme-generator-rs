@@ -91,7 +91,7 @@ pub struct MemeShortcut {
     pub humanized: Option<String>,
     pub names: Vec<String>,
     pub texts: Vec<String>,
-    pub options: Map<String, Value>,
+    pub parser_args: Vec<String>,
 }
 
 impl Default for MemeShortcut {
@@ -101,7 +101,7 @@ impl Default for MemeShortcut {
             humanized: None,
             names: Vec::new(),
             texts: Vec::new(),
-            options: Map::new(),
+            parser_args: Vec::new(),
         }
     }
 }
@@ -120,8 +120,6 @@ macro_rules! shortcut {
 }
 
 pub mod shortcut_setters {
-    use serde_json::{Map, Value};
-
     pub fn humanized(humanized: &str) -> Option<String> {
         Some(humanized.to_string())
     }
@@ -134,12 +132,8 @@ pub mod shortcut_setters {
         texts.iter().map(|text| text.to_string()).collect()
     }
 
-    pub fn options(options: &[(&str, Value)]) -> Map<String, Value> {
-        let mut map = Map::new();
-        for &(key, ref value) in options {
-            map.insert(key.to_string(), value.clone());
-        }
-        map
+    pub fn parser_args(parser_args: &[&str]) -> Vec<String> {
+        parser_args.iter().map(|arg| arg.to_string()).collect()
     }
 }
 

@@ -122,8 +122,8 @@ register_meme!(
     shortcuts = &[shortcut!(
         r"(?P<name>\S+)正在玩(?P<game>\S+)",
         humanized = "xx正在玩xx",
-        names = &["{name}"],
-        texts = &["{game}"],
+        names = &["${name}"],
+        texts = &["${game}"],
     )],
     date_created = local_date(2024, 8, 21),
     date_modified = local_date(2024, 8, 21),
