@@ -10,7 +10,10 @@ use tokio::{
     task,
 };
 
-use crate::{config::MEME_HOME, version::VERSION};
+use crate::{
+    config::{MEME_CONFIG, MEME_HOME},
+    version::VERSION,
+};
 
 #[derive(Deserialize)]
 struct FileWithHash {
@@ -35,7 +38,9 @@ pub async fn check_resources(base_url: &str) {
         None => return,
     };
 
-    download_resources(&client, base_url, "fonts", &resources.fonts).await;
+    if MEME_CONFIG.resource.download_fonts {
+        download_resources(&client, base_url, "fonts", &resources.fonts).await;
+    }
     download_resources(&client, base_url, "images", &resources.images).await;
 }
 
@@ -85,14 +90,17 @@ async fn download_resources(
             )
             .progress_chars("#>-"),
     );
-    pb.set_message(format!("Downloading {}", resource_type));
+    println!("Downloading {resource_type}");
 
     let mut tasks = vec![];
     for resource in to_download {
         let file_path = resources_dir.join(&resource.file);
         let client = client.clone();
         let pb = pb.clone();
-        let file_url = resource_url(base_url, &resource.file);
+        let file_url = resource_url(
+            base_url,
+            format!("{resource_type}/{}", resource.file).as_str(),
+        );
 
         tasks.push(task::spawn(async move {
             download_file(&client, &file_url, &file_path).await;
@@ -106,7 +114,7 @@ async fn download_resources(
         }
     }
 
-    pb.finish_with_message(format!("Finished downloading {}", resource_type));
+    pb.finish();
 }
 
 async fn is_file_hash_equal(file_path: &Path, expected_hash: &str) -> bool {
@@ -142,7 +150,13 @@ async fn download_file(client: &Client, url: &str, file_path: &Path) {
     }
 
     let mut resp = match client.get(url).send().await {
-        Ok(resp) => resp,
+        Ok(resp) => {
+            if !resp.status().is_success() {
+                eprintln!("Failed to download {}: HTTP error {}", url, resp.status());
+                return;
+            }
+            resp
+        }
         Err(e) => {
             eprintln!("Failed to download {}: {e}", url);
             return;
