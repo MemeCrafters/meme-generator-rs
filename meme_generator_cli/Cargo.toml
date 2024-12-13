@@ -17,6 +17,7 @@ meme_generator = { path = "../meme_generator" }
 meme_generator_server = { path = "../meme_generator_server", optional = true }
 
 [features]
+default = []
 server = ["dep:meme_generator_server", "dep:tokio"]
 
 [[bin]]

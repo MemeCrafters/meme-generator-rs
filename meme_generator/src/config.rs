@@ -1,4 +1,9 @@
-use std::{env, fs, path::PathBuf, sync::LazyLock};
+use std::{
+    env, fs,
+    net::{IpAddr, Ipv4Addr},
+    path::PathBuf,
+    sync::LazyLock,
+};
 
 use directories::UserDirs;
 use serde::Deserialize;
@@ -19,9 +24,23 @@ pub static MEME_HOME: LazyLock<PathBuf> = LazyLock::new(meme_home);
 pub struct Config {
     pub meme: MemeConfig,
     pub resource: ResourceConfig,
-    pub gif: GifConfig,
+    pub encoder: EncoderConfig,
     pub font: FontConfig,
-    pub translate: TranslatorConfig,
+    pub service: ServiceConfig,
+    pub server: ServerConfig,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Config {
+            meme: MemeConfig::default(),
+            resource: ResourceConfig::default(),
+            encoder: EncoderConfig::default(),
+            font: FontConfig::default(),
+            service: ServiceConfig::default(),
+            server: ServerConfig::default(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -29,67 +48,102 @@ pub struct MemeConfig {
     pub meme_disabled_list: Vec<String>,
 }
 
+impl Default for MemeConfig {
+    fn default() -> Self {
+        MemeConfig {
+            meme_disabled_list: vec![],
+        }
+    }
+}
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct ResourceConfig {
     pub resource_url: String,
 }
 
+impl Default for ResourceConfig {
+    fn default() -> Self {
+        ResourceConfig {
+            resource_url:
+                "https://ghp.ci/https://raw.githubusercontent.com/MemeCrafters/meme-generator-rs/"
+                    .to_string(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Deserialize)]
-pub struct GifConfig {
-    pub gif_max_frames: u32,
+pub struct EncoderConfig {
+    pub gif_max_frames: u16,
+}
+
+impl Default for EncoderConfig {
+    fn default() -> Self {
+        EncoderConfig {
+            gif_max_frames: 200,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct FontConfig {
+    pub use_system_fonts: bool,
     pub default_font_families: Vec<String>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct TranslatorConfig {
-    pub baidu_trans_appid: String,
-    pub baidu_trans_apikey: String,
+impl Default for FontConfig {
+    fn default() -> Self {
+        FontConfig {
+            use_system_fonts: true,
+            default_font_families: vec![
+                "Arial",
+                "Tahoma",
+                "Helvetica Neue",
+                "Segoe UI",
+                "PingFang SC",
+                "Hiragino Sans GB",
+                "Microsoft YaHei",
+                "Source Han Sans SC",
+                "Noto Sans SC",
+                "Noto Sans CJK SC",
+                "WenQuanYi Micro Hei",
+                "Apple Color Emoji",
+                "Noto Color Emoji",
+                "Segoe UI Emoji",
+                "Segoe UI Symbol",
+            ]
+            .into_iter()
+            .map(|s| s.to_string())
+            .collect(),
+        }
+    }
 }
 
-impl Default for Config {
+#[derive(Debug, Clone, Deserialize)]
+pub struct ServiceConfig {
+    pub baidu_trans_appid: Option<String>,
+    pub baidu_trans_apikey: Option<String>,
+}
+
+impl Default for ServiceConfig {
     fn default() -> Self {
-        Config {
-            meme: MemeConfig {
-                meme_disabled_list: vec![],
-            },
-            resource: ResourceConfig {
-                resource_url:
-                    "https://ghp.ci/https://raw.githubusercontent.com/MeetWq/meme-generator/"
-                        .to_string(),
-            },
-            gif: GifConfig {
-                gif_max_frames: 200,
-            },
-            font: FontConfig {
-                default_font_families: vec![
-                    "Arial",
-                    "Tahoma",
-                    "Helvetica Neue",
-                    "Segoe UI",
-                    "PingFang SC",
-                    "Hiragino Sans GB",
-                    "Microsoft YaHei",
-                    "Source Han Sans SC",
-                    "Noto Sans SC",
-                    "Noto Sans CJK SC",
-                    "WenQuanYi Micro Hei",
-                    "Apple Color Emoji",
-                    "Noto Color Emoji",
-                    "Segoe UI Emoji",
-                    "Segoe UI Symbol",
-                ]
-                .into_iter()
-                .map(|s| s.to_string())
-                .collect(),
-            },
-            translate: TranslatorConfig {
-                baidu_trans_appid: "".to_string(),
-                baidu_trans_apikey: "".to_string(),
-            },
+        ServiceConfig {
+            baidu_trans_apikey: None,
+            baidu_trans_appid: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ServerConfig {
+    pub host: IpAddr,
+    pub port: u16,
+}
+
+impl Default for ServerConfig {
+    fn default() -> Self {
+        ServerConfig {
+            host: Ipv4Addr::new(127, 0, 0, 1).into(),
+            port: 2233,
         }
     }
 }

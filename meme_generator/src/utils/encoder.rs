@@ -132,8 +132,8 @@ pub(crate) fn get_aligned_gif_indexes(
             }
             FrameAlign::ExtendLoop => {
                 let mut total_frame_num = target_gif_info.frame_num;
-                let max_frame_num = MEME_CONFIG.gif.gif_max_frames;
-                while total_frame_num + target_gif_info.frame_num <= max_frame_num {
+                let max_frame_num = MEME_CONFIG.encoder.gif_max_frames;
+                while total_frame_num + target_gif_info.frame_num <= max_frame_num as u32 {
                     total_frame_num += target_gif_info.frame_num;
                     let mut append_frame_indexes = (0..target_gif_info.frame_num).collect();
                     target_frame_indexes.append(&mut append_frame_indexes);

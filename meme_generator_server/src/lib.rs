@@ -1,4 +1,7 @@
-use std::{collections::HashMap, net::SocketAddr};
+use std::{
+    collections::HashMap,
+    net::{IpAddr, SocketAddr},
+};
 
 use axum::{
     body::Body,
@@ -205,7 +208,7 @@ fn handle_error(error: Error) -> ErrorResponse {
     }
 }
 
-pub async fn run_server() {
+pub async fn run_server(host: IpAddr, port: u16) {
     let app = Router::new()
         .route("/meme/version", get(|| async { VERSION }))
         .route("/meme/keys", get(meme_keys))
@@ -213,7 +216,7 @@ pub async fn run_server() {
         .route("/memes/:key/preview", get(meme_preview))
         .route("/memes/:key", post(meme_generate));
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 2233));
+    let addr = SocketAddr::from((host, port));
     let listener = TcpListener::bind(addr).await.unwrap();
     println!("Server running on {}", addr);
     axum::serve(listener, app).await.unwrap();

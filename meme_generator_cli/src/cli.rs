@@ -1,3 +1,5 @@
+#[cfg(feature = "server")]
+use std::net::IpAddr;
 use std::{
     fs::{read, write},
     path::PathBuf,
@@ -14,6 +16,7 @@ use serde_json::{Map, Number, Value};
 use tokio::runtime::Runtime;
 
 use meme_generator::{
+    config::MEME_CONFIG,
     error::{EncodeError, Error},
     manager::{get_meme, get_meme_keys, get_memes},
     meme::{MemeOption, RawImage},
@@ -258,10 +261,31 @@ pub(crate) fn build_command() -> Command {
                 .about("制作表情")
                 .subcommands(sub_commands)
                 .subcommand_required(true),
+        )
+        .subcommand(
+            Command::new("download").about("下载表情包所需的资源").arg(
+                arg!(--url <URL> "资源链接")
+                    .overrides_with("url")
+                    .value_parser(value_parser!(String)),
+            ),
         );
     #[cfg(feature = "server")]
     {
-        command = command.subcommand(Command::new("run").about("启动 web server").alias("start"));
+        command = command.subcommand(
+            Command::new("run")
+                .about("启动 web server")
+                .alias("start")
+                .arg(
+                    arg!(--host <HOST> "监听地址")
+                        .overrides_with("host")
+                        .value_parser(value_parser!(IpAddr)),
+                )
+                .arg(
+                    arg!(--port <PORT> "端口号")
+                        .overrides_with("port")
+                        .value_parser(value_parser!(u16)),
+                ),
+        );
     }
     command
 }
@@ -542,10 +566,23 @@ fn handle_result(result: Result<Vec<u8>, Error>) {
     };
 }
 
+pub(crate) fn handle_download(sub_matches: &ArgMatches) {
+    let resource_url = sub_matches
+        .get_one::<String>("url")
+        .unwrap_or(&MEME_CONFIG.resource.resource_url);
+    // TODO
+}
+
 #[cfg(feature = "server")]
-pub(crate) fn handle_run() {
+pub(crate) fn handle_run(sub_matches: &ArgMatches) {
+    let host = sub_matches
+        .get_one::<IpAddr>("host")
+        .unwrap_or(&MEME_CONFIG.server.host);
+    let port = sub_matches
+        .get_one::<u16>("port")
+        .unwrap_or(&MEME_CONFIG.server.port);
     let runtime = Runtime::new().unwrap();
     runtime.block_on(async {
-        run_server().await;
+        run_server(*host, *port).await;
     });
 }
