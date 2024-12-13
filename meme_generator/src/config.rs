@@ -59,6 +59,7 @@ impl Default for MemeConfig {
 #[derive(Debug, Clone, Deserialize)]
 pub struct ResourceConfig {
     pub resource_url: String,
+    pub download_fonts: bool,
 }
 
 impl Default for ResourceConfig {
@@ -67,6 +68,7 @@ impl Default for ResourceConfig {
             resource_url:
                 "https://ghp.ci/https://raw.githubusercontent.com/MemeCrafters/meme-generator-rs/"
                     .to_string(),
+            download_fonts: true,
         }
     }
 }
@@ -86,34 +88,16 @@ impl Default for EncoderConfig {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct FontConfig {
-    pub use_system_fonts: bool,
     pub default_font_families: Vec<String>,
 }
 
 impl Default for FontConfig {
     fn default() -> Self {
         FontConfig {
-            use_system_fonts: true,
-            default_font_families: vec![
-                "Arial",
-                "Tahoma",
-                "Helvetica Neue",
-                "Segoe UI",
-                "PingFang SC",
-                "Hiragino Sans GB",
-                "Microsoft YaHei",
-                "Source Han Sans SC",
-                "Noto Sans SC",
-                "Noto Sans CJK SC",
-                "WenQuanYi Micro Hei",
-                "Apple Color Emoji",
-                "Noto Color Emoji",
-                "Segoe UI Emoji",
-                "Segoe UI Symbol",
-            ]
-            .into_iter()
-            .map(|s| s.to_string())
-            .collect(),
+            default_font_families: vec!["Noto Sans SC", "Noto Color Emoji"]
+                .into_iter()
+                .map(|s| s.to_string())
+                .collect(),
         }
     }
 }

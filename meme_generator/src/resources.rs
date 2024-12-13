@@ -18,7 +18,7 @@ struct Resources {
 }
 
 fn resource_url(base_url: &str, name: &str) -> String {
-    format!("{}v{}/resources/{}", base_url, VERSION, name)
+    format!("{base_url}v{VERSION}/resources/{name}")
 }
 
 pub async fn check_resources(base_url: &str) {
@@ -27,14 +27,14 @@ pub async fn check_resources(base_url: &str) {
     let resp = match client.get(&url).send().await {
         Ok(resp) => resp,
         Err(e) => {
-            eprintln!("Failed to download {}: {}", url, e);
+            eprintln!("Failed to download {url}: {e}");
             return;
         }
     };
     let resources: Resources = match resp.json().await {
         Ok(resources) => resources,
         Err(e) => {
-            eprintln!("Failed to parse resources.json: {}", e);
+            eprintln!("Failed to parse resources.json: {e}");
             return;
         }
     };
