@@ -2,13 +2,14 @@
 members = [
     "meme_generator",
     "meme_generator_cli",
+    "meme_generator_py",
     "meme_generator_server",
     "meme_options_derive",
 ]
 resolver = "2"
 
 [workspace.package]
-version = "0.2.0-nightly.1"
+version = "0.2.0-alpha.1"
 authors = ["meetwq <meetwq@gmail.com>"]
 license = "MIT"
 readme = "README.md"

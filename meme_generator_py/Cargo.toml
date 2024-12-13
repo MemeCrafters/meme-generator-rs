@@ -1,0 +1,18 @@
+[package]
+name = "meme_generator_py"
+version.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+edition.workspace = true
+
+[dependencies]
+chrono = "0.4"
+pyo3 = { version = "0.23", features = ["extension-module", "chrono"] }
+serde_json = "1.0"
+
+meme_generator = { path = "../meme_generator" }
+
+[lib]
+crate-type = ["cdylib"]
