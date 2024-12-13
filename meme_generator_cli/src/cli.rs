@@ -1,6 +1,7 @@
 #[cfg(feature = "server")]
 use std::net::IpAddr;
 use std::{
+    collections::HashMap,
     fs::{read, write},
     path::PathBuf,
 };
@@ -10,18 +11,16 @@ use clap::{
     builder::{PossibleValue, ValueParser},
     value_parser, Arg, ArgAction, ArgMatches, Command,
 };
-use serde_json::{Map, Number, Value};
-use tokio::runtime::Runtime;
 
 use meme_generator::{
     config::MEME_CONFIG,
     error::{EncodeError, Error},
     manager::{get_meme, get_meme_keys, get_memes},
-    meme::{MemeOption, RawImage},
-    resources::check_resources,
+    meme::{MemeOption, OptionValue, RawImage},
+    resources::check_resources_sync,
 };
 #[cfg(feature = "server")]
-use meme_generator_server::run_server;
+use meme_generator_server::run_server_sync;
 
 fn build_arg(option: MemeOption) -> Arg {
     match option {
@@ -473,30 +472,27 @@ pub(crate) fn handle_generate(sub_matches: &ArgMatches) {
         .flatten()
         .map(|text| text.to_string())
         .collect::<Vec<_>>();
-    let mut options = Map::new();
+    let mut options = HashMap::new();
     for option in meme.info().params.options {
         match option {
             MemeOption::Boolean { name, .. } => {
                 if let Ok(Some(value)) = sub_matches.try_get_one::<bool>(name.as_str()) {
-                    options.insert(name, Value::Bool(*value));
+                    options.insert(name, OptionValue::Boolean(*value));
                 }
             }
             MemeOption::String { name, .. } => {
                 if let Ok(Some(value)) = sub_matches.try_get_one::<String>(name.as_str()) {
-                    options.insert(name, Value::String(value.clone()));
+                    options.insert(name, OptionValue::String(value.clone()));
                 }
             }
             MemeOption::Integer { name, .. } => {
                 if let Ok(Some(value)) = sub_matches.try_get_one::<i32>(name.as_str()) {
-                    options.insert(name, Value::Number((*value).into()));
+                    options.insert(name, OptionValue::Integer(*value));
                 }
             }
             MemeOption::Float { name, .. } => {
                 if let Ok(Some(value)) = sub_matches.try_get_one::<f32>(name.as_str()) {
-                    options.insert(
-                        name,
-                        Value::Number(Number::from_f64((*value).into()).unwrap()),
-                    );
+                    options.insert(name, OptionValue::Float(*value));
                 }
             }
         }
@@ -569,10 +565,7 @@ pub(crate) fn handle_download(sub_matches: &ArgMatches) {
     let resource_url = sub_matches
         .get_one::<String>("url")
         .unwrap_or(&MEME_CONFIG.resource.resource_url);
-    let runtime = Runtime::new().unwrap();
-    runtime.block_on(async {
-        check_resources(resource_url).await;
-    });
+    check_resources_sync(resource_url);
 }
 
 #[cfg(feature = "server")]
@@ -583,8 +576,5 @@ pub(crate) fn handle_run(sub_matches: &ArgMatches) {
     let port = sub_matches
         .get_one::<u16>("port")
         .unwrap_or(&MEME_CONFIG.server.port);
-    let runtime = Runtime::new().unwrap();
-    runtime.block_on(async {
-        run_server(*host, *port).await;
-    });
+    run_server_sync(*host, *port);
 }

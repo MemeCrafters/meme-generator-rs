@@ -13,13 +13,13 @@ use axum::{
 };
 use base64::{engine::general_purpose, Engine as _};
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Map, Value};
-use tokio::{net::TcpListener, task::spawn_blocking};
+use serde_json::{json, Value};
+use tokio::{net::TcpListener, runtime::Runtime, task::spawn_blocking};
 
 use meme_generator::{
     error::{EncodeError, Error},
     manager::{get_meme, get_meme_keys},
-    meme::RawImage,
+    meme::{OptionValue, RawImage},
     version::VERSION,
 };
 
@@ -40,7 +40,7 @@ struct MemeRequest {
     images: Vec<Image>,
     image_data: Vec<ImageData>,
     texts: Vec<String>,
-    options: Map<String, Value>,
+    options: HashMap<String, OptionValue>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -220,4 +220,8 @@ pub async fn run_server(host: IpAddr, port: u16) {
     let listener = TcpListener::bind(addr).await.unwrap();
     println!("Server running on {}", addr);
     axum::serve(listener, app).await.unwrap();
+}
+
+pub fn run_server_sync(host: IpAddr, port: u16) {
+    Runtime::new().unwrap().block_on(run_server(host, port));
 }

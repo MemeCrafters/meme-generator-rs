@@ -7,6 +7,7 @@ use sha2::{Digest, Sha256};
 use tokio::{
     fs::File,
     io::{AsyncReadExt, AsyncWriteExt},
+    runtime::Runtime,
     task,
 };
 
@@ -42,6 +43,17 @@ pub async fn check_resources(base_url: &str) {
         download_resources(&client, base_url, "fonts", &resources.fonts).await;
     }
     download_resources(&client, base_url, "images", &resources.images).await;
+}
+
+pub fn check_resources_sync(base_url: &str) {
+    Runtime::new().unwrap().block_on(check_resources(base_url));
+}
+
+pub fn check_resources_in_background(base_url: &str) {
+    let base_url = base_url.to_string();
+    task::spawn(async move {
+        check_resources(&base_url).await;
+    });
 }
 
 async fn fetch_resource_list(client: &Client, base_url: &str) -> Option<Resources> {

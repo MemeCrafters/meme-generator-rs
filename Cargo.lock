@@ -1146,8 +1146,6 @@ dependencies = [
  "infer",
  "meme_generator",
  "meme_generator_server",
- "serde_json",
- "tokio",
 ]
 
 [[package]]

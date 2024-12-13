@@ -1,8 +1,8 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
+use serde_json::{Map, Number, Value};
 use skia_safe::{Codec, Data};
 
 use crate::{
@@ -63,6 +63,14 @@ pub enum MemeOption {
         description: Option<String>,
         parser_flags: ParserFlags,
     },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum OptionValue {
+    Boolean(bool),
+    String(String),
+    Integer(i32),
+    Float(f32),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -287,7 +295,7 @@ pub trait Meme: Send + Sync {
         &self,
         images: &Vec<RawImage>,
         texts: &Vec<String>,
-        options: &Map<String, Value>,
+        options: &HashMap<String, OptionValue>,
     ) -> Result<Vec<u8>, Error>;
     fn generate_preview(&self) -> Result<Vec<u8>, Error>;
 }
@@ -323,7 +331,7 @@ where
         &self,
         images: &Vec<RawImage>,
         texts: &Vec<String>,
-        options: &Map<String, Value>,
+        options: &HashMap<String, OptionValue>,
     ) -> Result<Vec<u8>, Error> {
         let info = self.info();
         if images.len() < info.params.min_images as usize
@@ -344,7 +352,23 @@ where
                 texts.len() as u8,
             ));
         }
-        let options = &serde_json::from_value(Value::Object(options.clone()))?;
+
+        let mut options_json = Map::new();
+        for option in options {
+            let key = option.0;
+            let value = option.1;
+            let value = match value {
+                OptionValue::Boolean(value) => Value::Bool(value.clone()),
+                OptionValue::String(value) => Value::String(value.clone()),
+                OptionValue::Integer(value) => Value::Number(Number::from(value.clone())),
+                OptionValue::Float(value) => {
+                    Value::Number(Number::from_f64(f64::from(value.clone())).unwrap())
+                }
+            };
+            options_json.insert(key.clone(), value);
+        }
+
+        let options = &serde_json::from_value(Value::Object(options_json))?;
         let mut images = images
             .iter()
             .map(|image| DecodedImage::from(image))
@@ -377,7 +401,7 @@ where
             };
             texts.push(text);
         }
-        let options = Map::new();
+        let options = HashMap::new();
         self.generate(&images, &texts, &options)
     }
 }
