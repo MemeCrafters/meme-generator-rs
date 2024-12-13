@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs, path::Path};
+use std::{fs, path::Path};
 
 use indicatif::{ProgressBar, ProgressStyle};
 use reqwest::Client;
@@ -10,11 +10,18 @@ use tokio::{
     task,
 };
 
-use crate::{config::MEME_HOME, error::Error, version::VERSION};
+use crate::{config::MEME_HOME, version::VERSION};
+
+#[derive(Deserialize)]
+struct FileWithHash {
+    file: String,
+    hash: String,
+}
 
 #[derive(Deserialize)]
 struct Resources {
-    files: HashMap<String, String>,
+    fonts: Vec<FileWithHash>,
+    images: Vec<FileWithHash>,
 }
 
 fn resource_url(base_url: &str, name: &str) -> String {
@@ -23,23 +30,53 @@ fn resource_url(base_url: &str, name: &str) -> String {
 
 pub async fn check_resources(base_url: &str) {
     let client = Client::new();
+    let resources = match fetch_resource_list(&client, base_url).await {
+        Some(resources) => resources,
+        None => return,
+    };
+
+    download_resources(&client, base_url, "fonts", &resources.fonts).await;
+    download_resources(&client, base_url, "images", &resources.images).await;
+}
+
+async fn fetch_resource_list(client: &Client, base_url: &str) -> Option<Resources> {
     let url = resource_url(base_url, "resources.json");
     let resp = match client.get(&url).send().await {
         Ok(resp) => resp,
         Err(e) => {
             eprintln!("Failed to download {url}: {e}");
-            return;
+            return None;
         }
     };
-    let resources: Resources = match resp.json().await {
-        Ok(resources) => resources,
+    match resp.json::<Resources>().await {
+        Ok(resources) => Some(resources),
         Err(e) => {
             eprintln!("Failed to parse resources.json: {e}");
-            return;
+            None
         }
-    };
+    }
+}
 
-    let total_files = resources.files.len();
+async fn download_resources(
+    client: &Client,
+    base_url: &str,
+    resource_type: &str,
+    resources: &[FileWithHash],
+) {
+    let resources_dir = MEME_HOME.join("resources").join(resource_type);
+
+    let mut to_download = vec![];
+    for res in resources {
+        let file_path = resources_dir.join(&res.file);
+        if !file_path.exists() || !is_file_hash_equal(&file_path, &res.hash).await {
+            to_download.push(res);
+        }
+    }
+    let total_files = to_download.len();
+    if total_files == 0 {
+        return;
+    }
+
     let pb = ProgressBar::new(total_files as u64);
     pb.set_style(
         ProgressStyle::default_bar()
@@ -48,32 +85,28 @@ pub async fn check_resources(base_url: &str) {
             )
             .progress_chars("#>-"),
     );
+    pb.set_message(format!("Downloading {}", resource_type));
 
-    let resources_dir = MEME_HOME.join("resources");
     let mut tasks = vec![];
-    for (file, hash) in resources.files.into_iter() {
-        let file_path = resources_dir.join(file.clone());
+    for resource in to_download {
+        let file_path = resources_dir.join(&resource.file);
         let client = client.clone();
         let pb = pb.clone();
-        let file_url = resource_url(base_url, &file);
+        let file_url = resource_url(base_url, &resource.file);
+
         tasks.push(task::spawn(async move {
-            if !file_path.exists() || !is_file_hash_equal(&file_path, &hash).await {
-                download_file(&client, &file_url, &file_path).await;
-            }
+            download_file(&client, &file_url, &file_path).await;
             pb.inc(1);
-            Ok::<(), Error>(())
         }));
     }
 
     for task in tasks {
-        match task.await {
-            Ok(_) => {}
-            Err(e) => {
-                eprintln!("Failed to download file: {}", e);
-            }
+        if let Err(e) = task.await {
+            eprintln!("Task failed: {e}");
         }
     }
-    pb.finish();
+
+    pb.finish_with_message(format!("Finished downloading {}", resource_type));
 }
 
 async fn is_file_hash_equal(file_path: &Path, expected_hash: &str) -> bool {
@@ -82,67 +115,58 @@ async fn is_file_hash_equal(file_path: &Path, expected_hash: &str) -> bool {
     }
     let mut file = match File::open(file_path).await {
         Ok(file) => file,
-        Err(e) => {
-            eprintln!("Failed to open file {}: {}", file_path.display(), e);
-            return false;
-        }
+        Err(_) => return false,
     };
     let mut hasher = Sha256::new();
-    let mut buffer = vec![0; 1024];
+    let mut buffer = vec![0; 4096];
     loop {
         let n = match file.read(&mut buffer).await {
             Ok(n) => n,
-            Err(e) => {
-                eprintln!("Failed to read file {}: {}", file_path.display(), e);
-                return false;
-            }
+            Err(_) => return false,
         };
         if n == 0 {
             break;
         }
         hasher.update(&buffer[..n]);
     }
-    let result = hasher.finalize();
-    let file_hash = format!("{:x}", result);
+    let file_hash = format!("{:x}", hasher.finalize());
     file_hash == expected_hash
 }
 
 async fn download_file(client: &Client, url: &str, file_path: &Path) {
-    if !file_path.exists() {
-        if let Some(parent) = file_path.parent() {
-            fs::create_dir_all(parent).unwrap_or_else(|_| {
-                eprintln!("Failed to create directory {}", parent.display());
-                return;
-            });
+    if let Some(parent) = file_path.parent() {
+        if let Err(e) = fs::create_dir_all(parent) {
+            eprintln!("Failed to create directory {}: {e}", parent.display());
+            return;
         }
     }
+
     let mut resp = match client.get(url).send().await {
         Ok(resp) => resp,
         Err(e) => {
-            eprintln!("Failed to download {}: {}", url, e);
+            eprintln!("Failed to download {}: {e}", url);
             return;
         }
     };
+
     let mut file = match File::create(file_path).await {
         Ok(file) => file,
         Err(e) => {
-            eprintln!("Failed to create file {}: {}", file_path.display(), e);
+            eprintln!("Failed to create file {}: {e}", file_path.display());
             return;
         }
     };
+
     while let Some(chunk) = match resp.chunk().await {
         Ok(chunk) => chunk,
         Err(e) => {
-            eprintln!("Failed to download {}: {}", url, e);
+            eprintln!("Failed to download chunk from {}: {e}", url);
             return;
         }
     } {
-        match file.write_all(&chunk).await {
-            Ok(_) => {}
-            Err(e) => {
-                eprintln!("Failed to write file {}: {}", file_path.display(), e);
-                return;
-            }
+        if let Err(e) = file.write_all(&chunk).await {
+            eprintln!("Failed to write file {}: {e}", file_path.display());
+            return;
         }
     }
 }

@@ -11,8 +11,6 @@ use clap::{
     value_parser, Arg, ArgAction, ArgMatches, Command,
 };
 use serde_json::{Map, Number, Value};
-
-#[cfg(feature = "server")]
 use tokio::runtime::Runtime;
 
 use meme_generator::{
@@ -20,6 +18,7 @@ use meme_generator::{
     error::{EncodeError, Error},
     manager::{get_meme, get_meme_keys, get_memes},
     meme::{MemeOption, RawImage},
+    resources::check_resources,
 };
 #[cfg(feature = "server")]
 use meme_generator_server::run_server;
@@ -570,7 +569,10 @@ pub(crate) fn handle_download(sub_matches: &ArgMatches) {
     let resource_url = sub_matches
         .get_one::<String>("url")
         .unwrap_or(&MEME_CONFIG.resource.resource_url);
-    // TODO
+    let runtime = Runtime::new().unwrap();
+    runtime.block_on(async {
+        check_resources(resource_url).await;
+    });
 }
 
 #[cfg(feature = "server")]

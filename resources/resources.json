@@ -1,0 +1,578 @@
+{
+  "fonts": [
+    {
+      "file": "Aller_Bd.ttf",
+      "hash": "8518454f34e629edae988ecbdb35196519695fa0ce0f212270b2aa1d3d335069"
+    },
+    {
+      "file": "FZKATJW.ttf",
+      "hash": "d3988cdca576ea293487944aac33855fa6f92ab9a163f42b198339db00b0b596"
+    },
+    {
+      "file": "FZSEJW.ttf",
+      "hash": "dc9862417e867e7018c0e87a6bf9677a8fde25ab504bfcb05e5926c24a02e3c8"
+    },
+    {
+      "file": "FZSJ-QINGCRJ.ttf",
+      "hash": "40df2ae9d2ea46549b141947492e7111240fd2385fd2cc5355bf4708bb086983"
+    },
+    {
+      "file": "FZXS14.ttf",
+      "hash": "c1bfb94df96b5e907a0a07c87ab79d50703bd887c0d953e75aa2ea8620e25193"
+    },
+    {
+      "file": "GlowSansSC-Normal-Heavy.otf",
+      "hash": "6f7c4704c1ebf564cbd5fbefed3f497fc7d735521364debe2feb3b38153ec321"
+    },
+    {
+      "file": "HiraginoMin-W5-90-RKSJ-H-2.ttc",
+      "hash": "52b1b0e94d3a8af284ca0d57c23e74aaed003859c597d047c4b0c3411f451ed7"
+    },
+    {
+      "file": "NeoSans-Bold.ttf",
+      "hash": "a16697363125301eb3ef47fd308c94b6924a0932d6f3b8b70194cc38869eac52"
+    },
+    {
+      "file": "NotoColorEmoji.ttf",
+      "hash": "39ee3c587e10e89669b9ff32703261d10d5f9c4dd5ad147b6b5a1c5200591817"
+    },
+    {
+      "file": "NotoSansSC-Bold.ttf",
+      "hash": "297c1dd08c6176525405620d8425213906a7759cc3fe2b8dfa22991163bead36"
+    },
+    {
+      "file": "NotoSansSC-Regular.ttf",
+      "hash": "ae82f4e2a55e1316a55bcc1d05e9555ce08d8bda07e893b486896b626fd852ff"
+    },
+    {
+      "file": "NotoSerifSC-Bold.otf",
+      "hash": "fbb49fb1f7851e663b683d85d1cc8e81cda8c0a227f24964d067b188b8cba946"
+    },
+    {
+      "file": "NotoSerifSC-Regular.otf",
+      "hash": "4f05a61b6543b1e595cfdf98b915b8e80ae804d5d0df5aa6ab0ca75bac296699"
+    },
+    {
+      "file": "PangMenZhengDao-Cu.ttf",
+      "hash": "06b2048c592b1dae43b7ab895c941fbc7cfe11060da1c0cb8e68cb178ae6735a"
+    },
+    {
+      "file": "RoGSanSrfStd-Bd.otf",
+      "hash": "299f361bd5ca959494799fe804046aa7ccae1748ceaebad927ad95a9737a312c"
+    },
+    {
+      "file": "consola.ttf",
+      "hash": "c6e6ce8119fdd47ec6a5449a08e2d2ad7f41ea03143aae193068ed9fa58eaebc"
+    }
+  ],
+  "images": [
+    {
+      "file": "confuse/00.png",
+      "hash": "061a13b6ab65f87b3095bf5cc5a242fbc40dddcee0a938f7b85f859723e73825"
+    },
+    {
+      "file": "confuse/01.png",
+      "hash": "ada7b2e5f071a2486a90e3803cb30ea573d25d5d3e8bd999e7c6d3bf0c448bc6"
+    },
+    {
+      "file": "confuse/02.png",
+      "hash": "45b61f0beae1d61e959d892c2791785016e4f2577769d72a6ed93afd7cf3a648"
+    },
+    {
+      "file": "confuse/03.png",
+      "hash": "790ee6c878455213fe09b5ef755b8dc06f0a502d1a20da0207f4b9b403f26cfe"
+    },
+    {
+      "file": "confuse/04.png",
+      "hash": "ee7d08e8709cc006225ca0bada6b28728d3d2f26b9e801d999f0079da2286121"
+    },
+    {
+      "file": "confuse/05.png",
+      "hash": "e160ec5824e0ce2e609020da24942d6cfc33fed844444f2c97cb67b809be9a2a"
+    },
+    {
+      "file": "confuse/06.png",
+      "hash": "59cc44e9408524bfbaf93538227d66b65c61c77e61fe810ec862bb9158f687ca"
+    },
+    {
+      "file": "confuse/07.png",
+      "hash": "e953cbe7ae67539a2686ac489fee8722d9a7151643063d540369ef0ee7ca11b3"
+    },
+    {
+      "file": "confuse/08.png",
+      "hash": "8c9890d0b2f9c356fa8f86e2e41e5b20fbde2708f788c65ed83842146e2fb03e"
+    },
+    {
+      "file": "confuse/09.png",
+      "hash": "8e21801c8e572868b46ea93f761650239f91df8d988ba794b91b88b8c27e2f28"
+    },
+    {
+      "file": "confuse/10.png",
+      "hash": "7a38159b1baee3d8f3ed368db8e6c678af9e20cfa3a0c29924bc9f93c5bdb28a"
+    },
+    {
+      "file": "confuse/11.png",
+      "hash": "79239b4410ed128629211879b2f311b21a5af20dcda2b88ba45c1ec74542db81"
+    },
+    {
+      "file": "confuse/12.png",
+      "hash": "ea607b51904b5442c16ed77f6a05844469deb2836b66e9628c14aaa1293b74ee"
+    },
+    {
+      "file": "confuse/13.png",
+      "hash": "41a27cecad121373b550fdd1669e9f9bd1e2e49e7389f96573434d7ba51dfc2b"
+    },
+    {
+      "file": "confuse/14.png",
+      "hash": "a453ea14f87b2fd687d4e231f6d9c17b4f88bc4cb7866f3978d4bd179184db22"
+    },
+    {
+      "file": "confuse/15.png",
+      "hash": "e3365c05274f7e847a12b59f7c7e0f059eca1e6c2deee13a301e6e415bacca44"
+    },
+    {
+      "file": "confuse/16.png",
+      "hash": "269f9048217faf7bb04b6d78b0fdeac8f976c8b42c79b0bae39e6623efadf22f"
+    },
+    {
+      "file": "confuse/17.png",
+      "hash": "5fb6f1b76a3d6ec97a477bf9748901310f0344e650a6513f51b819210b4a0437"
+    },
+    {
+      "file": "confuse/18.png",
+      "hash": "00293d4951b0a1612533cad35d77325e8ab8abec919389597345e03ac198a44e"
+    },
+    {
+      "file": "confuse/19.png",
+      "hash": "a5a40f619095e67a55d604623910fd31445bf8b13ba44551defef2eff869abb1"
+    },
+    {
+      "file": "confuse/20.png",
+      "hash": "7603b1987582db101165574e5225e14a05f211caa05d745b9617bdf75ecdedb0"
+    },
+    {
+      "file": "confuse/21.png",
+      "hash": "f04b134f98108111e00379872106310d49661d4babf236313ac268a44682dd17"
+    },
+    {
+      "file": "confuse/22.png",
+      "hash": "7429c930c9fa5cbe11db57b8b7ae667d9532e17ec59eb23a28d689c06a3b1294"
+    },
+    {
+      "file": "confuse/23.png",
+      "hash": "edc2ddc47b0ae6a3e94b4f66f319cac98bb9c99273543777d6db0bf57b3aa0e4"
+    },
+    {
+      "file": "confuse/24.png",
+      "hash": "d36e7155d1c6f3ff2480839f6f8a1656af91d195fc6272e10dfdf71409d867b9"
+    },
+    {
+      "file": "confuse/25.png",
+      "hash": "c913a20e4a53911adefde26a9236a38e2a9e29949726c063519b26d4b9ddcdf6"
+    },
+    {
+      "file": "confuse/26.png",
+      "hash": "0b356284c65784c21579170c3a1cbc56512c3185180a8c4fd45bf1addf59c856"
+    },
+    {
+      "file": "confuse/27.png",
+      "hash": "1b49e98e1b1dea65a5027c63647fe3b7618aac5942f6e6bb97f9f836750af87f"
+    },
+    {
+      "file": "confuse/28.png",
+      "hash": "dd4532cced238eecf969a1e36bc2dca95db5a05c03ae1d7cf8d8a3febc720fa9"
+    },
+    {
+      "file": "confuse/29.png",
+      "hash": "bdb3dc71223d19b160096b9b249760306469e8fe4d3fa5bd374d150d060ff66e"
+    },
+    {
+      "file": "confuse/30.png",
+      "hash": "0df5ec22d75aac6d60384751c0d799c39603ec4cf63a16f08149e354bab83838"
+    },
+    {
+      "file": "confuse/31.png",
+      "hash": "c8ded087ef374d126645471042fde4827da5b5345932663413a194a2008874cc"
+    },
+    {
+      "file": "confuse/32.png",
+      "hash": "e52e1fab7dbf0c6b6c054c22edfc72f5923775a81378edab733ecf6c1765fb6a"
+    },
+    {
+      "file": "confuse/33.png",
+      "hash": "783f31af35384aa53b73e8d0c03fbaf3dbd140e01bd2388558093830a99b3ad0"
+    },
+    {
+      "file": "confuse/34.png",
+      "hash": "b85df3a07375f3fa7adc8fe4b8498a51aba4035fa01305ecca66e972a2af25a4"
+    },
+    {
+      "file": "confuse/35.png",
+      "hash": "e76ba95168c020d41d4dfbdcf87d2b13a7437d3ca7a69e0b44ab79b566b4095c"
+    },
+    {
+      "file": "confuse/36.png",
+      "hash": "46550a0e12451ef7a0d22ac35350fdeb95ddb65eda04bfaac2d3a233201df8bb"
+    },
+    {
+      "file": "confuse/37.png",
+      "hash": "39a190726fbb0719a14fef145ac597cbfb15cab8804cc00616e1d8e1ef8011b8"
+    },
+    {
+      "file": "confuse/38.png",
+      "hash": "8799ad8cbe2d5e7667e1b0aed94cb38ea7fc6ccd0c8c960382a859c6fa10c6fd"
+    },
+    {
+      "file": "confuse/39.png",
+      "hash": "13851d41e65502fb0d65965522cee92927941d975f5f32a47c1306f752fe66c9"
+    },
+    {
+      "file": "confuse/40.png",
+      "hash": "5b5b0d893e17fb414527c57a9b8d0780dcc134384b0946533dc5d2048474bddc"
+    },
+    {
+      "file": "confuse/41.png",
+      "hash": "4737d62c645b815b0df553e76a20b1c7b78685b5d5566482d5f27831fe598dcb"
+    },
+    {
+      "file": "confuse/42.png",
+      "hash": "df0ed971aee80dc0586edea9d0e6d783e20f6f2d930a49ced44f6fb6d842bde3"
+    },
+    {
+      "file": "confuse/43.png",
+      "hash": "4e775c9c95ed3079528b0c20139826af82fca623c8f5498c16296880a901ada6"
+    },
+    {
+      "file": "confuse/44.png",
+      "hash": "b33dddfb9805487f0cd19c9935a4bd9d76e1ff1478dc4ef9e10b4594a437f91e"
+    },
+    {
+      "file": "confuse/45.png",
+      "hash": "d4c4b0b6390355fc708c8b3a9f562ae424ef3b6d9720c2aaf5f6b969fa6d2e93"
+    },
+    {
+      "file": "confuse/46.png",
+      "hash": "54d04a1616a22d3501a146cf1089471196947594996e695401987b9ca1026cb0"
+    },
+    {
+      "file": "confuse/47.png",
+      "hash": "1bd3b2d2de243de28375e2aadce3d065fc5bbbf05fd228642fe089e5c1492cde"
+    },
+    {
+      "file": "confuse/48.png",
+      "hash": "919080f50280b4c1fa1bf6fd365f8e4914d4e15ff5703965601809c5ee27981b"
+    },
+    {
+      "file": "confuse/49.png",
+      "hash": "690d2876178c1b27d9d17c291fd206a7ebad9df4e501a50ab80e234e7000beb7"
+    },
+    {
+      "file": "confuse/50.png",
+      "hash": "e26fa008cf99f0b53a65ece5b4bc937ff16e45fef030c061b6ee87be10524118"
+    },
+    {
+      "file": "confuse/51.png",
+      "hash": "d8734f33ab75aede9b9fd454ca30a485cafe60a5264d092e1ad494f11f04a6ba"
+    },
+    {
+      "file": "confuse/52.png",
+      "hash": "e0a16761375a40df088f89ee260d0134eec4a89384c2524e7397eaa5c2e09eb8"
+    },
+    {
+      "file": "confuse/53.png",
+      "hash": "94381f9a3a879fa8ffd7840621788bfdc9a4a4b73ef3e393820c09c90fbcb657"
+    },
+    {
+      "file": "confuse/54.png",
+      "hash": "52cc142895085c73a881bc4b63a892d53d61d81d70936b762942b1134deef2eb"
+    },
+    {
+      "file": "confuse/55.png",
+      "hash": "543426c30aebb1430151c30054524476464e1c865dcf5b0fde0047211d0e9895"
+    },
+    {
+      "file": "confuse/56.png",
+      "hash": "e1dbab5d2e4a058e4ced41f644d98aa8512cc4039a9f9ecaf17995d9a44fde9d"
+    },
+    {
+      "file": "confuse/57.png",
+      "hash": "b31cfdcc32f716907ae4c71db3c6651507e97f5c4cf857ab799fa4a0a9ad6e7e"
+    },
+    {
+      "file": "confuse/58.png",
+      "hash": "c81dd5560cc3270bd0e114a27f263a57a6cc547344df30a7bc7393760ab208d7"
+    },
+    {
+      "file": "confuse/59.png",
+      "hash": "754a98325696b7427e14ceb61a670221793d2ed47164f486147546f9f43d9b25"
+    },
+    {
+      "file": "confuse/60.png",
+      "hash": "ab75fb42e2fc47a42d4b2df74d349e8ecc06e7dfe5bb46f6dfa8bede25b538a2"
+    },
+    {
+      "file": "confuse/61.png",
+      "hash": "f1d9dc5ca87f307701e4d3c81280e7ed50c4f6008fb580ade9ff9b55ab13e09f"
+    },
+    {
+      "file": "confuse/62.png",
+      "hash": "e9a52f0b59c6bb1f7f6b033f15cd35ee6251cd3b43a64318e7810d50beb91a14"
+    },
+    {
+      "file": "confuse/63.png",
+      "hash": "57dd9d23109f6f508b0a526126089ae7cffc3a44b792ad387d8a6cc9b45a3f92"
+    },
+    {
+      "file": "confuse/64.png",
+      "hash": "57c83d3cfeb0a7781650e2d921c7aa72903baf94154a944fbadbb8b91a9a3073"
+    },
+    {
+      "file": "confuse/65.png",
+      "hash": "cbe88a03b745daa9cc309ae944f9e58f0efb96f78cc3567b624e2a3bd8ebfbdd"
+    },
+    {
+      "file": "confuse/66.png",
+      "hash": "400e095647f7288dcdc0c1c621cabfd5170d797a5eb460621ba749aa21613f7a"
+    },
+    {
+      "file": "confuse/67.png",
+      "hash": "c005fc5c12d3aba8fc0ded68018f02300b344f20919778a6130571aedcf50008"
+    },
+    {
+      "file": "confuse/68.png",
+      "hash": "71b9e9903da2891d262bdc3afe6e2a7cc3bd5caad9790612b5c374e6f1a1e808"
+    },
+    {
+      "file": "confuse/69.png",
+      "hash": "f8d388c3d07f0c83bf313fe074465dbf8ff8a82c540ad4c2185f2294c0e37ad5"
+    },
+    {
+      "file": "confuse/70.png",
+      "hash": "61bc987cc9cb067ca78ce0bcc420bc36a56e1c23c1e2a778fdc7ceda47419c82"
+    },
+    {
+      "file": "confuse/71.png",
+      "hash": "0b212bd6a2a64ec83f086e65f57d1062efc512ed4472ddde55c29802290b75e8"
+    },
+    {
+      "file": "confuse/72.png",
+      "hash": "1364f1bc7a7777fb51d46681c3330d67a0ebbb8b4bc062c16bcce28c49938f2c"
+    },
+    {
+      "file": "confuse/73.png",
+      "hash": "8b605b24d69d7f74d82c2ebe339f78ce2c6b5fdfe45837ab2ac85d73ac836dac"
+    },
+    {
+      "file": "confuse/74.png",
+      "hash": "fb0286cd6175f4fadb282eb88fc199ca3275eb66ae5d91e548041a12afab5a9a"
+    },
+    {
+      "file": "confuse/75.png",
+      "hash": "620857117daad5d56a91422722a55908b982342e6b2227bb7f53bd892bddeda3"
+    },
+    {
+      "file": "confuse/76.png",
+      "hash": "877124f6ce8da976e104f4ef978dadd2ef8e47c480ce20af7307fa477bc517d4"
+    },
+    {
+      "file": "confuse/77.png",
+      "hash": "dbb392daeff655d917bfb6371fb3743fe3650fb15e6de4f66f11e739492ce297"
+    },
+    {
+      "file": "confuse/78.png",
+      "hash": "a1fca20b81755469c7aea0498b5211141e129f1c0a53a4bf35505168dc3f6d36"
+    },
+    {
+      "file": "confuse/79.png",
+      "hash": "ef4ffd59eda3996cf41a2fd1ef16518cd1103947b8a0cc1b197fd30676ae9d3f"
+    },
+    {
+      "file": "confuse/80.png",
+      "hash": "09c33bacc158e49297e0ce1c23c9e2a4ce2df527498a0e3f3e78f50e9f065947"
+    },
+    {
+      "file": "confuse/81.png",
+      "hash": "a52c983f83946cf535147dc40754604a13269c3894fdec317f359da3d8d55714"
+    },
+    {
+      "file": "confuse/82.png",
+      "hash": "d51b3f1833183568b9777aef4cac2c67a14c0b567c44858564e8ebeea1d53fc8"
+    },
+    {
+      "file": "confuse/83.png",
+      "hash": "83f07c67b4e8b8d2f01a9a325915182978af05a699c6d4d46f7dff474ad230d2"
+    },
+    {
+      "file": "confuse/84.png",
+      "hash": "123f5f564c33bec88ad736cc14e4a1bf7054146615e251b21655c898b3850962"
+    },
+    {
+      "file": "confuse/85.png",
+      "hash": "1d98c8d074cd7f9c225ed1e8993c97dbc26187a48c7be8889b0f626f9a660ba6"
+    },
+    {
+      "file": "confuse/86.png",
+      "hash": "4c7bf50d7bb96d70030eeecaa4a2d5e7cc8493e76b49e76a05c76876d782e3e2"
+    },
+    {
+      "file": "confuse/87.png",
+      "hash": "99f05af8303f365c22e5ea49a2df204465681feebaaec688fc9b75f1314ff1fe"
+    },
+    {
+      "file": "confuse/88.png",
+      "hash": "e6725decfe4c4311addce58829def7cf4688e475295fb079d1af678a73d29be1"
+    },
+    {
+      "file": "confuse/89.png",
+      "hash": "c5da7e33506bf46f5af3be9d302929c7e0e779b86f0ffd0f0f5d74f8b17316bf"
+    },
+    {
+      "file": "confuse/90.png",
+      "hash": "b9044ac0ca5765c69dd31c3ae088a6891bba9a3d6a159040f1d05799553487c3"
+    },
+    {
+      "file": "confuse/91.png",
+      "hash": "49d7a4183c2fc2d80ab06b924fcee5a678f0b33a2fabc5c1d419a17e8c19bcc6"
+    },
+    {
+      "file": "confuse/92.png",
+      "hash": "1120b4c0d4d1efe037864b282abdcfb9b41835d55f45944f12cf1b9c3ee32096"
+    },
+    {
+      "file": "confuse/93.png",
+      "hash": "5ccb1b0e416d51bd02c53c9f1091e2f55f0be458986d99f7779a13bbd405df8d"
+    },
+    {
+      "file": "confuse/94.png",
+      "hash": "18907976604fdc66580182296ee66a21fb0a530e59f5c2e456bb4332495dc366"
+    },
+    {
+      "file": "confuse/95.png",
+      "hash": "96e25209d1ab7d4c683b7faceb04849acbfb0d1550749c41fe18f115ad8126ab"
+    },
+    {
+      "file": "confuse/96.png",
+      "hash": "14c327de76483c949f3898bf459587b6eb2c3ac32ebf3d9d1970a8ec18c512ba"
+    },
+    {
+      "file": "confuse/97.png",
+      "hash": "02254b6a1ad024788019d86bef55a1239f3ae01c55430d0a13a70caea8340140"
+    },
+    {
+      "file": "confuse/98.png",
+      "hash": "d3fe23ad94ef72d48376d1c8fa07449aa3b6710dd191d4d7f6cb0aa793ec725e"
+    },
+    {
+      "file": "confuse/99.png",
+      "hash": "6967a81fa4c4c8d596a751029e2dd433dd49946738200f7124fabf5bdfac785d"
+    },
+    {
+      "file": "firefly_holdsign/01.png",
+      "hash": "ede28860d0bae275a454e9bd6b394a89eef02c154d520522017e9eee4b13343a"
+    },
+    {
+      "file": "firefly_holdsign/02.png",
+      "hash": "adccdfc24190de91c9ad8608a4acc9f66f1cfd94e0a0db70634b0908d51b9b38"
+    },
+    {
+      "file": "firefly_holdsign/03.png",
+      "hash": "4b71d9baee2399eb6a4ecf0ec6402bb2286a4dfeb6c5accacdcb6952a0a74e88"
+    },
+    {
+      "file": "firefly_holdsign/04.png",
+      "hash": "14a13c6f6c5c2b5b3c7207f64b75124cef135528dc4b48b135fab1677da54d7b"
+    },
+    {
+      "file": "firefly_holdsign/05.png",
+      "hash": "c207ae21e500a804a7ca83da5379bcb86d36ef2344726dc7433b39850dc731d2"
+    },
+    {
+      "file": "firefly_holdsign/06.png",
+      "hash": "86e9a610d1cbe4f1be1ee2174ea0f11838fb6e2adc2a094c1cdc6dce36832569"
+    },
+    {
+      "file": "firefly_holdsign/07.png",
+      "hash": "71b4887cdff4e8442a489b2b523a85dfd6426a444283c9a894a14150a26d18b5"
+    },
+    {
+      "file": "firefly_holdsign/08.png",
+      "hash": "3ec0f4369cc0dc711a1d7e47304768999f7dd85ba4d3ba8c7e7f0b3c530c3ed5"
+    },
+    {
+      "file": "firefly_holdsign/09.png",
+      "hash": "381af8f2b911d55acbe0ac1202e4e433b55634b8fa0d5ade355dc9cebf0182f0"
+    },
+    {
+      "file": "firefly_holdsign/10.png",
+      "hash": "6effa6dd524e8bc464f664801c5293a248813be2975e396e43ec871defe7cf90"
+    },
+    {
+      "file": "firefly_holdsign/11.png",
+      "hash": "d565f111a5a962a386513493671d1edd7bc2a91a1a6d72a437916c21e9d78a79"
+    },
+    {
+      "file": "firefly_holdsign/12.png",
+      "hash": "0fdc0d81ddb276f0f76989bacf69567bd3e7d8472b2d9b7a2024ee358104d37e"
+    },
+    {
+      "file": "firefly_holdsign/13.png",
+      "hash": "92ba8e1d75f29762a2760ae95480fe0a2fb7da2778bda0ce028dfdda89945704"
+    },
+    {
+      "file": "firefly_holdsign/14.png",
+      "hash": "bfdeda317b1544476daf5660888c7d7f1c789bebf28b9223d483fa6ec6f8af4f"
+    },
+    {
+      "file": "firefly_holdsign/15.png",
+      "hash": "e5ceab93df3c9dc9170e61d5954514b58d55bee536c9530a5baaf6f385335d7e"
+    },
+    {
+      "file": "firefly_holdsign/16.png",
+      "hash": "83183bda881f0b7d7e5fa4796818ff215a927c0798e2a7e76733cc9864da4f17"
+    },
+    {
+      "file": "firefly_holdsign/17.png",
+      "hash": "fc65510c63b92dc56455172ba34c442efd8f7693e125f129ecf675c1dd86fc2c"
+    },
+    {
+      "file": "firefly_holdsign/18.png",
+      "hash": "f958c121aee4768dbd30eef2c847252c396ac9116b89dba1b42c86ca8fcaf5a3"
+    },
+    {
+      "file": "firefly_holdsign/19.png",
+      "hash": "06c7f5869e885e59a99b2758f31e176fdb6cc658dadcaf1cc536472da649cb79"
+    },
+    {
+      "file": "firefly_holdsign/20.png",
+      "hash": "e6851274ef987e1e1eb816db19a913ea43a25c416e97828cfb172ce9faa2ae60"
+    },
+    {
+      "file": "firefly_holdsign/21.png",
+      "hash": "99e4d71327c545c66b93b3bf57c635be67c3539f2e6490a3293ab863d6e71505"
+    },
+    {
+      "file": "petpet/0.png",
+      "hash": "69da867cbb64df16fb2eaf43b1e312a33600963fb2e2079c074e55ef4cfa5986"
+    },
+    {
+      "file": "petpet/1.png",
+      "hash": "7d0dced26c6f6ff6d30b0c9cfd1eabf9bfc897e6fe8ecb28a1cc148d208aae68"
+    },
+    {
+      "file": "petpet/2.png",
+      "hash": "30707317d526660c41b4d666a404fcd56eebb4a50b8609b70eb2f6aba54e50a1"
+    },
+    {
+      "file": "petpet/3.png",
+      "hash": "0f3964243f86324185ddb4505a8a41b9395d27a7fd7982cc48a095e3b6b5d428"
+    },
+    {
+      "file": "petpet/4.png",
+      "hash": "502464be19528bc68872198cd63982edfc1fcaf2501d9ad0e5b7ddc79c578cf6"
+    },
+    {
+      "file": "steam_message/logo.png",
+      "hash": "e61b670e56a384f6eb3ad952302eba4085f3f2db700f570dbb40bb2c85f43ec5"
+    }
+  ]
+}
