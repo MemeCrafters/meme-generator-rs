@@ -205,7 +205,7 @@ fn handle_error(error: Error) -> ErrorResponse {
     }
 }
 
-pub(crate) async fn run() {
+pub async fn run_server() {
     let app = Router::new()
         .route("/meme/version", get(|| async { VERSION }))
         .route("/meme/keys", get(meme_keys))

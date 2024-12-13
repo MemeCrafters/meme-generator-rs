@@ -1142,9 +1142,20 @@ dependencies = [
 name = "meme_generator_cli"
 version = "0.1.0"
 dependencies = [
+ "clap",
+ "infer",
+ "meme_generator",
+ "meme_generator_server",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "meme_generator_server"
+version = "0.1.0"
+dependencies = [
  "axum",
  "base64 0.22.1",
- "clap",
  "infer",
  "meme_generator",
  "serde",

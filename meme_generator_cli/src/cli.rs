@@ -9,6 +9,8 @@ use clap::{
     value_parser, Arg, ArgAction, ArgMatches, Command,
 };
 use serde_json::{Map, Number, Value};
+
+#[cfg(feature = "server")]
 use tokio::runtime::Runtime;
 
 use meme_generator::{
@@ -16,8 +18,8 @@ use meme_generator::{
     manager::{get_meme, get_meme_keys, get_memes},
     meme::{MemeOption, RawImage},
 };
-
-use crate::app::run;
+#[cfg(feature = "server")]
+use meme_generator_server::run_server;
 
 fn build_arg(option: MemeOption) -> Arg {
     match option {
@@ -217,10 +219,11 @@ pub(crate) fn build_command() -> Command {
         sub_commands.push(command);
     }
 
-    Command::new("meme")
+    let mut command = Command::new("meme")
         .about("表情包制作")
         .subcommand_required(true)
-        .arg_required_else_help(true)
+        .arg_required_else_help(true);
+    command = command
         .subcommand(Command::new("list").about("查看所有可用表情").alias("ls"))
         .subcommand(
             Command::new("info")
@@ -255,8 +258,12 @@ pub(crate) fn build_command() -> Command {
                 .about("制作表情")
                 .subcommands(sub_commands)
                 .subcommand_required(true),
-        )
-        .subcommand(Command::new("run").about("启动 web server").alias("start"))
+        );
+    #[cfg(feature = "server")]
+    {
+        command = command.subcommand(Command::new("run").about("启动 web server").alias("start"));
+    }
+    command
 }
 
 pub(crate) fn handle_list() {
@@ -535,9 +542,10 @@ fn handle_result(result: Result<Vec<u8>, Error>) {
     };
 }
 
+#[cfg(feature = "server")]
 pub(crate) fn handle_run() {
     let runtime = Runtime::new().unwrap();
     runtime.block_on(async {
-        run().await;
+        run_server().await;
     });
 }

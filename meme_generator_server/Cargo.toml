@@ -1,5 +1,5 @@
 [package]
-name = "meme_generator_cli"
+name = "meme_generator_server"
 version.workspace = true
 authors.workspace = true
 license.workspace = true
@@ -8,17 +8,15 @@ repository.workspace = true
 edition.workspace = true
 
 [dependencies]
-clap = { version = "4.5", features = ["string"] }
+axum = "0.7"
+base64 = "0.22"
 infer = "0.16"
+serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-tokio = { version = "1.42", optional = true }
+tokio = { version = "1.42", features = ["full"] }
 
 meme_generator = { path = "../meme_generator" }
-meme_generator_server = { path = "../meme_generator_server", optional = true }
-
-[features]
-server = ["dep:meme_generator_server", "dep:tokio"]
 
 [[bin]]
-name = "meme"
+name = "server"
 path = "src/main.rs"
