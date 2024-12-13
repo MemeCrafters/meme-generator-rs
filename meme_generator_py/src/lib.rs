@@ -500,5 +500,5 @@ fn get_meme_keys() -> Vec<String> {
 
 #[pyfunction]
 fn check_resources() {
-    resources::check_resources_in_background(config::MEME_CONFIG.resource.resource_url.as_str());
+    resources::check_resources_in_thread(config::MEME_CONFIG.resource.resource_url.as_str());
 }

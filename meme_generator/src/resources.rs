@@ -49,10 +49,10 @@ pub fn check_resources_sync(base_url: &str) {
     Runtime::new().unwrap().block_on(check_resources(base_url));
 }
 
-pub fn check_resources_in_background(base_url: &str) {
+pub fn check_resources_in_thread(base_url: &str) {
     let base_url = base_url.to_string();
-    task::spawn(async move {
-        check_resources(&base_url).await;
+    std::thread::spawn(move || {
+        Runtime::new().unwrap().block_on(check_resources(&base_url));
     });
 }
 

@@ -6,5 +6,6 @@ avatar.jpg
 config.toml
 test.py
 
-*/.venv/
-*/__pycache__/
+*.venv/
+*__pycache__/
+*.so
