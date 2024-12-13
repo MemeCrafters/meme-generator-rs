@@ -8,6 +8,22 @@ use std::{
 
 #[pymodule(name = "meme_generator")]
 fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_class::<ParserFlags>()?;
+    m.add_class::<BooleanOption>()?;
+    m.add_class::<StringOption>()?;
+    m.add_class::<IntegerOption>()?;
+    m.add_class::<FloatOption>()?;
+    m.add_class::<MemeParams>()?;
+    m.add_class::<MemeShortcut>()?;
+    m.add_class::<MemeInfo>()?;
+    m.add_class::<ImageDecodeError>()?;
+    m.add_class::<ImageEncodeError>()?;
+    m.add_class::<IOError>()?;
+    m.add_class::<DeserializeError>()?;
+    m.add_class::<ImageNumberMismatch>()?;
+    m.add_class::<TextNumberMismatch>()?;
+    m.add_class::<TextOverLength>()?;
+    m.add_class::<MemeFeedback>()?;
     m.add_class::<Meme>()?;
     m.add_function(wrap_pyfunction!(get_meme, m)?)?;
     m.add_function(wrap_pyfunction!(get_memes, m)?)?;
@@ -91,8 +107,7 @@ struct FloatOption {
     parser_flags: ParserFlags,
 }
 
-#[pyclass]
-#[derive(Clone)]
+#[derive(IntoPyObject, Clone)]
 enum MemeOption {
     Boolean(BooleanOption),
     String(StringOption),
@@ -151,21 +166,21 @@ struct MemeInfo {
     date_modified: DateTime<Local>,
 }
 
-#[pyclass]
-#[derive(Clone)]
+#[derive(FromPyObject, Clone)]
 struct RawImage {
-    #[pyo3(get, set)]
     name: String,
-    #[pyo3(get, set)]
     data: Vec<u8>,
 }
 
-#[pyclass]
-#[derive(Clone)]
+#[derive(FromPyObject, Clone)]
 enum OptionValue {
+    #[pyo3(transparent, annotation = "bool")]
     Boolean(bool),
+    #[pyo3(transparent, annotation = "str")]
     String(String),
+    #[pyo3(transparent, annotation = "int")]
     Integer(i32),
+    #[pyo3(transparent, annotation = "float")]
     Float(f32),
 }
 
@@ -233,8 +248,7 @@ struct MemeFeedback {
     feedback: String,
 }
 
-#[pyclass]
-#[derive(Clone)]
+#[derive(IntoPyObject, Clone)]
 enum Error {
     ImageDecodeError(ImageDecodeError),
     ImageEncodeError(ImageEncodeError),
@@ -246,8 +260,7 @@ enum Error {
     MemeFeedback(MemeFeedback),
 }
 
-#[pyclass]
-#[derive(Clone)]
+#[derive(IntoPyObject, Clone)]
 enum MemeResult {
     Ok(Vec<u8>),
     Err(Error),
@@ -265,6 +278,7 @@ impl Meme {
         self.meme.key()
     }
 
+    #[getter]
     fn info(&self) -> MemeInfo {
         let info = self.meme.info();
         MemeInfo {
