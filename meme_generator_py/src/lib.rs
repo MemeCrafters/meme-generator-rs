@@ -1,5 +1,5 @@
 use chrono::{DateTime, Local};
-use meme_generator::{config, error, manager, meme, resources};
+use meme_generator::{config, error, manager, meme, resources, version};
 use pyo3::prelude::*;
 use std::{
     collections::{HashMap, HashSet},
@@ -25,6 +25,7 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<TextOverLength>()?;
     m.add_class::<MemeFeedback>()?;
     m.add_class::<Meme>()?;
+    m.add_function(wrap_pyfunction!(get_version, m)?)?;
     m.add_function(wrap_pyfunction!(get_meme, m)?)?;
     m.add_function(wrap_pyfunction!(get_memes, m)?)?;
     m.add_function(wrap_pyfunction!(get_meme_keys, m)?)?;
@@ -472,6 +473,11 @@ fn handle_result(result: Result<Vec<u8>, error::Error>) -> MemeResult {
             }
         },
     }
+}
+
+#[pyfunction]
+fn get_version() -> String {
+    version::VERSION.to_string()
 }
 
 #[pyfunction]
