@@ -1,0 +1,33 @@
+name: Update resources.json
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "resources/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-resources:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Update resources.json
+        run: python scripts/update_resources.py
+
+      - name: Commit & Push changes
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          message: "update resources.json"
+          branch: "main"
