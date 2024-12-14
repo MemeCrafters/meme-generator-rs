@@ -1,8 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, Union
-
-if TYPE_CHECKING:
-    from . import RawImage
+from typing import Optional, Union
 
 class ParserFlags:
     short: bool
@@ -114,7 +111,10 @@ class Meme:
     @property
     def info(self) -> MemeInfo: ...
     def generate(
-        self, images: list["RawImage"], text: list[str], options: dict[str, OptionValue]
+        self,
+        images: list[tuple[str, bytes]],
+        text: list[str],
+        options: dict[str, OptionValue],
     ) -> MemeResult: ...
     def generate_preview(self) -> MemeResult: ...
 

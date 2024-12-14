@@ -167,10 +167,7 @@ struct MemeInfo {
 }
 
 #[derive(FromPyObject, Clone)]
-struct RawImage {
-    name: String,
-    data: Vec<u8>,
-}
+struct RawImage(String, Vec<u8>);
 
 #[derive(FromPyObject, Clone)]
 enum OptionValue {
@@ -397,7 +394,7 @@ impl Meme {
     ) -> MemeResult {
         let images = images
             .into_iter()
-            .map(|RawImage { name, data }| meme::RawImage { name, data })
+            .map(|RawImage(name, data)| meme::RawImage { name, data })
             .collect::<Vec<_>>();
 
         let options = options

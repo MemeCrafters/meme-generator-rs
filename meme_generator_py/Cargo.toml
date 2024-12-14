@@ -15,4 +15,8 @@ serde_json = "1.0"
 meme_generator = { path = "../meme_generator" }
 
 [lib]
+name = "meme_generator"
 crate-type = ["cdylib"]
+
+[features]
+contrib = ["meme_generator/contrib"]
