@@ -41,7 +41,6 @@ fn petpet(
         Ok(surface.image_snapshot())
     };
 
-    let images = vec![&mut images[0].codec];
     make_gif_or_combined_gif(
         images,
         func,

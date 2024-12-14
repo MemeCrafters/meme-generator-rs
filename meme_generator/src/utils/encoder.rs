@@ -1,11 +1,10 @@
 use gif::{DisposalMethod, Encoder, Frame, Repeat};
-use skia_safe::{
-    image::CachingHint, AlphaType, Codec, ColorType, EncodedImageFormat, Image, ImageInfo,
-};
+use skia_safe::{image::CachingHint, AlphaType, ColorType, EncodedImageFormat, Image, ImageInfo};
 
 use crate::{
     config::MEME_CONFIG,
     error::{EncodeError, Error},
+    meme::DecodedImage,
     utils::decoder::CodecExt,
 };
 
@@ -186,10 +185,15 @@ pub(crate) fn get_aligned_gif_indexes(
 /// - `images` 图片列表
 /// - `func`: 图片处理函数，传入图片列表，返回处理后的图片
 ///
-pub(crate) fn make_png_or_gif<F>(mut images: Vec<&mut Codec>, func: F) -> Result<Vec<u8>, Error>
+pub(crate) fn make_png_or_gif<F>(images: &mut Vec<DecodedImage>, func: F) -> Result<Vec<u8>, Error>
 where
     F: Fn(&Vec<Image>) -> Result<Image, Error>,
 {
+    let mut images = images
+        .iter_mut()
+        .map(|image| &mut image.codec)
+        .collect::<Vec<_>>();
+
     let mut gif_flags: Vec<bool> = Vec::new();
     let mut gif_infos: Vec<GifInfo> = Vec::new();
     for image in images.iter_mut() {
@@ -271,7 +275,7 @@ where
 /// - `frame_align` gif 对齐方式
 ///
 pub(crate) fn make_gif_or_combined_gif<F>(
-    mut images: Vec<&mut Codec>,
+    images: &mut Vec<DecodedImage>,
     func: F,
     target_gif_info: GifInfo,
     frame_align: impl Into<Option<FrameAlign>>,
@@ -279,6 +283,11 @@ pub(crate) fn make_gif_or_combined_gif<F>(
 where
     F: Fn(u32, &Vec<Image>) -> Result<Image, Error>,
 {
+    let mut images = images
+        .iter_mut()
+        .map(|image| &mut image.codec)
+        .collect::<Vec<_>>();
+
     let mut gif_flags: Vec<bool> = Vec::new();
     let mut gif_infos: Vec<GifInfo> = Vec::new();
     for image in images.iter_mut() {

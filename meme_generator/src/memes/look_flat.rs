@@ -62,7 +62,6 @@ fn look_flat(
         Ok(surface.image_snapshot())
     };
 
-    let images = vec![&mut images[0].codec];
     make_png_or_gif(images, func)
 }
 
