@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 jobs:
-  wheels:
+  build_wheels:
     runs-on: ${{ matrix.platform.runner }}
     strategy:
       matrix:
@@ -39,37 +39,37 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
-          working-directory: ${{ github.workspace }}/meme_generator_py
+          working-directory: meme_generator_py
           args: --release --out dist --find-interpreter
           sccache: true
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.platform.os }}-${{ matrix.platform.target }}
+          name: meme-generator-wheels-${{ matrix.platform.os }}-${{ matrix.platform.target }}
           path: meme_generator_py/dist
 
-  sdist:
+  build_sdist:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Build sdist
         uses: PyO3/maturin-action@v1
         with:
-          working-directory: ${{ github.workspace }}/meme_generator_py
+          working-directory: meme_generator_py
           command: sdist
           args: --out dist
       - name: Upload sdist
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-sdist
+          name: meme-generator-wheels-sdist
           path: meme_generator_py/dist
 
   release:
     name: Release
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [wheels, sdist]
+    needs: [build_wheels, build_sdist]
     steps:
       - uses: actions/download-artifact@v4
       - name: Publish to PyPI
@@ -78,4 +78,79 @@ jobs:
           MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         with:
           command: upload
-          args: --non-interactive --skip-existing wheels-*/*
+          args: --non-interactive --skip-existing meme-generator-wheels-*/*
+
+  build_wheels_contrib:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-20.04
+            target: x86_64
+            os: linux
+          - runner: windows-latest
+            target: x86_64
+            os: windows
+          - runner: macos-latest
+            target: x86_64
+            os: macos
+          - runner: macos-14
+            target: aarch64
+            os: macos
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Rename project name
+        run: sed -ie "s#meme_generator#meme_generator_contrib#g" meme_generator_py/pyproject.toml
+
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          working-directory: meme_generator_py
+          args: --features contrib --release --out dist --find-interpreter
+          sccache: true
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: meme-generator-contrib-wheels-${{ matrix.platform.os }}-${{ matrix.platform.target }}
+          path: meme_generator_py/dist
+
+  build_sdist_contrib:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rename project name
+        run: sed -ie "s#meme_generator#meme_generator_contrib#g" meme_generator_py/pyproject.toml
+
+      - name: Build sdist
+        uses: PyO3/maturin-action@v1
+        with:
+          working-directory: meme_generator_py
+          command: sdist
+          args: --out dist
+      - name: Upload sdist
+        uses: actions/upload-artifact@v4
+        with:
+          name: meme-generator-contrib-wheels-sdist
+          path: meme_generator_py/dist
+
+  release_contrib:
+    name: Release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [build_wheels_contrib, build_sdist_contrib]
+    steps:
+      - uses: actions/download-artifact@v4
+      - name: Publish to PyPI
+        uses: PyO3/maturin-action@v1
+        env:
+          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        with:
+          command: upload
+          args: --non-interactive --skip-existing meme-generator-contrib-wheels-*/*
