@@ -9,7 +9,7 @@ edition.workspace = true
 
 [dependencies]
 chrono = "0.4"
-pyo3 = { version = "0.23", features = ["extension-module", "chrono"] }
+pyo3 = { version = "0.23", features = ["extension-module", "abi3-py39", "chrono"] }
 serde_json = "1.0"
 
 meme_generator = { path = "../meme_generator" }
