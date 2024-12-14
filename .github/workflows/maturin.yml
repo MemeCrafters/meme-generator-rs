@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         platform:
-          - runner: ubuntu-latest
+          - runner: ubuntu-20.04
             target: x86_64
             os: linux
           - runner: windows-latest
