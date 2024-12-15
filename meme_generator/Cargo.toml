@@ -4,6 +4,7 @@ description = "Meme generator for making fun pictures"
 version.workspace = true
 authors.workspace = true
 license.workspace = true
+readme.workspace = true
 homepage.workspace = true
 repository.workspace = true
 edition.workspace = true
