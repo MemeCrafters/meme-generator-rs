@@ -58,6 +58,7 @@ jobs:
           path: |
             target/${{ matrix.platform.target }}/release/meme*
             !target/${{ matrix.platform.target }}/release/meme.d
+            !target/${{ matrix.platform.target }}/release/meme.pdb
 
       - name: Build contrib
         run: cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server,contrib
@@ -68,3 +69,4 @@ jobs:
           path: |
             target/${{ matrix.platform.target }}/release/meme*
             !target/${{ matrix.platform.target }}/release/meme.d
+            !target/${{ matrix.platform.target }}/release/meme.pdb
