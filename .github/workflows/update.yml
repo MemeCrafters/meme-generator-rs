@@ -3,7 +3,7 @@ name: Update resources.json
 on:
   push:
     branches:
-      - "main"
+      - main
     paths:
       - "resources/**"
   workflow_dispatch:

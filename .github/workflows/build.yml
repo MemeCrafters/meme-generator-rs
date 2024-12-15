@@ -1,0 +1,70 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "meme_generator/**"
+      - "meme_generator_cli/**"
+      - "meme_generator_server/**"
+  pull_request_target:
+    paths:
+      - "meme_generator/**"
+      - "meme_generator_cli/**"
+      - "meme_generator_server/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            label: linux-x86_64
+          - runner: windows-latest
+            target: x86_64-pc-windows-msvc
+            label: windows-x86_64
+          - runner: macos-latest
+            target: x86_64-apple-darwin
+            label: macos-x86_64
+          - runner: macos-latest
+            target: aarch64-apple-darwin
+            label: macos-aarch64
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+
+      - name: Rustup add target
+        run: rustup target add ${{ matrix.platform.target }}
+
+      - name: Build target
+        run: cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "meme-generator-cli-${{ matrix.platform.label }}"
+          path: |
+            target/${{ matrix.platform.target }}/release/meme*
+            !target/${{ matrix.platform.target }}/release/meme.d
+
+      - name: Build contrib
+        run: cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server,contrib
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "meme-generator-cli-with-contrib-${{ matrix.platform.label }}"
+          path: |
+            target/${{ matrix.platform.target }}/release/meme*
+            !target/${{ matrix.platform.target }}/release/meme.d

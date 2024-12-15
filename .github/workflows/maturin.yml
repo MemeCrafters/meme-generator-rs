@@ -1,9 +1,12 @@
-name: Maturin Build
+name: Build wheels
 
 on:
   push:
     branches:
       - main
+    paths:
+      - "meme_generator/**"
+      - "meme_generator_py/**"
     tags:
       - "*"
   workflow_dispatch:
