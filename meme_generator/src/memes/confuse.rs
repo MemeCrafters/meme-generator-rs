@@ -17,7 +17,7 @@ fn confuse(
     _: &Vec<String>,
     _: &NoOptions,
 ) -> Result<Vec<u8>, Error> {
-    let func = |i: u32, images: &Vec<Image>| {
+    let func = |i: usize, images: &Vec<Image>| {
         let img_w = images[0].width().min(500);
         let image = images[0].resize_width(img_w);
         let mut surface = new_surface(image.dimensions());

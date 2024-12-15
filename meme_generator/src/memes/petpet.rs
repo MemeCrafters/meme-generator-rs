@@ -25,7 +25,7 @@ fn petpet(
         (12, 20, 98, 98),
     ];
 
-    let func = |i: u32, images: &Vec<Image>| {
+    let func = |i: usize, images: &Vec<Image>| {
         let mut image = images[0].square();
         if options.circle {
             image = image.circle();
@@ -34,7 +34,7 @@ fn petpet(
         let hand = load_image(format!("petpet/{i}.png"))?;
         let mut surface = new_surface(hand.dimensions());
         let canvas = surface.canvas();
-        let (x, y, w, h) = locs[i as usize];
+        let (x, y, w, h) = locs[i];
         let image = image.resize_exact((w, h));
         canvas.draw_image(&image, (x, y), None);
         canvas.draw_image(&hand, (0, 0), None);

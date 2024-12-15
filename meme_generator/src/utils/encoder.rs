@@ -104,8 +104,8 @@ pub(crate) fn get_aligned_gif_indexes(
     gif_infos: &Vec<GifInfo>,
     target_gif_info: &GifInfo,
     frame_align: impl Into<Option<FrameAlign>>,
-) -> (Vec<Vec<u32>>, Vec<u32>) {
-    let mut target_frame_indexes: Vec<u32> = (0..target_gif_info.frame_num).collect();
+) -> (Vec<Vec<usize>>, Vec<usize>) {
+    let mut target_frame_indexes: Vec<usize> = (0..target_gif_info.frame_num as usize).collect();
 
     let max_total_duration = gif_infos
         .iter()
@@ -126,7 +126,7 @@ pub(crate) fn get_aligned_gif_indexes(
             }
             FrameAlign::ExtendLast => {
                 let mut append_frame_indexes =
-                    vec![target_gif_info.frame_num - 1; diff_num as usize];
+                    vec![target_gif_info.frame_num as usize - 1; diff_num as usize];
                 target_frame_indexes.append(&mut append_frame_indexes);
             }
             FrameAlign::ExtendLoop => {
@@ -134,7 +134,8 @@ pub(crate) fn get_aligned_gif_indexes(
                 let max_frame_num = MEME_CONFIG.encoder.gif_max_frames;
                 while total_frame_num + target_gif_info.frame_num <= max_frame_num as u32 {
                     total_frame_num += target_gif_info.frame_num;
-                    let mut append_frame_indexes = (0..target_gif_info.frame_num).collect();
+                    let mut append_frame_indexes =
+                        (0..target_gif_info.frame_num as usize).collect();
                     target_frame_indexes.append(&mut append_frame_indexes);
                     let total_duration = total_frame_num as f32 * target_gif_info.duration;
                     if gif_infos.iter().all(|gif_info| {
@@ -152,18 +153,18 @@ pub(crate) fn get_aligned_gif_indexes(
         }
     }
 
-    let mut frame_indexes: Vec<Vec<u32>> = Vec::new();
+    let mut frame_indexes: Vec<Vec<usize>> = Vec::new();
     for gif_info in gif_infos {
         let mut frame_index = 0;
         let mut time_start = 0.0;
-        let mut indexes: Vec<u32> = Vec::new();
+        let mut indexes: Vec<usize> = Vec::new();
         for i in 0..target_frame_indexes.len() {
             while frame_index < gif_info.frame_num {
                 let duration = i as f32 * target_gif_info.duration - time_start;
                 if duration >= frame_index as f32 * gif_info.duration
                     && duration < (frame_index + 1) as f32 * gif_info.duration
                 {
-                    indexes.push(frame_index);
+                    indexes.push(frame_index as usize);
                     break;
                 } else {
                     frame_index += 1;
@@ -281,7 +282,7 @@ pub(crate) fn make_gif_or_combined_gif<F>(
     frame_align: impl Into<Option<FrameAlign>>,
 ) -> Result<Vec<u8>, Error>
 where
-    F: Fn(u32, &Vec<Image>) -> Result<Image, Error>,
+    F: Fn(usize, &Vec<Image>) -> Result<Image, Error>,
 {
     let mut images = images
         .iter_mut()
@@ -309,7 +310,7 @@ where
             .map(|image| image.first_frame())
             .collect::<Result<Vec<_>, Error>>()?;
         for i in 0..target_gif_info.frame_num {
-            let frame = func(i, &frame_images)?;
+            let frame = func(i as usize, &frame_images)?;
             frames.push(frame);
         }
         return Ok(encode_gif(&frames, target_gif_info.duration)?);

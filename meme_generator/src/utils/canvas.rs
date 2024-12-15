@@ -27,8 +27,8 @@ pub(crate) trait CanvasExt {
         &self,
         rect: impl Into<Rect>,
         text: impl Into<String>,
-        max_font_size: scalar,
         min_font_size: scalar,
+        max_font_size: scalar,
         text_params: &TextParams,
     ) -> Result<(), Error>;
 }
@@ -69,8 +69,8 @@ impl CanvasExt for Canvas {
         &self,
         rect: impl Into<Rect>,
         text: impl Into<String>,
-        max_font_size: scalar,
         min_font_size: scalar,
+        max_font_size: scalar,
         text_params: &TextParams,
     ) -> Result<(), Error> {
         let rect: Rect = rect.into();

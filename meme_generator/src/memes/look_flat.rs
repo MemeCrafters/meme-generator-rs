@@ -35,8 +35,8 @@ fn look_flat(
     canvas.draw_text_area_auto_font_size(
         IRect::from_ltrb(10, 0, img_w - 10, text_h),
         text,
-        55.0,
         30.0,
+        55.0,
         &TextParams {
             font_style: FontStyle::bold(),
             ..Default::default()

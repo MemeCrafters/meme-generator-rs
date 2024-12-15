@@ -140,7 +140,12 @@ impl ImageExt for Image {
 
     fn square(&self) -> Image {
         let size = self.width().min(self.height());
-        self.crop(&IRect::from_wh(size, size))
+        self.crop(&IRect::from_xywh(
+            ((self.width() - size) as f32 / 2.0).round() as i32,
+            ((self.height() - size) as f32 / 2.0).round() as i32,
+            size,
+            size,
+        ))
     }
 
     fn clip_path(&self, path: &Path, op: ClipOp) -> Image {
@@ -152,10 +157,9 @@ impl ImageExt for Image {
     }
 
     fn circle(&self) -> Image {
-        let width = self.width() as f32;
-        let height = self.height() as f32;
-        let radius = width.min(height) / 2.0;
-        let path = Path::circle((width / 2.0, height / 2.0), radius, None);
+        let image = self.square();
+        let radius = image.width() as f32 / 2.0;
+        let path = Path::circle((radius, radius), radius, None);
         self.clip_path(&path, ClipOp::Intersect)
     }
 

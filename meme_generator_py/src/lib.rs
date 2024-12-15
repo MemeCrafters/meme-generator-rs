@@ -30,6 +30,7 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(get_memes, m)?)?;
     m.add_function(wrap_pyfunction!(get_meme_keys, m)?)?;
     m.add_function(wrap_pyfunction!(check_resources, m)?)?;
+    m.add_function(wrap_pyfunction!(check_resources_in_background, m)?)?;
     Ok(())
 }
 
@@ -503,5 +504,10 @@ fn get_meme_keys() -> Vec<String> {
 
 #[pyfunction]
 fn check_resources() {
-    resources::check_resources_in_thread(config::MEME_CONFIG.resource.resource_url.as_str());
+    resources::check_resources_sync(config::MEME_CONFIG.resource.resource_url.as_str());
+}
+
+#[pyfunction]
+fn check_resources_in_background() {
+    resources::check_resources_in_background(config::MEME_CONFIG.resource.resource_url.as_str());
 }

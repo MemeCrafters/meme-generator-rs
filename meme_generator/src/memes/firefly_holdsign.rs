@@ -142,8 +142,8 @@ fn firefly_holdsign(
     canvas.draw_text_area_auto_font_size(
         IRect::from_ltrb(padding, padding, size.0 - padding, size.1 - padding),
         text,
-        80.0,
         30.0,
+        80.0,
         &TextParams {
             font_families: vec!["FZShaoEr-M11S".to_string()],
             paint: new_paint(color_from_hex_code("#3b0b07")),
