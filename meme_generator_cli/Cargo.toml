@@ -1,5 +1,6 @@
 [package]
 name = "meme_generator_cli"
+description = "CLI for meme_generator"
 version.workspace = true
 authors.workspace = true
 license.workspace = true

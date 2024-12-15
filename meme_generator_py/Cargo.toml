@@ -1,5 +1,6 @@
 [package]
 name = "meme_generator_py"
+description = "Python bindings for meme_generator"
 version.workspace = true
 authors.workspace = true
 license.workspace = true
