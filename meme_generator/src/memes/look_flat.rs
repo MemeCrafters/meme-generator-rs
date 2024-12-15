@@ -37,7 +37,7 @@ fn look_flat(
         text,
         30.0,
         55.0,
-        &TextParams {
+        TextParams {
             font_style: FontStyle::bold(),
             ..Default::default()
         },

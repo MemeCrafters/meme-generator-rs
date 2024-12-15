@@ -73,6 +73,7 @@ impl FontManager {
 
 unsafe impl Send for FontManager {}
 
+#[derive(Debug, Clone)]
 pub(crate) struct TextParams {
     pub font_style: FontStyle,
     pub font_families: Vec<String>,
@@ -99,8 +100,13 @@ pub(crate) struct Text2Image {
 }
 
 impl Text2Image {
-    pub fn from_text(text: impl Into<String>, font_size: scalar, text_params: &TextParams) -> Self {
+    pub fn from_text(
+        text: impl Into<String>,
+        font_size: scalar,
+        text_params: impl Into<Option<TextParams>>,
+    ) -> Self {
         let text: String = text.into();
+        let text_params: TextParams = text_params.into().unwrap_or_default();
         let mut font_families = text_params.font_families.clone();
         font_families.append(&mut MEME_CONFIG.font.default_font_families.clone());
 

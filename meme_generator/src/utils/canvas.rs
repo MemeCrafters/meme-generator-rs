@@ -12,7 +12,7 @@ pub(crate) trait CanvasExt {
         origin: impl Into<Point>,
         text: impl Into<String>,
         font_size: scalar,
-        text_params: &TextParams,
+        text_params: impl Into<Option<TextParams>>,
     );
 
     fn draw_text_area(
@@ -20,7 +20,7 @@ pub(crate) trait CanvasExt {
         rect: impl Into<Rect>,
         text: impl Into<String>,
         font_size: scalar,
-        text_params: &TextParams,
+        text_params: impl Into<Option<TextParams>>,
     ) -> Result<(), Error>;
 
     fn draw_text_area_auto_font_size(
@@ -29,7 +29,7 @@ pub(crate) trait CanvasExt {
         text: impl Into<String>,
         min_font_size: scalar,
         max_font_size: scalar,
-        text_params: &TextParams,
+        text_params: impl Into<Option<TextParams>>,
     ) -> Result<(), Error>;
 }
 
@@ -39,7 +39,7 @@ impl CanvasExt for Canvas {
         origin: impl Into<Point>,
         text: impl Into<String>,
         font_size: scalar,
-        text_params: &TextParams,
+        text_params: impl Into<Option<TextParams>>,
     ) {
         let origin: Point = origin.into();
         let text2image = Text2Image::from_text(text, font_size, text_params);
@@ -51,7 +51,7 @@ impl CanvasExt for Canvas {
         rect: impl Into<Rect>,
         text: impl Into<String>,
         font_size: scalar,
-        text_params: &TextParams,
+        text_params: impl Into<Option<TextParams>>,
     ) -> Result<(), Error> {
         let rect: Rect = rect.into();
         let text: String = text.into();
@@ -71,13 +71,15 @@ impl CanvasExt for Canvas {
         text: impl Into<String>,
         min_font_size: scalar,
         max_font_size: scalar,
-        text_params: &TextParams,
+        text_params: impl Into<Option<TextParams>>,
     ) -> Result<(), Error> {
         let rect: Rect = rect.into();
         let text: String = text.into();
+        let text_params: TextParams = text_params.into().unwrap_or_default();
         let mut font_size = max_font_size;
         while font_size >= min_font_size {
-            let mut text2image = Text2Image::from_text(text.clone(), font_size, text_params);
+            let mut text2image =
+                Text2Image::from_text(text.clone(), font_size, text_params.clone());
             text2image.layout(rect.width());
             if text2image.height() <= rect.height() {
                 let top = rect.top() + (rect.height() - text2image.height()) / 2.0;

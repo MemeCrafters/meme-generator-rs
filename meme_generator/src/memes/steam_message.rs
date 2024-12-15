@@ -28,7 +28,7 @@ fn steam_message(
     let text_name = Text2Image::from_text(
         name,
         65.0,
-        &TextParams {
+        TextParams {
             paint: new_paint(color_from_hex_code("#e3ffc2")),
             ..Default::default()
         },
@@ -36,7 +36,7 @@ fn steam_message(
     let text_play = Text2Image::from_text(
         "正在玩",
         62.0,
-        &TextParams {
+        TextParams {
             paint: new_paint(color_from_hex_code("#d1d1c0")),
             ..Default::default()
         },
@@ -44,7 +44,7 @@ fn steam_message(
     let text_game = Text2Image::from_text(
         game,
         65.0,
-        &TextParams {
+        TextParams {
             paint: new_paint(color_from_hex_code("#91c257")),
             ..Default::default()
         },

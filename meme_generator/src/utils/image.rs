@@ -6,7 +6,7 @@ use skia_safe::{
 use crate::utils::{default_sampling_options, new_surface};
 
 #[allow(dead_code)]
-#[derive(PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub(crate) enum Fit {
     /// 使图像完全包含在指定的大小内
     Contain,

@@ -144,7 +144,7 @@ fn firefly_holdsign(
         text,
         30.0,
         80.0,
-        &TextParams {
+        TextParams {
             font_families: vec!["FZShaoEr-M11S".to_string()],
             paint: new_paint(color_from_hex_code("#3b0b07")),
             ..Default::default()
