@@ -10,8 +10,10 @@ use std::fs::read;
 
 use chrono::{DateTime, Local, TimeZone};
 use skia_safe::{
-    scalar, surfaces, Codec, Color, Color4f, Data, FilterMode, ISize, Image, MipmapMode, Paint,
-    PaintJoin, PaintStyle, SamplingOptions, Surface,
+    scalar, surfaces,
+    textlayout::{Decoration, TextDecoration, TextDecorationMode},
+    Codec, Color, Color4f, Data, FilterMode, ISize, Image, MipmapMode, Paint, PaintJoin,
+    PaintStyle, SamplingOptions, Surface,
 };
 
 use crate::{config::MEME_HOME, error::Error, utils::decoder::CodecExt};
@@ -26,7 +28,6 @@ pub(crate) fn new_paint(color: impl Into<Color4f>) -> Paint {
     paint
 }
 
-#[allow(dead_code)]
 pub(crate) fn new_stroke_paint(color: impl Into<Color4f>, stroke_width: scalar) -> Paint {
     let mut paint = Paint::new(color.into(), None);
     paint.set_anti_alias(true);
@@ -34,6 +35,15 @@ pub(crate) fn new_stroke_paint(color: impl Into<Color4f>, stroke_width: scalar) 
     paint.set_style(PaintStyle::Stroke);
     paint.set_stroke_join(PaintJoin::Round);
     paint
+}
+
+pub(crate) fn new_decoration(text_decoration: TextDecoration, color: Color) -> Decoration {
+    let mut decoration = Decoration::default();
+    decoration.ty = text_decoration;
+    decoration.mode = TextDecorationMode::Through;
+    decoration.color = color;
+    decoration.thickness_multiplier = 1.5;
+    decoration
 }
 
 pub(crate) fn color_from_hex_code(hex_code: &str) -> Color {
