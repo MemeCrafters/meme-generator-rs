@@ -3,8 +3,8 @@ use skia_safe::IRect;
 
 use crate::{
     error::Error,
+    manager::register_meme,
     meme::{DecodedImage, MemeOptions},
-    register_meme,
     tags::MemeTags,
     utils::{
         canvas::CanvasExt, color_from_hex_code, encoder::encode_png, image::ImageExt, load_image,

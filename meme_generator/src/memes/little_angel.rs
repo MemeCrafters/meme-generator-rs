@@ -2,8 +2,8 @@ use skia_safe::{Color, FontStyle, IRect, Image};
 
 use crate::{
     error::Error,
+    manager::register_meme,
     meme::DecodedImage,
-    register_meme,
     utils::{
         canvas::CanvasExt, encoder::make_png_or_gif, image::ImageExt, local_date, new_surface,
         options::Gender, text::TextParams,

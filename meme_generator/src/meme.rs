@@ -10,7 +10,7 @@ use crate::{
     utils::{encoder::encode_png, tools::empty_image},
 };
 
-pub use meme_options_derive::MemeOptions;
+pub(crate) use meme_options_derive::MemeOptions;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ParserFlags {
@@ -117,7 +117,6 @@ impl Default for MemeShortcut {
     }
 }
 
-#[macro_export]
 macro_rules! shortcut {
     ($pattern:expr, $($field:ident = $value:expr),* $(,)?) => {
         crate::meme::MemeShortcut {
@@ -130,7 +129,10 @@ macro_rules! shortcut {
     };
 }
 
-pub mod shortcut_setters {
+pub(crate) use shortcut;
+
+#[allow(dead_code)]
+pub(crate) mod shortcut_setters {
     pub fn humanized(humanized: &str) -> Option<String> {
         Some(humanized.to_string())
     }
@@ -173,7 +175,7 @@ impl Default for MemeInfo {
     }
 }
 
-pub trait MemeOptions: Default + for<'de> Deserialize<'de> + Send + Sync {
+pub(crate) trait MemeOptions: Default + for<'de> Deserialize<'de> + Send + Sync {
     fn to_options(&self) -> Vec<MemeOption>;
 }
 

@@ -27,7 +27,6 @@ impl MemeRegistry {
 pub(crate) static MEME_REGISTRY: LazyLock<Mutex<MemeRegistry>> =
     LazyLock::new(|| Mutex::new(MemeRegistry::new()));
 
-#[macro_export]
 macro_rules! register_meme {
     ($key:expr, $function:expr, $($field:ident = $value:expr),* $(,)?) => {
         #[ctor::ctor]
@@ -45,6 +44,8 @@ macro_rules! register_meme {
         }
     };
 }
+
+pub(crate) use register_meme;
 
 pub fn get_meme(key: &str) -> Option<Arc<dyn Meme>> {
     let registry = MEME_REGISTRY.lock().unwrap();

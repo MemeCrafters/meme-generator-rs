@@ -2,8 +2,8 @@ use skia_safe::{Color, Image};
 
 use crate::{
     error::Error,
+    manager::register_meme,
     meme::DecodedImage,
-    register_meme,
     utils::{
         encoder::{make_gif_or_combined_gif, GifInfo},
         image::{Fit, ImageExt},

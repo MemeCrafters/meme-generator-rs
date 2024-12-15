@@ -2,8 +2,8 @@ use skia_safe::{IRect, Image};
 
 use crate::{
     error::Error,
-    meme::DecodedImage,
-    register_meme, shortcut,
+    manager::register_meme,
+    meme::{shortcut, DecodedImage},
     utils::{
         color_from_hex_code,
         encoder::make_png_or_gif,
