@@ -67,6 +67,14 @@
   ],
   "images": [
     {
+      "file": "abstinence/base.png",
+      "hash": "34c6720d7dfe0b3a3eb6834be66200fe7fca83c3c7138e97b81d438fc173c4a5"
+    },
+    {
+      "file": "abstinence/stamp.png",
+      "hash": "62e297012be39747ebdf2208cb4554dbccac07d0efbe9158c227237d4a9a0038"
+    },
+    {
       "file": "confuse/00.png",
       "hash": "061a13b6ab65f87b3095bf5cc5a242fbc40dddcee0a938f7b85f859723e73825"
     },
