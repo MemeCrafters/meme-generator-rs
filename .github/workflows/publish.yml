@@ -1,0 +1,23 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "*"
+
+permissions:
+  contents: read
+
+jobs:
+  crates_io_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+
+      - name: Cargo login
+        run: cargo login ${{ secrets.CRATES_IO_API_TOKEN }}
+
+      - name: Cargo Publish
+        run: cargo publish --package meme_generator
