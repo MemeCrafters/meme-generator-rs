@@ -1,4 +1,8 @@
 mod abstinence;
+mod acg_entrance;
+mod add_chaos;
+mod addiction;
+mod alike;
 mod confuse;
 mod firefly_holdsign;
 mod little_angel;

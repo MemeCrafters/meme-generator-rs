@@ -9,7 +9,7 @@ use crate::{
         canvas::CanvasExt,
         encoder::make_png_or_gif,
         image::{Fit, ImageExt},
-        load_image, local_date, new_surface,
+        load_image, local_date,
     },
 };
 
@@ -39,9 +39,8 @@ fn abstinence(
     let name = images[0].name.clone();
 
     let bg = load_image("abstinence/base.png")?;
-    let mut surface = new_surface(bg.dimensions());
+    let mut surface = bg.to_surface();
     let canvas = surface.canvas();
-    canvas.draw_image(&bg, (0, 0), None);
 
     canvas.draw_bbcode_text_area_auto_font_size(
         IRect::from_ltrb(150, 650, 760, 800),

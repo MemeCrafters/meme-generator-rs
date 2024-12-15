@@ -153,9 +153,8 @@ fn firefly_holdsign(
     let text_image = text_surface.image_snapshot();
 
     let frame = load_image(format!("firefly_holdsign/{num:02}.png"))?;
-    let mut surface = new_surface(frame.dimensions());
+    let mut surface = frame.to_surface();
     let canvas = surface.canvas();
-    canvas.draw_image(&frame, (0, 0), None);
     canvas.draw_image(
         &text_image.perspective(points.0, points.1, points.2, points.3),
         loc,

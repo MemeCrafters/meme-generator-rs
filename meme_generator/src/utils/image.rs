@@ -1,6 +1,6 @@
 use skia_safe::{
     canvas::SrcRectConstraint, color_filters, ClipOp, ColorMatrix, IRect, ISize, Image, Matrix,
-    Paint, Path, Point, RRect, Rect,
+    Paint, Path, Point, RRect, Rect, Surface,
 };
 
 use crate::utils::{default_sampling_options, new_surface};
@@ -17,6 +17,8 @@ pub(crate) enum Fit {
 
 #[allow(dead_code)]
 pub(crate) trait ImageExt {
+    fn to_surface(&self) -> Surface;
+
     fn resize_exact(&self, size: impl Into<ISize>) -> Image;
 
     fn resize_fit(&self, size: impl Into<ISize>, fit: Fit) -> Image;
@@ -53,6 +55,13 @@ pub(crate) trait ImageExt {
 }
 
 impl ImageExt for Image {
+    fn to_surface(&self) -> Surface {
+        let mut surface = new_surface(self.dimensions());
+        let canvas = surface.canvas();
+        canvas.draw_image(self, (0, 0), None);
+        surface
+    }
+
     fn resize_exact(&self, size: impl Into<ISize>) -> Image {
         let size = size.into();
         let mut surface = new_surface(size);

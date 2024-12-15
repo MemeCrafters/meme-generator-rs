@@ -24,8 +24,11 @@ fn look_flat(
     texts: &Vec<String>,
     options: &Ratio,
 ) -> Result<Vec<u8>, Error> {
-    let default_text = DEFAULT_TEXT.to_string();
-    let text = texts.get(0).unwrap_or(&default_text);
+    let text = if !texts.is_empty() {
+        &texts[0]
+    } else {
+        DEFAULT_TEXT
+    };
     let ratio = options.ratio;
 
     let img_w = 500;
