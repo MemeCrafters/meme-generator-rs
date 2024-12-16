@@ -87,6 +87,10 @@
       "hash": "d11a5a65c9020fe30c7c8fcdcf444a045b5114502b0d182bc1b53939405811bc"
     },
     {
+      "file": "alipay/0.png",
+      "hash": "d1db5d6cbf924a153a7bb8b2a8e659fc3326627fcae55072e80725b0d1753844"
+    },
+    {
       "file": "confuse/00.png",
       "hash": "061a13b6ab65f87b3095bf5cc5a242fbc40dddcee0a938f7b85f859723e73825"
     },
@@ -605,6 +609,14 @@
     {
       "file": "steam_message/logo.png",
       "hash": "e61b670e56a384f6eb3ad952302eba4085f3f2db700f570dbb40bb2c85f43ec5"
+    },
+    {
+      "file": "wechat_pay/0.png",
+      "hash": "5a98886a8ab45fc5ac090ac6284c5d048d7dd4be38330bb7082d6c9935ada9dc"
+    },
+    {
+      "file": "wechat_pay/logo.png",
+      "hash": "4a8db078f7243687e38ccf10a4a3ad47dcba420dfbef5aca30fa3b1e3c0cb0da"
     }
   ]
 }
