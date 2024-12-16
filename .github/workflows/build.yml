@@ -65,8 +65,49 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: "meme-generator-cli-with-contrib-${{ matrix.platform.label }}"
+          name: "meme-generator-contrib-cli-${{ matrix.platform.label }}"
           path: |
             target/${{ matrix.platform.target }}/release/meme*
             !target/${{ matrix.platform.target }}/release/meme.d
             !target/${{ matrix.platform.target }}/release/meme.pdb
+
+  build_linux_aarch64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+
+      - name: Rustup add target
+        run: rustup target add aarch64-unknown-linux-gnu
+
+      - name: Install dependencies
+        run: |
+          cargo install cross
+          echo "[build]" >> Cross.toml
+          echo "pre-build = [" >> Cross.toml
+          echo '  "dpkg --add-architecture $CROSS_DEB_ARCH",' >> Cross.toml
+          echo '  "apt-get update && apt-get -y install libssl-dev:$CROSS_DEB_ARCH libfontconfig1-dev:$CROSS_DEB_ARCH libfreetype6-dev:$CROSS_DEB_ARCH",' >> Cross.toml
+          echo "]" >> Cross.toml
+          echo "[target.aarch64-unknown-linux-gnu]" >> Cross.toml
+          echo 'image = "ghcr.io/cross-rs/aarch64-unknown-linux-gnu:main"' >> Cross.toml
+
+      - name: Build target
+        run: cross build --release --target aarch64-unknown-linux-gnu --bin meme --features server
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "meme-generator-cli-linux-aarch64"
+          path: |
+            target/aarch64-unknown-linux-gnu/release/meme*
+            !target/aarch64-unknown-linux-gnu/release/meme.d
+
+      - name: Build contrib
+        run: cross build --release --target aarch64-unknown-linux-gnu --bin meme --features server,contrib
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "meme-generator-contrib-cli-linux-aarch64"
+          path: |
+            target/aarch64-unknown-linux-gnu/release/meme*
+            !target/aarch64-unknown-linux-gnu/release/meme.d
