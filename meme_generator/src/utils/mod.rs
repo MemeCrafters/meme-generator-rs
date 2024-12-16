@@ -1,9 +1,9 @@
-pub mod canvas;
-pub mod decoder;
-pub mod encoder;
-pub mod image;
-pub mod options;
-pub mod text;
+pub(crate) mod canvas;
+pub(crate) mod decoder;
+pub(crate) mod encoder;
+pub(crate) mod image;
+pub(crate) mod options;
+pub(crate) mod text;
 pub mod tools;
 
 use std::fs::read;

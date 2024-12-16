@@ -1,8 +1,8 @@
 use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{
-    punctuated::Punctuated, Data, DeriveInput, Error, Expr, ExprLit, Field, Fields, Ident, Lit,
-    Meta, MetaNameValue, Token, Type,
+    ext::IdentExt, punctuated::Punctuated, Data, DeriveInput, Error, Expr, ExprLit, Field, Fields,
+    Ident, Lit, Meta, MetaNameValue, Token, Type,
 };
 
 pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
@@ -415,9 +415,10 @@ impl ToTokens for MemeOption {
                     Some(description) => quote!(Some(#description.to_string())),
                     None => quote!(None),
                 };
+                let field_name_str = field_name.unraw().to_string();
                 tokens.extend(quote! {
                     crate::meme::MemeOption::Boolean {
-                        name: stringify!(#field_name).to_string(),
+                        name: #field_name_str.to_string(),
                         default: #default,
                         description: #description,
                         parser_flags: crate::meme::ParserFlags {
@@ -455,9 +456,10 @@ impl ToTokens for MemeOption {
                     Some(choices) => quote!(Some(Vec::from([#(#choices.to_string()),*]))),
                     None => quote!(None),
                 };
+                let field_name_str = field_name.unraw().to_string();
                 tokens.extend(quote! {
                     crate::meme::MemeOption::String {
-                        name: stringify!(#field_name).to_string(),
+                        name: #field_name_str.to_string(),
                         default: #default,
                         choices: #choices,
                         description: #description,
@@ -501,9 +503,10 @@ impl ToTokens for MemeOption {
                     Some(maximum) => quote!(Some(#maximum)),
                     None => quote!(None),
                 };
+                let field_name_str = field_name.unraw().to_string();
                 tokens.extend(quote! {
                     crate::meme::MemeOption::Integer {
-                        name: stringify!(#field_name).to_string(),
+                        name: #field_name_str.to_string(),
                         default: #default,
                         minimum: #minimum,
                         maximum: #maximum,
@@ -548,9 +551,10 @@ impl ToTokens for MemeOption {
                     Some(maximum) => quote!(Some(#maximum)),
                     None => quote!(None),
                 };
+                let field_name_str = field_name.unraw().to_string();
                 tokens.extend(quote! {
                     crate::meme::MemeOption::Float {
-                        name: stringify!(#field_name).to_string(),
+                        name: #field_name_str.to_string(),
                         default: #default,
                         minimum: #minimum,
                         maximum: #maximum,
