@@ -20,18 +20,39 @@ jobs:
     strategy:
       matrix:
         platform:
-          - runner: ubuntu-20.04
-            target: x86_64
-            os: linux
+          - runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            label: linux-x86_64
+            script: |
+              yum update -y && yum install -y openssl-devel fontconfig-devel freetype-devel
+          - runner: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            label: linux-aarch64
+            script: |
+              echo "" > /etc/apt/sources.list
+              echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy main multiverse universe" >> /etc/apt/sources.list
+              echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy-security main multiverse universe" >> /etc/apt/sources.list
+              echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy-backports main multiverse universe" >> /etc/apt/sources.list
+              echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy-updates main multiverse universe" >> /etc/apt/sources.list
+              echo "deb [arch=arm64] http://ports.ubuntu.com/ jammy main multiverse universe" >> /etc/apt/sources.list
+              echo "deb [arch=arm64] http://ports.ubuntu.com/ jammy-security main multiverse universe" >> /etc/apt/sources.list
+              echo "deb [arch=arm64] http://ports.ubuntu.com/ jammy-backports main multiverse universe" >> /etc/apt/sources.list
+              echo "deb [arch=arm64] http://ports.ubuntu.com/ jammy-updates main multiverse universe" >> /etc/apt/sources.list
+              dpkg --add-architecture arm64
+              apt-get update && apt-get install -y libssl-dev:arm64 libfontconfig1-dev:arm64 libfreetype6-dev:arm64
+              cp /usr/include/aarch64-linux-gnu/openssl/* /usr/include/openssl/
+              export OPENSSL_LIB_DIR=/usr/lib/aarch64-linux-gnu/
+              export OPENSSL_INCLUDE_DIR=/usr/include/
           - runner: windows-latest
-            target: x86_64
-            os: windows
+            target: x86_64-pc-windows-msvc
+            label: windows-x86_64
           - runner: macos-latest
-            target: x86_64
-            os: macos
-          - runner: macos-14
-            target: aarch64
-            os: macos
+            target: x86_64-apple-darwin
+            label: macos-x86_64
+          - runner: macos-latest
+            target: aarch64-apple-darwin
+            label: macos-aarch64
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -43,13 +64,15 @@ jobs:
         with:
           target: ${{ matrix.platform.target }}
           working-directory: meme_generator_py
-          args: --release --out dist --find-interpreter
+          args: --release --out dist
+          manylinux: auto
+          before-script-linux: ${{ matrix.platform.script || '' }}
           sccache: true
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: meme-generator-wheels-${{ matrix.platform.os }}-${{ matrix.platform.target }}
+          name: meme-generator-wheels-${{ matrix.platform.label }}
           path: meme_generator_py/dist
 
       - name: Rename project name
@@ -60,13 +83,15 @@ jobs:
         with:
           target: ${{ matrix.platform.target }}
           working-directory: meme_generator_py
-          args: --release --features contrib --out dist_contrib --find-interpreter
+          args: --release --features contrib --out dist_contrib
+          manylinux: auto
+          before-script-linux: ${{ matrix.platform.script || '' }}
           sccache: true
 
       - name: Upload wheels contrib
         uses: actions/upload-artifact@v4
         with:
-          name: meme-generator-contrib-wheels-${{ matrix.platform.os }}-${{ matrix.platform.target }}
+          name: meme-generator-contrib-wheels-${{ matrix.platform.label }}
           path: meme_generator_py/dist_contrib
 
   build_sdist:
