@@ -3,7 +3,7 @@ use skia_safe::{textlayout::TextAlign, Color, IRect, Image};
 use crate::{
     error::Error,
     manager::register_meme,
-    meme::{DecodedImage, MemeOptions},
+    meme::{shortcut, DecodedImage, MemeOptions},
     utils::{
         canvas::CanvasExt,
         decoder::CodecExt,
@@ -189,6 +189,7 @@ register_meme!(
     min_images = 1,
     max_images = 1,
     keywords = &["一直"],
+    shortcuts = &[shortcut!("一直一直", parser_args = &["--loop"])],
     date_created = local_date(2024, 10, 30),
     date_modified = local_date(2024, 10, 30),
 );
