@@ -26,7 +26,7 @@ skia-safe = { version = "0.80", features = ["textlayout"] }
 tokio = { version = "1.42", features = ["full"] }
 toml = "0.8"
 
-meme_options_derive = { version = "0.0.1", path = "../meme_options_derive" }
+meme_options_derive = { version = "0.0.2", path = "../meme_options_derive" }
 
 [features]
 contrib = []
