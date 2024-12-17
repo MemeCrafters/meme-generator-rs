@@ -1400,7 +1400,7 @@ checksum = "78ca9ab1a0babb1e7d5695e3530886289c18cf2f87ec19a575a0abdce112e3a3"
 
 [[package]]
 name = "meme_generator"
-version = "0.2.0-alpha.5"
+version = "0.2.0-alpha.6"
 dependencies = [
  "chrono",
  "ctor",
@@ -1422,7 +1422,7 @@ dependencies = [
 
 [[package]]
 name = "meme_generator_cli"
-version = "0.2.0-alpha.5"
+version = "0.2.0-alpha.6"
 dependencies = [
  "clap",
  "infer",
@@ -1432,7 +1432,7 @@ dependencies = [
 
 [[package]]
 name = "meme_generator_py"
-version = "0.2.0-alpha.5"
+version = "0.2.0-alpha.6"
 dependencies = [
  "chrono",
  "meme_generator",
@@ -1442,7 +1442,7 @@ dependencies = [
 
 [[package]]
 name = "meme_generator_server"
-version = "0.2.0-alpha.5"
+version = "0.2.0-alpha.6"
 dependencies = [
  "axum",
  "base64 0.22.1",
