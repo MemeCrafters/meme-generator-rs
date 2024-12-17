@@ -50,10 +50,11 @@ fn wechat_pay(
         80.0,
         None,
     )?;
+    let frame = surface.image_snapshot();
     let logo = load_image("wechat_pay/logo.png")?;
 
     let func = |images: &Vec<Image>| {
-        let mut surface = surface.clone();
+        let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let image = images[0]
             .resize_fit((166, 166), Fit::Cover)

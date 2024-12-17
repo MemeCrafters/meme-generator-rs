@@ -38,8 +38,8 @@ fn abstinence(
     }
     let name = images[0].name.clone();
 
-    let bg = load_image("abstinence/base.png")?;
-    let mut surface = bg.to_surface();
+    let frame = load_image("abstinence/base.png")?;
+    let mut surface = frame.to_surface();
     let canvas = surface.canvas();
 
     canvas.draw_bbcode_text_area_auto_font_size(
@@ -61,13 +61,13 @@ fn abstinence(
         20.0,
         None,
     )?;
-
+    let frame = surface.image_snapshot();
     let stamp = load_image("abstinence/stamp.png")?;
 
     let func = |images: &Vec<Image>| {
-        let image = images[0].resize_fit((300, 300), Fit::Cover);
-        let mut surface = surface.clone();
+        let mut surface = frame.to_surface();
         let canvas = surface.canvas();
+        let image = images[0].resize_fit((300, 300), Fit::Cover);
         canvas.draw_image(&image, (80.0, 400.0), None);
         canvas.draw_image(&stamp, (350, 650), None);
         Ok(surface.image_snapshot())

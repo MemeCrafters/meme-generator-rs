@@ -8,7 +8,7 @@ use crate::{
     tags::MemeTags,
     utils::{
         canvas::CanvasExt, color_from_hex_code, encoder::encode_png, image::ImageExt, load_image,
-        local_date, new_paint, new_surface, text::TextParams,
+        local_date, new_paint, new_surface, text::text_params,
     },
 };
 
@@ -144,11 +144,10 @@ fn firefly_holdsign(
         text,
         30.0,
         80.0,
-        TextParams {
-            font_families: vec!["FZShaoEr-M11S".to_string()],
-            paint: new_paint(color_from_hex_code("#3b0b07")),
-            ..Default::default()
-        },
+        text_params!(
+            font_families = &["FZShaoEr-M11S"],
+            paint = new_paint(color_from_hex_code("#3b0b07"))
+        ),
     )?;
     let text_image = text_surface.image_snapshot();
 
@@ -160,7 +159,7 @@ fn firefly_holdsign(
         loc,
         None,
     );
-    Ok(encode_png(&surface.image_snapshot())?)
+    encode_png(&surface.image_snapshot())
 }
 
 register_meme!(

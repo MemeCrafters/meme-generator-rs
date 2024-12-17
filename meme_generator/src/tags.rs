@@ -33,8 +33,19 @@ meme_tags!(
     // nilou = (["妮露"], genshin),
     // yae_miko = (["八重神子"], genshin),
     // ayaka = (["神里绫华"], genshin),
-    firefly = (["流萤"], star_rail),
     // bronya = (["布洛妮娅·扎伊切克"], honkai3),
     // captain = (["休伯利安号", "舰长"], honkai3),
     // griseo = (["格蕾修"], honkai3),
+    firefly = (["流萤"], star_rail),
+    // 蔚蓝档案
+    blue_archive = (["蔚蓝档案", "碧蓝档案"]),
+    // shiroko = (["砂狼白子"], blue_archive),
+    // kokona = (["春原心奈", "春原心菜"], blue_archive),
+    // plana = (["普拉娜"], blue_archive),
+    arona = (["阿罗娜"], blue_archive),
+    // 其他
+    // capoo = (["猫猫虫", "咖波"]),
+    // nekoha = (["猫羽雫"]),
+    // kirby = (["星之卡比"]),
+    atri = (["亚托莉", "ATRI", "萝卜子"]),
 );

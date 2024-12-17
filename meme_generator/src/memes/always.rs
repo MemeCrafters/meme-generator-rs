@@ -10,14 +10,14 @@ use crate::{
         encoder::{make_gif_or_combined_gif, make_png_or_gif, GifInfo},
         image::ImageExt,
         local_date, new_surface,
-        text::TextParams,
+        text::text_params,
     },
 };
 
 #[derive(MemeOptions)]
 struct Mode {
     /// 生成模式
-    #[option(long, default="normal", choices = ["normal", "loop", "circle"])]
+    #[option(long, default = "normal", choices = ["normal", "loop", "circle"])]
     mode: String,
 
     /// 套娃模式
@@ -49,24 +49,19 @@ fn always_normal(images: &mut Vec<DecodedImage>) -> Result<Vec<u8>, Error> {
         "要我一直",
         40.0,
         60.0,
-        TextParams {
-            text_align: TextAlign::Right,
-            ..Default::default()
-        },
+        text_params!(text_align = TextAlign::Right),
     )?;
     canvas.draw_text_area_auto_font_size(
         IRect::from_ltrb(400, h1 + 5, 480, frame_h - 5),
         "吗",
         40.0,
         60.0,
-        TextParams {
-            text_align: TextAlign::Left,
-            ..Default::default()
-        },
+        text_params!(text_align = TextAlign::Left),
     )?;
+    let frame = surface.image_snapshot();
 
     let func = |images: &Vec<Image>| {
-        let mut surface = surface.clone();
+        let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let image_big = images[0].resize_width(img_big_w);
         let image_small = images[0].resize_width(img_small_w);
@@ -104,20 +99,14 @@ fn always_always(images: &mut Vec<DecodedImage>, loop_: bool) -> Result<Vec<u8>,
         "要我一直",
         40.0,
         60.0,
-        TextParams {
-            text_align: TextAlign::Right,
-            ..Default::default()
-        },
+        text_params!(text_align = TextAlign::Right),
     )?;
     canvas.draw_text_area_auto_font_size(
         IRect::from_ltrb(400, img_big_h + 5, 480, frame_h - 5),
         "吗",
         40.0,
         60.0,
-        TextParams {
-            text_align: TextAlign::Left,
-            ..Default::default()
-        },
+        text_params!(text_align = TextAlign::Left),
     )?;
     let text_frame = surface.image_snapshot();
 
@@ -190,6 +179,6 @@ register_meme!(
     max_images = 1,
     keywords = &["一直"],
     shortcuts = &[shortcut!("一直一直", parser_args = &["--loop"])],
-    date_created = local_date(2024, 10, 30),
-    date_modified = local_date(2024, 10, 30),
+    date_created = local_date(2021, 12, 2),
+    date_modified = local_date(2024, 8, 9),
 );

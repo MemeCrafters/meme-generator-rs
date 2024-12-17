@@ -10,7 +10,7 @@ use crate::{
         image::{Fit, ImageExt},
         load_image, local_date, new_paint, new_surface,
         options::NoOptions,
-        text::{Text2Image, TextParams},
+        text::{text_params, Text2Image},
     },
 };
 
@@ -28,26 +28,17 @@ fn steam_message(
     let text_name = Text2Image::from_text(
         name,
         65.0,
-        TextParams {
-            paint: new_paint(color_from_hex_code("#e3ffc2")),
-            ..Default::default()
-        },
+        text_params!(paint = new_paint(color_from_hex_code("#e3ffc2"))),
     );
     let text_play = Text2Image::from_text(
         "正在玩",
         62.0,
-        TextParams {
-            paint: new_paint(color_from_hex_code("#d1d1c0")),
-            ..Default::default()
-        },
+        text_params!(paint = new_paint(color_from_hex_code("#d1d1c0"))),
     );
     let text_game = Text2Image::from_text(
         game,
         65.0,
-        TextParams {
-            paint: new_paint(color_from_hex_code("#91c257")),
-            ..Default::default()
-        },
+        text_params!(paint = new_paint(color_from_hex_code("#91c257"))),
     );
 
     let avatar_w = 280;
@@ -97,11 +88,12 @@ fn steam_message(
             frame_h as f32 - padding_v as f32 - 40.0 - text_game.height() / 2.0,
         ),
     );
+    let frame = surface.image_snapshot();
 
     let func = |images: &Vec<Image>| {
-        let avatar = images[0].resize_fit((avatar_w, avatar_w), Fit::Cover);
-        let mut surface = surface.clone();
+        let mut surface = frame.to_surface();
         let canvas = surface.canvas();
+        let avatar = images[0].resize_fit((avatar_w, avatar_w), Fit::Cover);
         canvas.draw_image(&avatar, (padding_h as f32, padding_v as f32), None);
         Ok(surface.image_snapshot())
     };

@@ -10,7 +10,7 @@ use crate::{
         image::{Fit, ImageExt},
         load_image, local_date, new_paint, new_surface,
         options::NoOptions,
-        text::TextParams,
+        text::text_params,
     },
 };
 
@@ -26,28 +26,25 @@ fn acg_entrance(
     } else {
         DEFAULT_TEXT
     };
-    let bg = load_image("acg_entrance/0.png")?;
-    let mut surface = bg.to_surface();
+    let frame = load_image("acg_entrance/0.png")?;
+    let mut surface = frame.to_surface();
     let canvas = surface.canvas();
     canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(30, 720, bg.width() - 30, 810),
+        IRect::from_ltrb(30, 720, frame.width() - 30, 810),
         text,
         25.0,
         50.0,
-        TextParams {
-            paint: new_paint(Color::WHITE),
-            ..Default::default()
-        },
+        text_params!(paint = new_paint(Color::WHITE)),
     )?;
-    let bg = surface.image_snapshot();
+    let frame = surface.image_snapshot();
 
     let func = |images: &Vec<Image>| {
-        let mut surface = new_surface(bg.dimensions());
+        let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
         canvas.clear(Color::WHITE);
         let image = images[0].resize_fit((290, 410), Fit::Cover);
         canvas.draw_image(&image, (190.0, 265.0), None);
-        canvas.draw_image(&bg, (0, 0), None);
+        canvas.draw_image(&frame, (0, 0), None);
         Ok(surface.image_snapshot())
     };
 

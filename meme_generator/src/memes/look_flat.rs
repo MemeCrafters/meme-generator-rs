@@ -6,7 +6,7 @@ use crate::{
     meme::{DecodedImage, MemeOptions},
     utils::{
         canvas::CanvasExt, encoder::make_png_or_gif, image::ImageExt, local_date, new_surface,
-        text::TextParams,
+        text::text_params,
     },
 };
 
@@ -40,10 +40,7 @@ fn look_flat(
         text,
         30.0,
         55.0,
-        TextParams {
-            font_style: FontStyle::bold(),
-            ..Default::default()
-        },
+        text_params!(font_style = FontStyle::bold()),
     )?;
     let text_image = text_surface.image_snapshot();
 

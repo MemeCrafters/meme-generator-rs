@@ -34,8 +34,8 @@ fn alipay(
     };
     let name = images[0].name.clone();
 
-    let bg = load_image("alipay/0.png")?;
-    let mut surface = bg.to_surface();
+    let frame = load_image("alipay/0.png")?;
+    let mut surface = frame.to_surface();
     let canvas = surface.canvas();
     let qr_image = qrcode_image(message).resize_exact((658, 658));
     canvas.draw_image(&qr_image, (211, 606), None);
@@ -52,9 +52,10 @@ fn alipay(
         70.0,
         None,
     )?;
+    let frame = surface.image_snapshot();
 
     let func = |images: &Vec<Image>| {
-        let mut surface = surface.clone();
+        let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let image = images[0]
             .resize_fit((108, 108), Fit::Cover)

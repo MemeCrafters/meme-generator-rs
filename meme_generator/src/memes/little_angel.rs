@@ -6,7 +6,7 @@ use crate::{
     meme::DecodedImage,
     utils::{
         canvas::CanvasExt, encoder::make_png_or_gif, image::ImageExt, local_date, new_surface,
-        options::Gender, text::TextParams,
+        options::Gender, text::text_params,
     },
 };
 
@@ -30,10 +30,7 @@ fn little_angel(
     if name.is_empty() {
         name = ta;
     }
-    let text_params = TextParams {
-        font_style: FontStyle::bold(),
-        ..Default::default()
-    };
+    let text_params = text_params!(font_style = FontStyle::bold());
     canvas.draw_text_area_auto_font_size(
         IRect::from_ltrb(20, 0, 580, 110),
         format!("请问你们看到{name}了吗?"),
@@ -55,10 +52,12 @@ fn little_angel(
         26.0,
         text_params.clone(),
     )?;
+    let frame = surface.image_snapshot();
+
     let func = |images: &Vec<Image>| {
-        let image = images[0].resize_width(img_w);
-        let mut surface = surface.clone();
+        let mut surface = frame.to_surface();
         let canvas = surface.canvas();
+        let image = images[0].resize_width(img_w);
         canvas.draw_image(&image, (300.0 - img_w as f32 / 2.0, 110.0), None);
         Ok(surface.image_snapshot())
     };

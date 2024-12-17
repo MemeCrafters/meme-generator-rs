@@ -97,6 +97,43 @@ impl Default for TextParams {
     }
 }
 
+macro_rules! text_params {
+    ($($field:ident = $value:expr),* $(,)?) => {
+        crate::utils::text::TextParams {
+            $(
+                $field: crate::utils::text::text_params_setters::$field($value),
+            )*
+            ..Default::default()
+        }
+    };
+}
+
+pub(crate) use text_params;
+
+pub(crate) mod text_params_setters {
+    use skia_safe::{textlayout::TextAlign, FontStyle, Paint};
+
+    pub fn font_style(style: FontStyle) -> FontStyle {
+        style
+    }
+
+    pub fn font_families(names: &[&str]) -> Vec<String> {
+        names.iter().map(|name| name.to_string()).collect()
+    }
+
+    pub fn text_align(align: TextAlign) -> TextAlign {
+        align
+    }
+
+    pub fn paint(paint: Paint) -> Paint {
+        paint
+    }
+
+    pub fn stroke_paint(paint: Paint) -> Option<Paint> {
+        Some(paint)
+    }
+}
+
 pub(crate) struct Text2Image {
     paragraph: Paragraph,
     stroke_paragraph: Option<Paragraph>,
