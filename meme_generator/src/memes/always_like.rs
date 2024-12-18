@@ -53,5 +53,5 @@ register_meme!(
     max_images = 1,
     keywords = &["我永远喜欢"],
     date_created = local_date(2022, 3, 14),
-    date_modified = local_date(2023, 2, 14),
+    date_modified = local_date(2024, 12, 17),
 );

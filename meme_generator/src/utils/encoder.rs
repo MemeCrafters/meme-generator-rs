@@ -65,6 +65,9 @@ pub(crate) fn encode_png(image: &Image) -> Result<Vec<u8>, Error> {
 #[allow(dead_code)]
 #[derive(PartialEq)]
 pub(crate) enum FrameAlign {
+    /// 不延长
+    NoExtend,
+
     /// 以循环方式延长
     ExtendLoop,
 
@@ -73,9 +76,6 @@ pub(crate) enum FrameAlign {
 
     /// 延长最后一帧
     ExtendLast,
-
-    /// 不延长
-    NoExtend,
 }
 
 #[derive(Debug, Clone)]
@@ -117,7 +117,7 @@ pub(crate) fn get_aligned_gif_indexes(
     let diff_duration = max_total_duration - target_total_duration;
     if diff_duration >= target_gif_info.duration {
         let diff_num = (diff_duration / target_gif_info.duration).ceil() as i32;
-        let frame_align = frame_align.into().unwrap_or(FrameAlign::ExtendLoop);
+        let frame_align = frame_align.into().unwrap_or(FrameAlign::NoExtend);
         match frame_align {
             FrameAlign::ExtendFirst => {
                 let mut origin_frame_indexes = target_frame_indexes.clone();

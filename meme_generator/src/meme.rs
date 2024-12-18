@@ -394,15 +394,22 @@ where
                 });
             }
         }
-        let mut texts = Vec::new();
-        for i in 0..self.min_texts {
-            let text = if self.min_texts == 1 {
-                "{text}".to_string()
-            } else {
-                format!("{{text{}}}", i + 1)
-            };
-            texts.push(text);
-        }
+        let texts = if self.default_texts.len() >= self.min_texts as usize
+            && self.default_texts.len() <= self.max_texts as usize
+        {
+            self.default_texts.clone()
+        } else {
+            let mut texts = Vec::new();
+            for i in 0..self.min_texts {
+                let text = if self.min_texts == 1 {
+                    "{text}".to_string()
+                } else {
+                    format!("{{text{}}}", i + 1)
+                };
+                texts.push(text);
+            }
+            texts
+        };
         let options = HashMap::new();
         self.generate(&images, &texts, &options)
     }

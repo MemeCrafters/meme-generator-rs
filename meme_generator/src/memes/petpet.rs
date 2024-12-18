@@ -5,7 +5,7 @@ use crate::{
     manager::register_meme,
     meme::DecodedImage,
     utils::{
-        encoder::{make_gif_or_combined_gif, GifInfo},
+        encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
         image::ImageExt,
         load_image, local_date, new_surface,
         options::Circle,
@@ -48,7 +48,7 @@ fn petpet(
             frame_num: 5,
             duration: 0.06,
         },
-        None,
+        FrameAlign::ExtendLoop,
     )
 }
 

@@ -5,7 +5,7 @@ use crate::{
     manager::register_meme,
     meme::DecodedImage,
     utils::{
-        encoder::{make_gif_or_combined_gif, GifInfo},
+        encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
         image::ImageExt,
         load_image, local_date, new_surface,
         options::NoOptions,
@@ -43,7 +43,7 @@ fn applaud(
             frame_num: 5,
             duration: 0.1,
         },
-        None,
+        FrameAlign::ExtendLoop,
     )
 }
 

@@ -42,13 +42,7 @@ pub(crate) trait ImageExt {
 
     fn flip_horizontal(&self) -> Image;
 
-    fn perspective(
-        &self,
-        top_left: impl Into<Point>,
-        top_right: impl Into<Point>,
-        bottom_right: impl Into<Point>,
-        bottom_left: impl Into<Point>,
-    ) -> Image;
+    fn perspective(&self, points: &[impl Into<Point> + Copy; 4]) -> Image;
 
     fn grayscale(&self) -> Image;
 }
@@ -219,17 +213,11 @@ impl ImageExt for Image {
         surface.image_snapshot()
     }
 
-    fn perspective(
-        &self,
-        top_left: impl Into<Point>,
-        top_right: impl Into<Point>,
-        bottom_right: impl Into<Point>,
-        bottom_left: impl Into<Point>,
-    ) -> Image {
-        let top_left: Point = top_left.into();
-        let top_right: Point = top_right.into();
-        let bottom_right: Point = bottom_right.into();
-        let bottom_left: Point = bottom_left.into();
+    fn perspective(&self, points: &[impl Into<Point> + Copy; 4]) -> Image {
+        let top_left: Point = points[0].into();
+        let top_right: Point = points[1].into();
+        let bottom_right: Point = points[2].into();
+        let bottom_left: Point = points[3].into();
 
         let x1: f32 = top_left.x;
         let y1: f32 = top_left.y;

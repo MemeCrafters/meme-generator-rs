@@ -5,7 +5,7 @@ use crate::{
     manager::register_meme,
     meme::{DecodedImage, MemeOptions},
     utils::{
-        encoder::{make_gif_or_combined_gif, GifInfo},
+        encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
         image::ImageExt,
         load_image, local_date, new_surface,
     },
@@ -41,7 +41,7 @@ fn do_(images: &mut Vec<DecodedImage>, _: &Vec<String>, options: &Fps) -> Result
             frame_num: 3,
             duration: 1.0 / options.fps as f32,
         },
-        None,
+        FrameAlign::ExtendLoop,
     )
 }
 

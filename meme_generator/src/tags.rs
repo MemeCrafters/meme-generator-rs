@@ -49,7 +49,7 @@ meme_tags!(
     // yae_miko = (["八重神子"], genshin),
     // ayaka = (["神里绫华"], genshin),
     bronya = (["布洛妮娅·扎伊切克"], honkai3),
-    // captain = (["休伯利安号", "舰长"], honkai3),
+    captain = (["休伯利安号", "舰长"], honkai3),
     // griseo = (["格蕾修"], honkai3),
     firefly = (["流萤"], star_rail),
     // 蔚蓝档案
@@ -70,7 +70,7 @@ meme_tags!(
     tom = (["汤姆"], tom_and_jerry),
     jerry = (["杰瑞"], tom_and_jerry),
     // 其他
-    // capoo = (["猫猫虫", "咖波"]),
+    capoo = (["猫猫虫", "咖波"]),
     // nekoha = (["猫羽雫"]),
     // kirby = (["星之卡比"]),
     atri = (["亚托莉", "ATRI", "萝卜子"]),

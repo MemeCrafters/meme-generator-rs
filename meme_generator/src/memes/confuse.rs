@@ -5,7 +5,7 @@ use crate::{
     manager::register_meme,
     meme::DecodedImage,
     utils::{
-        encoder::{make_gif_or_combined_gif, GifInfo},
+        encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
         image::{Fit, ImageExt},
         load_image, local_date, new_surface,
         options::NoOptions,
@@ -37,7 +37,7 @@ fn confuse(
             frame_num: 100,
             duration: 0.02,
         },
-        None,
+        FrameAlign::ExtendLoop,
     )
 }
 

@@ -6,7 +6,7 @@ use crate::{
     meme::DecodedImage,
     utils::{
         canvas::CanvasExt,
-        encoder::{make_gif_or_combined_gif, GifInfo},
+        encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
         image::ImageExt,
         load_image, local_date, new_surface,
         options::NoOptions,
@@ -53,7 +53,7 @@ fn beat_head(
             frame_num: 3,
             duration: 0.05,
         },
-        None,
+        FrameAlign::ExtendLoop,
     )
 }
 

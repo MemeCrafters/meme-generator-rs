@@ -57,7 +57,7 @@ fn arona_throw(
             frame_num: 16,
             duration: 0.04,
         },
-        FrameAlign::NoExtend,
+        FrameAlign::ExtendLoop,
     )
 }
 

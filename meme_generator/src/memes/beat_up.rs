@@ -6,7 +6,7 @@ use crate::{
     meme::DecodedImage,
     tags::{union_tags, MemeTags},
     utils::{
-        encoder::{make_gif_or_combined_gif, GifInfo},
+        encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
         image::ImageExt,
         load_image, local_date,
         options::NoOptions,
@@ -24,7 +24,7 @@ fn beat_up(
     let func = |i: usize, images: &Vec<Image>| {
         let self_head = images[0].circle().resize_exact((55, 55));
         let user_head = images[1].circle().resize_exact((45, 45));
-        let frame = load_image(&format!("beat_up/{}.png", i))?;
+        let frame = load_image(&format!("beat_up/{i}.png"))?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         canvas.draw_image(&self_head, self_locs[i], None);
@@ -39,7 +39,7 @@ fn beat_up(
             frame_num: 3,
             duration: 0.1,
         },
-        None,
+        FrameAlign::ExtendLoop,
     )
 }
 

@@ -7,7 +7,7 @@ use crate::{
     utils::{
         canvas::CanvasExt,
         decoder::CodecExt,
-        encoder::{make_gif_or_combined_gif, make_png_or_gif, GifInfo},
+        encoder::{make_gif_or_combined_gif, make_png_or_gif, FrameAlign, GifInfo},
         image::ImageExt,
         local_date, new_surface,
         text::text_params,
@@ -148,7 +148,7 @@ fn always_always(images: &mut Vec<DecodedImage>, loop_: bool) -> Result<Vec<u8>,
             frame_num,
             duration: 0.1,
         },
-        None,
+        FrameAlign::ExtendLoop,
     )
 }
 
