@@ -45,6 +45,8 @@ pub(crate) trait ImageExt {
     fn perspective(&self, points: &[impl Into<Point> + Copy; 4]) -> Image;
 
     fn grayscale(&self) -> Image;
+
+    fn invert(&self) -> Image;
 }
 
 impl ImageExt for Image {
@@ -263,6 +265,23 @@ impl ImageExt for Image {
                 0.2126, 0.7152, 0.0722, 0.0, 0.0, //
                 0.2126, 0.7152, 0.0722, 0.0, 0.0, //
                 0.2126, 0.7152, 0.0722, 0.0, 0.0, //
+                0.0, 0.0, 0.0, 1.0, 0.0,
+            ),
+            None,
+        ));
+        canvas.draw_image(self, (0, 0), Some(&paint));
+        surface.image_snapshot()
+    }
+
+    fn invert(&self) -> Image {
+        let mut surface = new_surface(self.dimensions());
+        let canvas = surface.canvas();
+        let mut paint = Paint::default();
+        paint.set_color_filter(color_filters::matrix(
+            &ColorMatrix::new(
+                -1.0, 0.0, 0.0, 0.0, 1.0, //
+                0.0, -1.0, 0.0, 0.0, 1.0, //
+                0.0, 0.0, -1.0, 0.0, 1.0, //
                 0.0, 0.0, 0.0, 1.0, 0.0,
             ),
             None,

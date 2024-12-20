@@ -79,7 +79,7 @@ register_meme!(
     shortcuts = &[shortcut!(
         r"你的(?P<text>.+?)(?:主要)?都?是由?这个引起的",
         humanized = "你的xx主要都是由这个引起的",
-        texts = &["{text}"],
+        texts = &["${text}"],
     )],
     date_created = local_date(2024, 11, 18),
     date_modified = local_date(2024, 11, 22),

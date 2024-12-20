@@ -58,10 +58,18 @@ meme_tags!(
     // kokona = (["春原心奈", "春原心菜"], blue_archive),
     // plana = (["普拉娜"], blue_archive),
     arona = (["阿罗娜"], blue_archive),
+    // 明日方舟
+    arknights = (["明日方舟"]),
     // 孤独摇滚
     bocchi_the_rock = (["孤独摇滚"]),
     bocchi = (["后藤一里", "波奇酱"], bocchi_the_rock),
     // nijika = (["伊地知虹夏"], bocchi_the_rock),
+    // 咒术回战
+    jujutsu_kaisen = (["咒术回战"]),
+    sukuna = (["两面宿傩"], jujutsu_kaisen),
+    // 葬送的芙莉莲
+    sousou_no_frieren = (["葬送的芙莉莲"]),
+    frieren = (["芙莉莲"], sousou_no_frieren),
     // 别当欧尼酱了
     onimai = (["别当欧尼酱了"]),
     mahiro = (["绪山真寻"], onimai),
