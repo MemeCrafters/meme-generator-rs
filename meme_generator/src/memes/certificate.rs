@@ -6,12 +6,8 @@ use crate::{
     manager::register_meme,
     meme::{DecodedImage, MemeOptions},
     utils::{
-        canvas::CanvasExt,
-        color_from_hex_code,
-        encoder::encode_png,
-        image::ImageExt,
-        load_image, local_date, new_paint,
-        text::{text_params, Text2Image},
+        canvas::CanvasExt, color_from_hex_code, encoder::encode_png, image::ImageExt, load_image,
+        local_date, new_paint, text::text_params,
     },
 };
 
@@ -69,13 +65,13 @@ fn certificate(
     } else {
         "　　在本学年第一学期中表现优秀，被我校决定评为"
     };
-    let mut text2image =
-        Text2Image::from_text(text, 60.0, text_params!(text_align = TextAlign::Left));
-    text2image.layout(1820.0);
-    if text2image.height() > 230.0 {
-        return Err(Error::TextOverLength(text.to_string()));
-    }
-    text2image.draw_on_canvas(canvas, (450.0, 850.0));
+    canvas.draw_text_area_auto_font_size(
+        IRect::from_ltrb(450, 850, 2270, 1080),
+        text,
+        40.0,
+        80.0,
+        text_params!(text_align = TextAlign::Left),
+    )?;
 
     canvas.draw_text_area_auto_font_size(
         IRect::from_ltrb(1565, 1520, 1700, 1595),
