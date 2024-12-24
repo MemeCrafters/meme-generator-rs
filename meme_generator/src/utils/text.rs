@@ -24,46 +24,50 @@ struct FontManager {
     font_collection: FontCollection,
 }
 
-impl FontManager {
-    pub fn init() -> Self {
-        let fonts_dir = meme_home().join("resources/fonts");
-        let mut font_provider = TypefaceFontProvider::new();
-        let font_mgr = FontMgr::new();
-        if fonts_dir.exists() {
-            let entries = fonts_dir.read_dir();
-            if let Ok(entries) = entries {
-                for entry in entries {
-                    if let Ok(entry) = entry {
-                        let path = entry.path();
-                        if path.is_file() {
-                            if let Some(ext) = path.extension() {
-                                let ext = ext.to_str().unwrap();
-                                if !["ttf", "ttc", "otf"].contains(&ext) {
-                                    continue;
-                                }
-                                if let Ok(bytes) = std::fs::read(path.clone()) {
-                                    if let Some(font) = font_mgr.new_from_data(&bytes, None) {
-                                        font_provider.register_typeface(font, None);
-                                    } else {
-                                        eprintln!(
-                                            "Failed to create typeface from font file: {path:?}",
-                                        );
-                                    }
-                                } else {
-                                    eprintln!("Failed to read font file: {path:?}");
-                                }
+fn construct_font_provider() -> TypefaceFontProvider {
+    let mut font_provider = TypefaceFontProvider::new();
+    let font_mgr = FontMgr::new();
+    let fonts_dir = meme_home().join("resources/fonts");
+    if !fonts_dir.exists() {
+        return font_provider;
+    }
+    let entries = fonts_dir.read_dir();
+    if let Ok(entries) = entries {
+        for entry in entries {
+            if let Ok(entry) = entry {
+                let path = entry.path();
+                if path.is_file() {
+                    if let Some(ext) = path.extension() {
+                        let ext = ext.to_str().unwrap();
+                        if !["ttf", "ttc", "otf"].contains(&ext) {
+                            continue;
+                        }
+                        if let Ok(bytes) = std::fs::read(path.clone()) {
+                            if let Some(font) = font_mgr.new_from_data(&bytes, None) {
+                                font_provider.register_typeface(font, None);
+                            } else {
+                                eprintln!("Failed to create typeface from font file: {path:?}",);
                             }
                         }
                     }
                 }
-            } else {
-                eprintln!("Failed to read fonts directory: {fonts_dir:?}");
             }
         }
+    }
+    font_provider
+}
 
+impl FontManager {
+    pub fn init() -> Self {
+        let font_mgr = FontMgr::new();
         let mut font_collection = FontCollection::new();
         font_collection.set_default_font_manager(font_mgr, None);
-        font_collection.set_asset_font_manager(FontMgr::from(font_provider));
+
+        if MEME_CONFIG.font.use_local_fonts {
+            let font_provider = construct_font_provider();
+            font_collection.set_asset_font_manager(FontMgr::from(font_provider));
+        }
+
         Self {
             font_collection: font_collection,
         }
