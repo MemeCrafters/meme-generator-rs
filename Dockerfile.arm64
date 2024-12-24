@@ -18,7 +18,11 @@ pre-build = [\n\
   "apt-get update && apt-get -y install libssl-dev:$CROSS_DEB_ARCH libfontconfig1-dev:$CROSS_DEB_ARCH libfreetype6-dev:$CROSS_DEB_ARCH",\n\
 ]\n\
 [target.aarch64-unknown-linux-gnu]\n\
-image = "ghcr.io/cross-rs/aarch64-unknown-linux-gnu:main"' > Cross.toml
+image = "ghcr.io/cross-rs/aarch64-unknown-linux-gnu:main"' > Cross.toml \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends ca-certificates curl \
+  && curl -fsSL https://get.docker.com -o get-docker.sh \
+  && sh get-docker.sh
 
 RUN cross build --release --target aarch64-unknown-linux-gnu --bin server
 
