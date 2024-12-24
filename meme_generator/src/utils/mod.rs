@@ -12,11 +12,11 @@ use chrono::{DateTime, Local, TimeZone};
 use skia_safe::{
     scalar, surfaces,
     textlayout::{Decoration, TextDecoration, TextDecorationMode},
-    Codec, Color, Color4f, Data, FilterMode, ISize, Image, MipmapMode, Paint, PaintJoin,
-    PaintStyle, SamplingOptions, Surface,
+    Color, Color4f, Data, FilterMode, ISize, Image, MipmapMode, Paint, PaintJoin, PaintStyle,
+    SamplingOptions, Surface,
 };
 
-use crate::{config::MEME_HOME, error::Error, utils::decoder::CodecExt};
+use crate::{config::MEME_HOME, error::Error};
 
 pub(crate) fn new_surface(size: impl Into<ISize>) -> Surface {
     surfaces::raster_n32_premul(size).unwrap()
@@ -70,7 +70,5 @@ pub(crate) fn local_date(year: i32, month: u32, day: u32) -> DateTime<Local> {
 pub(crate) fn load_image(path: impl Into<String>) -> Result<Image, Error> {
     let image_path = MEME_HOME.join("resources/images").join(path.into());
     let data = Data::new_copy(&read(image_path)?);
-    Codec::from_data(data)
-        .ok_or(Error::ImageDecodeError(None))?
-        .first_frame()
+    Image::from_encoded(data).ok_or(Error::ImageDecodeError(None))
 }

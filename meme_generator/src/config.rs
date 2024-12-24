@@ -93,12 +93,14 @@ impl Default for EncoderConfig {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(default)]
 pub struct FontConfig {
+    pub use_local_fonts: bool,
     pub default_font_families: Vec<String>,
 }
 
 impl Default for FontConfig {
     fn default() -> Self {
         FontConfig {
+            use_local_fonts: true,
             default_font_families: vec!["Noto Sans SC", "Noto Color Emoji"]
                 .into_iter()
                 .map(|s| s.to_string())
