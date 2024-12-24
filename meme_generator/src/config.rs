@@ -21,6 +21,7 @@ pub fn meme_home() -> PathBuf {
 pub static MEME_HOME: LazyLock<PathBuf> = LazyLock::new(meme_home);
 
 #[derive(Debug, Clone, Deserialize)]
+#[serde(default)]
 pub struct Config {
     pub meme: MemeConfig,
     pub resource: ResourceConfig,
@@ -44,6 +45,7 @@ impl Default for Config {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[serde(default)]
 pub struct MemeConfig {
     pub meme_disabled_list: Vec<String>,
 }
@@ -57,6 +59,7 @@ impl Default for MemeConfig {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[serde(default)]
 pub struct ResourceConfig {
     pub resource_url: String,
     pub download_fonts: bool,
@@ -74,6 +77,7 @@ impl Default for ResourceConfig {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[serde(default)]
 pub struct EncoderConfig {
     pub gif_max_frames: u16,
 }
@@ -87,6 +91,7 @@ impl Default for EncoderConfig {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[serde(default)]
 pub struct FontConfig {
     pub default_font_families: Vec<String>,
 }
@@ -103,6 +108,7 @@ impl Default for FontConfig {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[serde(default)]
 pub struct ServiceConfig {
     pub baidu_trans_appid: Option<String>,
     pub baidu_trans_apikey: Option<String>,
@@ -118,6 +124,7 @@ impl Default for ServiceConfig {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[serde(default)]
 pub struct ServerConfig {
     pub host: IpAddr,
     pub port: u16,
