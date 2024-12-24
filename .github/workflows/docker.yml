@@ -65,3 +65,16 @@ jobs:
             ghcr.io/memecrafters/meme-generator:rust
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Build and Push Arm64
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.arm64
+          platforms: linux/arm64
+          push: true
+          tags: |
+            meetwq/meme-generator:rust
+            ghcr.io/memecrafters/meme-generator:rust
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
