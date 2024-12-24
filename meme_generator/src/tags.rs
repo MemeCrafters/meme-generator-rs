@@ -95,7 +95,7 @@ meme_tags!(
     // lucky_star = (["幸运星"]),
     // konata = (["泉此方"], lucky_star),
     // 凉宫春日
-    // haruhi = (["凉宫春日"]),
+    haruhi = (["凉宫春日"]),
     // 猫和老鼠
     tom_and_jerry = (["猫和老鼠"]),
     tom = (["汤姆"], tom_and_jerry),

@@ -4,21 +4,15 @@ use skia_safe::{IRect, Image};
 use crate::{
     error::Error,
     manager::register_meme,
-    meme::{DecodedImage, MemeOptions},
+    meme::DecodedImage,
     utils::{
         canvas::CanvasExt,
         encoder::make_png_or_gif,
         image::{Fit, ImageExt},
         load_image, local_date,
+        options::Time,
     },
 };
-
-#[derive(MemeOptions)]
-struct Time {
-    /// 时间
-    #[option(short, long)]
-    time: String,
-}
 
 fn abstinence(
     images: &mut Vec<DecodedImage>,

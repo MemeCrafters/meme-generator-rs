@@ -4,19 +4,12 @@ use skia_safe::{textlayout::TextAlign, IRect};
 use crate::{
     error::Error,
     manager::register_meme,
-    meme::{DecodedImage, MemeOptions},
+    meme::DecodedImage,
     utils::{
         canvas::CanvasExt, color_from_hex_code, encoder::encode_png, image::ImageExt, load_image,
-        local_date, new_paint, text::text_params,
+        local_date, new_paint, options::Time, text::text_params,
     },
 };
-
-#[derive(MemeOptions)]
-struct Time {
-    /// 时间
-    #[option(short, long)]
-    time: String,
-}
 
 fn certificate(
     _: &mut Vec<DecodedImage>,

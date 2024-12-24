@@ -16,3 +16,10 @@ pub(crate) struct Gender {
     #[option(short, long, default = "unknown", choices = ["male", "female", "unknown"])]
     pub gender: String,
 }
+
+#[derive(MemeOptions)]
+pub(crate) struct Time {
+    /// 时间
+    #[option(short, long)]
+    pub time: String,
+}
