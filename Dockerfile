@@ -32,11 +32,12 @@ host = '0.0.0.0'\n\
 port = 2233" > /root/.meme_generator/config.toml
 
 COPY --from=builder /tmp/target/release/server /app/server
-COPY resources/fonts /root/.meme_generator/resources/fonts
+COPY resources/fonts /usr/share/fonts/meme-fonts/
 COPY resources/images /root/.meme_generator/resources/images
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends pkg-config libssl-dev libfontconfig1-dev libfreetype6-dev \
+  && apt-get install -y --no-install-recommends pkg-config libssl-dev libfontconfig1-dev libfreetype6-dev fontconfig fonts-noto-color-emoji \
+  && fc-cache -fv \
   && rm -rf /var/lib/apt/lists/*
 
 CMD ["/app/server"]
