@@ -40,7 +40,7 @@ COPY resources/fonts /usr/share/fonts/meme-fonts/
 COPY resources/images /root/.meme_generator/resources/images
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends pkg-config libssl-dev fontconfig \
+  && apt-get install -y --no-install-recommends openssl fontconfig \
   && fc-cache -fv \
   && rm -rf /var/lib/apt/lists/*
 
