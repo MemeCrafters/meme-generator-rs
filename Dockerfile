@@ -13,8 +13,6 @@ RUN cargo build --release --bin server
 
 FROM debian:bookworm-slim AS app
 
-WORKDIR /app
-
 EXPOSE 2233
 
 ENV TZ=Asia/Shanghai \
@@ -22,7 +20,7 @@ ENV TZ=Asia/Shanghai \
   GIF_MAX_FRAMES=200 \
   DEFAULT_FONT_FAMILIES="['Noto Sans SC', 'Noto Color Emoji']"
 
-RUN mkdir -p /root/.meme_generator/resources \
+RUN mkdir -p /root/.meme_generator \
   && echo "\
 [meme]\n\
 meme_disabled_list = $MEME_DISABLED_LIST\n\
@@ -35,13 +33,13 @@ default_font_families = $DEFAULT_FONT_FAMILIES\n\
 host = '0.0.0.0'\n\
 port = 2233" > /root/.meme_generator/config.toml
 
-COPY --from=builder /tmp/target/release/server /app/server
+COPY --from=builder /tmp/target/release/server /usr/local/bin/
 COPY resources/fonts /usr/share/fonts/meme-fonts/
-COPY resources/images /root/.meme_generator/resources/images
+COPY resources/images /root/.meme_generator/resources/images/
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends openssl fontconfig \
   && fc-cache -fv \
   && rm -rf /var/lib/apt/lists/*
 
-CMD ["/app/server"]
+CMD ["server"]
