@@ -4,12 +4,6 @@ on:
   push:
     branches:
       - test
-    paths:
-      - "meme_generator/**"
-      - "meme_generator_server/**"
-      - "resources/**"
-    tags:
-      - "v*"
   workflow_dispatch:
 
 permissions:
