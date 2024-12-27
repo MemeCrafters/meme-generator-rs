@@ -8,6 +8,8 @@ on:
       - "meme_generator/**"
       - "meme_generator_cli/**"
       - "meme_generator_server/**"
+    tags:
+      - "v*"
   pull_request_target:
     paths:
       - "meme_generator/**"
@@ -28,9 +30,6 @@ jobs:
     strategy:
       matrix:
         platform:
-          - runner: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            label: linux-x86_64
           - runner: windows-latest
             target: x86_64-pc-windows-msvc
             label: windows-x86_64
@@ -60,33 +59,88 @@ jobs:
             !target/${{ matrix.platform.target }}/release/meme.d
             !target/${{ matrix.platform.target }}/release/meme.pdb
 
-  build_linux_aarch64:
-    runs-on: ubuntu-latest
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          working-directory: meme_generator_py
+          args: --release --out dist
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: meme-generator-wheels-${{ matrix.platform.label }}
+          path: meme_generator_py/dist
+
+  build_linux:
+    runs-on: ${{ matrix.platform.runner }}
+    container: ${{ matrix.platform.container }}
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-latest
+            container: ghcr.io/memecrafters/meme-generator-container:latest
+            target: x86_64-unknown-linux-gnu
+            label: linux-x86_64
+
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: swatinem/rust-cache@v2
 
       - name: Rustup add target
-        run: rustup target add aarch64-unknown-linux-gnu
-
-      - name: Install dependencies
-        run: |
-          cargo install cross
-          echo "[build]" >> Cross.toml
-          echo "pre-build = [" >> Cross.toml
-          echo '  "dpkg --add-architecture $CROSS_DEB_ARCH",' >> Cross.toml
-          echo '  "apt-get update && apt-get -y install libssl-dev:$CROSS_DEB_ARCH libfontconfig1-dev:$CROSS_DEB_ARCH libfreetype6-dev:$CROSS_DEB_ARCH",' >> Cross.toml
-          echo "]" >> Cross.toml
-          echo "[target.aarch64-unknown-linux-gnu]" >> Cross.toml
-          echo 'image = "ghcr.io/cross-rs/aarch64-unknown-linux-gnu:main"' >> Cross.toml
+        run: rustup target add ${{ matrix.platform.target }}
 
       - name: Build target
-        run: cross build --release --target aarch64-unknown-linux-gnu --bin meme --features server
+        run: cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server,vendored,embed-freetype
 
       - uses: actions/upload-artifact@v4
         with:
-          name: "meme-generator-cli-linux-aarch64"
+          name: "meme-generator-cli-${{ matrix.platform.label }}"
           path: |
-            target/aarch64-unknown-linux-gnu/release/meme*
-            !target/aarch64-unknown-linux-gnu/release/meme.d
+            target/${{ matrix.platform.target }}/release/meme*
+            !target/${{ matrix.platform.target }}/release/meme.d
+
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          working-directory: meme_generator_py
+          args: --release --out dist --features vendored,embed-freetype
+          container: "off"
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: meme-generator-wheels-${{ matrix.platform.label }}
+          path: meme_generator_py/dist
+
+  crates_io_publish:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [build, build_linux]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+
+      - name: Cargo login
+        run: cargo login ${{ secrets.CRATES_IO_API_TOKEN }}
+
+      - name: Cargo Publish
+        run: cargo publish --package meme_generator
+
+  pypi_publish:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [build, build_linux]
+    steps:
+      - uses: actions/download-artifact@v4
+
+      - name: Publish to PyPI
+        uses: PyO3/maturin-action@v1
+        env:
+          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        with:
+          command: upload
+          args: --non-interactive --skip-existing meme-generator-wheels-*/*
