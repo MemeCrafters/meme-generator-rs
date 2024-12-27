@@ -11,7 +11,11 @@ edition.workspace = true
 
 [dependencies]
 chrono = "0.4"
-pyo3 = { version = "0.23", features = ["extension-module", "abi3-py39", "chrono"] }
+pyo3 = { version = "0.23", features = [
+    "extension-module",
+    "abi3-py39",
+    "chrono",
+] }
 serde_json = "1.0"
 
 meme_generator = { path = "../meme_generator" }
@@ -19,6 +23,3 @@ meme_generator = { path = "../meme_generator" }
 [lib]
 name = "meme_generator"
 crate-type = ["cdylib"]
-
-[features]
-contrib = ["meme_generator/contrib"]

@@ -72,24 +72,6 @@ jobs:
           name: meme-generator-wheels-${{ matrix.platform.os }}-${{ matrix.platform.target }}
           path: meme_generator_py/dist
 
-      - name: Rename project name
-        run: sed -ie "s#meme_generator#meme_generator_contrib#g" meme_generator_py/pyproject.toml
-
-      - name: Build wheels contrib
-        uses: PyO3/maturin-action@v1
-        with:
-          target: ${{ matrix.platform.target }}
-          working-directory: meme_generator_py
-          args: --release --features contrib --out dist_contrib
-          before-script-linux: ${{ matrix.platform.script || '' }}
-          sccache: true
-
-      - name: Upload wheels contrib
-        uses: actions/upload-artifact@v4
-        with:
-          name: meme-generator-contrib-wheels-${{ matrix.platform.os }}-${{ matrix.platform.target }}
-          path: meme_generator_py/dist_contrib
-
   build_sdist:
     runs-on: ubuntu-latest
     steps:
@@ -108,22 +90,6 @@ jobs:
           name: meme-generator-wheels-sdist
           path: meme_generator_py/dist
 
-      - name: Rename project name
-        run: sed -ie "s#meme_generator#meme_generator_contrib#g" meme_generator_py/pyproject.toml
-
-      - name: Build sdist contrib
-        uses: PyO3/maturin-action@v1
-        with:
-          working-directory: meme_generator_py
-          command: sdist
-          args: --out dist_contrib
-
-      - name: Upload sdist contrib
-        uses: actions/upload-artifact@v4
-        with:
-          name: meme-generator-contrib-wheels-sdist
-          path: meme_generator_py/dist_contrib
-
   release:
     name: Release
     runs-on: ubuntu-latest
@@ -139,11 +105,3 @@ jobs:
         with:
           command: upload
           args: --non-interactive --skip-existing meme-generator-wheels-*/*
-
-      - name: Publish to PyPI contrib
-        uses: PyO3/maturin-action@v1
-        env:
-          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-        with:
-          command: upload
-          args: --non-interactive --skip-existing meme-generator-contrib-wheels-*/*

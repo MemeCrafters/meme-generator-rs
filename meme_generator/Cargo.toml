@@ -28,6 +28,5 @@ toml = "0.8"
 meme_options_derive = { version = "0.0.2", path = "../meme_options_derive" }
 
 [features]
-contrib = []
 vendored = ["reqwest/native-tls-vendored"]
 embed-freetype = ["skia-safe/embed-freetype"]

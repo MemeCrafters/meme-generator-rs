@@ -60,17 +60,6 @@ jobs:
             !target/${{ matrix.platform.target }}/release/meme.d
             !target/${{ matrix.platform.target }}/release/meme.pdb
 
-      - name: Build contrib
-        run: cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server,contrib
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: "meme-generator-contrib-cli-${{ matrix.platform.label }}"
-          path: |
-            target/${{ matrix.platform.target }}/release/meme*
-            !target/${{ matrix.platform.target }}/release/meme.d
-            !target/${{ matrix.platform.target }}/release/meme.pdb
-
   build_linux_aarch64:
     runs-on: ubuntu-latest
     steps:
@@ -98,16 +87,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: "meme-generator-cli-linux-aarch64"
-          path: |
-            target/aarch64-unknown-linux-gnu/release/meme*
-            !target/aarch64-unknown-linux-gnu/release/meme.d
-
-      - name: Build contrib
-        run: cross build --release --target aarch64-unknown-linux-gnu --bin meme --features server,contrib
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: "meme-generator-contrib-cli-linux-aarch64"
           path: |
             target/aarch64-unknown-linux-gnu/release/meme*
             !target/aarch64-unknown-linux-gnu/release/meme.d
