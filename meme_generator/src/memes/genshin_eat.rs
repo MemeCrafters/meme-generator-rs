@@ -5,11 +5,11 @@ use crate::{
     error::Error,
     manager::register_meme,
     meme::{shortcut, DecodedImage, MemeOptions},
-    tags::{union_tags, MemeTags},
     utils::{
         encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
         image::ImageExt,
         load_image, local_date,
+        tags::{union_tags, MemeTags},
     },
 };
 

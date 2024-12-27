@@ -7,6 +7,7 @@ on:
     paths:
       - "meme_generator/**"
       - "meme_generator_cli/**"
+      - "meme_generator_py/**"
       - "meme_generator_server/**"
     tags:
       - "v*"
@@ -14,6 +15,7 @@ on:
     paths:
       - "meme_generator/**"
       - "meme_generator_cli/**"
+      - "meme_generator_py/**"
       - "meme_generator_server/**"
   workflow_dispatch:
 

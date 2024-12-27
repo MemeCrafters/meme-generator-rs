@@ -3,6 +3,7 @@ pub(crate) mod decoder;
 pub(crate) mod encoder;
 pub(crate) mod image;
 pub(crate) mod options;
+pub(crate) mod tags;
 pub(crate) mod text;
 pub(crate) mod tools;
 

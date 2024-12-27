@@ -62,7 +62,6 @@ pub(crate) fn encode_png(image: &Image) -> Result<Vec<u8>, Error> {
 }
 
 /// gif 对齐方式
-#[allow(dead_code)]
 #[derive(PartialEq)]
 pub(crate) enum FrameAlign {
     /// 不延长

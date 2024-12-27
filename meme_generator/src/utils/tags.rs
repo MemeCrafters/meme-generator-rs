@@ -55,17 +55,17 @@ meme_tags!(
     // 蔚蓝档案
     blue_archive = (["蔚蓝档案", "碧蓝档案"]),
     // shiroko = (["砂狼白子"], blue_archive),
-    // kokona = (["春原心奈", "春原心菜"], blue_archive),
+    kokona = (["春原心奈", "春原心菜"], blue_archive),
     // plana = (["普拉娜"], blue_archive),
     arona = (["阿罗娜"], blue_archive),
     // 明日方舟
     arknights = (["明日方舟"]),
     // 鸣潮
-    // wuthering_waves = (["鸣潮"]),
-    // jinhsi = (["今汐"], wuthering_waves),
+    wuthering_waves = (["鸣潮"]),
+    jinhsi = (["今汐"], wuthering_waves),
     // 公主连结
-    // re_dive = (["公主连结"]),
-    // karyl = (["凯露"], re_dive),
+    re_dive = (["公主连结"]),
+    karyl = (["凯露"], re_dive),
     // 间谍过家家
     // spy_family = (["间谍过家家"]),
     // anya = (["阿尼亚·福杰"], spy_family),
@@ -92,8 +92,8 @@ meme_tags!(
     onimai = (["别当欧尼酱了"]),
     mahiro = (["绪山真寻"], onimai),
     // 幸运星
-    // lucky_star = (["幸运星"]),
-    // konata = (["泉此方"], lucky_star),
+    lucky_star = (["幸运星"]),
+    konata = (["泉此方"], lucky_star),
     // 凉宫春日
     haruhi = (["凉宫春日"]),
     // 猫和老鼠
@@ -111,13 +111,13 @@ meme_tags!(
     // 哈利·波特
     // harry_potter = (["哈利·波特"]),
     // VTuber
-    // gura = (["噶呜·古拉", "Gawr Gura", "鲨鲨"]),
+    gura = (["噶呜·古拉", "Gawr Gura", "鲨鲨"]),
     // VOCALOID
     // miku = (["初音未来"]),
     // 其他
     atri = (["亚托莉", "ATRI", "萝卜子"]),
     capoo = (["猫猫虫", "咖波"]),
-    // kirby = (["星之卡比"]),
+    kirby = (["星之卡比"]),
     // maimai = (["舞萌"]),
     // nekoha = (["猫羽雫"]),
 );

@@ -4,9 +4,9 @@ use crate::{
     error::Error,
     manager::register_meme,
     meme::DecodedImage,
-    tags::MemeTags,
     utils::{
         encoder::make_png_or_gif, image::ImageExt, load_image, local_date, options::NoOptions,
+        tags::MemeTags,
     },
 };
 

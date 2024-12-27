@@ -4,12 +4,12 @@ use crate::{
     error::Error,
     manager::register_meme,
     meme::DecodedImage,
-    tags::MemeTags,
     utils::{
         encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
         image::{Fit, ImageExt},
         load_image, local_date,
         options::NoOptions,
+        tags::MemeTags,
     },
 };
 

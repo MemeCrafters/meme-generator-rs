@@ -31,7 +31,10 @@ fn clown_mask(
         let frame = load_image("clown_mask/0.png")?;
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
-        let image = images[0].circle().resize_exact((440, 440)).rotate(-15.0);
+        let image = images[0]
+            .circle()
+            .resize_exact((440, 440))
+            .rotate_crop(-15.0);
         canvas.draw_image(&image, (16, 104), None);
         canvas.draw_image(&frame, (0, 0), None);
         Ok(surface.image_snapshot())
@@ -45,7 +48,7 @@ fn clown_mask(
         let image = images[0]
             .circle()
             .perspective(&[(282, 0), (496, 154), (214, 546), (0, 392)])
-            .rotate(-6.0);
+            .rotate_crop(-6.0);
         canvas.draw_image(&image, (214, 100), None);
         canvas.draw_image(&frame2, (-85, 20), None);
         Ok(surface.image_snapshot())

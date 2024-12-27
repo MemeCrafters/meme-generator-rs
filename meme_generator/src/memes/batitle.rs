@@ -4,11 +4,11 @@ use crate::{
     error::Error,
     manager::register_meme,
     meme::DecodedImage,
-    tags::MemeTags,
     utils::{
         encoder::encode_png,
         load_image, local_date, new_stroke_paint, new_surface,
         options::NoOptions,
+        tags::MemeTags,
         text::{text_params, Text2Image},
     },
 };

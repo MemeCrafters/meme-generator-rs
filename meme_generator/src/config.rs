@@ -69,7 +69,7 @@ impl Default for ResourceConfig {
     fn default() -> Self {
         ResourceConfig {
             resource_url:
-                "https://ghp.ci/https://raw.githubusercontent.com/MemeCrafters/meme-generator-rs/"
+                "https://ghgo.xyz/https://raw.githubusercontent.com/MemeCrafters/meme-generator-rs/"
                     .to_string(),
             download_fonts: true,
         }

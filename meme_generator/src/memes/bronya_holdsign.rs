@@ -4,10 +4,9 @@ use crate::{
     error::Error,
     manager::register_meme,
     meme::DecodedImage,
-    tags::MemeTags,
     utils::{
         canvas::CanvasExt, encoder::encode_png, image::ImageExt, load_image, local_date, new_paint,
-        options::NoOptions, text::text_params,
+        options::NoOptions, tags::MemeTags, text::text_params,
     },
 };
 

@@ -48,7 +48,7 @@ fn clauvio_twist(
         let image = images[0]
             .circle()
             .resize_exact((100, 100))
-            .rotate(-angle as f32);
+            .rotate_crop(-angle as f32);
         canvas.draw_image(&image, pos, None);
         Ok(surface.image_snapshot())
     };

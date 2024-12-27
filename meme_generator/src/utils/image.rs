@@ -38,15 +38,21 @@ pub(crate) trait ImageExt {
 
     fn rotate(&self, degrees: f32) -> Image;
 
+    fn rotate_crop(&self, degrees: f32) -> Image;
+
     fn flip_vertical(&self) -> Image;
 
     fn flip_horizontal(&self) -> Image;
 
     fn perspective(&self, points: &[impl Into<Point> + Copy; 4]) -> Image;
 
+    fn color_filter(&self, matrix: ColorMatrix) -> Image;
+
     fn grayscale(&self) -> Image;
 
     fn invert(&self) -> Image;
+
+    fn brightness(&self, factor: f32) -> Image;
 }
 
 impl ImageExt for Image {
@@ -197,6 +203,16 @@ impl ImageExt for Image {
         surface.image_snapshot()
     }
 
+    fn rotate_crop(&self, degrees: f32) -> Image {
+        let mut surface = new_surface(self.dimensions());
+        let canvas = surface.canvas();
+        canvas.translate((self.width() as f32 / 2.0, self.height() as f32 / 2.0));
+        canvas.rotate(degrees, None);
+        canvas.translate((-self.width() as f32 / 2.0, -self.height() as f32 / 2.0));
+        canvas.draw_image_with_sampling_options(self, (0, 0), default_sampling_options(), None);
+        surface.image_snapshot()
+    }
+
     fn flip_vertical(&self) -> Image {
         let mut surface = new_surface(self.dimensions());
         let canvas = surface.canvas();
@@ -256,37 +272,39 @@ impl ImageExt for Image {
         surface.image_snapshot()
     }
 
-    fn grayscale(&self) -> Image {
+    fn color_filter(&self, matrix: ColorMatrix) -> Image {
         let mut surface = new_surface(self.dimensions());
         let canvas = surface.canvas();
         let mut paint = Paint::default();
-        paint.set_color_filter(color_filters::matrix(
-            &ColorMatrix::new(
-                0.2126, 0.7152, 0.0722, 0.0, 0.0, //
-                0.2126, 0.7152, 0.0722, 0.0, 0.0, //
-                0.2126, 0.7152, 0.0722, 0.0, 0.0, //
-                0.0, 0.0, 0.0, 1.0, 0.0,
-            ),
-            None,
-        ));
+        paint.set_color_filter(color_filters::matrix(&matrix, None));
         canvas.draw_image(self, (0, 0), Some(&paint));
         surface.image_snapshot()
     }
 
+    fn grayscale(&self) -> Image {
+        self.color_filter(ColorMatrix::new(
+            0.2126, 0.7152, 0.0722, 0.0, 0.0, //
+            0.2126, 0.7152, 0.0722, 0.0, 0.0, //
+            0.2126, 0.7152, 0.0722, 0.0, 0.0, //
+            0.0, 0.0, 0.0, 1.0, 0.0,
+        ))
+    }
+
     fn invert(&self) -> Image {
-        let mut surface = new_surface(self.dimensions());
-        let canvas = surface.canvas();
-        let mut paint = Paint::default();
-        paint.set_color_filter(color_filters::matrix(
-            &ColorMatrix::new(
-                -1.0, 0.0, 0.0, 0.0, 1.0, //
-                0.0, -1.0, 0.0, 0.0, 1.0, //
-                0.0, 0.0, -1.0, 0.0, 1.0, //
-                0.0, 0.0, 0.0, 1.0, 0.0,
-            ),
-            None,
-        ));
-        canvas.draw_image(self, (0, 0), Some(&paint));
-        surface.image_snapshot()
+        self.color_filter(ColorMatrix::new(
+            -1.0, 0.0, 0.0, 0.0, 1.0, //
+            0.0, -1.0, 0.0, 0.0, 1.0, //
+            0.0, 0.0, -1.0, 0.0, 1.0, //
+            0.0, 0.0, 0.0, 1.0, 0.0,
+        ))
+    }
+
+    fn brightness(&self, factor: f32) -> Image {
+        self.color_filter(ColorMatrix::new(
+            factor, 0.0, 0.0, 0.0, 0.0, //
+            0.0, factor, 0.0, 0.0, 0.0, //
+            0.0, 0.0, factor, 0.0, 0.0, //
+            0.0, 0.0, 0.0, 1.0, 0.0,
+        ))
     }
 }
