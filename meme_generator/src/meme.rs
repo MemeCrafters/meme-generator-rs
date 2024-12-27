@@ -7,7 +7,7 @@ use skia_safe::{Codec, Data};
 
 use crate::{
     error::Error,
-    utils::{encoder::encode_png, tools::empty_image},
+    utils::{encoder::encode_png, tools::grid_pattern_image},
 };
 
 pub(crate) use meme_options_derive::MemeOptions;
@@ -131,7 +131,6 @@ macro_rules! shortcut {
 
 pub(crate) use shortcut;
 
-#[allow(dead_code)]
 pub(crate) mod shortcut_setters {
     pub fn humanized(humanized: &str) -> Option<String> {
         Some(humanized.to_string())
@@ -381,7 +380,7 @@ where
     fn generate_preview(&self) -> Result<Vec<u8>, Error> {
         let mut images = Vec::new();
         if self.min_images > 0 {
-            let image = encode_png(&empty_image())?;
+            let image = encode_png(&grid_pattern_image())?;
             for i in 0..self.min_images {
                 let name = if self.min_images == 1 {
                     "{name}".to_string()
