@@ -263,70 +263,6 @@
       "hash": "d0c4704293099ef958d5320ea5831365ac186eebc9bd865e6d5a47910e294a94"
     },
     {
-      "file": "bite/00.png",
-      "hash": "91ef0ce434ccfd6b02ad69396316a702ae6f5454fe5b0ce96b2acbab1a1b14be"
-    },
-    {
-      "file": "bite/01.png",
-      "hash": "afc61a7f81491f9931fbb459c4d44f17f03ad99ee2f397be0776353a76d713e3"
-    },
-    {
-      "file": "bite/02.png",
-      "hash": "61fc92db822823bbe8246accfc0fe765f677ade9ccafcd2740884e69928cbc80"
-    },
-    {
-      "file": "bite/03.png",
-      "hash": "567027d5adf0281d3a6030584256a7f0aabe75025921c4e7d802db9377be2019"
-    },
-    {
-      "file": "bite/04.png",
-      "hash": "a23f0ae1fd63161894ad009b584a1599ec9567f865fa03e7f1198271c66ff37e"
-    },
-    {
-      "file": "bite/05.png",
-      "hash": "f1c1a5e05885d0f45bba0208cb334a91d47628bcc0dfd9f5e15ea88a284c81b5"
-    },
-    {
-      "file": "bite/06.png",
-      "hash": "a3d34700b19f258d59b12dbcc9e44a0a5a7822b170af3818482e226c2cc00ddd"
-    },
-    {
-      "file": "bite/07.png",
-      "hash": "5e02e6cd28989e837e1442fd63cb1cf2387a259c6ce31dc0d23f47c037e1ec3d"
-    },
-    {
-      "file": "bite/08.png",
-      "hash": "aec19aa2e98749cf4d1f7d9b2f2bf947bbdeea3d4ff471c243fe80e7c67896ee"
-    },
-    {
-      "file": "bite/09.png",
-      "hash": "72e7434fd2ff423955fceca250f3043a78d073a2c78c1fbc793abf4523a0893a"
-    },
-    {
-      "file": "bite/10.png",
-      "hash": "934d04a8d0784a80f330a33cf943b6b09b5fa6816dd030e78cf804c73151ed5d"
-    },
-    {
-      "file": "bite/11.png",
-      "hash": "2d8531f0cf4a8788a46914acbc41f8c2de11385ed3fae0eba45fabbb007eaf46"
-    },
-    {
-      "file": "bite/12.png",
-      "hash": "aec19aa2e98749cf4d1f7d9b2f2bf947bbdeea3d4ff471c243fe80e7c67896ee"
-    },
-    {
-      "file": "bite/13.png",
-      "hash": "72e7434fd2ff423955fceca250f3043a78d073a2c78c1fbc793abf4523a0893a"
-    },
-    {
-      "file": "bite/14.png",
-      "hash": "934d04a8d0784a80f330a33cf943b6b09b5fa6816dd030e78cf804c73151ed5d"
-    },
-    {
-      "file": "bite/15.png",
-      "hash": "2d8531f0cf4a8788a46914acbc41f8c2de11385ed3fae0eba45fabbb007eaf46"
-    },
-    {
       "file": "blamed_mahiro/00.png",
       "hash": "4f9ef4be79a6ebff44e0bf54ac406d605fa9cbd935da2ed996d8ad55693ce82e"
     },
@@ -2193,18 +2129,6 @@
     {
       "file": "divorce/0.png",
       "hash": "f83d6bd549a005c70d15d7bc8b698859f38c0dec238e630941eba5c1abf07931"
-    },
-    {
-      "file": "do/0.png",
-      "hash": "8a0c7a54d538a91896f24b27a5850622af63f0c459e6d6c99f9c948fb3b04746"
-    },
-    {
-      "file": "do/1.png",
-      "hash": "6e0489cae9f9ef5b795ae8cec8a5e128e04d4a28ab74d6bb3f225e0e27e313f6"
-    },
-    {
-      "file": "do/2.png",
-      "hash": "dbb253a4f6a90e6fd58afc186035e499a24883cf79af6397188df07dd65e3bcf"
     },
     {
       "file": "dog_dislike/00.png",
