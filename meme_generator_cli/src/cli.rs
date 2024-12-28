@@ -14,7 +14,7 @@ use clap::{
 
 use meme_generator::{
     config::MEME_CONFIG,
-    error::{EncodeError, Error},
+    error::Error,
     manager::{get_meme, get_meme_keys, get_memes},
     meme::{MemeOption, OptionValue, RawImage},
     resources::check_resources_sync,
@@ -504,20 +504,11 @@ pub(crate) fn handle_generate(sub_matches: &ArgMatches) {
 fn handle_result(result: Result<Vec<u8>, Error>) {
     match result {
         Err(Error::ImageDecodeError(err)) => {
-            if let Some(err) = err {
-                eprintln!("图片解码失败：{err:?}");
-            } else {
-                eprintln!("图片解码失败");
-            }
+            eprintln!("图片解码失败：{err}");
         }
-        Err(Error::ImageEncodeError(err)) => match err {
-            EncodeError::GifEncodeError(err) => {
-                eprintln!("图片编码为 GIF 失败：{err:?}");
-            }
-            EncodeError::SkiaEncodeError => {
-                eprintln!("图片编码失败");
-            }
-        },
+        Err(Error::ImageEncodeError(err)) => {
+            eprintln!("图片编码失败：{err}");
+        }
         Err(Error::IOError(err)) => {
             eprintln!("IO 错误：{err}");
         }

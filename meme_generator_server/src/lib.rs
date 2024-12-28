@@ -17,7 +17,7 @@ use serde_json::{json, Value};
 use tokio::{net::TcpListener, runtime::Runtime, task::spawn_blocking};
 
 use meme_generator::{
-    error::{EncodeError, Error},
+    error::Error,
     manager::{get_meme, get_meme_keys},
     meme::{OptionValue, RawImage},
     version::VERSION,
@@ -45,9 +45,9 @@ struct MemeRequest {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct ErrorResponse {
-    err_code: u16,
+    code: u16,
     message: String,
-    data: Option<Value>,
+    data: Value,
 }
 
 impl IntoResponse for ErrorResponse {
@@ -153,57 +153,45 @@ async fn meme_generate(
 fn handle_error(error: Error) -> ErrorResponse {
     let message = format!("{error}");
     match error {
-        Error::ImageDecodeError(Some(err)) => ErrorResponse {
-            err_code: 510,
+        Error::ImageDecodeError(err) => ErrorResponse {
+            code: 510,
             message,
-            data: Some(json!({ "error": format!("{err:?}") })),
+            data: json!({ "error": err }),
         },
-        Error::ImageDecodeError(None) => ErrorResponse {
-            err_code: 510,
+        Error::ImageEncodeError(err) => ErrorResponse {
+            code: 520,
             message,
-            data: None,
-        },
-        Error::ImageEncodeError(encode_err) => match encode_err {
-            EncodeError::GifEncodeError(err) => ErrorResponse {
-                err_code: 520,
-                message,
-                data: Some(json!({ "error": format!("{err}") })),
-            },
-            EncodeError::SkiaEncodeError => ErrorResponse {
-                err_code: 521,
-                message,
-                data: None,
-            },
+            data: json!({ "error": err }),
         },
         Error::IOError(err) => ErrorResponse {
-            err_code: 530,
+            code: 530,
             message,
-            data: Some(json!({ "error": format!("{err}") })),
+            data: json!({ "error": err }),
         },
         Error::DeserializeError(err) => ErrorResponse {
-            err_code: 540,
+            code: 540,
             message,
-            data: Some(json!({ "error": format!("{err}") })),
+            data: json!({ "error": err }),
         },
         Error::ImageNumberMismatch(min, max, actual) => ErrorResponse {
-            err_code: 550,
+            code: 550,
             message,
-            data: Some(json!({ "min": min, "max": max, "actual": actual })),
+            data: json!({ "min": min, "max": max, "actual": actual }),
         },
         Error::TextNumberMismatch(min, max, actual) => ErrorResponse {
-            err_code: 551,
+            code: 551,
             message,
-            data: Some(json!({ "min": min, "max": max, "actual": actual })),
+            data: json!({ "min": min, "max": max, "actual": actual }),
         },
         Error::TextOverLength(text) => ErrorResponse {
-            err_code: 560,
+            code: 560,
             message,
-            data: Some(json!({ "text": text })),
+            data: json!({ "text": text }),
         },
         Error::MemeFeedback(feedback) => ErrorResponse {
-            err_code: 570,
+            code: 570,
             message,
-            data: Some(json!({ "feedback": feedback })),
+            data: json!({ "feedback": feedback }),
         },
     }
 }

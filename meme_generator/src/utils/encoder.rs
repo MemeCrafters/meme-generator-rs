@@ -1,12 +1,7 @@
 use gif::{DisposalMethod, Encoder, Frame, Repeat};
 use skia_safe::{image::CachingHint, AlphaType, ColorType, EncodedImageFormat, Image, ImageInfo};
 
-use crate::{
-    config::MEME_CONFIG,
-    error::{EncodeError, Error},
-    meme::DecodedImage,
-    utils::decoder::CodecExt,
-};
+use crate::{config::MEME_CONFIG, error::Error, meme::DecodedImage, utils::decoder::CodecExt};
 
 pub(crate) fn encode_gif(images: &Vec<Image>, duration: f32) -> Result<Vec<u8>, Error> {
     let mut bytes = Vec::new();
@@ -53,7 +48,7 @@ fn encode_image(
 ) -> Result<Vec<u8>, Error> {
     let data = image
         .encode(None, format, quality)
-        .ok_or(EncodeError::SkiaEncodeError)?;
+        .ok_or(Error::ImageEncodeError("Skia encode error".to_string()))?;
     Ok(data.as_bytes().to_vec())
 }
 

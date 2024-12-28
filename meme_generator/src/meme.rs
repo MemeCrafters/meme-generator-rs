@@ -191,7 +191,8 @@ pub struct DecodedImage<'a> {
 impl<'a> DecodedImage<'a> {
     pub fn from(input: &RawImage) -> Result<DecodedImage<'static>, Error> {
         let data = Data::new_copy(&input.data);
-        let codec = Codec::from_data(data).ok_or(Error::ImageDecodeError(None))?;
+        let codec = Codec::from_data(data)
+            .ok_or(Error::ImageDecodeError("Skia decode error".to_string()))?;
         Ok(DecodedImage {
             name: input.name.clone(),
             codec: codec,

@@ -63,10 +63,10 @@ class MemeInfo:
     date_modified: datetime
 
 class ImageDecodeError:
-    error: Optional[str]
+    error: str
 
 class ImageEncodeError:
-    error: Optional[str]
+    error: str
 
 class IOError:
     error: str

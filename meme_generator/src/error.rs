@@ -3,17 +3,11 @@ use std::{error, fmt, io};
 use skia_safe::codec;
 
 #[derive(Debug)]
-pub enum EncodeError {
-    GifEncodeError(gif::EncodingError),
-    SkiaEncodeError,
-}
-
-#[derive(Debug)]
 pub enum Error {
-    ImageDecodeError(Option<codec::Result>),
-    ImageEncodeError(EncodeError),
-    IOError(io::Error),
-    DeserializeError(serde_json::Error),
+    ImageDecodeError(String),
+    ImageEncodeError(String),
+    IOError(String),
+    DeserializeError(String),
     ImageNumberMismatch(u8, u8, u8),
     TextNumberMismatch(u8, u8, u8),
     TextOverLength(String),
@@ -23,14 +17,8 @@ pub enum Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Error::ImageDecodeError(Some(err)) => write!(f, "Failed to decode image: {err:?}"),
-            Error::ImageDecodeError(None) => write!(f, "Failed to decode image"),
-            Error::ImageEncodeError(EncodeError::GifEncodeError(err)) => {
-                write!(f, "Failed to encode image as GIF: {err}")
-            }
-            Error::ImageEncodeError(EncodeError::SkiaEncodeError) => {
-                write!(f, "Failed to encode image")
-            }
+            Error::ImageDecodeError(err) => write!(f, "Failed to decode image: {err}"),
+            Error::ImageEncodeError(err) => write!(f, "Failed to encode image: {err}"),
             Error::IOError(err) => write!(f, "IO error: {err}"),
             Error::DeserializeError(err) => write!(f, "Failed to deserialize: {err}"),
             Error::ImageNumberMismatch(min, max, actual) => write!(
@@ -49,31 +37,25 @@ impl fmt::Display for Error {
 
 impl From<codec::Result> for Error {
     fn from(err: codec::Result) -> Self {
-        Error::ImageDecodeError(Some(err))
+        Error::ImageDecodeError(format!("{:?}", err))
     }
 }
 
 impl From<gif::EncodingError> for Error {
     fn from(err: gif::EncodingError) -> Self {
-        Error::ImageEncodeError(EncodeError::GifEncodeError(err))
-    }
-}
-
-impl From<EncodeError> for Error {
-    fn from(err: EncodeError) -> Self {
-        Error::ImageEncodeError(err)
+        Error::ImageEncodeError(err.to_string())
     }
 }
 
 impl From<io::Error> for Error {
     fn from(err: io::Error) -> Self {
-        Error::IOError(err)
+        Error::IOError(err.to_string())
     }
 }
 
 impl From<serde_json::Error> for Error {
     fn from(err: serde_json::Error) -> Self {
-        Error::DeserializeError(err)
+        Error::DeserializeError(err.to_string())
     }
 }
 

@@ -23,7 +23,7 @@ impl<'a> CodecExt for Codec<'a> {
         for i in 0..count {
             let frame_info = self
                 .get_frame_info(i)
-                .ok_or(Error::ImageDecodeError(None))?;
+                .ok_or(Error::ImageDecodeError("Skia decode error".to_string()))?;
             total_duration += frame_info.duration as f32 / 1000.0;
         }
         Ok(total_duration / count as f32)

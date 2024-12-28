@@ -187,14 +187,14 @@ enum OptionValue {
 #[derive(Clone)]
 struct ImageDecodeError {
     #[pyo3(get)]
-    error: Option<String>,
+    error: String,
 }
 
 #[pyclass]
 #[derive(Clone)]
 struct ImageEncodeError {
     #[pyo3(get)]
-    error: Option<String>,
+    error: String,
 }
 
 #[pyclass]
@@ -428,29 +428,15 @@ fn handle_result(result: Result<Vec<u8>, error::Error>) -> MemeResult {
     match result {
         Ok(data) => MemeResult::Ok(data),
         Err(error) => match error {
-            error::Error::ImageDecodeError(Some(err)) => {
-                MemeResult::Err(Error::ImageDecodeError(ImageDecodeError {
-                    error: Some(format!("{err:?}")),
-                }))
+            error::Error::ImageDecodeError(error) => {
+                MemeResult::Err(Error::ImageDecodeError(ImageDecodeError { error }))
             }
-            error::Error::ImageDecodeError(None) => {
-                MemeResult::Err(Error::ImageDecodeError(ImageDecodeError { error: None }))
+            error::Error::ImageEncodeError(error) => {
+                MemeResult::Err(Error::ImageEncodeError(ImageEncodeError { error }))
             }
-            error::Error::ImageEncodeError(encode_err) => {
-                MemeResult::Err(Error::ImageEncodeError(match encode_err {
-                    error::EncodeError::GifEncodeError(err) => ImageEncodeError {
-                        error: Some(format!("{err}")),
-                    },
-                    error::EncodeError::SkiaEncodeError => ImageEncodeError { error: None },
-                }))
-            }
-            error::Error::IOError(err) => MemeResult::Err(Error::IOError(IOError {
-                error: format!("{err}"),
-            })),
-            error::Error::DeserializeError(err) => {
-                MemeResult::Err(Error::DeserializeError(DeserializeError {
-                    error: format!("{err}"),
-                }))
+            error::Error::IOError(error) => MemeResult::Err(Error::IOError(IOError { error })),
+            error::Error::DeserializeError(error) => {
+                MemeResult::Err(Error::DeserializeError(DeserializeError { error }))
             }
             error::Error::ImageNumberMismatch(min, max, actual) => {
                 MemeResult::Err(Error::ImageNumberMismatch(ImageNumberMismatch {

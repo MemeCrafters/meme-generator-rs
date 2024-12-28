@@ -63,7 +63,7 @@ pub(crate) fn local_date(year: i32, month: u32, day: u32) -> DateTime<Local> {
 pub(crate) fn load_image(path: impl Into<String>) -> Result<Image, Error> {
     let image_path = MEME_HOME.join("resources/images").join(path.into());
     let data = Data::new_copy(&read(image_path)?);
-    Image::from_encoded(data).ok_or(Error::ImageDecodeError(None))
+    Image::from_encoded(data).ok_or(Error::ImageDecodeError("Skia decode error".to_string()))
 }
 
 pub(crate) fn grid_pattern_image() -> Image {
