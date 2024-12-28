@@ -3,7 +3,7 @@ use std::{
     sync::{Arc, LazyLock, Mutex},
 };
 
-use crate::meme::Meme;
+use crate::{config::MEME_CONFIG, meme::Meme};
 
 pub(crate) struct MemeRegistry {
     memes: HashMap<String, Arc<dyn Meme>>,
@@ -19,6 +19,9 @@ impl MemeRegistry {
     pub fn register(&mut self, name: String, meme: Arc<dyn Meme>) {
         if self.memes.contains_key(&name) {
             panic!("Meme `{name}` is already registered");
+        }
+        if MEME_CONFIG.meme.meme_disabled_list.contains(&name) {
+            return;
         }
         self.memes.insert(name, meme);
     }
