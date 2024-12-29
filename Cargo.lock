@@ -1106,6 +1106,7 @@ name = "meme_generator"
 version = "0.2.0-alpha.7"
 dependencies = [
  "indicatif",
+ "libloading",
  "meme_generator_core",
  "meme_generator_memes",
  "reqwest",
