@@ -1,14 +1,16 @@
 use skia_safe::{Color, FontStyle, IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        canvas::CanvasExt, encoder::make_png_or_gif, image::ImageExt, local_date, new_surface,
-        options::Gender, text::text_params,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::make_png_or_gif,
+    image::ImageExt,
+    text_params,
+    tools::{local_date, new_surface},
 };
+
+use crate::{options::Gender, register_meme};
 
 fn little_angel(
     images: &mut Vec<DecodedImage>,

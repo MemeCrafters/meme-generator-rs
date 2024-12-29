@@ -1,17 +1,15 @@
 use skia_safe::{Color, Image, Matrix, Paint, PaintJoin, PaintStyle, Shader, TileMode};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        color_from_hex_code,
-        encoder::encode_png,
-        local_date, new_paint, new_stroke_paint, new_surface,
-        options::NoOptions,
-        text::{text_params, Text2Image},
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::encode_png,
+    text::Text2Image,
+    text_params,
+    tools::{color_from_hex_code, local_date, new_paint, new_stroke_paint, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 fn fivethousand_choyen(
     _: &mut Vec<DecodedImage>,

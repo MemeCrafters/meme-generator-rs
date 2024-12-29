@@ -1,17 +1,14 @@
 use skia_safe::{Color, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
-        image::ImageExt,
-        load_image, local_date, new_surface,
-        options::NoOptions,
-        tags::MemeTags,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
+    image::ImageExt,
+    tools::{load_image, local_date, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
 fn capoo_rub(
     images: &mut Vec<DecodedImage>,

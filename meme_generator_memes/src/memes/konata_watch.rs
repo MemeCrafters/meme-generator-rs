@@ -1,17 +1,14 @@
 use skia_safe::{Color, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        encoder::make_png_or_gif,
-        image::{Fit, ImageExt},
-        load_image, local_date, new_surface,
-        options::NoOptions,
-        tags::MemeTags,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::make_png_or_gif,
+    image::{Fit, ImageExt},
+    tools::{load_image, local_date, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
 fn konata_watch(
     images: &mut Vec<DecodedImage>,

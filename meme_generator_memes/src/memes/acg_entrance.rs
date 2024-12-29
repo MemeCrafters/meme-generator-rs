@@ -10,7 +10,7 @@ use meme_generator_utils::{
     tools::{load_image, local_date, new_paint, new_surface},
 };
 
-use crate::{options::NoOptions, registry::register_meme};
+use crate::{options::NoOptions, register_meme};
 
 const DEFAULT_TEXT: &str = "走，跟我去二次元吧";
 

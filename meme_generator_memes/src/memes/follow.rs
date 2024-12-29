@@ -1,17 +1,16 @@
 use skia_safe::{Color, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        encoder::make_png_or_gif,
-        image::ImageExt,
-        local_date, new_paint, new_surface,
-        options::Gender,
-        text::{text_params, Text2Image},
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::make_png_or_gif,
+    image::ImageExt,
+    text::Text2Image,
+    text_params,
+    tools::{local_date, new_paint, new_surface},
 };
+
+use crate::{options::Gender, register_meme};
 
 fn follow(
     images: &mut Vec<DecodedImage>,

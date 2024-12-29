@@ -1,11 +1,14 @@
 use skia_safe::{Color, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{encoder::make_png_or_gif, image::ImageExt, local_date, new_surface, options::Circle},
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::make_png_or_gif,
+    image::ImageExt,
+    tools::{local_date, new_surface},
 };
+
+use crate::{options::Circle, register_meme};
 
 fn kaleidoscope(
     images: &mut Vec<DecodedImage>,

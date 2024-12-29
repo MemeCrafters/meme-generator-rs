@@ -1,20 +1,20 @@
 use skia_safe::{textlayout::TextAlign, Color, Color4f, IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        canvas::CanvasExt,
-        color_from_hex_code,
-        decoder::CodecExt,
-        encoder::make_png_or_gif,
-        image::{Fit, ImageExt},
-        load_image, local_date, new_paint, new_stroke_paint, new_surface,
-        options::Gender,
-        text::{text_params, Text2Image},
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    decoder::CodecExt,
+    encoder::make_png_or_gif,
+    image::{Fit, ImageExt},
+    text::Text2Image,
+    text_params,
+    tools::{
+        color_from_hex_code, load_image, local_date, new_paint, new_stroke_paint, new_surface,
     },
 };
+
+use crate::{options::Gender, register_meme};
 
 fn ask(
     images: &mut Vec<DecodedImage>,

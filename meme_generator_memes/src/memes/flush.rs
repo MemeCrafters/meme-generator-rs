@@ -1,17 +1,15 @@
 use rand::Rng;
 use skia_safe::{Color, Color4f, IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        encoder::{make_gif_or_combined_gif, GifInfo},
-        image::ImageExt,
-        load_image, local_date, new_paint, new_surface,
-        options::NoOptions,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::{make_gif_or_combined_gif, GifInfo},
+    image::ImageExt,
+    tools::{load_image, local_date, new_paint, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 fn flush(images: &mut Vec<DecodedImage>, _: &Vec<String>, _: &NoOptions) -> Result<Vec<u8>, Error> {
     let func = |i: usize, images: &Vec<Image>| {

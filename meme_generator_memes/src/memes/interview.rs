@@ -1,14 +1,16 @@
 use skia_safe::{Color, IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        canvas::CanvasExt, encoder::make_png_or_gif, image::ImageExt, load_image, local_date,
-        new_paint, new_surface, options::NoOptions, text::text_params,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::make_png_or_gif,
+    image::ImageExt,
+    text_params,
+    tools::{load_image, local_date, new_paint, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 const DEFAULT_TEXT: &str = "采访大佬经验";
 

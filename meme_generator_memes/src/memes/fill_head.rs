@@ -1,17 +1,16 @@
 use skia_safe::{IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::{shortcut, DecodedImage},
-    utils::{
-        canvas::CanvasExt,
-        encoder::make_png_or_gif,
-        image::{Fit, ImageExt},
-        load_image, local_date,
-        options::NoOptions,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::make_png_or_gif,
+    image::{Fit, ImageExt},
+    shortcut,
+    tools::{load_image, local_date},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 fn fill_head(
     images: &mut Vec<DecodedImage>,

@@ -4,6 +4,7 @@ macro_rules! meme_tags {
     ($($name:ident = ( $base:expr $(, $inherit:ident)* ),)+ $(,)?) => {
         pub(crate) struct MemeTags;
 
+        #[allow(dead_code)]
         impl MemeTags {
             $(
                 pub fn $name() -> HashSet<String> {

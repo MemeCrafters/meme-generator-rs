@@ -1,16 +1,15 @@
 use skia_safe::{IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::{DecodedImage, MemeOptions},
-    utils::{
-        decoder::CodecExt,
-        encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
-        image::ImageExt,
-        local_date, new_surface,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::{DecodedImage, MemeOptions},
+    decoder::CodecExt,
+    encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
+    image::ImageExt,
+    tools::{local_date, new_surface},
 };
+
+use crate::register_meme;
 
 #[derive(MemeOptions)]
 struct Direction {

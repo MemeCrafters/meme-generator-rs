@@ -21,6 +21,7 @@ toml = "0.8"
 
 meme_generator_core = { version = "0.0.1", path = "../meme_generator_core" }
 meme_generator_memes = { path = "../meme_generator_memes" }
+meme_generator_utils = { version = "0.0.2", path = "../meme_generator_utils" }
 
 [features]
 vendored = ["reqwest/native-tls-vendored"]

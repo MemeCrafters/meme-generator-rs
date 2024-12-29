@@ -1,16 +1,14 @@
 use skia_safe::Image;
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        encoder::{make_gif_or_combined_gif, GifInfo},
-        image::ImageExt,
-        load_image, local_date,
-        options::Circle,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::{make_gif_or_combined_gif, GifInfo},
+    image::ImageExt,
+    tools::{load_image, local_date},
 };
+
+use crate::{options::Circle, register_meme};
 
 fn dog_dislike(
     images: &mut Vec<DecodedImage>,

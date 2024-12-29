@@ -1,18 +1,16 @@
 use skia_safe::{textlayout::TextAlign, Color, IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        canvas::CanvasExt,
-        encoder::make_png_or_gif,
-        image::{Fit, ImageExt},
-        local_date, new_surface,
-        options::NoOptions,
-        text::text_params,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::make_png_or_gif,
+    image::{Fit, ImageExt},
+    text_params,
+    tools::{local_date, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 const DEFAULT_TEXT: &str = "如何提高社交质量 : \n远离以下头像的人";
 

@@ -10,7 +10,7 @@ use meme_generator_utils::{
     tools::{color_from_hex_code, load_image, local_date, new_paint, new_stroke_paint},
 };
 
-use crate::{options::NoOptions, registry::register_meme};
+use crate::{options::NoOptions, register_meme};
 
 struct ShadowText {
     inner: Text2Image,

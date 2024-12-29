@@ -1,17 +1,14 @@
 use skia_safe::Image;
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
-        image::{Fit, ImageExt},
-        load_image, local_date,
-        options::Circle,
-        tags::MemeTags,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
+    image::{Fit, ImageExt},
+    tools::{load_image, local_date},
 };
+
+use crate::{options::Circle, register_meme, tags::MemeTags};
 
 fn kirby_hammer(
     images: &mut Vec<DecodedImage>,

@@ -1,17 +1,16 @@
 use chrono::{Local, NaiveDate};
 use skia_safe::{textlayout::TextAlign, Color};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        encoder::encode_png,
-        load_image, local_date, new_surface,
-        options::Time,
-        text::{text_params, Text2Image},
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::encode_png,
+    text::Text2Image,
+    text_params,
+    tools::{load_image, local_date, new_surface},
 };
+
+use crate::{options::Time, register_meme};
 
 fn hold_grudge(
     _: &mut Vec<DecodedImage>,

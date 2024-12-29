@@ -1,14 +1,16 @@
 use skia_safe::{Color, IRect};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        canvas::CanvasExt, encoder::encode_png, image::ImageExt, load_image, local_date,
-        new_stroke_paint, options::NoOptions, text::text_params,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::encode_png,
+    image::ImageExt,
+    text_params,
+    tools::{load_image, local_date, new_stroke_paint},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 fn bad_news(
     _: &mut Vec<DecodedImage>,

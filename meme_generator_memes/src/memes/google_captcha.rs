@@ -1,14 +1,16 @@
 use skia_safe::{textlayout::TextAlign, Color, FontStyle, IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        canvas::CanvasExt, color_from_hex_code, encoder::make_png_or_gif, image::ImageExt,
-        local_date, new_paint, new_surface, options::NoOptions, text::text_params,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::make_png_or_gif,
+    image::ImageExt,
+    text_params,
+    tools::{color_from_hex_code, local_date, new_paint, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 fn google_captcha(
     images: &mut Vec<DecodedImage>,

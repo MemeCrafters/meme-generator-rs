@@ -1,17 +1,15 @@
 use skia_safe::{Color, Matrix};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        encoder::encode_png,
-        load_image, local_date, new_stroke_paint, new_surface,
-        options::NoOptions,
-        tags::MemeTags,
-        text::{text_params, Text2Image},
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::encode_png,
+    text::Text2Image,
+    text_params,
+    tools::{load_image, local_date, new_stroke_paint, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
 fn batitle(
     _: &mut Vec<DecodedImage>,

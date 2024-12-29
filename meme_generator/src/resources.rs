@@ -11,7 +11,7 @@ use tokio::{
     task,
 };
 
-use meme_generator_memes::config::{FONTS_DIR, IMAGES_DIR};
+use meme_generator_utils::config::{FONTS_DIR, IMAGES_DIR};
 
 use crate::config::CONFIG;
 

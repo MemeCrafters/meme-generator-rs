@@ -9,7 +9,7 @@ use meme_generator_utils::{
     tools::{local_date, new_surface},
 };
 
-use crate::{options::NoOptions, registry::register_meme};
+use crate::{options::NoOptions, register_meme};
 
 fn alike(images: &mut Vec<DecodedImage>, _: &Vec<String>, _: &NoOptions) -> Result<Vec<u8>, Error> {
     let mut surface = new_surface((470, 180));

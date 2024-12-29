@@ -7,6 +7,7 @@ pub(crate) struct MemeDeclaration {
 
 inventory::collect!(MemeDeclaration);
 
+#[macro_export]
 macro_rules! register_meme {
     ($key:expr, $function:expr, $($field:ident = $value:expr),* $(,)?) => {
         fn builder() -> Box<dyn meme_generator_core::meme::Meme> {
@@ -29,8 +30,6 @@ macro_rules! register_meme {
         }
     }
 }
-
-pub(crate) use register_meme;
 
 pub fn register_memes(registry: &mut dyn MemeRegistry) {
     for meme_declaration in inventory::iter::<MemeDeclaration> {

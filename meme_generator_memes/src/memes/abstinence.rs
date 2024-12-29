@@ -10,7 +10,7 @@ use meme_generator_utils::{
     tools::{load_image, local_date},
 };
 
-use crate::{options::Time, registry::register_meme};
+use crate::{options::Time, register_meme};
 
 fn abstinence(
     images: &mut Vec<DecodedImage>,

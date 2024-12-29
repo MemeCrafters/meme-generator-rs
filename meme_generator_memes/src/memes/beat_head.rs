@@ -1,17 +1,15 @@
 use skia_safe::{IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        canvas::CanvasExt,
-        encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
-        image::ImageExt,
-        load_image, local_date, new_surface,
-        options::NoOptions,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
+    image::ImageExt,
+    tools::{load_image, local_date, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 const DEFAULT_TEXT: &str = "怎么说话的你";
 

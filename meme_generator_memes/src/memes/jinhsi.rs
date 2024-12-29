@@ -1,16 +1,16 @@
 use rand::Rng;
 use skia_safe::IRect;
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::{DecodedImage, MemeOptions},
-    utils::{
-        canvas::CanvasExt, encoder::encode_png, image::ImageExt, load_image, local_date,
-        tags::MemeTags,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::{DecodedImage, MemeOptions},
+    canvas::CanvasExt,
+    encoder::encode_png,
+    image::ImageExt,
+    tools::{load_image, local_date},
 };
 
+use crate::{register_meme, tags::MemeTags};
 #[derive(MemeOptions)]
 struct Number {
     /// 图片编号

@@ -1,14 +1,16 @@
 use skia_safe::{Color, FontStyle, IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::{DecodedImage, MemeOptions},
-    utils::{
-        canvas::CanvasExt, encoder::make_png_or_gif, image::ImageExt, local_date, new_surface,
-        text::text_params,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::{DecodedImage, MemeOptions},
+    canvas::CanvasExt,
+    encoder::make_png_or_gif,
+    image::ImageExt,
+    text_params,
+    tools::{local_date, new_surface},
 };
+
+use crate::register_meme;
 
 #[derive(MemeOptions)]
 struct Ratio {

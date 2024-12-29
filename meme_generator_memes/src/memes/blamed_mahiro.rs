@@ -1,14 +1,16 @@
 use skia_safe::{textlayout::TextAlign, Color, Color4f, IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        canvas::CanvasExt, encoder::encode_gif, image::ImageExt, load_image, local_date, new_paint,
-        new_stroke_paint, new_surface, options::NoOptions, tags::MemeTags, text::text_params,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::encode_gif,
+    image::ImageExt,
+    text_params,
+    tools::{load_image, local_date, new_paint, new_stroke_paint, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
 const DEFAULT_TEXT: &str = "傻逼";
 

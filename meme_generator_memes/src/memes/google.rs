@@ -1,11 +1,14 @@
 use skia_safe::Color;
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{encoder::encode_png, local_date, new_surface, options::NoOptions, text::Text2Image},
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::encode_png,
+    text::Text2Image,
+    tools::{local_date, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 fn google(_: &mut Vec<DecodedImage>, texts: &Vec<String>, _: &NoOptions) -> Result<Vec<u8>, Error> {
     let text = &texts[0];

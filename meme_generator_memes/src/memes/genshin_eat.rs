@@ -1,17 +1,16 @@
 use rand::Rng;
 use skia_safe::Image;
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::{shortcut, DecodedImage, MemeOptions},
-    utils::{
-        encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
-        image::ImageExt,
-        load_image, local_date,
-        tags::{union_tags, MemeTags},
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::{DecodedImage, MemeOptions},
+    encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
+    image::ImageExt,
+    shortcut,
+    tools::{load_image, local_date},
 };
+
+use crate::{register_meme, tags::MemeTags, union_tags};
 
 #[derive(MemeOptions)]
 struct Character {

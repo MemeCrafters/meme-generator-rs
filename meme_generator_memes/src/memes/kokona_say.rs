@@ -1,15 +1,17 @@
 use rand::seq::SliceRandom;
 use skia_safe::{Color, IRect};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::{DecodedImage, MemeOptions},
-    utils::{
-        canvas::CanvasExt, encoder::encode_png, image::ImageExt, load_image, local_date, new_paint,
-        tags::MemeTags, text::text_params,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::{DecodedImage, MemeOptions},
+    canvas::CanvasExt,
+    encoder::encode_png,
+    image::ImageExt,
+    text_params,
+    tools::{load_image, local_date, new_paint},
 };
+
+use crate::{register_meme, tags::MemeTags};
 
 #[derive(MemeOptions)]
 struct Position {

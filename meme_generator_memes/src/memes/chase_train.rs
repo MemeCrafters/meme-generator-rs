@@ -1,16 +1,14 @@
 use skia_safe::{Color, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        encoder::{make_gif_or_combined_gif, GifInfo},
-        image::ImageExt,
-        load_image, local_date, new_surface,
-        options::NoOptions,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::{make_gif_or_combined_gif, GifInfo},
+    image::ImageExt,
+    tools::{load_image, local_date, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 fn chase_train(
     images: &mut Vec<DecodedImage>,

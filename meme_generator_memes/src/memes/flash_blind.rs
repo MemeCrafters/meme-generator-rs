@@ -1,17 +1,14 @@
 use skia_safe::{IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
-        image::ImageExt,
-        local_date,
-        options::NoOptions,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
+    image::ImageExt,
+    tools::local_date,
 };
 
+use crate::{options::NoOptions, register_meme};
 fn flash_blind(
     images: &mut Vec<DecodedImage>,
     _: &Vec<String>,

@@ -1,14 +1,16 @@
 use skia_safe::Color;
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::{shortcut, DecodedImage},
-    utils::{
-        canvas::CanvasExt, encoder::encode_png, image::ImageExt, load_image, local_date, new_paint,
-        new_stroke_paint, options::NoOptions, text::text_params,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::encode_png,
+    image::ImageExt,
+    shortcut, text_params,
+    tools::{load_image, local_date, new_paint, new_stroke_paint},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 fn high_eq(
     _: &mut Vec<DecodedImage>,

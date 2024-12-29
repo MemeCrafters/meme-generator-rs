@@ -1,13 +1,14 @@
 use skia_safe::Image;
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        encoder::make_png_or_gif, image::ImageExt, load_image, local_date, options::NoOptions,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::make_png_or_gif,
+    image::ImageExt,
+    tools::{load_image, local_date},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 fn dont_go_near(
     images: &mut Vec<DecodedImage>,

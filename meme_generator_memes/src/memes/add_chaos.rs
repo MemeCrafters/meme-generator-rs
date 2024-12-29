@@ -8,7 +8,7 @@ use meme_generator_utils::{
     tools::{load_image, local_date},
 };
 
-use crate::{options::NoOptions, registry::register_meme};
+use crate::{options::NoOptions, register_meme};
 
 fn add_chaos(
     images: &mut Vec<DecodedImage>,

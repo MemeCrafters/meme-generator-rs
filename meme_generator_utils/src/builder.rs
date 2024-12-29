@@ -24,7 +24,7 @@ macro_rules! shortcut {
         meme_generator_core::meme::MemeShortcut {
             pattern: $pattern.to_string(),
             $(
-                $field: $crate::meme::shortcut_setters::$field($value),
+                $field: $crate::builder::shortcut_setters::$field($value),
             )*
             ..Default::default()
         }

@@ -141,7 +141,9 @@ jobs:
         run: cargo login ${{ secrets.CRATES_IO_API_TOKEN }}
 
       - name: Cargo Publish
-        run: cargo publish --package meme_generator
+        run: |
+          cargo publish --package meme_generator_memes
+          cargo publish --package meme_generator
 
   pypi_publish:
     runs-on: ubuntu-latest

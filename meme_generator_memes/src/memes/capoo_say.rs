@@ -1,14 +1,16 @@
 use skia_safe::{IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        canvas::CanvasExt, encoder::encode_gif, image::ImageExt, load_image, local_date,
-        new_surface, options::NoOptions, tags::MemeTags, text::text_params,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::encode_gif,
+    image::ImageExt,
+    text_params,
+    tools::{load_image, local_date, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
 fn capoo_say_one_loop(text: &str) -> Result<Vec<Image>, Error> {
     let mut surface = new_surface((80, 80));

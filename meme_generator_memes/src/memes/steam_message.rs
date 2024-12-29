@@ -1,18 +1,17 @@
 use skia_safe::{IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::{shortcut, DecodedImage},
-    utils::{
-        color_from_hex_code,
-        encoder::make_png_or_gif,
-        image::{Fit, ImageExt},
-        load_image, local_date, new_paint, new_surface,
-        options::NoOptions,
-        text::{text_params, Text2Image},
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::make_png_or_gif,
+    image::{Fit, ImageExt},
+    shortcut,
+    text::Text2Image,
+    text_params,
+    tools::{color_from_hex_code, load_image, local_date, new_paint, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 fn steam_message(
     images: &mut Vec<DecodedImage>,

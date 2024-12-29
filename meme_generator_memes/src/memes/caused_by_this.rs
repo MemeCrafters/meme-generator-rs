@@ -1,18 +1,17 @@
 use skia_safe::{Color, IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::{shortcut, DecodedImage},
-    utils::{
-        canvas::CanvasExt,
-        encoder::make_png_or_gif,
-        image::{Fit, ImageExt},
-        load_image, local_date, new_surface,
-        options::NoOptions,
-        text::Text2Image,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::make_png_or_gif,
+    image::{Fit, ImageExt},
+    shortcut,
+    text::Text2Image,
+    tools::{load_image, local_date, new_surface},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 const DEFAULT_TEXT: &str = "心脏病 高血压 心律不齐 心肌梗塞 失眠 脱发 呼吸困难 胸闷气短 缺氧 躁郁 焦虑 脑供血不足 心慌心悸 心脑血管炸裂";
 

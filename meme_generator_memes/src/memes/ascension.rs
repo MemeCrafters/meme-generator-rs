@@ -1,14 +1,15 @@
 use skia_safe::IRect;
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        canvas::CanvasExt, encoder::encode_png, image::ImageExt, load_image, local_date,
-        options::NoOptions,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::encode_png,
+    image::ImageExt,
+    tools::{load_image, local_date},
 };
+
+use crate::{options::NoOptions, register_meme};
 
 fn ascension(
     _: &mut Vec<DecodedImage>,

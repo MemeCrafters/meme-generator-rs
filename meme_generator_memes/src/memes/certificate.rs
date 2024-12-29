@@ -1,15 +1,17 @@
 use chrono::{Local, NaiveDate};
 use skia_safe::{textlayout::TextAlign, IRect};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        canvas::CanvasExt, color_from_hex_code, encoder::encode_png, image::ImageExt, load_image,
-        local_date, new_paint, options::Time, text::text_params,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::encode_png,
+    image::ImageExt,
+    text_params,
+    tools::{color_from_hex_code, load_image, local_date, new_paint},
 };
+
+use crate::{options::Time, register_meme};
 
 fn certificate(
     _: &mut Vec<DecodedImage>,
