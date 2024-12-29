@@ -5,18 +5,28 @@ on:
     branches:
       - main
     paths:
+      - "Cargo.toml"
       - "meme_generator/**"
       - "meme_generator_cli/**"
+      - "meme_generator_core/**"
+      - "meme_generator_memes/**"
       - "meme_generator_py/**"
       - "meme_generator_server/**"
+      - "meme_generator_utils/**"
+      - "meme_options_derive/**"
     tags:
       - "v*"
   pull_request_target:
     paths:
+      - "Cargo.toml"
       - "meme_generator/**"
       - "meme_generator_cli/**"
+      - "meme_generator_core/**"
+      - "meme_generator_memes/**"
       - "meme_generator_py/**"
       - "meme_generator_server/**"
+      - "meme_generator_utils/**"
+      - "meme_options_derive/**"
   workflow_dispatch:
 
 permissions:

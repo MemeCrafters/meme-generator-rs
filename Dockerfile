@@ -5,8 +5,11 @@ WORKDIR /tmp
 COPY Cargo.toml Cargo.lock /tmp/
 COPY meme_generator /tmp/meme_generator
 COPY meme_generator_cli /tmp/meme_generator_cli
+COPY meme_generator_core /tmp/meme_generator_core
+COPY meme_generator_memes /tmp/meme_generator_memes
 COPY meme_generator_py /tmp/meme_generator_py
 COPY meme_generator_server /tmp/meme_generator_server
+COPY meme_generator_utils /tmp/meme_generator_utils
 COPY meme_options_derive /tmp/meme_options_derive
 
 RUN cargo build --release --bin server

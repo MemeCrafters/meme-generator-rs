@@ -5,8 +5,13 @@ on:
     branches:
       - main
     paths:
+      - "Dockerfile"
       - "meme_generator/**"
+      - "meme_generator_core/**"
+      - "meme_generator_memes/**"
       - "meme_generator_server/**"
+      - "meme_generator_utils/**"
+      - "meme_options_derive/**"
       - "resources/**"
     tags:
       - "v*"
