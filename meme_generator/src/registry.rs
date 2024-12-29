@@ -129,7 +129,7 @@ fn load_external_memes(registry: &mut MemeRegistry) -> Result<(), std::io::Error
             continue;
         }
         let ext = path.extension().and_then(|ext| ext.to_str()).unwrap_or("");
-        if !["dll", "so"].contains(&ext) {
+        if !["dll", "so", "dylib"].contains(&ext) {
             continue;
         }
         match unsafe { load_library(&entry.path()) } {
