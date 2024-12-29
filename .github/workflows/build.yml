@@ -54,7 +54,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.83.0
+
       - uses: swatinem/rust-cache@v2
 
       - name: Rustup add target
@@ -97,7 +98,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.83.0
       - uses: swatinem/rust-cache@v2
 
       - name: Rustup add target
@@ -133,7 +134,7 @@ jobs:
     needs: [build, build_linux]
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.83.0
       - uses: swatinem/rust-cache@v2
 
       - name: Cargo login
