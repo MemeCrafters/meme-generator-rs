@@ -1,0 +1,23 @@
+[package]
+name = "meme_generator_memes"
+description = "Meme generator built-in memes"
+version.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+edition.workspace = true
+
+[dependencies]
+chrono = "0.4"
+inventory = "0.3"
+qrcode = { version = "0.14", default-features = false }
+rand = "0.8"
+serde = "1.0"
+skia-safe = { version = "0.80", features = ["textlayout"] }
+
+meme_generator_core = { version = "0.0.1", path = "../meme_generator_core" }
+meme_generator_utils = { version = "0.0.1", path = "../meme_generator_utils" }
+
+[features]
+embed-freetype = ["skia-safe/embed-freetype"]

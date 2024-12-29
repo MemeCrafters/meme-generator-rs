@@ -3,10 +3,10 @@ use skia_safe::{
     Paint, Path, Point, RRect, Rect, Surface,
 };
 
-use crate::utils::{default_sampling_options, new_surface};
+use crate::tools::{default_sampling_options, new_surface};
 
 #[derive(Debug, Clone, PartialEq)]
-pub(crate) enum Fit {
+pub enum Fit {
     /// 使图像完全包含在指定的大小内
     Contain,
 
@@ -14,8 +14,7 @@ pub(crate) enum Fit {
     Cover,
 }
 
-#[allow(dead_code)]
-pub(crate) trait ImageExt {
+pub trait ImageExt {
     fn to_surface(&self) -> Surface;
 
     fn resize_exact(&self, size: impl Into<ISize>) -> Image;

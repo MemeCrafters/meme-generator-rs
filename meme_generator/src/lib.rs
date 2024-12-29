@@ -1,9 +1,9 @@
-pub mod config;
-pub mod error;
-pub mod manager;
-pub mod meme;
-pub mod resources;
-pub mod utils;
-pub mod version;
+mod config;
+mod registry;
 
-mod memes;
+pub mod resources;
+pub use meme_generator_core::{
+    config::{read_config_file, MEME_HOME},
+    error, meme,
+};
+pub use registry::load_memes;

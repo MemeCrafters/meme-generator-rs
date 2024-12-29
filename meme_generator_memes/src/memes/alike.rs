@@ -1,17 +1,15 @@
 use skia_safe::{Color, IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        canvas::CanvasExt,
-        encoder::make_png_or_gif,
-        image::{Fit, ImageExt},
-        local_date, new_surface,
-        options::NoOptions,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::make_png_or_gif,
+    image::{Fit, ImageExt},
+    tools::{local_date, new_surface},
 };
+
+use crate::{options::NoOptions, registry::register_meme};
 
 fn alike(images: &mut Vec<DecodedImage>, _: &Vec<String>, _: &NoOptions) -> Result<Vec<u8>, Error> {
     let mut surface = new_surface((470, 180));

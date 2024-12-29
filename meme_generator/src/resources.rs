@@ -11,10 +11,11 @@ use tokio::{
     task,
 };
 
-use crate::{
-    config::{MEME_CONFIG, MEME_HOME},
-    version::VERSION,
-};
+use meme_generator_memes::config::{FONTS_DIR, IMAGES_DIR};
+
+use crate::config::CONFIG;
+
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[derive(Deserialize)]
 struct FileWithHash {
@@ -32,27 +33,27 @@ fn resource_url(base_url: &str, name: &str) -> String {
     format!("{base_url}v{VERSION}/resources/{name}")
 }
 
-pub async fn check_resources(base_url: &str) {
+pub async fn check_resources(base_url: Option<String>) {
+    let base_url = base_url.unwrap_or(CONFIG.resource.resource_url.clone());
     let client = Client::new();
-    let resources = match fetch_resource_list(&client, base_url).await {
+    let resources = match fetch_resource_list(&client, &base_url).await {
         Some(resources) => resources,
         None => return,
     };
 
-    if MEME_CONFIG.resource.download_fonts {
-        download_resources(&client, base_url, "fonts", &resources.fonts).await;
+    if CONFIG.resource.download_fonts {
+        download_resources(&client, &base_url, "fonts", &resources.fonts).await;
     }
-    download_resources(&client, base_url, "images", &resources.images).await;
+    download_resources(&client, &base_url, "images", &resources.images).await;
 }
 
-pub fn check_resources_sync(base_url: &str) {
+pub fn check_resources_sync(base_url: Option<String>) {
     Runtime::new().unwrap().block_on(check_resources(base_url));
 }
 
-pub fn check_resources_in_background(base_url: &str) {
-    let base_url = base_url.to_string();
+pub fn check_resources_in_background(base_url: Option<String>) {
     std::thread::spawn(move || {
-        Runtime::new().unwrap().block_on(check_resources(&base_url));
+        Runtime::new().unwrap().block_on(check_resources(base_url));
     });
 }
 
@@ -80,7 +81,11 @@ async fn download_resources(
     resource_type: &str,
     resources: &[FileWithHash],
 ) {
-    let resources_dir = MEME_HOME.join("resources").join(resource_type);
+    let resources_dir = match resource_type {
+        "fonts" => FONTS_DIR.clone(),
+        "images" => IMAGES_DIR.clone(),
+        _ => return,
+    };
 
     let mut to_download = vec![];
     for res in resources {

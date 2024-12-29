@@ -1,9 +1,11 @@
 use gif::{DisposalMethod, Encoder, Frame, Repeat};
 use skia_safe::{image::CachingHint, AlphaType, ColorType, EncodedImageFormat, Image, ImageInfo};
 
-use crate::{config::MEME_CONFIG, error::Error, meme::DecodedImage, utils::decoder::CodecExt};
+use meme_generator_core::error::Error;
 
-pub(crate) fn encode_gif(images: &Vec<Image>, duration: f32) -> Result<Vec<u8>, Error> {
+use crate::{builder::DecodedImage, config::CONFIG, decoder::CodecExt};
+
+pub fn encode_gif(images: &Vec<Image>, duration: f32) -> Result<Vec<u8>, Error> {
     let mut bytes = Vec::new();
     let delay = (duration * 100.0) as u16;
     {
@@ -12,8 +14,11 @@ pub(crate) fn encode_gif(images: &Vec<Image>, duration: f32) -> Result<Vec<u8>, 
             images[0].width() as u16,
             images[0].height() as u16,
             &[],
-        )?;
-        encoder.set_repeat(Repeat::Infinite)?;
+        )
+        .map_err(|err| Error::ImageEncodeError(err.to_string()))?;
+        encoder
+            .set_repeat(Repeat::Infinite)
+            .map_err(|err| Error::ImageEncodeError(err.to_string()))?;
         for image in images {
             let image_info = ImageInfo::new(
                 image.dimensions(),
@@ -35,7 +40,9 @@ pub(crate) fn encode_gif(images: &Vec<Image>, duration: f32) -> Result<Vec<u8>, 
                 Frame::from_rgba_speed(image.width() as u16, image.height() as u16, &mut data, 10);
             frame.delay = delay;
             frame.dispose = DisposalMethod::Background;
-            encoder.write_frame(&frame)?;
+            encoder
+                .write_frame(&frame)
+                .map_err(|err| Error::ImageEncodeError(err.to_string()))?;
         }
     }
     Ok(bytes)
@@ -52,13 +59,13 @@ fn encode_image(
     Ok(data.as_bytes().to_vec())
 }
 
-pub(crate) fn encode_png(image: &Image) -> Result<Vec<u8>, Error> {
+pub fn encode_png(image: &Image) -> Result<Vec<u8>, Error> {
     encode_image(image, EncodedImageFormat::PNG, None)
 }
 
 /// gif 对齐方式
 #[derive(PartialEq)]
-pub(crate) enum FrameAlign {
+pub enum FrameAlign {
     /// 不延长
     NoExtend,
 
@@ -73,7 +80,7 @@ pub(crate) enum FrameAlign {
 }
 
 #[derive(Debug, Clone)]
-pub(crate) struct GifInfo {
+pub struct GifInfo {
     /// 帧数
     pub frame_num: u32,
 
@@ -94,7 +101,7 @@ impl GifInfo {
 /// - `frame_align` gif 对齐方式
 ///
 /// 返回值：每个 gif 的帧索引列表和目标 gif 的帧索引列表
-pub(crate) fn get_aligned_gif_indexes(
+pub fn get_aligned_gif_indexes(
     gif_infos: &Vec<GifInfo>,
     target_gif_info: &GifInfo,
     frame_align: impl Into<Option<FrameAlign>>,
@@ -125,7 +132,7 @@ pub(crate) fn get_aligned_gif_indexes(
             }
             FrameAlign::ExtendLoop => {
                 let mut total_frame_num = target_gif_info.frame_num;
-                let max_frame_num = MEME_CONFIG.encoder.gif_max_frames;
+                let max_frame_num = CONFIG.encoder.gif_max_frames;
                 while total_frame_num + target_gif_info.frame_num <= max_frame_num as u32 {
                     total_frame_num += target_gif_info.frame_num;
                     let mut append_frame_indexes =
@@ -180,7 +187,7 @@ pub(crate) fn get_aligned_gif_indexes(
 /// - `images` 图片列表
 /// - `func`: 图片处理函数，传入图片列表，返回处理后的图片
 ///
-pub(crate) fn make_png_or_gif<F>(images: &mut Vec<DecodedImage>, func: F) -> Result<Vec<u8>, Error>
+pub fn make_png_or_gif<F>(images: &mut Vec<DecodedImage>, func: F) -> Result<Vec<u8>, Error>
 where
     F: Fn(&Vec<Image>) -> Result<Image, Error>,
 {
@@ -269,7 +276,7 @@ where
 /// - `target_gif_info` 目标 gif 的帧数和时间间隔
 /// - `frame_align` gif 对齐方式
 ///
-pub(crate) fn make_gif_or_combined_gif<F>(
+pub fn make_gif_or_combined_gif<F>(
     images: &mut Vec<DecodedImage>,
     func: F,
     target_gif_info: GifInfo,

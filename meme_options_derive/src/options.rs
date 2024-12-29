@@ -26,8 +26,8 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
     };
 
     let meme_options_impl = quote! {
-        impl crate::meme::MemeOptions for #name {
-            fn to_options(&self) -> Vec<crate::meme::MemeOption> {
+        impl meme_generator_utils::builder::MemeOptions for #name {
+            fn to_options(&self) -> Vec<meme_generator_core::meme::MemeOption> {
                 Vec::from([
                     #(#options),*
                 ])
@@ -417,11 +417,11 @@ impl ToTokens for MemeOption {
                 };
                 let field_name_str = field_name.unraw().to_string();
                 tokens.extend(quote! {
-                    crate::meme::MemeOption::Boolean {
+                    meme_generator_core::meme::MemeOption::Boolean {
                         name: #field_name_str.to_string(),
                         default: #default,
                         description: #description,
-                        parser_flags: crate::meme::ParserFlags {
+                        parser_flags: meme_generator_core::meme::ParserFlags {
                             short: #short,
                             long: #long,
                             short_aliases: Vec::from([#(#short_aliases),*]),
@@ -458,12 +458,12 @@ impl ToTokens for MemeOption {
                 };
                 let field_name_str = field_name.unraw().to_string();
                 tokens.extend(quote! {
-                    crate::meme::MemeOption::String {
+                    meme_generator_core::meme::MemeOption::String {
                         name: #field_name_str.to_string(),
                         default: #default,
                         choices: #choices,
                         description: #description,
-                        parser_flags: crate::meme::ParserFlags {
+                        parser_flags: meme_generator_core::meme::ParserFlags {
                             short: #short,
                             long: #long,
                             short_aliases: Vec::from([#(#short_aliases),*]),
@@ -505,13 +505,13 @@ impl ToTokens for MemeOption {
                 };
                 let field_name_str = field_name.unraw().to_string();
                 tokens.extend(quote! {
-                    crate::meme::MemeOption::Integer {
+                    meme_generator_core::meme::MemeOption::Integer {
                         name: #field_name_str.to_string(),
                         default: #default,
                         minimum: #minimum,
                         maximum: #maximum,
                         description: #description,
-                        parser_flags: crate::meme::ParserFlags {
+                        parser_flags: meme_generator_core::meme::ParserFlags {
                             short: #short,
                             long: #long,
                             short_aliases: Vec::from([#(#short_aliases),*]),
@@ -553,13 +553,13 @@ impl ToTokens for MemeOption {
                 };
                 let field_name_str = field_name.unraw().to_string();
                 tokens.extend(quote! {
-                    crate::meme::MemeOption::Float {
+                    meme_generator_core::meme::MemeOption::Float {
                         name: #field_name_str.to_string(),
                         default: #default,
                         minimum: #minimum,
                         maximum: #maximum,
                         description: #description,
-                        parser_flags: crate::meme::ParserFlags {
+                        parser_flags: meme_generator_core::meme::ParserFlags {
                             short: #short,
                             long: #long,
                             short_aliases: Vec::from([#(#short_aliases),*]),

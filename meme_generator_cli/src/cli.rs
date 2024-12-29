@@ -4,6 +4,7 @@ use std::{
     collections::HashMap,
     fs::{read, write},
     path::PathBuf,
+    sync::LazyLock,
 };
 
 use clap::{
@@ -13,14 +14,15 @@ use clap::{
 };
 
 use meme_generator::{
-    config::MEME_CONFIG,
     error::Error,
-    manager::{get_meme, get_meme_keys, get_memes},
-    meme::{MemeOption, OptionValue, RawImage},
+    load_memes,
+    meme::{Meme, MemeOption, OptionValue, RawImage},
     resources::check_resources_sync,
 };
 #[cfg(feature = "server")]
 use meme_generator_server::run_server_sync;
+
+static LOADED_MEMES: LazyLock<HashMap<String, Box<dyn Meme>>> = LazyLock::new(|| load_memes());
 
 fn build_arg(option: MemeOption) -> Arg {
     match option {
@@ -196,9 +198,15 @@ fn build_arg(option: MemeOption) -> Arg {
     }
 }
 
+fn get_meme_keys() -> Vec<String> {
+    let mut keys = LOADED_MEMES.keys().cloned().collect::<Vec<_>>();
+    keys.sort();
+    keys
+}
+
 pub(crate) fn build_command() -> Command {
     let mut sub_commands: Vec<Command> = Vec::new();
-    for meme in get_memes() {
+    for meme in LOADED_MEMES.values() {
         let key = meme.key();
         let info = meme.info();
         let options = info.params.options;
@@ -289,8 +297,9 @@ pub(crate) fn build_command() -> Command {
 }
 
 pub(crate) fn handle_list() {
-    let list = get_memes()
-        .iter()
+    let list = LOADED_MEMES
+        .values()
+        .into_iter()
         .enumerate()
         .map(|(i, meme)| {
             let index = i + 1;
@@ -306,7 +315,9 @@ pub(crate) fn handle_list() {
 
 pub(crate) fn handle_info(sub_matches: &ArgMatches) {
     let key = sub_matches.get_one::<String>("KEY").unwrap();
-    let meme = get_meme(key).expect(format!("表情 `{key}` 不存在").as_str());
+    let meme = LOADED_MEMES
+        .get(key)
+        .expect(format!("表情 `{key}` 不存在").as_str());
     let info = meme.info();
     let options = info.params.options;
     let options = options
@@ -433,14 +444,16 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
 
 pub(crate) fn handle_preview(sub_matches: &ArgMatches) {
     let key = sub_matches.get_one::<String>("KEY").unwrap();
-    let meme = get_meme(key).expect(format!("表情 `{key}` 不存在").as_str());
+    let meme = LOADED_MEMES
+        .get(key)
+        .expect(format!("表情 `{key}` 不存在").as_str());
     let result = meme.generate_preview();
     handle_result(result)
 }
 
 pub(crate) fn handle_generate(sub_matches: &ArgMatches) {
     let (key, sub_matches) = sub_matches.subcommand().unwrap();
-    let meme = get_meme(key).unwrap();
+    let meme = LOADED_MEMES.get(key).unwrap();
     let mut images = sub_matches
         .get_many::<PathBuf>("images")
         .into_iter()
@@ -553,19 +566,13 @@ fn handle_result(result: Result<Vec<u8>, Error>) {
 }
 
 pub(crate) fn handle_download(sub_matches: &ArgMatches) {
-    let resource_url = sub_matches
-        .get_one::<String>("url")
-        .unwrap_or(&MEME_CONFIG.resource.resource_url);
-    check_resources_sync(resource_url);
+    let resource_url = sub_matches.get_one::<String>("url");
+    check_resources_sync(resource_url.cloned());
 }
 
 #[cfg(feature = "server")]
 pub(crate) fn handle_run(sub_matches: &ArgMatches) {
-    let host = sub_matches
-        .get_one::<IpAddr>("host")
-        .unwrap_or(&MEME_CONFIG.server.host);
-    let port = sub_matches
-        .get_one::<u16>("port")
-        .unwrap_or(&MEME_CONFIG.server.port);
-    run_server_sync(*host, *port);
+    let host = sub_matches.get_one::<IpAddr>("host");
+    let port = sub_matches.get_one::<u16>("port");
+    run_server_sync(host.cloned(), port.cloned());
 }

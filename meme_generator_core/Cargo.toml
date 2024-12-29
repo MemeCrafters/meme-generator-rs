@@ -1,0 +1,17 @@
+[package]
+name = "meme_generator_core"
+description = "Meme generator core"
+version = "0.0.1"
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+edition.workspace = true
+
+[dependencies]
+chrono = { version = "0.4", features = ["serde"] }
+directories = "5.0"
+serde = { version = "1.0", features = ["derive"] }
+
+[build-dependencies]
+rustc_version = "0.4"

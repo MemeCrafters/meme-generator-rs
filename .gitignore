@@ -5,6 +5,7 @@ result.jpg
 avatar.jpg
 config.toml
 test.py
+temp/
 
 *.venv/
 *__pycache__/

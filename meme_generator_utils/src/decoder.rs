@@ -1,8 +1,8 @@
 use skia_safe::{codec, AlphaType, Codec, ColorType, Image, ImageInfo};
 
-use crate::error::Error;
+use meme_generator_core::error::Error;
 
-pub(crate) trait CodecExt {
+pub trait CodecExt {
     fn is_multi_frame(&mut self) -> bool;
 
     fn get_average_duration(&mut self) -> Result<f32, Error>;
@@ -46,6 +46,7 @@ impl<'a> CodecExt for Codec<'a> {
             frame_index: index,
             prior_frame: if index == 0 { None } else { Some(index - 1) },
         };
-        Ok(self.get_image(image_info, &options)?)
+        self.get_image(image_info, &options)
+            .map_err(|_| Error::ImageDecodeError("Skia decode error".to_string()))
     }
 }

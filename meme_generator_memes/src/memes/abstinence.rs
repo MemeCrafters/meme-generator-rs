@@ -1,18 +1,16 @@
 use chrono::{Datelike, Local, NaiveDate};
 use skia_safe::{IRect, Image};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        canvas::CanvasExt,
-        encoder::make_png_or_gif,
-        image::{Fit, ImageExt},
-        load_image, local_date,
-        options::Time,
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    canvas::CanvasExt,
+    encoder::make_png_or_gif,
+    image::{Fit, ImageExt},
+    tools::{load_image, local_date},
 };
+
+use crate::{options::Time, registry::register_meme};
 
 fn abstinence(
     images: &mut Vec<DecodedImage>,

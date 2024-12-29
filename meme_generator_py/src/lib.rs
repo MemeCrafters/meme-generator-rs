@@ -1,10 +1,12 @@
-use chrono::{DateTime, Local};
-use meme_generator::{config, error, manager, meme, resources, version};
-use pyo3::prelude::*;
 use std::{
     collections::{HashMap, HashSet},
-    sync::Arc,
+    sync::LazyLock,
 };
+
+use chrono::{DateTime, Local};
+use pyo3::prelude::*;
+
+use meme_generator::{error, load_memes, meme, resources};
 
 #[pymodule(name = "meme_generator")]
 fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -25,7 +27,6 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<TextOverLength>()?;
     m.add_class::<MemeFeedback>()?;
     m.add_class::<Meme>()?;
-    m.add_function(wrap_pyfunction!(get_version, m)?)?;
     m.add_function(wrap_pyfunction!(get_meme, m)?)?;
     m.add_function(wrap_pyfunction!(get_memes, m)?)?;
     m.add_function(wrap_pyfunction!(get_meme_keys, m)?)?;
@@ -267,7 +268,7 @@ enum MemeResult {
 
 #[pyclass]
 struct Meme {
-    meme: Arc<dyn meme::Meme>,
+    meme: &'static Box<dyn meme::Meme>,
 }
 
 #[pymethods]
@@ -462,14 +463,12 @@ fn handle_result(result: Result<Vec<u8>, error::Error>) -> MemeResult {
     }
 }
 
-#[pyfunction]
-fn get_version() -> String {
-    version::VERSION.to_string()
-}
+static LOADED_MEMES: LazyLock<HashMap<String, Box<dyn meme::Meme>>> =
+    LazyLock::new(|| load_memes());
 
 #[pyfunction]
 fn get_meme(key: &str) -> Option<Meme> {
-    match manager::get_meme(key) {
+    match LOADED_MEMES.get(key) {
         Some(meme) => Some(Meme { meme }),
         None => None,
     }
@@ -477,7 +476,8 @@ fn get_meme(key: &str) -> Option<Meme> {
 
 #[pyfunction]
 fn get_memes() -> Vec<Meme> {
-    manager::get_memes()
+    LOADED_MEMES
+        .values()
         .into_iter()
         .map(|meme| Meme { meme })
         .collect()
@@ -485,15 +485,17 @@ fn get_memes() -> Vec<Meme> {
 
 #[pyfunction]
 fn get_meme_keys() -> Vec<String> {
-    manager::get_meme_keys()
+    let mut keys = LOADED_MEMES.keys().cloned().collect::<Vec<_>>();
+    keys.sort();
+    keys
 }
 
 #[pyfunction]
 fn check_resources() {
-    resources::check_resources_sync(config::MEME_CONFIG.resource.resource_url.as_str());
+    resources::check_resources_sync(None);
 }
 
 #[pyfunction]
 fn check_resources_in_background() {
-    resources::check_resources_in_background(config::MEME_CONFIG.resource.resource_url.as_str());
+    resources::check_resources_in_background(None);
 }

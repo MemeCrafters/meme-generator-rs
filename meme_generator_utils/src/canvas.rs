@@ -1,12 +1,10 @@
 use skia_safe::{scalar, Canvas, Point, Rect};
 
-use crate::{
-    error::Error,
-    utils::text::{Text2Image, TextParams},
-};
+use meme_generator_core::error::Error;
 
-#[allow(dead_code)]
-pub(crate) trait CanvasExt {
+use crate::text::{Text2Image, TextParams};
+
+pub trait CanvasExt {
     fn draw_text(
         &self,
         origin: impl Into<Point>,

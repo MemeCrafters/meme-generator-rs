@@ -1,18 +1,16 @@
 use skia_safe::{Canvas, Point};
 
-use crate::{
-    error::Error,
-    manager::register_meme,
-    meme::DecodedImage,
-    utils::{
-        color_from_hex_code,
-        encoder::encode_png,
-        image::ImageExt,
-        load_image, local_date, new_paint, new_stroke_paint,
-        options::NoOptions,
-        text::{text_params, Text2Image},
-    },
+use meme_generator_core::error::Error;
+use meme_generator_utils::{
+    builder::DecodedImage,
+    encoder::encode_png,
+    image::ImageExt,
+    text::Text2Image,
+    text_params,
+    tools::{color_from_hex_code, load_image, local_date, new_paint, new_stroke_paint},
 };
+
+use crate::{options::NoOptions, registry::register_meme};
 
 struct ShadowText {
     inner: Text2Image,

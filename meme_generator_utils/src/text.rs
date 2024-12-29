@@ -13,8 +13,8 @@ use skia_safe::{
 };
 
 use crate::{
-    config::{meme_home, MEME_CONFIG},
-    utils::{color_from_hex_code, new_decoration, new_paint, new_stroke_paint},
+    config::{CONFIG, FONTS_DIR},
+    tools::{color_from_hex_code, new_decoration, new_paint, new_stroke_paint},
 };
 
 static FONT_MANAGER: LazyLock<Mutex<FontManager>> =
@@ -27,11 +27,10 @@ struct FontManager {
 fn construct_font_provider() -> TypefaceFontProvider {
     let mut font_provider = TypefaceFontProvider::new();
     let font_mgr = FontMgr::new();
-    let fonts_dir = meme_home().join("resources/fonts");
-    if !fonts_dir.exists() {
+    if !FONTS_DIR.exists() {
         return font_provider;
     }
-    let entries = fonts_dir.read_dir();
+    let entries = FONTS_DIR.read_dir();
     if let Ok(entries) = entries {
         for entry in entries {
             if let Ok(entry) = entry {
@@ -63,7 +62,7 @@ impl FontManager {
         let mut font_collection = FontCollection::new();
         font_collection.set_default_font_manager(font_mgr, None);
 
-        if MEME_CONFIG.font.use_local_fonts {
+        if CONFIG.font.use_local_fonts {
             let font_provider = construct_font_provider();
             font_collection.set_asset_font_manager(FontMgr::from(font_provider));
         }
@@ -81,7 +80,7 @@ impl FontManager {
 unsafe impl Send for FontManager {}
 
 #[derive(Debug, Clone)]
-pub(crate) struct TextParams {
+pub struct TextParams {
     pub font_style: FontStyle,
     pub font_families: Vec<String>,
     pub text_align: TextAlign,
@@ -101,20 +100,19 @@ impl Default for TextParams {
     }
 }
 
+#[macro_export]
 macro_rules! text_params {
     ($($field:ident = $value:expr),* $(,)?) => {
-        crate::utils::text::TextParams {
+        $crate::text::TextParams {
             $(
-                $field: crate::utils::text::text_params_setters::$field($value),
+                $field: $crate::text::text_params_setters::$field($value),
             )*
             ..Default::default()
         }
     };
 }
 
-pub(crate) use text_params;
-
-pub(crate) mod text_params_setters {
+pub mod text_params_setters {
     use skia_safe::{textlayout::TextAlign, FontStyle, Paint};
 
     pub fn font_style(style: FontStyle) -> FontStyle {
@@ -138,7 +136,7 @@ pub(crate) mod text_params_setters {
     }
 }
 
-pub(crate) struct Text2Image {
+pub struct Text2Image {
     paragraph: Paragraph,
     stroke_paragraph: Option<Paragraph>,
 }
@@ -152,7 +150,7 @@ impl Text2Image {
         let text: String = text.into();
         let text_params: TextParams = text_params.into().unwrap_or_default();
         let mut font_families = text_params.font_families.clone();
-        font_families.append(&mut MEME_CONFIG.font.default_font_families.clone());
+        font_families.append(&mut CONFIG.font.default_font_families.clone());
 
         let mut paragraph_style = ParagraphStyle::new();
         paragraph_style.set_text_align(text_params.text_align);
@@ -203,7 +201,7 @@ impl Text2Image {
         let text: String = text.into();
         let text_params: TextParams = text_params.into().unwrap_or_default();
         let mut font_families = text_params.font_families.clone();
-        font_families.append(&mut MEME_CONFIG.font.default_font_families.clone());
+        font_families.append(&mut CONFIG.font.default_font_families.clone());
 
         let mut paragraph_style = ParagraphStyle::new();
         paragraph_style.set_text_align(text_params.text_align);

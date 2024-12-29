@@ -16,6 +16,7 @@ infer = "0.16"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tokio = { version = "1.42", features = ["full"] }
+toml = "0.8"
 
 meme_generator = { path = "../meme_generator" }
 

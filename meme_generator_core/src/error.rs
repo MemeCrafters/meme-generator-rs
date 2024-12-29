@@ -1,7 +1,5 @@
 use std::{error, fmt, io};
 
-use skia_safe::codec;
-
 #[derive(Debug)]
 pub enum Error {
     ImageDecodeError(String),
@@ -35,27 +33,9 @@ impl fmt::Display for Error {
     }
 }
 
-impl From<codec::Result> for Error {
-    fn from(err: codec::Result) -> Self {
-        Error::ImageDecodeError(format!("{:?}", err))
-    }
-}
-
-impl From<gif::EncodingError> for Error {
-    fn from(err: gif::EncodingError) -> Self {
-        Error::ImageEncodeError(err.to_string())
-    }
-}
-
 impl From<io::Error> for Error {
     fn from(err: io::Error) -> Self {
         Error::IOError(err.to_string())
-    }
-}
-
-impl From<serde_json::Error> for Error {
-    fn from(err: serde_json::Error) -> Self {
-        Error::DeserializeError(err.to_string())
     }
 }
 
