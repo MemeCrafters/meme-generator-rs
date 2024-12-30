@@ -14,7 +14,7 @@ use crate::register_meme;
 struct Person {
     /// 是否使用爷爷头轮廓
     #[option(short, long, short_aliases = ['爷'])]
-    person: bool,
+    person: Option<bool>,
 }
 
 fn clown(
@@ -22,7 +22,7 @@ fn clown(
     _: &Vec<String>,
     options: &Person,
 ) -> Result<Vec<u8>, Error> {
-    let (frame_path, size, angle, left_center_x, center_y) = if options.person {
+    let (frame_path, size, angle, left_center_x, center_y) = if options.person.unwrap_or(false) {
         ("clown/person.png", (434, 467), 26.0, 174, 378)
     } else {
         ("clown/circle.png", (554, 442), 26.0, 153, 341)

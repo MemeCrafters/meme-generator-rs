@@ -16,16 +16,16 @@ use crate::{register_meme, tags::MemeTags};
 #[derive(MemeOptions)]
 struct Mode {
     /// 模式
-    #[option(long, default="random", choices=["yes", "no", "random"])]
-    mode: String,
+    #[option(long, choices=["yes", "no"])]
+    mode: Option<String>,
 
     /// yes 模式
     #[option(short, long)]
-    yes: bool,
+    yes: Option<bool>,
 
     /// no 模式
     #[option(short, long)]
-    no: bool,
+    no: Option<bool>,
 }
 
 fn atri_pillow(
@@ -33,17 +33,16 @@ fn atri_pillow(
     texts: &Vec<String>,
     options: &Mode,
 ) -> Result<Vec<u8>, Error> {
-    let mut mode = if options.yes {
+    let mode = if options.yes.unwrap_or(false) {
         "yes"
-    } else if options.no {
+    } else if options.no.unwrap_or(false) {
         "no"
     } else {
-        options.mode.as_str()
+        options.mode.as_deref().unwrap_or({
+            let mut rng = rand::thread_rng();
+            ["yes", "no"].choose(&mut rng).unwrap()
+        })
     };
-    if mode == "random" {
-        let mut rng = rand::thread_rng();
-        mode = ["yes", "no"].choose(&mut rng).unwrap();
-    }
     let text = texts[0].clone();
 
     let text_color = match mode {

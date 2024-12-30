@@ -9,25 +9,19 @@ use meme_generator_utils::{
     tools::{load_image, local_date},
 };
 
-use crate::register_meme;
+use crate::{options::number_option, register_meme};
 
-#[derive(MemeOptions)]
-struct Number {
-    /// 图片编号
-    #[option(short, long, minimum = 0, maximum = 92)]
-    number: i32,
-}
+number_option!(Number, 1, 92);
 
 fn crawl(
     images: &mut Vec<DecodedImage>,
     _: &Vec<String>,
     options: &Number,
 ) -> Result<Vec<u8>, Error> {
-    let mut num = options.number;
-    if num == 0 {
+    let num = options.number.unwrap_or({
         let mut rng = rand::thread_rng();
-        num = rng.gen_range(1..=92);
-    }
+        rng.gen_range(1..=92)
+    });
 
     let func = |images: &Vec<Image>| {
         let frame = load_image(format!("crawl/{:02}.jpg", num))?;

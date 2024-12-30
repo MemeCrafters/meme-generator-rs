@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::seq::SliceRandom;
 use skia_safe::Image;
 
 use meme_generator_core::error::Error;
@@ -15,8 +15,8 @@ use crate::{register_meme, tags::MemeTags, union_tags};
 #[derive(MemeOptions)]
 struct Character {
     /// 角色名
-    #[option(short, long, default = "random", choices = ["random", "hutao", "keqing", "klee", "nilou", "yae_miko", "zhongli"])]
-    character: String,
+    #[option(short, long, choices = ["hutao", "keqing", "klee", "nilou", "yae_miko", "zhongli"])]
+    character: Option<String>,
 }
 
 fn genshin_eat(
@@ -24,13 +24,12 @@ fn genshin_eat(
     _: &Vec<String>,
     options: &Character,
 ) -> Result<Vec<u8>, Error> {
-    let character = if options.character.as_str() == "random" {
+    let character = options.character.as_deref().unwrap_or({
         let mut rng = rand::thread_rng();
-        let characters = ["hutao", "keqing", "klee", "nilou", "yae_miko", "zhongli"];
-        characters[rng.gen_range(0..characters.len())]
-    } else {
-        &options.character
-    };
+        ["hutao", "keqing", "klee", "nilou", "yae_miko", "zhongli"]
+            .choose(&mut rng)
+            .unwrap()
+    });
 
     let locs = [(106, 245), (115, 224), (116, 205), (115, 198), (120, 217)];
 

@@ -22,7 +22,7 @@ fn ask(
     options: &Gender,
 ) -> Result<Vec<u8>, Error> {
     let name = images[0].name.clone();
-    let ta = match options.gender.as_str() {
+    let ta = match options.gender.as_deref().unwrap() {
         "male" => "他",
         _ => "她",
     };

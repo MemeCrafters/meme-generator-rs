@@ -10,13 +10,9 @@ use meme_generator_utils::{
     tools::{load_image, local_date},
 };
 
-use crate::{register_meme, tags::MemeTags};
-#[derive(MemeOptions)]
-struct Number {
-    /// 图片编号
-    #[option(short, long, minimum = 0, maximum = 13)]
-    number: i32,
-}
+use crate::{options::number_option, register_meme, tags::MemeTags};
+
+number_option!(Number, 1, 13);
 
 fn jinhsi(
     _: &mut Vec<DecodedImage>,
@@ -24,11 +20,10 @@ fn jinhsi(
     options: &Number,
 ) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
-    let mut num = options.number;
-    if num == 0 {
+    let num = options.number.unwrap_or({
         let mut rng = rand::thread_rng();
-        num = rng.gen_range(1..=13);
-    }
+        rng.gen_range(1..=13)
+    });
 
     let frame = load_image(format!("jinhsi/{:02}.png", num))?;
     let paddings = [55, 43, 50, 36, 40, 33, 36, 38, 33, 46, 26, 33, 28];

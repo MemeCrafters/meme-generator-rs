@@ -57,7 +57,7 @@ fn dog_dislike(
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let image = images[0].square().resize_exact((122, 122));
-        let image = if options.circle {
+        let image = if options.circle.unwrap_or(false) {
             image.circle()
         } else {
             image

@@ -16,16 +16,16 @@ use crate::{register_meme, tags::MemeTags};
 #[derive(MemeOptions)]
 struct Position {
     /// 消息框的位置
-    #[option(short, long, default="random", choices=["left", "right", "random"])]
-    position: String,
+    #[option(short, long, choices=["right", "random"])]
+    position: Option<String>,
 
     /// 左
     #[option(short, long)]
-    left: bool,
+    left: Option<bool>,
 
     /// 右
     #[option(short, long)]
-    right: bool,
+    right: Option<bool>,
 }
 
 fn kokona_say(
@@ -33,17 +33,16 @@ fn kokona_say(
     texts: &Vec<String>,
     options: &Position,
 ) -> Result<Vec<u8>, Error> {
-    let mut position = if options.left {
+    let position = if options.left.unwrap_or(false) {
         "left"
-    } else if options.right {
+    } else if options.right.unwrap_or(false) {
         "right"
     } else {
-        options.position.as_str()
+        options.position.as_deref().unwrap_or({
+            let mut rng = rand::thread_rng();
+            ["left", "right"].choose(&mut rng).unwrap()
+        })
     };
-    if position == "random" {
-        let mut rng = rand::thread_rng();
-        position = ["left", "right"].choose(&mut rng).unwrap();
-    }
     let text = &texts[0];
 
     let img_name = match position {

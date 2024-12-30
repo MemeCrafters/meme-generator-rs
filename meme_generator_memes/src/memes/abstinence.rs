@@ -3,14 +3,21 @@ use skia_safe::{IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::{DecodedImage, MemeOptions},
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
     tools::{load_image, local_date},
 };
 
-use crate::{options::Time, register_meme};
+use crate::register_meme;
+
+#[derive(MemeOptions)]
+struct Time {
+    /// 时间
+    #[option(short, long)]
+    time: Option<String>,
+}
 
 fn abstinence(
     images: &mut Vec<DecodedImage>,
@@ -18,8 +25,8 @@ fn abstinence(
     options: &Time,
 ) -> Result<Vec<u8>, Error> {
     let mut time = Local::now().naive_local().date();
-    if !options.time.is_empty() {
-        if let Ok(t) = NaiveDate::parse_from_str(&options.time, "%Y-%m-%d") {
+    if let Some(time_set) = &options.time {
+        if let Ok(t) = NaiveDate::parse_from_str(time_set, "%Y-%m-%d") {
             time = t;
         } else {
             return Err(Error::MemeFeedback(format!(

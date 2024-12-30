@@ -29,7 +29,7 @@ fn petpet(
         let canvas = surface.canvas();
         let (x, y, w, h) = locs[i];
         let image = images[0].square();
-        let image = if options.circle {
+        let image = if options.circle.unwrap_or(false) {
             image.circle()
         } else {
             image

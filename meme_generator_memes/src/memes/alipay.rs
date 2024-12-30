@@ -17,7 +17,7 @@ const DEFAULT_MESSAGE: &str = "https://github.com/MemeCrafters/meme-generator-rs
 struct Message {
     /// 二维码内容
     #[option(short, long)]
-    message: String,
+    message: Option<String>,
 }
 
 fn alipay(
@@ -25,11 +25,7 @@ fn alipay(
     _: &Vec<String>,
     options: &Message,
 ) -> Result<Vec<u8>, Error> {
-    let message = if !options.message.is_empty() {
-        &options.message
-    } else {
-        DEFAULT_MESSAGE
-    };
+    let message = options.message.as_deref().unwrap_or(DEFAULT_MESSAGE);
     let name = images[0].name.clone();
 
     let frame = load_image("alipay/0.png")?;

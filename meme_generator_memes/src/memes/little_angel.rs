@@ -24,7 +24,7 @@ fn little_angel(
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);
 
-    let ta = match options.gender.as_str() {
+    let ta = match options.gender.as_deref().unwrap() {
         "male" => "他",
         _ => "她",
     };

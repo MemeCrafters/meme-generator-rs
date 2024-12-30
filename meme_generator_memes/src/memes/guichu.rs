@@ -15,23 +15,23 @@ use crate::register_meme;
 struct Direction {
     /// 鬼畜对称方向
     #[option(short, long, default="left", choices=["left", "right", "top", "bottom"])]
-    direction: String,
+    direction: Option<String>,
 
     /// 左
     #[option(long, short_aliases=['左'])]
-    left: bool,
+    left: Option<bool>,
 
     /// 右
     #[option(long, short_aliases=['右'])]
-    right: bool,
+    right: Option<bool>,
 
     /// 上
     #[option(long, short_aliases=['上'])]
-    top: bool,
+    top: Option<bool>,
 
     /// 下
     #[option(long, short_aliases=['下'])]
-    bottom: bool,
+    bottom: Option<bool>,
 }
 
 fn guichu(
@@ -39,16 +39,16 @@ fn guichu(
     _: &Vec<String>,
     options: &Direction,
 ) -> Result<Vec<u8>, Error> {
-    let direction = if options.left {
+    let direction = if options.left.unwrap_or(false) {
         "left"
-    } else if options.right {
+    } else if options.right.unwrap_or(false) {
         "right"
-    } else if options.top {
+    } else if options.top.unwrap_or(false) {
         "top"
-    } else if options.bottom {
+    } else if options.bottom.unwrap_or(false) {
         "bottom"
     } else {
-        options.direction.as_str()
+        options.direction.as_deref().unwrap()
     };
 
     let image = images[0].codec.first_frame()?;

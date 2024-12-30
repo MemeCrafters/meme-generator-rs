@@ -14,19 +14,19 @@ use crate::register_meme;
 struct Position {
     /// 奶茶的位置
     #[option(short, long, default="right", choices=["left", "right", "both"])]
-    position: String,
+    position: Option<String>,
 
     /// 左手
     #[option(long)]
-    left: bool,
+    left: Option<bool>,
 
     /// 右手
     #[option(long)]
-    right: bool,
+    right: Option<bool>,
 
     /// 双手
     #[option(long)]
-    both: bool,
+    both: Option<bool>,
 }
 
 fn bubble_tea(
@@ -34,14 +34,14 @@ fn bubble_tea(
     _: &Vec<String>,
     options: &Position,
 ) -> Result<Vec<u8>, Error> {
-    let position = if options.left {
+    let position = if options.left.unwrap_or(false) {
         "left"
-    } else if options.right {
+    } else if options.right.unwrap_or(false) {
         "right"
-    } else if options.both {
+    } else if options.both.unwrap_or(false) {
         "both"
     } else {
-        options.position.as_str()
+        options.position.as_deref().unwrap()
     };
     let left = position == "left" || position == "both";
     let right = position == "right" || position == "both";

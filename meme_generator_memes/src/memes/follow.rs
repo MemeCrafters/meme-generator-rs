@@ -20,7 +20,7 @@ fn follow(
     let name = if !images[0].name.is_empty() {
         &images[0].name
     } else {
-        match options.gender.as_str() {
+        match options.gender.as_deref().unwrap() {
             "female" => "女同",
             _ => "男同",
         }

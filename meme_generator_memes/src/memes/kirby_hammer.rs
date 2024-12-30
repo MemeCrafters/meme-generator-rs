@@ -44,7 +44,7 @@ fn kirby_hammer(
         }
 
         let mut image = images[0].clone();
-        if options.circle {
+        if options.circle.unwrap_or(false) {
             image = image.circle();
         }
         image = image.resize_height(80);

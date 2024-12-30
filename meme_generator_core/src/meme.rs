@@ -133,6 +133,7 @@ pub struct RawImage {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum OptionValue {
     Boolean(bool),
     String(String),

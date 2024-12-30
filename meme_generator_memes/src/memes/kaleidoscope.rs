@@ -37,7 +37,7 @@ fn kaleidoscope(
             let r = radius(i);
             let img_w = (i * 35 + 100) as i32;
             let mut img = image.resize_width(img_w);
-            if options.circle {
+            if options.circle.unwrap_or(false) {
                 img = img.circle();
             }
 

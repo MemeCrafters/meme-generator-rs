@@ -17,7 +17,7 @@ const DEFAULT_MESSAGE: &str = "https://github.com/MemeCrafters/meme-generator-rs
 struct Message {
     /// 二维码内容
     #[option(short, long)]
-    message: String,
+    message: Option<String>,
 }
 
 fn wechat_pay(
@@ -25,10 +25,9 @@ fn wechat_pay(
     _: &Vec<String>,
     options: &Message,
 ) -> Result<Vec<u8>, Error> {
-    let message = if !options.message.is_empty() {
-        &options.message
-    } else {
-        DEFAULT_MESSAGE
+    let message = match &options.message {
+        Some(message) => message,
+        None => DEFAULT_MESSAGE,
     };
     let name = images[0].name.clone();
 

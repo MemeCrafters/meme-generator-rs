@@ -14,15 +14,15 @@ use crate::register_meme;
 struct Mode {
     /// 小丑在前/后
     #[option(short, long, default="front", choices = ["front", "behind"])]
-    mode: String,
+    mode: Option<String>,
 
     /// 小丑在前
     #[option(long, short_aliases=['前'])]
-    front: bool,
+    front: Option<bool>,
 
     /// 小丑在后
     #[option(long, short_aliases=['后'])]
-    behind: bool,
+    behind: Option<bool>,
 }
 
 fn clown_mask(
@@ -57,12 +57,12 @@ fn clown_mask(
         Ok(surface.image_snapshot())
     };
 
-    let mode = if options.front {
+    let mode = if options.front.unwrap_or(false) {
         "front"
-    } else if options.behind {
+    } else if options.behind.unwrap_or(false) {
         "behind"
     } else {
-        options.mode.as_str()
+        options.mode.as_deref().unwrap()
     };
 
     if mode == "front" {

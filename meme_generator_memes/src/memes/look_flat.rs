@@ -16,7 +16,7 @@ use crate::register_meme;
 struct Ratio {
     /// 图片“压扁”比例
     #[option(short, long, minimum = 1.0, maximum = 10.0, default = 2.0)]
-    ratio: f32,
+    ratio: Option<f32>,
 }
 
 const DEFAULT_TEXT: &str = "可恶...被人看扁了";
@@ -31,7 +31,7 @@ fn look_flat(
     } else {
         DEFAULT_TEXT
     };
-    let ratio = options.ratio;
+    let ratio = options.ratio.unwrap();
 
     let img_w = 500;
     let text_h = 80;

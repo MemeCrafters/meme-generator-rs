@@ -2,7 +2,7 @@ use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{
     ext::IdentExt, punctuated::Punctuated, Data, DeriveInput, Error, Expr, ExprLit, Field, Fields,
-    Ident, Lit, Meta, MetaNameValue, Token, Type,
+    Ident, Lit, Meta, MetaNameValue, Token,
 };
 
 pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
@@ -94,11 +94,40 @@ pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
     Ok(TokenStream::from(expanded))
 }
 
+#[derive(PartialEq)]
+enum FieldType {
+    Boolean,
+    String,
+    Integer,
+    Float,
+}
+
+impl FieldType {
+    fn from_field(field: &Field) -> Result<Self, Error> {
+        match field.ty.to_token_stream().to_string().as_str() {
+            "Option < bool >" => Ok(FieldType::Boolean),
+            "Option < String >" => Ok(FieldType::String),
+            "Option < i32 >" => Ok(FieldType::Integer),
+            "Option < f32 >" => Ok(FieldType::Float),
+            _ => Err(Error::new_spanned(field, "Unsupported field type")),
+        }
+    }
+}
+
+impl ToTokens for FieldType {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        match self {
+            FieldType::Boolean => tokens.extend(quote!(Option<bool>)),
+            FieldType::String => tokens.extend(quote!(Option<String>)),
+            FieldType::Integer => tokens.extend(quote!(Option<i32>)),
+            FieldType::Float => tokens.extend(quote!(Option<f32>)),
+        }
+    }
+}
+
 fn parse_option(field: &Field) -> Result<MemeOption, Error> {
     let field_name = field.ident.as_ref().unwrap();
-    let field_type = &field.ty;
-    let field_type_string = quote!(#field_type).to_string();
-    let field_type_str = field_type_string.as_str();
+    let field_type = FieldType::from_field(field)?;
     let mut description = None;
     let mut parser_flags = ParserFlags::default();
     let mut default_lit = None;
@@ -145,7 +174,7 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                             _ => return Err(Error::new_spanned(value, "Expected literal")),
                         }
                     } else if path.is_ident("minimum") {
-                        if field_type_str != "i32" && field_type_str != "f32" {
+                        if field_type != FieldType::Integer && field_type != FieldType::Float {
                             return Err(Error::new_spanned(
                                 path,
                                 "Minimum is only supported for integer and float types",
@@ -156,7 +185,7 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                             _ => return Err(Error::new_spanned(value, "Expected literal")),
                         }
                     } else if path.is_ident("maximum") {
-                        if field_type_str != "i32" && field_type_str != "f32" {
+                        if field_type != FieldType::Integer && field_type != FieldType::Float {
                             return Err(Error::new_spanned(
                                 path,
                                 "Maximum is only supported for integer and float types",
@@ -167,7 +196,7 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                             _ => return Err(Error::new_spanned(value, "Expected literal")),
                         }
                     } else if path.is_ident("choices") {
-                        if field_type_str != "String" {
+                        if field_type != FieldType::String {
                             return Err(Error::new_spanned(
                                 path,
                                 "Choices are only supported for string types",
@@ -181,9 +210,9 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
         }
     }
 
-    match field_type_str {
-        "bool" => {
-            let mut default = Some(false);
+    match field_type {
+        FieldType::Boolean => {
+            let mut default = None;
             if let Some(lit) = default_lit {
                 match &lit {
                     Lit::Bool(b) => {
@@ -194,14 +223,14 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
             }
             Ok(MemeOption::Boolean {
                 field_name: field_name.clone(),
-                field_type: field_type.clone(),
+                field_type: field_type,
                 default,
                 description,
                 parser_flags,
             })
         }
-        "String" => {
-            let mut default = Some(String::new());
+        FieldType::String => {
+            let mut default = None;
             if let Some(lit) = default_lit {
                 match &lit {
                     Lit::Str(s) => {
@@ -212,15 +241,15 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
             }
             Ok(MemeOption::String {
                 field_name: field_name.clone(),
-                field_type: field_type.clone(),
+                field_type: field_type,
                 default,
                 choices,
                 description,
                 parser_flags,
             })
         }
-        "i32" => {
-            let mut default = Some(0);
+        FieldType::Integer => {
+            let mut default = None;
             if let Some(lit) = default_lit {
                 match &lit {
                     Lit::Int(i) => {
@@ -249,7 +278,7 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
             }
             Ok(MemeOption::Integer {
                 field_name: field_name.clone(),
-                field_type: field_type.clone(),
+                field_type: field_type,
                 default,
                 minimum,
                 maximum,
@@ -257,8 +286,8 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                 parser_flags,
             })
         }
-        "f32" => {
-            let mut default = Some(0.0);
+        FieldType::Float => {
+            let mut default = None;
             if let Some(lit) = default_lit {
                 match &lit {
                     Lit::Float(f) => {
@@ -287,7 +316,7 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
             }
             Ok(MemeOption::Float {
                 field_name: field_name.clone(),
-                field_type: field_type.clone(),
+                field_type: field_type,
                 default,
                 minimum,
                 maximum,
@@ -295,7 +324,6 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                 parser_flags,
             })
         }
-        _ => Err(Error::new_spanned(field, "Unsupported field type")),
     }
 }
 
@@ -320,14 +348,14 @@ impl Default for ParserFlags {
 enum MemeOption {
     Boolean {
         field_name: Ident,
-        field_type: Type,
+        field_type: FieldType,
         default: Option<bool>,
         description: Option<String>,
         parser_flags: ParserFlags,
     },
     String {
         field_name: Ident,
-        field_type: Type,
+        field_type: FieldType,
         default: Option<String>,
         choices: Option<Vec<String>>,
         description: Option<String>,
@@ -335,7 +363,7 @@ enum MemeOption {
     },
     Integer {
         field_name: Ident,
-        field_type: Type,
+        field_type: FieldType,
         default: Option<i32>,
         minimum: Option<i32>,
         maximum: Option<i32>,
@@ -344,7 +372,7 @@ enum MemeOption {
     },
     Float {
         field_name: Ident,
-        field_type: Type,
+        field_type: FieldType,
         default: Option<f32>,
         minimum: Option<f32>,
         maximum: Option<f32>,
@@ -582,32 +610,40 @@ fn default_value_tokens(options: &Vec<MemeOption>) -> Vec<proc_macro2::TokenStre
                 ..
             } = option
             {
-                let default = default.unwrap_or(false);
-                quote! {#field_name: #default}
+                match default {
+                    Some(default) => quote!(#field_name: Some(#default)),
+                    None => quote!(#field_name: None),
+                }
             } else if let MemeOption::String {
                 field_name,
                 default,
                 ..
             } = option
             {
-                let default = default.clone().unwrap_or(String::new());
-                quote! {#field_name: #default.to_string()}
+                match default {
+                    Some(default) => quote!(#field_name: Some(#default.to_string())),
+                    None => quote!(#field_name: None),
+                }
             } else if let MemeOption::Integer {
                 field_name,
                 default,
                 ..
             } = option
             {
-                let default = default.unwrap_or(0);
-                quote! {#field_name: #default}
+                match default {
+                    Some(default) => quote!(#field_name: Some(#default)),
+                    None => quote!(#field_name: None),
+                }
             } else if let MemeOption::Float {
                 field_name,
                 default,
                 ..
             } = option
             {
-                let default = default.unwrap_or(0.0);
-                quote! {#field_name: #default}
+                match default {
+                    Some(default) => quote!(#field_name: Some(#default)),
+                    None => quote!(#field_name: None),
+                }
             } else {
                 unreachable!()
             }
@@ -667,12 +703,14 @@ fn checker_tokens(options: &Vec<MemeOption>) -> Vec<proc_macro2::TokenStream> {
                 if let Some(choices) = choices {
                     let choices = choices.iter().map(|choice| quote!(#choice));
                     return quote! {
-                        if !Vec::from([#(#choices),*]).contains(&wrapper.#field_name.as_str()) {
-                            return Err(serde::de::Error::custom(format!(
-                                "Invalid value for {}: {}",
-                                stringify!(#field_name),
-                                wrapper.#field_name
-                            )));
+                        if let Some(#field_name) = &wrapper.#field_name {
+                            if !Vec::from([#(#choices),*]).contains(&#field_name.as_str()) {
+                                return Err(serde::de::Error::custom(format!(
+                                    "Invalid value for {}: {}",
+                                    stringify!(#field_name),
+                                    #field_name
+                                )));
+                            }
                         }
                     };
                 }
@@ -686,35 +724,41 @@ fn checker_tokens(options: &Vec<MemeOption>) -> Vec<proc_macro2::TokenStream> {
                 if let Some(minimum) = minimum {
                     if let Some(maximum) = maximum {
                         return quote! {
-                            if wrapper.#field_name < #minimum || wrapper.#field_name > #maximum {
-                                return Err(serde::de::Error::custom(format!(
-                                    "Value for {} must be between {} and {}",
-                                    stringify!(#field_name),
-                                    #minimum,
-                                    #maximum
-                                )));
+                            if let Some(#field_name) = wrapper.#field_name {
+                                if #field_name < #minimum || #field_name > #maximum {
+                                    return Err(serde::de::Error::custom(format!(
+                                        "Value for {} must be between {} and {}",
+                                        stringify!(#field_name),
+                                        #minimum,
+                                        #maximum
+                                    )));
+                                }
                             }
                         };
                     } else {
                         return quote! {
-                            if wrapper.#field_name < #minimum {
-                                return Err(serde::de::Error::custom(format!(
-                                    "Value for {} must be greater than or equal to {}",
-                                    stringify!(#field_name),
-                                    #minimum
-                                )));
+                            if let Some(#field_name) = wrapper.#field_name {
+                                if #field_name < #minimum {
+                                    return Err(serde::de::Error::custom(format!(
+                                        "Value for {} must be greater than or equal to {}",
+                                        stringify!(#field_name),
+                                        #minimum
+                                    )));
+                                }
                             }
                         };
                     }
                 }
                 if let Some(maximum) = maximum {
                     return quote! {
-                        if wrapper.#field_name > #maximum {
-                            return Err(serde::de::Error::custom(format!(
-                                "Value for {} must be less than or equal to {}",
-                                stringify!(#field_name),
-                                #maximum
-                            )));
+                        if let Some(#field_name) = wrapper.#field_name {
+                            if #field_name > #maximum {
+                                return Err(serde::de::Error::custom(format!(
+                                    "Value for {} must be less than or equal to {}",
+                                    stringify!(#field_name),
+                                    #maximum
+                                )));
+                            }
                         }
                     };
                 }
@@ -728,35 +772,41 @@ fn checker_tokens(options: &Vec<MemeOption>) -> Vec<proc_macro2::TokenStream> {
                 if let Some(minimum) = minimum {
                     if let Some(maximum) = maximum {
                         return quote! {
-                            if wrapper.#field_name < #minimum || wrapper.#field_name > #maximum {
-                                return Err(serde::de::Error::custom(format!(
-                                    "Value for {} must be between {} and {}",
-                                    stringify!(#field_name),
-                                    #minimum,
-                                    #maximum
-                                )));
+                            if let Some(#field_name) = wrapper.#field_name {
+                                if #field_name < #minimum || #field_name > #maximum {
+                                    return Err(serde::de::Error::custom(format!(
+                                        "Value for {} must be between {} and {}",
+                                        stringify!(#field_name),
+                                        #minimum,
+                                        #maximum
+                                    )));
+                                }
                             }
                         };
                     } else {
                         return quote! {
-                            if wrapper.#field_name < #minimum {
-                                return Err(serde::de::Error::custom(format!(
-                                    "Value for {} must be greater than or equal to {}",
-                                    stringify!(#field_name),
-                                    #minimum
-                                )));
+                            if let Some(#field_name) = wrapper.#field_name {
+                                if #field_name < #minimum {
+                                    return Err(serde::de::Error::custom(format!(
+                                        "Value for {} must be greater than or equal to {}",
+                                        stringify!(#field_name),
+                                        #minimum
+                                    )));
+                                }
                             }
                         };
                     }
                 }
                 if let Some(maximum) = maximum {
                     return quote! {
-                        if wrapper.#field_name > #maximum {
-                            return Err(serde::de::Error::custom(format!(
-                                "Value for {} must be less than or equal to {}",
-                                stringify!(#field_name),
-                                #maximum
-                            )));
+                        if let Some(#field_name) = wrapper.#field_name {
+                            if #field_name > #maximum {
+                                return Err(serde::de::Error::custom(format!(
+                                    "Value for {} must be less than or equal to {}",
+                                    stringify!(#field_name),
+                                    #maximum
+                                )));
+                            }
                         }
                     };
                 }

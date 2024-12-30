@@ -7,19 +7,25 @@ pub(crate) struct NoOptions {}
 pub(crate) struct Circle {
     /// 是否将图片变为圆形
     #[option(short, long, short_aliases = ['圆'])]
-    pub circle: bool,
+    pub circle: Option<bool>,
 }
 
 #[derive(MemeOptions)]
 pub(crate) struct Gender {
     /// 性别
     #[option(short, long, default = "unknown", choices = ["male", "female", "unknown"])]
-    pub gender: String,
+    pub gender: Option<String>,
 }
 
-#[derive(MemeOptions)]
-pub(crate) struct Time {
-    /// 时间
-    #[option(short, long)]
-    pub time: String,
+macro_rules! number_option {
+    ($name:ident, $min:tt, $max:tt) => {
+        #[derive(MemeOptions)]
+        struct $name {
+            /// 图片编号
+            #[option(short, long, minimum = $min, maximum = $max)]
+            number: Option<i32>,
+        }
+    };
 }
+
+pub(crate) use number_option;

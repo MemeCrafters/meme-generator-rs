@@ -11,14 +11,9 @@ use meme_generator_utils::{
     tools::{color_from_hex_code, load_image, local_date, new_paint, new_surface},
 };
 
-use crate::{register_meme, tags::MemeTags};
+use crate::{options::number_option, register_meme, tags::MemeTags};
 
-#[derive(MemeOptions)]
-struct Number {
-    /// 图片编号
-    #[option(short, long, minimum = 0, maximum = 12)]
-    number: i32,
-}
+number_option!(Number, 1, 12);
 
 fn kokona_seal(
     _: &mut Vec<DecodedImage>,
@@ -26,11 +21,10 @@ fn kokona_seal(
     options: &Number,
 ) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
-    let mut num = options.number;
-    if num == 0 {
+    let num = options.number.unwrap_or({
         let mut rng = rand::thread_rng();
-        num = rng.gen_range(1..=12);
-    }
+        rng.gen_range(1..=12)
+    });
 
     let size = (320, 155);
     let loc = (75, 25);

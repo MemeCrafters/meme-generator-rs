@@ -17,15 +17,15 @@ use crate::register_meme;
 struct Mode {
     /// 生成模式
     #[option(long, default = "normal", choices = ["normal", "loop", "circle"])]
-    mode: String,
+    mode: Option<String>,
 
     /// 套娃模式
     #[option(long, long_aliases = ["套娃"])]
-    circle: bool,
+    circle: Option<bool>,
 
     /// 循环模式
     #[option(long, long_aliases = ["循环"])]
-    r#loop: bool,
+    r#loop: Option<bool>,
 }
 
 fn always_normal(images: &mut Vec<DecodedImage>) -> Result<Vec<u8>, Error> {
@@ -156,12 +156,12 @@ fn always(
     _: &Vec<String>,
     options: &Mode,
 ) -> Result<Vec<u8>, Error> {
-    let mode = if options.circle {
+    let mode = if options.circle.unwrap_or(false) {
         "circle"
-    } else if options.r#loop {
+    } else if options.r#loop.unwrap_or(false) {
         "loop"
     } else {
-        options.mode.as_str()
+        options.mode.as_deref().unwrap()
     };
 
     match mode {
