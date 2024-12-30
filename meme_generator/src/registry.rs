@@ -1,4 +1,4 @@
-use std::{collections::HashMap, path::PathBuf, rc::Rc, sync::LazyLock};
+use std::{collections::HashMap, fs::DirEntry, path::PathBuf, rc::Rc, sync::LazyLock};
 
 use libloading::Library;
 
@@ -27,6 +27,9 @@ impl MemeRegistry {
 
 impl meme_generator_core::registry::MemeRegistry for MemeRegistry {
     fn register_meme(&mut self, key: &str, meme: Box<dyn Meme>) {
+        if CONFIG.meme.meme_disabled_list.contains(&key.to_string()) {
+            return;
+        }
         self.memes.insert(key.to_string(), meme);
     }
 }
@@ -78,18 +81,23 @@ impl ExternalMemeRegistry {
 
 impl meme_generator_core::registry::MemeRegistry for ExternalMemeRegistry {
     fn register_meme(&mut self, key: &str, meme: Box<dyn Meme>) {
-        let meme = ExternalMeme {
-            meme,
-            _library: Rc::clone(&self.library),
-        };
-        self.memes.insert(key.to_string(), meme);
+        if CONFIG.meme.meme_disabled_list.contains(&key.to_string()) {
+            return;
+        }
+        self.memes.insert(
+            key.to_string(),
+            ExternalMeme {
+                meme,
+                _library: Rc::clone(&self.library),
+            },
+        );
     }
 }
 
 unsafe fn load_library(
-    library_path: &PathBuf,
+    library_path: &DirEntry,
 ) -> Result<Option<HashMap<String, ExternalMeme>>, libloading::Error> {
-    let library = Rc::new(Library::new(library_path)?);
+    let library = Rc::new(Library::new(library_path.path())?);
 
     let declaration = library
         .get::<*mut MemePackDeclaration>(b"MEME_PACK_DECLARATION")?
@@ -99,7 +107,8 @@ unsafe fn load_library(
         eprintln!(
             "Library {:?} is compiled with rustc {}, but meme_generator_core is compiled with {}, please recompile the library",
             library_path.file_name(),
-            RUSTC_VERSION, declaration.rustc_version
+            declaration.rustc_version,
+            RUSTC_VERSION,
         );
         return Ok(None);
     }
@@ -107,7 +116,8 @@ unsafe fn load_library(
         eprintln!(
             "Library {:?} is compiled with meme_generator_core {}, but current version is {}, please recompile the library",
             library_path.file_name(),
-            declaration.core_version, CORE_VERSION
+            declaration.core_version,
+            CORE_VERSION,
         );
         return Ok(None);
     }
@@ -132,7 +142,7 @@ fn load_external_memes(registry: &mut MemeRegistry) -> Result<(), std::io::Error
         if !["dll", "so", "dylib"].contains(&ext) {
             continue;
         }
-        match unsafe { load_library(&entry.path()) } {
+        match unsafe { load_library(&entry) } {
             Ok(Some(memes)) => {
                 println!(
                     "Loaded library {:?} with {} memes",
