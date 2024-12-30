@@ -11,9 +11,9 @@ use meme_generator_utils::{
 use crate::{options::Circle, register_meme};
 
 fn kaleidoscope(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Circle,
+    images: Vec<DecodedImage>,
+    _: Vec<String>,
+    options: Circle,
 ) -> Result<Vec<u8>, Error> {
     let circle_num = 10;
     let img_per_circle = 4;

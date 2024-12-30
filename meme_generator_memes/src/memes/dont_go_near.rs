@@ -10,11 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn dont_go_near(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn dont_go_near(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let frame = load_image("dont_go_near/0.png")?;
 
     let func = |images: &Vec<Image>| {

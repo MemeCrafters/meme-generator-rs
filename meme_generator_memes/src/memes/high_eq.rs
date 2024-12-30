@@ -12,11 +12,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn high_eq(
-    _: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn high_eq(_: Vec<DecodedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let frame = load_image("high_eq/0.jpg")?;
 
     let mut surface = frame.to_surface();
@@ -36,7 +32,7 @@ fn high_eq(
     draw((40, 540, 602, 1140), &texts[0])?;
     draw((682, 540, 1244, 1140), &texts[1])?;
 
-    encode_png(&surface.image_snapshot())
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

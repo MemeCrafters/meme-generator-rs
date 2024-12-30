@@ -11,11 +11,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn find_chips(
-    _: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn find_chips(_: Vec<DecodedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let frame = load_image("find_chips/0.jpg")?;
 
     let mut surface = frame.to_surface();
@@ -37,7 +33,7 @@ fn find_chips(
     draw((65, 400, 325, 463), &texts[2])?;
     draw((430, 400, 630, 470), &texts[3])?;
 
-    encode_png(&surface.image_snapshot())
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

@@ -12,12 +12,8 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn bad_news(
-    _: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
-    let text = texts[0].clone();
+fn bad_news(_: Vec<DecodedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+    let text = &texts[0];
     let frame = load_image("bad_news/0.png")?;
     let mut surface = frame.to_surface();
     let canvas = surface.canvas();
@@ -28,7 +24,7 @@ fn bad_news(
         60.0,
         text_params!(stroke_paint = new_stroke_paint(Color::WHITE, 5.0)),
     )?;
-    encode_png(&surface.image_snapshot())
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

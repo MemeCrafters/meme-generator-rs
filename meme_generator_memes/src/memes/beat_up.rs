@@ -10,11 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags, union_tags};
 
-fn beat_up(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn beat_up(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let self_locs = [(100, 43), (110, 46), (101, 40)];
     let user_locs = [(99, 136), (99, 136), (89, 140)];
 

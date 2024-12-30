@@ -10,7 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn eat(images: &mut Vec<DecodedImage>, _: &Vec<String>, _: &NoOptions) -> Result<Vec<u8>, Error> {
+fn eat(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let func = |i: usize, images: &Vec<Image>| {
         let frame = load_image(format!("eat/{i}.png"))?;
         let mut surface = new_surface(frame.dimensions());

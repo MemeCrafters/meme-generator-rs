@@ -12,13 +12,13 @@ use meme_generator_utils::{
 use crate::{options::NoOptions, register_meme};
 
 fn fivethousand_choyen(
-    _: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
+    _: Vec<DecodedImage>,
+    texts: Vec<String>,
+    _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
     let fontsize = 200.0;
     let font_families = &["Noto Sans SC"];
-    let text = texts[0].clone();
+    let text = &texts[0];
     let pos_x = 20;
     let pos_y = 0;
     let mut images: Vec<(Image, (i32, i32))> = Vec::new();
@@ -204,7 +204,7 @@ fn fivethousand_choyen(
         (pos_x, pos_y - 6),
     );
 
-    let text = texts[1].clone();
+    let text = &texts[1];
     let font_families = &["Noto Serif SC"];
     let pos_x = 280;
     let pos_y = 260;
@@ -301,7 +301,7 @@ fn fivethousand_choyen(
     for (img, pos) in images {
         canvas.draw_image(img, (pos.0, pos.1), None);
     }
-    encode_png(&surface.image_snapshot())
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

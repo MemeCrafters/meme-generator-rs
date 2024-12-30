@@ -15,9 +15,9 @@ use crate::{options::NoOptions, register_meme};
 const DEFAULT_TEXT: &str = "采访大佬经验";
 
 fn interview(
-    images: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
+    images: Vec<DecodedImage>,
+    texts: Vec<String>,
+    _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
     let text = if !texts.is_empty() {
         &texts[0]

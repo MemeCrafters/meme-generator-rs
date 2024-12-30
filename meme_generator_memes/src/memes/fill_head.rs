@@ -12,11 +12,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn fill_head(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn fill_head(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let name = if !images[0].name.is_empty() {
         &images[0].name
     } else {

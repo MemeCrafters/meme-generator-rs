@@ -10,11 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
-fn capoo_rip(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn capoo_rip(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let params1 = [
         ((61, 196), [(140, 68), (0, 59), (33, 0), (165, 8)]),
         ((63, 196), [(136, 68), (0, 59), (29, 0), (158, 13)]),

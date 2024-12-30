@@ -10,11 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn dog_of_vtb(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn dog_of_vtb(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let frame = load_image("dog_of_vtb/0.png")?;
 
     let func = |images: &Vec<Image>| {

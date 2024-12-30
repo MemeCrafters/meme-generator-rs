@@ -146,9 +146,9 @@ pub trait Meme: Send + Sync {
     fn info(&self) -> MemeInfo;
     fn generate(
         &self,
-        images: &Vec<RawImage>,
-        texts: &Vec<String>,
-        options: &HashMap<String, OptionValue>,
+        images: Vec<RawImage>,
+        texts: Vec<String>,
+        options: HashMap<String, OptionValue>,
     ) -> Result<Vec<u8>, Error>;
     fn generate_preview(&self) -> Result<Vec<u8>, Error>;
 }

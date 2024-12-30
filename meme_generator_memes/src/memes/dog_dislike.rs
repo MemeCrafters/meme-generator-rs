@@ -11,9 +11,9 @@ use meme_generator_utils::{
 use crate::{options::Circle, register_meme};
 
 fn dog_dislike(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Circle,
+    images: Vec<DecodedImage>,
+    _: Vec<String>,
+    options: Circle,
 ) -> Result<Vec<u8>, Error> {
     let locs = [
         (36, 408),

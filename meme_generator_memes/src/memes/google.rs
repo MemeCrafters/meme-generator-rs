@@ -10,7 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn google(_: &mut Vec<DecodedImage>, texts: &Vec<String>, _: &NoOptions) -> Result<Vec<u8>, Error> {
+fn google(_: Vec<DecodedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
 
     let colors = [
@@ -36,7 +36,7 @@ fn google(_: &mut Vec<DecodedImage>, texts: &Vec<String>, _: &NoOptions) -> Resu
     canvas.clear(Color::WHITE);
     text2image.draw_on_canvas(canvas, (50, 50));
 
-    encode_png(&surface.image_snapshot())
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

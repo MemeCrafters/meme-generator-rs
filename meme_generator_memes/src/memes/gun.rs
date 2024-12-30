@@ -29,11 +29,7 @@ struct Position {
     both: Option<bool>,
 }
 
-fn gun(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Position,
-) -> Result<Vec<u8>, Error> {
+fn gun(images: Vec<DecodedImage>, _: Vec<String>, options: Position) -> Result<Vec<u8>, Error> {
     let position = if options.left.unwrap_or(false) {
         "left"
     } else if options.right.unwrap_or(false) {

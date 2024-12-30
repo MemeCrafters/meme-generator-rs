@@ -50,9 +50,9 @@ impl Meme for ExternalMeme {
 
     fn generate(
         &self,
-        images: &Vec<RawImage>,
-        texts: &Vec<String>,
-        options: &HashMap<String, OptionValue>,
+        images: Vec<RawImage>,
+        texts: Vec<String>,
+        options: HashMap<String, OptionValue>,
     ) -> Result<Vec<u8>, Error> {
         self.meme.generate(images, texts, options)
     }

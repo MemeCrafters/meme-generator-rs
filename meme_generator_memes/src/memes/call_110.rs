@@ -12,9 +12,9 @@ use meme_generator_utils::{
 use crate::{options::NoOptions, register_meme};
 
 fn call_110(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    _: &NoOptions,
+    images: Vec<DecodedImage>,
+    _: Vec<String>,
+    _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
     let mut surface = new_surface((900, 500));
     let canvas = surface.canvas();

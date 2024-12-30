@@ -9,11 +9,7 @@ use meme_generator_utils::{
 };
 
 use crate::{options::NoOptions, register_meme};
-fn hug_leg(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn hug_leg(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let locs = [
         (50, 73, 68, 92),
         (58, 60, 62, 95),

@@ -13,11 +13,7 @@ use crate::{options::number_option, register_meme};
 
 number_option!(Number, 1, 92);
 
-fn crawl(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Number,
-) -> Result<Vec<u8>, Error> {
+fn crawl(images: Vec<DecodedImage>, _: Vec<String>, options: Number) -> Result<Vec<u8>, Error> {
     let num = options.number.unwrap_or({
         let mut rng = rand::thread_rng();
         rng.gen_range(1..=92)

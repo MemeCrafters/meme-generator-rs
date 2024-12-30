@@ -12,11 +12,7 @@ use meme_generator_utils::{
 
 use crate::{options::Gender, register_meme};
 
-fn follow(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Gender,
-) -> Result<Vec<u8>, Error> {
+fn follow(images: Vec<DecodedImage>, _: Vec<String>, options: Gender) -> Result<Vec<u8>, Error> {
     let name = if !images[0].name.is_empty() {
         &images[0].name
     } else {

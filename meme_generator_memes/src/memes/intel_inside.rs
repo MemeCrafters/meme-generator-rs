@@ -12,11 +12,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn intel_inside(
-    _: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn intel_inside(_: Vec<DecodedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
 
     let frame = load_image("intel_inside/0.jpg")?;
@@ -34,7 +30,7 @@ fn intel_inside(
         ),
     )?;
 
-    encode_png(&surface.image_snapshot())
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

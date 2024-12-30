@@ -82,8 +82,8 @@ async fn download_resources(
     resources: &[FileWithHash],
 ) {
     let resources_dir = match resource_type {
-        "fonts" => FONTS_DIR.clone(),
-        "images" => IMAGES_DIR.clone(),
+        "fonts" => &FONTS_DIR,
+        "images" => &IMAGES_DIR,
         _ => return,
     };
 

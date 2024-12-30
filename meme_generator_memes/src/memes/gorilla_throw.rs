@@ -11,9 +11,9 @@ use meme_generator_utils::{
 use crate::{options::NoOptions, register_meme};
 
 fn gorilla_throw(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    _: &NoOptions,
+    images: Vec<DecodedImage>,
+    _: Vec<String>,
+    _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
     let params = [
         (74, 125, 24, 8, 135),

@@ -29,9 +29,9 @@ struct Position {
 }
 
 fn kokona_say(
-    _: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    options: &Position,
+    _: Vec<DecodedImage>,
+    texts: Vec<String>,
+    options: Position,
 ) -> Result<Vec<u8>, Error> {
     let position = if options.left.unwrap_or(false) {
         "left"
@@ -65,7 +65,7 @@ fn kokona_say(
         text_params!(paint = new_paint(Color::BLACK)),
     )?;
 
-    encode_png(&surface.image_snapshot())
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

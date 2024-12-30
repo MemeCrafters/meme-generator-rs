@@ -10,11 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::Circle, register_meme};
 
-fn petpet(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Circle,
-) -> Result<Vec<u8>, Error> {
+fn petpet(images: Vec<DecodedImage>, _: Vec<String>, options: Circle) -> Result<Vec<u8>, Error> {
     let locs = [
         (14, 20, 98, 98),
         (12, 33, 101, 85),

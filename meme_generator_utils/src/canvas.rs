@@ -112,9 +112,9 @@ fn draw_text_area_auto_font_size(
     let mut font_size = max_font_size;
     while font_size >= min_font_size {
         let mut text2image = if use_bbcode {
-            Text2Image::from_bbcode_text(text.clone(), font_size, text_params.clone())
+            Text2Image::from_bbcode_text(&text, font_size, text_params.clone())
         } else {
-            Text2Image::from_text(text.clone(), font_size, text_params.clone())
+            Text2Image::from_text(&text, font_size, text_params.clone())
         };
         text2image.layout(rect.width());
         if text2image.height() <= rect.height() {

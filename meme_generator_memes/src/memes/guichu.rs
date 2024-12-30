@@ -3,7 +3,6 @@ use skia_safe::{IRect, Image};
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::{DecodedImage, MemeOptions},
-    decoder::CodecExt,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::ImageExt,
     tools::{local_date, new_surface},
@@ -34,11 +33,7 @@ struct Direction {
     bottom: Option<bool>,
 }
 
-fn guichu(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Direction,
-) -> Result<Vec<u8>, Error> {
+fn guichu(images: Vec<DecodedImage>, _: Vec<String>, options: Direction) -> Result<Vec<u8>, Error> {
     let direction = if options.left.unwrap_or(false) {
         "left"
     } else if options.right.unwrap_or(false) {
@@ -51,7 +46,7 @@ fn guichu(
         options.direction.as_deref().unwrap()
     };
 
-    let image = images[0].codec.first_frame()?;
+    let image = &images[0];
     let img_w = image.width();
     let img_h = image.height();
 
@@ -84,10 +79,10 @@ fn guichu(
     };
 
     let func = |i: usize, images: &Vec<Image>| {
-        let image = images[0].clone();
+        let image = &images[0];
 
         if [0, 1, 2, 6, 7, 8, 12, 13, 14, 18, 20, 22].contains(&i) {
-            Ok(image)
+            Ok(image.clone())
         } else {
             let image_flip = match direction {
                 "left" => image.flip_horizontal(),

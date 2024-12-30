@@ -48,16 +48,12 @@ fn capoo_say_one_loop(text: &str) -> Result<Vec<Image>, Error> {
     Ok(frames)
 }
 
-fn capoo_say(
-    _: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn capoo_say(_: Vec<DecodedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let mut all_frames = vec![];
     for text in texts {
-        all_frames.extend(capoo_say_one_loop(text)?);
+        all_frames.extend(capoo_say_one_loop(&text)?);
     }
-    encode_gif(&all_frames, 0.1)
+    encode_gif(all_frames, 0.1)
 }
 
 register_meme! {

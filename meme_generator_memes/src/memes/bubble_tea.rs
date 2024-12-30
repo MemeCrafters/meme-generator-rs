@@ -30,9 +30,9 @@ struct Position {
 }
 
 fn bubble_tea(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Position,
+    images: Vec<DecodedImage>,
+    _: Vec<String>,
+    options: Position,
 ) -> Result<Vec<u8>, Error> {
     let position = if options.left.unwrap_or(false) {
         "left"

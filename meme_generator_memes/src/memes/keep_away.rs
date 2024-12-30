@@ -15,9 +15,9 @@ use crate::{options::NoOptions, register_meme};
 const DEFAULT_TEXT: &str = "如何提高社交质量 : \n远离以下头像的人";
 
 fn keep_away(
-    images: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
+    images: Vec<DecodedImage>,
+    texts: Vec<String>,
+    _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
     let text = if !texts.is_empty() {
         &texts[0]

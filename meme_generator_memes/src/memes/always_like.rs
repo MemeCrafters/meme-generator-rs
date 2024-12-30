@@ -12,12 +12,8 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn always_like(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
-    let name = images[0].name.clone();
+fn always_like(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+    let name = &images[0].name;
     let text = format!("我永远喜欢{name}");
 
     let frame = load_image("always_like/0.png")?;

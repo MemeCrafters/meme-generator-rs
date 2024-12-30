@@ -4,7 +4,6 @@ use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::DecodedImage,
     canvas::CanvasExt,
-    decoder::CodecExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
     text::Text2Image,
@@ -16,12 +15,8 @@ use meme_generator_utils::{
 
 use crate::{options::Gender, register_meme};
 
-fn ask(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Gender,
-) -> Result<Vec<u8>, Error> {
-    let name = images[0].name.clone();
+fn ask(images: Vec<DecodedImage>, _: Vec<String>, options: Gender) -> Result<Vec<u8>, Error> {
+    let name = &images[0].name;
     let ta = match options.gender.as_deref().unwrap() {
         "male" => "他",
         _ => "她",
@@ -29,7 +24,7 @@ fn ask(
     let text = format!("{name}不知道哦。");
 
     let name_image = Text2Image::from_text(
-        name.clone(),
+        name,
         40.0,
         text_params!(
             font_families = &["HYWenHei"],
@@ -47,11 +42,11 @@ fn ask(
         ),
     );
     if name_image.longest_line() > 500.0 {
-        return Err(Error::TextOverLength(name));
+        return Err(Error::TextOverLength(name.clone()));
     }
     let line_width = text_image.longest_line() + 200.0;
 
-    let image = images[0].codec.first_frame()?;
+    let image = &images[0];
     let image_height = 900;
     let image_width = image.width() * image_height / image.height();
     let image_width = image_width

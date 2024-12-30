@@ -14,11 +14,7 @@ use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
 const DEFAULT_TEXT: &str = "傻逼";
 
-fn blamed_mahiro(
-    _: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn blamed_mahiro(_: Vec<DecodedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = if !texts.is_empty() {
         &texts[0]
     } else {
@@ -79,7 +75,7 @@ fn blamed_mahiro(
         frames.push(surface.image_snapshot());
     }
 
-    encode_gif(&frames, 0.08)
+    encode_gif(frames, 0.08)
 }
 
 register_meme!(

@@ -21,15 +21,15 @@ struct Message {
 }
 
 fn wechat_pay(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Message,
+    images: Vec<DecodedImage>,
+    _: Vec<String>,
+    options: Message,
 ) -> Result<Vec<u8>, Error> {
     let message = match &options.message {
         Some(message) => message,
         None => DEFAULT_MESSAGE,
     };
-    let name = images[0].name.clone();
+    let name = &images[0].name;
 
     let bg = load_image("wechat_pay/0.png")?;
     let mut surface = bg.to_surface();

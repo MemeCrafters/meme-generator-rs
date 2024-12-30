@@ -11,9 +11,9 @@ use meme_generator_utils::{
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
 fn fight_with_sunuo(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    _: &NoOptions,
+    images: Vec<DecodedImage>,
+    _: Vec<String>,
+    _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
     let frame = load_image("fight_with_sunuo/0.png")?;
 

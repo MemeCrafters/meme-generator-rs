@@ -20,11 +20,7 @@ pub(crate) struct Time {
     pub time: Option<String>,
 }
 
-fn certificate(
-    _: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    options: &Time,
-) -> Result<Vec<u8>, Error> {
+fn certificate(_: Vec<DecodedImage>, texts: Vec<String>, options: Time) -> Result<Vec<u8>, Error> {
     let mut time = Local::now().naive_local().date();
     if let Some(time_set) = &options.time {
         if let Ok(t) = NaiveDate::parse_from_str(time_set, "%Y-%m-%d") {
@@ -97,7 +93,7 @@ fn certificate(
         None,
     )?;
 
-    encode_png(&surface.image_snapshot())
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

@@ -9,15 +9,12 @@ use meme_generator_utils::{
 };
 
 use crate::{options::NoOptions, register_meme};
-fn flash_blind(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+
+fn flash_blind(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let func = |i: usize, images: &Vec<Image>| {
-        let image = images[0].clone();
+        let image = &images[0];
         match i {
-            0 => Ok(image),
+            0 => Ok(image.clone()),
             1 => Ok(image.invert()),
             2 => {
                 let width = image.width();

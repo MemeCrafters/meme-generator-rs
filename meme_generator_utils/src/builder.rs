@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use chrono::{DateTime, Local};
 use serde::Deserialize;
-use serde_json::{Map, Number, Value};
+use serde_json::{Number, Value};
 use skia_safe::{Codec, Data};
 
 use meme_generator_core::{
@@ -64,9 +64,17 @@ impl<'a> DecodedImage<'a> {
             codec: codec,
         })
     }
+
+    pub fn width(&self) -> i32 {
+        self.codec.info().width()
+    }
+
+    pub fn height(&self) -> i32 {
+        self.codec.info().height()
+    }
 }
 
-type MemeFunction<T> = fn(&mut Vec<DecodedImage>, &Vec<String>, &T) -> Result<Vec<u8>, Error>;
+type MemeFunction<T> = fn(Vec<DecodedImage>, Vec<String>, T) -> Result<Vec<u8>, Error>;
 
 pub struct MemeBuilder<T>
 where
@@ -185,9 +193,9 @@ where
 
     fn generate(
         &self,
-        images: &Vec<RawImage>,
-        texts: &Vec<String>,
-        options: &HashMap<String, OptionValue>,
+        images: Vec<RawImage>,
+        texts: Vec<String>,
+        options: HashMap<String, OptionValue>,
     ) -> Result<Vec<u8>, Error> {
         let info = self.info();
         if images.len() < info.params.min_images as usize
@@ -209,34 +217,34 @@ where
             ));
         }
 
-        let mut options_json = Map::new();
-        for option in options {
-            let key = option.0;
-            let value = option.1;
-            let value = match value {
-                OptionValue::Boolean(value) => Value::Bool(value.clone()),
-                OptionValue::String(value) => Value::String(value.clone()),
-                OptionValue::Integer(value) => Value::Number(Number::from(value.clone())),
-                OptionValue::Float(value) => {
-                    Value::Number(Number::from_f64(f64::from(value.clone())).unwrap())
-                }
-            };
-            options_json.insert(key.clone(), value);
-        }
+        let options = options
+            .iter()
+            .map(|(key, value)| {
+                let value = match value {
+                    OptionValue::Boolean(value) => Value::Bool(*value),
+                    OptionValue::String(value) => Value::String(value.clone()),
+                    OptionValue::Integer(value) => Value::Number(Number::from(*value)),
+                    OptionValue::Float(value) => {
+                        Value::Number(Number::from_f64(f64::from(*value)).unwrap())
+                    }
+                };
+                (key.clone(), value)
+            })
+            .collect();
 
-        let options = &serde_json::from_value(Value::Object(options_json))
+        let options = serde_json::from_value(Value::Object(options))
             .map_err(|err| Error::DeserializeError(err.to_string()))?;
-        let mut images = images
+        let images = images
             .iter()
             .map(|image| DecodedImage::from(image))
             .collect::<Result<Vec<DecodedImage>, Error>>()?;
-        (self.function)(&mut images, texts, options)
+        (self.function)(images, texts, options)
     }
 
     fn generate_preview(&self) -> Result<Vec<u8>, Error> {
         let mut images = Vec::new();
         if self.min_images > 0 {
-            let image = encode_png(&grid_pattern_image())?;
+            let image = encode_png(grid_pattern_image())?;
             for i in 0..self.min_images {
                 let name = if self.min_images == 1 {
                     "{name}".to_string()
@@ -266,7 +274,7 @@ where
             texts
         };
         let options = HashMap::new();
-        self.generate(&images, &texts, &options)
+        self.generate(images, texts, options)
     }
 }
 

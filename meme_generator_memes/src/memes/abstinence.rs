@@ -19,11 +19,7 @@ struct Time {
     time: Option<String>,
 }
 
-fn abstinence(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Time,
-) -> Result<Vec<u8>, Error> {
+fn abstinence(images: Vec<DecodedImage>, _: Vec<String>, options: Time) -> Result<Vec<u8>, Error> {
     let mut time = Local::now().naive_local().date();
     if let Some(time_set) = &options.time {
         if let Ok(t) = NaiveDate::parse_from_str(time_set, "%Y-%m-%d") {
@@ -35,7 +31,7 @@ fn abstinence(
             )));
         }
     }
-    let name = images[0].name.clone();
+    let name = &images[0].name;
 
     let frame = load_image("abstinence/base.png")?;
     let mut surface = frame.to_surface();

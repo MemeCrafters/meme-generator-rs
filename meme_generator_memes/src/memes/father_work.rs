@@ -12,9 +12,9 @@ use meme_generator_utils::{
 use crate::{options::NoOptions, register_meme};
 
 fn father_work(
-    images: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
+    images: Vec<DecodedImage>,
+    texts: Vec<String>,
+    _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
     let frame = load_image("father_work/0.png")?;
     let text = &texts[0];

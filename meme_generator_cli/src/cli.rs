@@ -330,7 +330,7 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
                 ..
             } => {
                 let default = default.map(|b| b.to_string()).unwrap_or("无".to_string());
-                let description = description.clone().unwrap_or("".to_string());
+                let description = description.as_deref().unwrap_or("");
                 format!(" * {name}：{description} (默认值：{default})")
             }
             MemeOption::String {
@@ -340,15 +340,12 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
                 description,
                 ..
             } => {
-                let default = default
-                    .clone()
-                    .map(|s| s.to_string())
-                    .unwrap_or("无".to_string());
+                let default = default.as_deref().unwrap_or("无");
                 let choices = choices
-                    .clone()
+                    .as_deref()
                     .map(|choices| choices.join("、"))
                     .unwrap_or("无".to_string());
-                let description = description.clone().unwrap_or("".to_string());
+                let description = description.as_deref().unwrap_or("");
                 format!(" * {name}：{description} （默认值：{default}）（可选项：{choices}）")
             }
             MemeOption::Integer {
@@ -366,7 +363,7 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
                     (None, Some(max)) => format!("~{max}"),
                     _ => "无".to_string(),
                 };
-                let description = description.clone().unwrap_or("".to_string());
+                let description = description.as_deref().unwrap_or("");
                 format!(" * {name}：{description} （默认值：{default}）（范围：{range}）")
             }
             MemeOption::Float {
@@ -386,7 +383,7 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
                     (None, Some(max)) => format!("~{max:.1}"),
                     _ => "无".to_string(),
                 };
-                let description = description.clone().unwrap_or("".to_string());
+                let description = description.as_deref().unwrap_or("");
                 format!(" * {name}：{description} （默认值：{default}）（范围：{range}）")
             }
         })
@@ -395,15 +392,15 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
 
     let shortcuts = info
         .shortcuts
-        .iter()
+        .into_iter()
         .map(|shortcut| {
-            let pattern = shortcut.pattern.clone();
+            let pattern = shortcut.pattern;
             format!(" * {pattern} ")
         })
         .collect::<Vec<_>>()
         .join("\n");
 
-    let tags = info.tags.iter().cloned().collect::<Vec<_>>().join("、");
+    let tags = info.tags.into_iter().collect::<Vec<_>>().join("、");
     let keywords = info.keywords.join("/");
     let image_num = {
         let min = info.params.min_images;
@@ -510,7 +507,7 @@ pub(crate) fn handle_generate(sub_matches: &ArgMatches) {
             }
         }
     }
-    let result = meme.generate(&images, &texts, &options);
+    let result = meme.generate(images, texts, options);
     handle_result(result)
 }
 

@@ -13,9 +13,9 @@ use meme_generator_utils::{
 use crate::{options::Gender, register_meme};
 
 fn little_angel(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Gender,
+    images: Vec<DecodedImage>,
+    _: Vec<String>,
+    options: Gender,
 ) -> Result<Vec<u8>, Error> {
     let img_size = images[0].codec.dimensions();
     let img_w = 500;

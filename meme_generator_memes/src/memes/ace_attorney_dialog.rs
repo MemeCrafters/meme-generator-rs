@@ -68,9 +68,9 @@ impl ShadowText {
 }
 
 fn ace_attorney_dialog(
-    _: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
+    _: Vec<DecodedImage>,
+    texts: Vec<String>,
+    _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
     let ratio = 0.6;
 
@@ -86,7 +86,7 @@ fn ace_attorney_dialog(
             .unwrap()
     };
 
-    let text = texts[0].clone();
+    let text = &texts[0];
 
     let mut font_size = 650.0;
     let mut shadow_width = 20.0;
@@ -101,7 +101,7 @@ fn ace_attorney_dialog(
             break Ok(shadow_texts);
         }
         if font_size <= min_font_size {
-            break Err(Error::TextOverLength(text));
+            break Err(Error::TextOverLength(text.clone()));
         }
         font_size -= 10.0;
         shadow_width -= 0.3;
@@ -130,7 +130,7 @@ fn ace_attorney_dialog(
     let mark = mark.resize_height(mark_height as i32);
     canvas.draw_image(&mark, (x, mark_y), None);
 
-    encode_png(&surface.image_snapshot())
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

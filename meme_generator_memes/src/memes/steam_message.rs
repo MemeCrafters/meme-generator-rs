@@ -14,15 +14,15 @@ use meme_generator_utils::{
 use crate::{options::NoOptions, register_meme};
 
 fn steam_message(
-    images: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
+    images: Vec<DecodedImage>,
+    texts: Vec<String>,
+    _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
     let mut name = images[0].name.as_str();
     if name.is_empty() {
         name = "好友";
     }
-    let game = texts[0].clone();
+    let game = &texts[0];
 
     let text_name = Text2Image::from_text(
         name,

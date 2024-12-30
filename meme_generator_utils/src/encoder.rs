@@ -5,7 +5,7 @@ use meme_generator_core::error::Error;
 
 use crate::{builder::DecodedImage, config::CONFIG, decoder::CodecExt};
 
-pub fn encode_gif(images: &Vec<Image>, duration: f32) -> Result<Vec<u8>, Error> {
+pub fn encode_gif(images: Vec<Image>, duration: f32) -> Result<Vec<u8>, Error> {
     let mut bytes = Vec::new();
     let delay = (duration * 100.0) as u16;
     {
@@ -49,7 +49,7 @@ pub fn encode_gif(images: &Vec<Image>, duration: f32) -> Result<Vec<u8>, Error> 
 }
 
 fn encode_image(
-    image: &Image,
+    image: Image,
     format: EncodedImageFormat,
     quality: impl Into<Option<u32>>,
 ) -> Result<Vec<u8>, Error> {
@@ -59,7 +59,7 @@ fn encode_image(
     Ok(data.as_bytes().to_vec())
 }
 
-pub fn encode_png(image: &Image) -> Result<Vec<u8>, Error> {
+pub fn encode_png(image: Image) -> Result<Vec<u8>, Error> {
     encode_image(image, EncodedImageFormat::PNG, None)
 }
 
@@ -187,13 +187,13 @@ pub fn get_aligned_gif_indexes(
 /// - `images` 图片列表
 /// - `func`: 图片处理函数，传入图片列表，返回处理后的图片
 ///
-pub fn make_png_or_gif<F>(images: &mut Vec<DecodedImage>, func: F) -> Result<Vec<u8>, Error>
+pub fn make_png_or_gif<F>(images: Vec<DecodedImage>, func: F) -> Result<Vec<u8>, Error>
 where
     F: Fn(&Vec<Image>) -> Result<Image, Error>,
 {
     let mut images = images
-        .iter_mut()
-        .map(|image| &mut image.codec)
+        .into_iter()
+        .map(|image| image.codec)
         .collect::<Vec<_>>();
 
     let mut gif_flags: Vec<bool> = Vec::new();
@@ -215,7 +215,7 @@ where
             .iter_mut()
             .map(|image| image.first_frame())
             .collect::<Result<Vec<_>, Error>>()?;
-        return Ok(encode_png(&func(&images)?)?);
+        return Ok(encode_png(func(&images)?)?);
     } else if gif_infos.len() == 1 {
         let mut frames: Vec<Image> = Vec::new();
         let gif_info = &gif_infos[0];
@@ -231,7 +231,7 @@ where
             let frame = func(&frame_images)?;
             frames.push(frame);
         }
-        return Ok(encode_gif(&frames, gif_info.duration)?);
+        return Ok(encode_gif(frames, gif_info.duration)?);
     }
 
     let mut target_gif_index = 0;
@@ -266,7 +266,7 @@ where
         frames.push(frame);
     }
 
-    Ok(encode_gif(&frames, target_duration)?)
+    Ok(encode_gif(frames, target_duration)?)
 }
 
 /// 使用静图或动图制作 gif
@@ -277,7 +277,7 @@ where
 /// - `frame_align` gif 对齐方式
 ///
 pub fn make_gif_or_combined_gif<F>(
-    images: &mut Vec<DecodedImage>,
+    images: Vec<DecodedImage>,
     func: F,
     target_gif_info: GifInfo,
     frame_align: impl Into<Option<FrameAlign>>,
@@ -286,8 +286,8 @@ where
     F: Fn(usize, &Vec<Image>) -> Result<Image, Error>,
 {
     let mut images = images
-        .iter_mut()
-        .map(|image| &mut image.codec)
+        .into_iter()
+        .map(|image| image.codec)
         .collect::<Vec<_>>();
 
     let mut gif_flags: Vec<bool> = Vec::new();
@@ -314,7 +314,7 @@ where
             let frame = func(i as usize, &frame_images)?;
             frames.push(frame);
         }
-        return Ok(encode_gif(&frames, target_gif_info.duration)?);
+        return Ok(encode_gif(frames, target_gif_info.duration)?);
     }
 
     let (frame_indexes, target_frame_indexes) =
@@ -336,5 +336,5 @@ where
         frames.push(frame);
     }
 
-    encode_gif(&frames, target_gif_info.duration)
+    encode_gif(frames, target_gif_info.duration)
 }

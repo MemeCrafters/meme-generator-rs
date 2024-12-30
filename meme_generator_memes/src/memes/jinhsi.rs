@@ -14,11 +14,7 @@ use crate::{options::number_option, register_meme, tags::MemeTags};
 
 number_option!(Number, 1, 13);
 
-fn jinhsi(
-    _: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    options: &Number,
-) -> Result<Vec<u8>, Error> {
+fn jinhsi(_: Vec<DecodedImage>, texts: Vec<String>, options: Number) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
     let num = options.number.unwrap_or({
         let mut rng = rand::thread_rng();
@@ -39,7 +35,7 @@ fn jinhsi(
         None,
     )?;
 
-    encode_png(&surface.image_snapshot())
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

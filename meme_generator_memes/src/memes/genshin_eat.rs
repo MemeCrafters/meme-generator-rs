@@ -20,9 +20,9 @@ struct Character {
 }
 
 fn genshin_eat(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Character,
+    images: Vec<DecodedImage>,
+    _: Vec<String>,
+    options: Character,
 ) -> Result<Vec<u8>, Error> {
     let character = options.character.as_deref().unwrap_or({
         let mut rng = rand::thread_rng();

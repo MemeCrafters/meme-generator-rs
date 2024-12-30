@@ -140,7 +140,7 @@ async fn meme_generate(
     let texts = payload.texts;
     let options = payload.options;
 
-    match spawn_blocking(move || meme.generate(&images, &texts, &options))
+    match spawn_blocking(move || meme.generate(images, texts, options))
         .await
         .unwrap()
     {

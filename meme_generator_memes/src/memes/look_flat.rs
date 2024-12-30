@@ -22,9 +22,9 @@ struct Ratio {
 const DEFAULT_TEXT: &str = "可恶...被人看扁了";
 
 fn look_flat(
-    images: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    options: &Ratio,
+    images: Vec<DecodedImage>,
+    texts: Vec<String>,
+    options: Ratio,
 ) -> Result<Vec<u8>, Error> {
     let text = if !texts.is_empty() {
         &texts[0]

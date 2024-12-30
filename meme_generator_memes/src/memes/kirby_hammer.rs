@@ -11,9 +11,9 @@ use meme_generator_utils::{
 use crate::{options::Circle, register_meme, tags::MemeTags};
 
 fn kirby_hammer(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Circle,
+    images: Vec<DecodedImage>,
+    _: Vec<String>,
+    options: Circle,
 ) -> Result<Vec<u8>, Error> {
     let positions = [
         (318, 163),

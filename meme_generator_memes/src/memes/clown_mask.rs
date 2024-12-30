@@ -25,11 +25,7 @@ struct Mode {
     behind: Option<bool>,
 }
 
-fn clown_mask(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Mode,
-) -> Result<Vec<u8>, Error> {
+fn clown_mask(images: Vec<DecodedImage>, _: Vec<String>, options: Mode) -> Result<Vec<u8>, Error> {
     let make_front = |images: &Vec<Image>| {
         let frame = load_image("clown_mask/0.png")?;
         let mut surface = new_surface(frame.dimensions());

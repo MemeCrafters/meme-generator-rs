@@ -11,23 +11,19 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn coupon(
-    images: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn coupon(images: Vec<DecodedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = if !texts.is_empty() {
-        texts[0].clone()
+        &texts[0]
     } else {
         let name = &images[0].name;
-        format!("{}陪睡券\n（永久有效）", name)
+        &format!("{}陪睡券\n（永久有效）", name)
     };
 
     let mut surface = new_surface((250, 100));
     let canvas = surface.canvas();
     canvas.draw_text_area_auto_font_size(
         IRect::from_ltrb(0, 0, 250, 100),
-        &text,
+        text,
         15.0,
         30.0,
         None,

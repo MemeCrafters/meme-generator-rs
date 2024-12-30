@@ -15,9 +15,9 @@ use crate::{options::NoOptions, register_meme};
 const DEFAULT_TEXT: &str = "走，跟我去二次元吧";
 
 fn acg_entrance(
-    images: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
+    images: Vec<DecodedImage>,
+    texts: Vec<String>,
+    _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
     let text = if !texts.is_empty() {
         &texts[0]

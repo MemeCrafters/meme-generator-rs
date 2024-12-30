@@ -11,11 +11,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
-fn batitle(
-    _: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn batitle(_: Vec<DecodedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let fontsize = 168.0;
     let font_families = &["Ro GSan Serif Std", "Glow Sans SC"];
     let tilt = -0.4;
@@ -67,7 +63,7 @@ fn batitle(
     canvas.draw_image(&halo, (logo_x, logo_y), None);
     canvas.draw_image(&text_image, (padding_x, text_y), None);
     canvas.draw_image(&cross, (logo_x, logo_y), None);
-    encode_png(&surface.image_snapshot())
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

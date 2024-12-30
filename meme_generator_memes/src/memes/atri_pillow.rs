@@ -28,11 +28,7 @@ struct Mode {
     no: Option<bool>,
 }
 
-fn atri_pillow(
-    _: &mut Vec<DecodedImage>,
-    texts: &Vec<String>,
-    options: &Mode,
-) -> Result<Vec<u8>, Error> {
+fn atri_pillow(_: Vec<DecodedImage>, texts: Vec<String>, options: Mode) -> Result<Vec<u8>, Error> {
     let mode = if options.yes.unwrap_or(false) {
         "yes"
     } else if options.no.unwrap_or(false) {
@@ -43,7 +39,7 @@ fn atri_pillow(
             ["yes", "no"].choose(&mut rng).unwrap()
         })
     };
-    let text = texts[0].clone();
+    let text = &texts[0];
 
     let text_color = match mode {
         "yes" => Color4f::new(1.0, 0.0, 0.0, 0.3),
@@ -71,7 +67,7 @@ fn atri_pillow(
     canvas.draw_image(&text_image, (302, 288), None);
     let border = load_image("atri_pillow/border.png")?;
     canvas.draw_image(&border, (0, 416), None);
-    encode_png(&surface.image_snapshot())
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

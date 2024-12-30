@@ -288,11 +288,11 @@ impl Meme {
                 max_images: info.params.max_images,
                 min_texts: info.params.min_texts,
                 max_texts: info.params.max_texts,
-                default_texts: info.params.default_texts.clone(),
+                default_texts: info.params.default_texts,
                 options: info
                     .params
                     .options
-                    .iter()
+                    .into_iter()
                     .map(|option| match option {
                         meme::MemeOption::Boolean {
                             name,
@@ -300,14 +300,14 @@ impl Meme {
                             description,
                             parser_flags,
                         } => MemeOption::Boolean(BooleanOption {
-                            name: name.clone(),
-                            default: default.clone(),
-                            description: description.clone(),
+                            name: name,
+                            default: default,
+                            description: description,
                             parser_flags: ParserFlags {
                                 short: parser_flags.short,
                                 long: parser_flags.long,
-                                short_aliases: parser_flags.short_aliases.clone(),
-                                long_aliases: parser_flags.long_aliases.clone(),
+                                short_aliases: parser_flags.short_aliases,
+                                long_aliases: parser_flags.long_aliases,
                             },
                         }),
                         meme::MemeOption::String {
@@ -317,15 +317,15 @@ impl Meme {
                             description,
                             parser_flags,
                         } => MemeOption::String(StringOption {
-                            name: name.clone(),
-                            default: default.clone(),
-                            choices: choices.clone(),
-                            description: description.clone(),
+                            name: name,
+                            default: default,
+                            choices: choices,
+                            description: description,
                             parser_flags: ParserFlags {
                                 short: parser_flags.short,
                                 long: parser_flags.long,
-                                short_aliases: parser_flags.short_aliases.clone(),
-                                long_aliases: parser_flags.long_aliases.clone(),
+                                short_aliases: parser_flags.short_aliases,
+                                long_aliases: parser_flags.long_aliases,
                             },
                         }),
                         meme::MemeOption::Integer {
@@ -336,16 +336,16 @@ impl Meme {
                             description,
                             parser_flags,
                         } => MemeOption::Integer(IntegerOption {
-                            name: name.clone(),
-                            default: default.clone(),
-                            minimum: minimum.clone(),
-                            maximum: maximum.clone(),
-                            description: description.clone(),
+                            name: name,
+                            default: default,
+                            minimum: minimum,
+                            maximum: maximum,
+                            description: description,
                             parser_flags: ParserFlags {
                                 short: parser_flags.short,
                                 long: parser_flags.long,
-                                short_aliases: parser_flags.short_aliases.clone(),
-                                long_aliases: parser_flags.long_aliases.clone(),
+                                short_aliases: parser_flags.short_aliases,
+                                long_aliases: parser_flags.long_aliases,
                             },
                         }),
                         meme::MemeOption::Float {
@@ -356,36 +356,36 @@ impl Meme {
                             description,
                             parser_flags,
                         } => MemeOption::Float(FloatOption {
-                            name: name.clone(),
-                            default: default.clone(),
-                            minimum: minimum.clone(),
-                            maximum: maximum.clone(),
-                            description: description.clone(),
+                            name: name,
+                            default: default,
+                            minimum: minimum,
+                            maximum: maximum,
+                            description: description,
                             parser_flags: ParserFlags {
                                 short: parser_flags.short,
                                 long: parser_flags.long,
-                                short_aliases: parser_flags.short_aliases.clone(),
-                                long_aliases: parser_flags.long_aliases.clone(),
+                                short_aliases: parser_flags.short_aliases,
+                                long_aliases: parser_flags.long_aliases,
                             },
                         }),
                     })
                     .collect(),
             },
-            keywords: info.keywords.clone(),
+            keywords: info.keywords,
             shortcuts: info
                 .shortcuts
-                .iter()
+                .into_iter()
                 .map(|shortcut| MemeShortcut {
-                    pattern: shortcut.pattern.clone(),
-                    humanized: shortcut.humanized.clone(),
-                    names: shortcut.names.clone(),
-                    texts: shortcut.texts.clone(),
-                    parser_args: shortcut.parser_args.clone(),
+                    pattern: shortcut.pattern,
+                    humanized: shortcut.humanized,
+                    names: shortcut.names,
+                    texts: shortcut.texts,
+                    parser_args: shortcut.parser_args,
                 })
                 .collect(),
-            tags: info.tags.clone(),
-            date_created: info.date_created.clone(),
-            date_modified: info.date_modified.clone(),
+            tags: info.tags,
+            date_created: info.date_created,
+            date_modified: info.date_modified,
         }
     }
 
@@ -415,7 +415,7 @@ impl Meme {
             })
             .collect::<HashMap<_, _>>();
 
-        let result = self.meme.generate(&images, &texts, &options);
+        let result = self.meme.generate(images, texts, options);
         handle_result(result)
     }
 

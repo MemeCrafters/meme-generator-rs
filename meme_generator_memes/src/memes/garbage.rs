@@ -9,11 +9,7 @@ use meme_generator_utils::{
 };
 
 use crate::{options::NoOptions, register_meme};
-fn garbage(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    _: &NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn garbage(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let locs = [
         (39, 40),
         (39, 40),

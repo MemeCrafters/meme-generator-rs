@@ -4,7 +4,6 @@ use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::{DecodedImage, MemeOptions},
     canvas::CanvasExt,
-    decoder::CodecExt,
     encoder::{make_gif_or_combined_gif, make_png_or_gif, FrameAlign, GifInfo},
     image::ImageExt,
     shortcut, text_params,
@@ -28,8 +27,8 @@ struct Mode {
     r#loop: Option<bool>,
 }
 
-fn always_normal(images: &mut Vec<DecodedImage>) -> Result<Vec<u8>, Error> {
-    let image = images[0].codec.first_frame()?;
+fn always_normal(images: Vec<DecodedImage>) -> Result<Vec<u8>, Error> {
+    let image = &images[0];
     let img_big_w = 500;
     let img_big_h = ((img_big_w * image.height()) as f32 / image.width() as f32).round() as i32;
     let img_small_w = 100;
@@ -76,8 +75,8 @@ fn always_normal(images: &mut Vec<DecodedImage>) -> Result<Vec<u8>, Error> {
     make_png_or_gif(images, func)
 }
 
-fn always_always(images: &mut Vec<DecodedImage>, loop_: bool) -> Result<Vec<u8>, Error> {
-    let image = images[0].codec.first_frame()?;
+fn always_always(images: Vec<DecodedImage>, loop_: bool) -> Result<Vec<u8>, Error> {
+    let image = &images[0];
     let img_big_w = 500;
     let img_big_h = ((img_big_w * image.height()) as f32 / image.width() as f32).round() as i32;
     let img_small_w = 100;
@@ -151,11 +150,7 @@ fn always_always(images: &mut Vec<DecodedImage>, loop_: bool) -> Result<Vec<u8>,
     )
 }
 
-fn always(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Mode,
-) -> Result<Vec<u8>, Error> {
+fn always(images: Vec<DecodedImage>, _: Vec<String>, options: Mode) -> Result<Vec<u8>, Error> {
     let mode = if options.circle.unwrap_or(false) {
         "circle"
     } else if options.r#loop.unwrap_or(false) {

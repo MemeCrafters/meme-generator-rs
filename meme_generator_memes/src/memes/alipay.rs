@@ -20,13 +20,9 @@ struct Message {
     message: Option<String>,
 }
 
-fn alipay(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Message,
-) -> Result<Vec<u8>, Error> {
+fn alipay(images: Vec<DecodedImage>, _: Vec<String>, options: Message) -> Result<Vec<u8>, Error> {
     let message = options.message.as_deref().unwrap_or(DEFAULT_MESSAGE);
-    let name = images[0].name.clone();
+    let name = &images[0].name;
 
     let frame = load_image("alipay/0.png")?;
     let mut surface = frame.to_surface();

@@ -17,11 +17,7 @@ struct Person {
     person: Option<bool>,
 }
 
-fn clown(
-    images: &mut Vec<DecodedImage>,
-    _: &Vec<String>,
-    options: &Person,
-) -> Result<Vec<u8>, Error> {
+fn clown(images: Vec<DecodedImage>, _: Vec<String>, options: Person) -> Result<Vec<u8>, Error> {
     let (frame_path, size, angle, left_center_x, center_y) = if options.person.unwrap_or(false) {
         ("clown/person.png", (434, 467), 26.0, 174, 378)
     } else {
