@@ -5,7 +5,7 @@ use libloading::Library;
 use meme_generator_core::{
     config::MEME_HOME,
     error::Error,
-    meme::{Meme, MemeInfo, OptionValue, RawImage},
+    meme::{Image, Meme, MemeInfo, OptionValue},
     registry::{MemePackDeclaration, CORE_VERSION, RUSTC_VERSION},
 };
 
@@ -50,7 +50,7 @@ impl Meme for ExternalMeme {
 
     fn generate(
         &self,
-        images: Vec<RawImage>,
+        images: Vec<Image>,
         texts: Vec<String>,
         options: HashMap<String, OptionValue>,
     ) -> Result<Vec<u8>, Error> {

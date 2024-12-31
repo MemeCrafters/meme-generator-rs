@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
@@ -10,8 +10,8 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn jiujiu(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
-    let func = |i: usize, images: &Vec<Image>| {
+fn jiujiu(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+    let func = |i: usize, images: Vec<Image>| {
         let frame = load_image(format!("jiujiu/{i}.png"))?;
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();

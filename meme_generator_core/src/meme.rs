@@ -127,7 +127,7 @@ impl Default for MemeInfo {
     }
 }
 
-pub struct RawImage {
+pub struct Image {
     pub name: String,
     pub data: Vec<u8>,
 }
@@ -146,7 +146,7 @@ pub trait Meme: Send + Sync {
     fn info(&self) -> MemeInfo;
     fn generate(
         &self,
-        images: Vec<RawImage>,
+        images: Vec<Image>,
         texts: Vec<String>,
         options: HashMap<String, OptionValue>,
     ) -> Result<Vec<u8>, Error>;

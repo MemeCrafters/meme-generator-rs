@@ -3,7 +3,7 @@ use skia_safe::{Color4f, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{DecodedImage, MemeOptions},
+    builder::{MemeOptions, NamedImage},
     canvas::CanvasExt,
     encoder::encode_png,
     image::ImageExt,
@@ -28,7 +28,7 @@ struct Mode {
     no: Option<bool>,
 }
 
-fn atri_pillow(_: Vec<DecodedImage>, texts: Vec<String>, options: Mode) -> Result<Vec<u8>, Error> {
+fn atri_pillow(_: Vec<NamedImage>, texts: Vec<String>, options: Mode) -> Result<Vec<u8>, Error> {
     let mode = if options.yes.unwrap_or(false) {
         "yes"
     } else if options.no.unwrap_or(false) {

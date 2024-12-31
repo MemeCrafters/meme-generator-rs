@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
@@ -10,7 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn hit_screen(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn hit_screen(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let params = [
         ([(1, 10), (138, 1), (140, 119), (7, 154)], (32, 37)),
         ([(1, 10), (138, 1), (140, 121), (7, 154)], (32, 37)),
@@ -30,7 +30,7 @@ fn hit_screen(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result
         ([(1, 15), (165, 1), (175, 135), (1, 171)], (-6, 46)),
     ];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let frame = load_image(format!("hit_screen/{i:02}.png"))?;
         if i < 6 || i >= 22 {
             return Ok(frame);

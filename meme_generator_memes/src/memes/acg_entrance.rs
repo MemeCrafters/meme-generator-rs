@@ -2,7 +2,7 @@ use skia_safe::{Color, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -15,7 +15,7 @@ use crate::{options::NoOptions, register_meme};
 const DEFAULT_TEXT: &str = "走，跟我去二次元吧";
 
 fn acg_entrance(
-    images: Vec<DecodedImage>,
+    images: Vec<NamedImage>,
     texts: Vec<String>,
     _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
@@ -36,12 +36,12 @@ fn acg_entrance(
     )?;
     let frame = surface.image_snapshot();
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
         canvas.clear(Color::WHITE);
         let image = images[0].resize_fit((290, 410), Fit::Cover);
-        canvas.draw_image(&image, (190.0, 265.0), None);
+        canvas.draw_image(&image, (190, 265), None);
         canvas.draw_image(&frame, (0, 0), None);
         Ok(surface.image_snapshot())
     };

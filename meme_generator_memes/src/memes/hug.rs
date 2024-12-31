@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::ImageExt,
     tools::{load_image, local_date, new_surface},
@@ -10,7 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn hug(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn hug(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let user_locs = [
         (108, 15),
         (107, 14),
@@ -37,7 +37,7 @@ fn hug(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8
     ];
     let angles = [48, 18, 0, -38, -31, 43, 22, 0, -34, -35];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let frame = load_image(format!("hug/{i}.png"))?;
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();

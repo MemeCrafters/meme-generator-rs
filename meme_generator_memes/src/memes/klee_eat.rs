@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::ImageExt,
     tools::{load_image, local_date, new_surface},
@@ -10,7 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
-fn klee_eat(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn klee_eat(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let locs = [
         (0, 174),
         (0, 174),
@@ -45,7 +45,7 @@ fn klee_eat(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<V
         (0, 174),
     ];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let frame = load_image(format!("klee_eat/{i:02}.png"))?;
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();

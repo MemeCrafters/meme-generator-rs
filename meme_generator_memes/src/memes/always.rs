@@ -2,7 +2,7 @@ use skia_safe::{textlayout::TextAlign, Color, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{DecodedImage, MemeOptions},
+    builder::{MemeOptions, NamedImage},
     canvas::CanvasExt,
     encoder::{make_gif_or_combined_gif, make_png_or_gif, FrameAlign, GifInfo},
     image::ImageExt,
@@ -27,7 +27,7 @@ struct Mode {
     r#loop: Option<bool>,
 }
 
-fn always_normal(images: Vec<DecodedImage>) -> Result<Vec<u8>, Error> {
+fn always_normal(images: Vec<NamedImage>) -> Result<Vec<u8>, Error> {
     let image = &images[0];
     let img_big_w = 500;
     let img_big_h = ((img_big_w * image.height()) as f32 / image.width() as f32).round() as i32;
@@ -58,7 +58,7 @@ fn always_normal(images: Vec<DecodedImage>) -> Result<Vec<u8>, Error> {
     )?;
     let frame = surface.image_snapshot();
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let image_big = images[0].resize_width(img_big_w);
@@ -75,7 +75,7 @@ fn always_normal(images: Vec<DecodedImage>) -> Result<Vec<u8>, Error> {
     make_png_or_gif(images, func)
 }
 
-fn always_always(images: Vec<DecodedImage>, loop_: bool) -> Result<Vec<u8>, Error> {
+fn always_always(images: Vec<NamedImage>, loop_: bool) -> Result<Vec<u8>, Error> {
     let image = &images[0];
     let img_big_w = 500;
     let img_big_h = ((img_big_w * image.height()) as f32 / image.width() as f32).round() as i32;
@@ -111,7 +111,7 @@ fn always_always(images: Vec<DecodedImage>, loop_: bool) -> Result<Vec<u8>, Erro
     let frame_num = 20;
     let coeff = (5.0_f32).powf(1.0 / frame_num as f32);
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let mut surface = text_frame.to_surface();
         let canvas = surface.canvas();
         let image = images[0].resize_width(img_big_w);
@@ -136,7 +136,7 @@ fn always_always(images: Vec<DecodedImage>, loop_: bool) -> Result<Vec<u8>, Erro
     };
 
     if !loop_ {
-        return make_png_or_gif(images, |images: &Vec<Image>| func(0, images));
+        return make_png_or_gif(images, |images: Vec<Image>| func(0, images));
     }
 
     make_gif_or_combined_gif(
@@ -150,7 +150,7 @@ fn always_always(images: Vec<DecodedImage>, loop_: bool) -> Result<Vec<u8>, Erro
     )
 }
 
-fn always(images: Vec<DecodedImage>, _: Vec<String>, options: Mode) -> Result<Vec<u8>, Error> {
+fn always(images: Vec<NamedImage>, _: Vec<String>, options: Mode) -> Result<Vec<u8>, Error> {
     let mode = if options.circle.unwrap_or(false) {
         "circle"
     } else if options.r#loop.unwrap_or(false) {

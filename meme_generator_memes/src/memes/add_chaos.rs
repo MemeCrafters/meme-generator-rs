@@ -2,7 +2,7 @@ use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::make_png_or_gif,
     image::ImageExt,
     tools::{load_image, local_date},
@@ -10,10 +10,10 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn add_chaos(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn add_chaos(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let banner = load_image("add_chaos/0.png")?;
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let image = images[0].resize_width(240);
         let mut surface = image.to_surface();
         let canvas = surface.canvas();

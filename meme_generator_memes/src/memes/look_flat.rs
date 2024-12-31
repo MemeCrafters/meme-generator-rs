@@ -2,7 +2,7 @@ use skia_safe::{Color, FontStyle, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{DecodedImage, MemeOptions},
+    builder::{MemeOptions, NamedImage},
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::ImageExt,
@@ -22,7 +22,7 @@ struct Ratio {
 const DEFAULT_TEXT: &str = "可恶...被人看扁了";
 
 fn look_flat(
-    images: Vec<DecodedImage>,
+    images: Vec<NamedImage>,
     texts: Vec<String>,
     options: Ratio,
 ) -> Result<Vec<u8>, Error> {
@@ -53,7 +53,7 @@ fn look_flat(
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut image = images[0].resize_width(img_w);
         image = image.resize_exact((img_w, (image.height() as f32 / ratio) as i32));
         let mut surface = new_surface((img_w, image.height() + text_h));

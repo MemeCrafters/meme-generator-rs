@@ -2,7 +2,7 @@ use skia_safe::{Color, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::ImageExt,
@@ -14,11 +14,7 @@ use crate::{options::NoOptions, register_meme};
 
 const DEFAULT_TEXT: &str = "采访大佬经验";
 
-fn interview(
-    images: Vec<DecodedImage>,
-    texts: Vec<String>,
-    _: NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn interview(images: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = if !texts.is_empty() {
         &texts[0]
     } else {
@@ -39,7 +35,7 @@ fn interview(
     let huaji = load_image("interview/huaji.png")?;
     let microphone = load_image("interview/microphone.png")?;
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let (self_img, user_img) = if images.len() == 2 {
             (&images[0], &images[1])
         } else {

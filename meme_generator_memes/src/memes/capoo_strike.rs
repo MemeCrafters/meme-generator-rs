@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
@@ -10,7 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
-fn capoo_strike(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn capoo_strike(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let params = [
         ([(0, 4), (153, 0), (138, 105), (0, 157)], (28, 47)),
         ([(1, 13), (151, 0), (130, 104), (0, 156)], (28, 48)),
@@ -21,7 +21,7 @@ fn capoo_strike(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Resu
         ([(0, 25), (157, 0), (169, 113), (13, 147)], (18, 63)),
     ];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let frame = load_image(format!("capoo_strike/{i}.png"))?;
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();

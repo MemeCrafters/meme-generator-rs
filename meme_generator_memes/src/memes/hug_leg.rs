@@ -2,14 +2,14 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::ImageExt,
     tools::{load_image, local_date, new_surface},
 };
 
 use crate::{options::NoOptions, register_meme};
-fn hug_leg(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn hug_leg(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let locs = [
         (50, 73, 68, 92),
         (58, 60, 62, 95),
@@ -19,7 +19,7 @@ fn hug_leg(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Ve
         (66, 85, 60, 98),
     ];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let frame = load_image(format!("hug_leg/{i}.png"))?;
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();

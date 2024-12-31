@@ -2,7 +2,7 @@ use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
@@ -10,7 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
-fn bocchi_draft(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn bocchi_draft(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let params = [
         ([(54, 62), (353, 1), (379, 382), (1, 399)], (146, 173)),
         ([(54, 61), (349, 1), (379, 381), (1, 398)], (146, 174)),
@@ -28,7 +28,7 @@ fn bocchi_draft(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Resu
         0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10,
     ];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let frame = load_image(format!("bocchi_draft/{i:02}.png"))?;
         let (points, pos) = params[idx[i]];
         let mut surface = new_surface(frame.dimensions());

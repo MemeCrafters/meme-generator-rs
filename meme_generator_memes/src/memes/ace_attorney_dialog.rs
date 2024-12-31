@@ -2,7 +2,7 @@ use skia_safe::{Canvas, Point};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::encode_png,
     image::ImageExt,
     text::Text2Image,
@@ -68,7 +68,7 @@ impl ShadowText {
 }
 
 fn ace_attorney_dialog(
-    _: Vec<DecodedImage>,
+    _: Vec<NamedImage>,
     texts: Vec<String>,
     _: NoOptions,
 ) -> Result<Vec<u8>, Error> {

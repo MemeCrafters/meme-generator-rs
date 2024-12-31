@@ -2,7 +2,7 @@ use skia_safe::{textlayout::TextAlign, Color, FontStyle, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::ImageExt,
@@ -12,11 +12,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn google_captcha(
-    images: Vec<DecodedImage>,
-    _: Vec<String>,
-    _: NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn google_captcha(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let name = &images[0].name;
 
     let mut surface = new_surface((1004, 1539));
@@ -80,7 +76,7 @@ fn google_captcha(
     )?;
     let frame = surface.image_snapshot();
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let image = images[0].square().resize_exact((932, 932));

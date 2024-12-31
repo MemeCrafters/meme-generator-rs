@@ -2,7 +2,7 @@ use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::{Fit, ImageExt},
     tools::{load_image, local_date},
@@ -10,7 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
-fn arona_throw(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn arona_throw(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let position_list = [
         (270, 295),
         (154, 291),
@@ -31,7 +31,7 @@ fn arona_throw(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Resul
     ];
     let position_list2 = [(324, 15), (324, 106), (324, 161), (324, 192)];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let pyroxenes = images[0].resize_fit((120, 120), Fit::Cover).circle();
         let arona = load_image(format!("arona_throw/{i:02}.png"))?;
         let mut surface = arona.to_surface();

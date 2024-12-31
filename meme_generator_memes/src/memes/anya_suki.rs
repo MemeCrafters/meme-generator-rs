@@ -2,7 +2,7 @@ use skia_safe::{Color, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -14,11 +14,7 @@ use crate::{options::NoOptions, register_meme};
 
 const DEFAULT_TEXT: &str = "阿尼亚喜欢这个";
 
-fn anya_suki(
-    images: Vec<DecodedImage>,
-    texts: Vec<String>,
-    _: NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn anya_suki(images: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = if !texts.is_empty() {
         &texts[0]
     } else {
@@ -45,11 +41,11 @@ fn anya_suki(
     )?;
     let frame = surface.image_snapshot();
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
-        let img = images[0].resize_fit((305, 235), Fit::Cover);
-        canvas.draw_image(&img, (106, 72), None);
+        let image = images[0].resize_fit((305, 235), Fit::Cover);
+        canvas.draw_image(&image, (106, 72), None);
         canvas.draw_image(&frame, (0, 0), None);
         Ok(surface.image_snapshot())
     };

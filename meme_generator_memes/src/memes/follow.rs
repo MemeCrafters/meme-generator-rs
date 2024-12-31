@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::make_png_or_gif,
     image::ImageExt,
     text::Text2Image,
@@ -12,7 +12,7 @@ use meme_generator_utils::{
 
 use crate::{options::Gender, register_meme};
 
-fn follow(images: Vec<DecodedImage>, _: Vec<String>, options: Gender) -> Result<Vec<u8>, Error> {
+fn follow(images: Vec<NamedImage>, _: Vec<String>, options: Gender) -> Result<Vec<u8>, Error> {
     let name = if !images[0].name.is_empty() {
         &images[0].name
     } else {
@@ -42,7 +42,7 @@ fn follow(images: Vec<DecodedImage>, _: Vec<String>, options: Gender) -> Result<
     follow_image.draw_on_canvas(canvas, (300.0, 145.0));
     let frame = surface.image_snapshot();
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let image = images[0].circle().resize_exact((200, 200));

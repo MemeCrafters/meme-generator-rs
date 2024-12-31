@@ -2,7 +2,7 @@ use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::{Fit, ImageExt},
     tools::{load_image, local_date},
@@ -11,7 +11,7 @@ use meme_generator_utils::{
 use crate::{options::Circle, register_meme, tags::MemeTags};
 
 fn kirby_hammer(
-    images: Vec<DecodedImage>,
+    images: Vec<NamedImage>,
     _: Vec<String>,
     options: Circle,
 ) -> Result<Vec<u8>, Error> {
@@ -37,7 +37,7 @@ fn kirby_hammer(
         (280, 179),
     ];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let frame = load_image(format!("kirby_hammer/{i:02}.png"))?;
         if i > 39 {
             return Ok(frame);

@@ -2,7 +2,7 @@ use skia_safe::{IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -11,7 +11,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn coupon(images: Vec<DecodedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn coupon(images: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = if !texts.is_empty() {
         &texts[0]
     } else {
@@ -30,7 +30,7 @@ fn coupon(images: Vec<DecodedImage>, texts: Vec<String>, _: NoOptions) -> Result
     )?;
     let text_image = surface.image_snapshot();
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let frame = load_image("coupon/0.png")?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();

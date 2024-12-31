@@ -2,7 +2,7 @@ use skia_safe::{IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -12,7 +12,7 @@ use meme_generator_utils::{
 use crate::{options::NoOptions, register_meme};
 
 fn father_work(
-    images: Vec<DecodedImage>,
+    images: Vec<NamedImage>,
     texts: Vec<String>,
     _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
@@ -35,7 +35,7 @@ fn father_work(
     )?;
     let frame = surface.image_snapshot();
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let image = images[0].resize_fit((230, 120), Fit::Contain);

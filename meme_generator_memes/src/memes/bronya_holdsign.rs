@@ -2,7 +2,7 @@ use skia_safe::{Color, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::encode_png,
     image::ImageExt,
@@ -12,11 +12,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
-fn bronya_holdsign(
-    _: Vec<DecodedImage>,
-    texts: Vec<String>,
-    _: NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn bronya_holdsign(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
     let frame = load_image("bronya_holdsign/0.jpg")?;
     let mut surface = frame.to_surface();

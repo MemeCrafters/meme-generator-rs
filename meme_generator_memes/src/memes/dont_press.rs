@@ -2,13 +2,12 @@ use skia_safe::IRect;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage, canvas::CanvasExt, encoder::encode_png, image::ImageExt,
-    tools::load_image,
+    builder::NamedImage, canvas::CanvasExt, encoder::encode_png, image::ImageExt, tools::load_image,
 };
 
 use crate::{options::NoOptions, register_meme};
 
-fn dont_press(_: Vec<DecodedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn dont_press(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
 
     let frame = load_image("dont_press/0.png")?;

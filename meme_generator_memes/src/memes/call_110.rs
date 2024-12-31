@@ -2,7 +2,7 @@ use skia_safe::{Color, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::ImageExt,
@@ -11,11 +11,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn call_110(
-    images: Vec<DecodedImage>,
-    _: Vec<String>,
-    _: NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn call_110(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let mut surface = new_surface((900, 500));
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);
@@ -28,7 +24,7 @@ fn call_110(
     )?;
     let frame = surface.image_snapshot();
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let image1 = images[0].square().resize_exact((250, 250));

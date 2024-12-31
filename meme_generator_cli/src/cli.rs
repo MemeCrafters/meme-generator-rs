@@ -16,7 +16,7 @@ use clap::{
 use meme_generator::{
     error::Error,
     load_memes,
-    meme::{Meme, MemeOption, OptionValue, RawImage},
+    meme::{Image, Meme, MemeOption, OptionValue},
     resources::check_resources_sync,
 };
 #[cfg(feature = "server")]
@@ -462,7 +462,7 @@ pub(crate) fn handle_generate(sub_matches: &ArgMatches) {
             } else {
                 "".to_string()
             };
-            RawImage { name, data }
+            Image { name, data }
         })
         .collect::<Vec<_>>();
     let names = sub_matches

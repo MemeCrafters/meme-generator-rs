@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
@@ -10,7 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
-fn capoo_draw(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn capoo_draw(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let params = [
         ([(27, 0), (207, 12), (179, 142), (0, 117)], (30, 16)),
         ([(28, 0), (207, 13), (180, 137), (0, 117)], (34, 17)),
@@ -21,7 +21,7 @@ fn capoo_draw(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result
     }
     let indexes = [0, 1, 2, 1, 2, 3, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let index = indexes[i];
         let frame = &raw_frames[index];
         let mut surface = new_surface(frame.dimensions());

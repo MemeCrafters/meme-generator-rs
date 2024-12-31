@@ -170,7 +170,7 @@ struct MemeInfo {
 }
 
 #[derive(FromPyObject, Clone)]
-struct RawImage(String, Vec<u8>);
+struct Image(String, Vec<u8>);
 
 #[derive(FromPyObject, Clone)]
 enum OptionValue {
@@ -391,13 +391,13 @@ impl Meme {
 
     fn generate(
         &self,
-        images: Vec<RawImage>,
+        images: Vec<Image>,
         texts: Vec<String>,
         options: HashMap<String, OptionValue>,
     ) -> MemeResult {
         let images = images
             .into_iter()
-            .map(|RawImage(name, data)| meme::RawImage { name, data })
+            .map(|Image(name, data)| meme::Image { name, data })
             .collect::<Vec<_>>();
 
         let options = options

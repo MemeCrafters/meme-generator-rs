@@ -2,7 +2,7 @@ use skia_safe::IRect;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::encode_png,
     image::ImageExt,
@@ -11,7 +11,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn fanatic(_: Vec<DecodedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn fanatic(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
 
     let frame = load_image("fanatic/0.jpg")?;

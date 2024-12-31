@@ -2,7 +2,7 @@ use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::ImageExt,
     tools::{load_image, local_date},
@@ -10,11 +10,11 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags, union_tags};
 
-fn beat_up(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn beat_up(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let self_locs = [(100, 43), (110, 46), (101, 40)];
     let user_locs = [(99, 136), (99, 136), (89, 140)];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let self_head = images[0].circle().resize_exact((55, 55));
         let user_head = images[1].circle().resize_exact((45, 45));
         let frame = load_image(&format!("beat_up/{i}.png"))?;

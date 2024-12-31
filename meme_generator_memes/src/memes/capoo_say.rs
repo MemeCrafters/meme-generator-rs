@@ -2,7 +2,7 @@ use skia_safe::{IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::encode_gif,
     image::ImageExt,
@@ -48,7 +48,7 @@ fn capoo_say_one_loop(text: &str) -> Result<Vec<Image>, Error> {
     Ok(frames)
 }
 
-fn capoo_say(_: Vec<DecodedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn capoo_say(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let mut all_frames = vec![];
     for text in texts {
         all_frames.extend(capoo_say_one_loop(&text)?);

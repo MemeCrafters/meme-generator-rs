@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{DecodedImage, MemeOptions},
+    builder::{MemeOptions, NamedImage},
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
@@ -30,7 +30,7 @@ struct Position {
 }
 
 fn bubble_tea(
-    images: Vec<DecodedImage>,
+    images: Vec<NamedImage>,
     _: Vec<String>,
     options: Position,
 ) -> Result<Vec<u8>, Error> {
@@ -47,7 +47,7 @@ fn bubble_tea(
     let right = position == "right" || position == "both";
     let bubble_tea = load_image("bubble_tea/0.png")?;
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let frame = images[0].resize_fit((500, 500), Fit::Cover);
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();

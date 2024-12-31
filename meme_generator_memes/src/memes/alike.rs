@@ -2,7 +2,7 @@ use skia_safe::{Color, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -11,7 +11,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn alike(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn alike(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let mut surface = new_surface((470, 180));
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);
@@ -33,11 +33,11 @@ fn alike(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<
 
     let frame = surface.image_snapshot();
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let image = images[0].resize_fit((150, 150), Fit::Cover);
-        canvas.draw_image(&image, (200.0, 15.0), None);
+        canvas.draw_image(&image, (200, 15), None);
         Ok(surface.image_snapshot())
     };
 

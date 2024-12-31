@@ -2,7 +2,7 @@ use skia_safe::{Color, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -15,7 +15,7 @@ use crate::{options::NoOptions, register_meme};
 const DEFAULT_TEXT: &str = "原神，启动！";
 
 fn genshin_start(
-    images: Vec<DecodedImage>,
+    images: Vec<NamedImage>,
     texts: Vec<String>,
     _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
@@ -44,7 +44,7 @@ fn genshin_start(
     )?;
     let frame = surface.image_snapshot();
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
         let image = images[0].resize_fit((600, 330), Fit::Cover).perspective(&[

@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::make_png_or_gif,
     image::ImageExt,
     tools::{local_date, new_surface},
@@ -11,7 +11,7 @@ use meme_generator_utils::{
 use crate::{options::Circle, register_meme};
 
 fn kaleidoscope(
-    images: Vec<DecodedImage>,
+    images: Vec<NamedImage>,
     _: Vec<String>,
     options: Circle,
 ) -> Result<Vec<u8>, Error> {
@@ -25,7 +25,7 @@ fn kaleidoscope(
     let cx = radius(circle_num) as f32;
     let cy = cx;
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = new_surface(((cx * 2.0) as i32, (cy * 2.0) as i32));
         let canvas = surface.canvas();
         canvas.clear(Color::WHITE);

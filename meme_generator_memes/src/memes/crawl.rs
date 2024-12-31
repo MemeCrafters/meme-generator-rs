@@ -3,7 +3,7 @@ use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{DecodedImage, MemeOptions},
+    builder::{MemeOptions, NamedImage},
     encoder::make_png_or_gif,
     image::ImageExt,
     tools::{load_image, local_date},
@@ -13,13 +13,13 @@ use crate::{options::number_option, register_meme};
 
 number_option!(Number, 1, 92);
 
-fn crawl(images: Vec<DecodedImage>, _: Vec<String>, options: Number) -> Result<Vec<u8>, Error> {
+fn crawl(images: Vec<NamedImage>, _: Vec<String>, options: Number) -> Result<Vec<u8>, Error> {
     let num = options.number.unwrap_or({
         let mut rng = rand::thread_rng();
         rng.gen_range(1..=92)
     });
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let frame = load_image(format!("crawl/{:02}.jpg", num))?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();

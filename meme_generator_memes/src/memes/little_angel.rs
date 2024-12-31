@@ -2,7 +2,7 @@ use skia_safe::{Color, FontStyle, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::ImageExt,
@@ -13,7 +13,7 @@ use meme_generator_utils::{
 use crate::{options::Gender, register_meme};
 
 fn little_angel(
-    images: Vec<DecodedImage>,
+    images: Vec<NamedImage>,
     _: Vec<String>,
     options: Gender,
 ) -> Result<Vec<u8>, Error> {
@@ -56,7 +56,7 @@ fn little_angel(
     )?;
     let frame = surface.image_snapshot();
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let image = images[0].resize_width(img_w);

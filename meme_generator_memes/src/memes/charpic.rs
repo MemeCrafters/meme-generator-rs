@@ -2,7 +2,7 @@ use skia_safe::{textlayout::TextAlign, Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::make_png_or_gif,
     image::ImageExt,
     text::Text2Image,
@@ -12,12 +12,12 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn charpic(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn charpic(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let str_map = "@@$$&B88QMMGW##EE93SPPDOOU**==()+^,\"--''.  ";
     let text2image = Text2Image::from_text("@", 15.0, text_params!(font_families = &["Consolas"]));
     let ratio = text2image.longest_line() / text2image.height();
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let image = images[0].resize_width(150);
         let image = image.resize_exact((
             image.width(),

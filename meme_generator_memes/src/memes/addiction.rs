@@ -2,7 +2,7 @@ use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
     tools::{load_image, local_date},
@@ -10,14 +10,14 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn addiction(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn addiction(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let frame = load_image("addiction/0.png")?;
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
-        let img = images[0].resize_fit((91, 91), Fit::Cover);
-        canvas.draw_image(&img, (0, 0), None);
+        let image = images[0].resize_fit((91, 91), Fit::Cover);
+        canvas.draw_image(&image, (0, 0), None);
         Ok(surface.image_snapshot())
     };
 

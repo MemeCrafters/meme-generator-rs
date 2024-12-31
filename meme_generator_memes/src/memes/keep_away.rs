@@ -2,7 +2,7 @@ use skia_safe::{textlayout::TextAlign, Color, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -14,11 +14,7 @@ use crate::{options::NoOptions, register_meme};
 
 const DEFAULT_TEXT: &str = "如何提高社交质量 : \n远离以下头像的人";
 
-fn keep_away(
-    images: Vec<DecodedImage>,
-    texts: Vec<String>,
-    _: NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn keep_away(images: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = if !texts.is_empty() {
         &texts[0]
     } else {
@@ -40,7 +36,7 @@ fn keep_away(
     let num_per_user = 8 / images.len();
     let total_images = images.len();
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let mut count = 0;
@@ -60,7 +56,7 @@ fn keep_away(
             count += 1;
         };
 
-        for image in images {
+        for image in images.iter() {
             for n in 0..num_per_user {
                 paste(trans(image, n));
             }
@@ -68,7 +64,7 @@ fn keep_away(
 
         let num_left = 8 - num_per_user * total_images;
         for n in 0..num_left {
-            paste(trans(images.last().unwrap(), n + num_per_user));
+            paste(trans(&images[images.len() - 1], n + num_per_user));
         }
 
         Ok(surface.image_snapshot())

@@ -2,7 +2,7 @@ use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::make_png_or_gif,
     image::ImageExt,
     tools::{load_image, local_date},
@@ -10,11 +10,11 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
-fn distracted(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn distracted(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let frame = load_image("distracted/1.png")?;
     let label = load_image("distracted/0.png")?;
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let image = images[0].square().resize_exact((500, 500));
         let mut surface = image.to_surface();
         let canvas = surface.canvas();

@@ -3,7 +3,7 @@ use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{DecodedImage, MemeOptions},
+    builder::{MemeOptions, NamedImage},
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::ImageExt,
     shortcut,
@@ -20,7 +20,7 @@ struct Character {
 }
 
 fn genshin_eat(
-    images: Vec<DecodedImage>,
+    images: Vec<NamedImage>,
     _: Vec<String>,
     options: Character,
 ) -> Result<Vec<u8>, Error> {
@@ -33,7 +33,7 @@ fn genshin_eat(
 
     let locs = [(106, 245), (115, 224), (116, 205), (115, 198), (120, 217)];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let frame = load_image(format!("genshin_eat/{character}/{:02}.png", i))?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();

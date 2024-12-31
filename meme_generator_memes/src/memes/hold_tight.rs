@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
@@ -10,10 +10,10 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn hold_tight(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn hold_tight(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let frame = load_image("hold_tight/0.png")?;
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
         canvas.clear(Color::WHITE);

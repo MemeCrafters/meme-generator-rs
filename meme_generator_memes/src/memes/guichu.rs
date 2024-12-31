@@ -2,7 +2,7 @@ use skia_safe::{IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{DecodedImage, MemeOptions},
+    builder::{MemeOptions, NamedImage},
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::ImageExt,
     tools::{local_date, new_surface},
@@ -33,7 +33,7 @@ struct Direction {
     bottom: Option<bool>,
 }
 
-fn guichu(images: Vec<DecodedImage>, _: Vec<String>, options: Direction) -> Result<Vec<u8>, Error> {
+fn guichu(images: Vec<NamedImage>, _: Vec<String>, options: Direction) -> Result<Vec<u8>, Error> {
     let direction = if options.left.unwrap_or(false) {
         "left"
     } else if options.right.unwrap_or(false) {
@@ -78,7 +78,7 @@ fn guichu(images: Vec<DecodedImage>, _: Vec<String>, options: Direction) -> Resu
         _ => unreachable!(),
     };
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let image = &images[0];
 
         if [0, 1, 2, 6, 7, 8, 12, 13, 14, 18, 20, 22].contains(&i) {

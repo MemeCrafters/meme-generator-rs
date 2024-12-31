@@ -2,7 +2,7 @@ use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::{make_gif_or_combined_gif, GifInfo},
     image::{Fit, ImageExt},
     tools::{load_image, local_date},
@@ -10,11 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn gorilla_throw(
-    images: Vec<DecodedImage>,
-    _: Vec<String>,
-    _: NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn gorilla_throw(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let params = [
         (74, 125, 24, 8, 135),
         (84, 119, 24, 8, 130),
@@ -32,7 +28,7 @@ fn gorilla_throw(
         (-180, -180, 600, 360, -23),
     ];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let frame = load_image(format!("gorilla_throw/{i:02}.png"))?;
         if i < 28 {
             return Ok(frame);

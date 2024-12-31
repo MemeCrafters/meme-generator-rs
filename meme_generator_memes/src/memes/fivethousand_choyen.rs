@@ -2,7 +2,7 @@ use skia_safe::{Color, Image, Matrix, Paint, PaintJoin, PaintStyle, Shader, Tile
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::encode_png,
     text::Text2Image,
     text_params,
@@ -12,7 +12,7 @@ use meme_generator_utils::{
 use crate::{options::NoOptions, register_meme};
 
 fn fivethousand_choyen(
-    _: Vec<DecodedImage>,
+    _: Vec<NamedImage>,
     texts: Vec<String>,
     _: NoOptions,
 ) -> Result<Vec<u8>, Error> {

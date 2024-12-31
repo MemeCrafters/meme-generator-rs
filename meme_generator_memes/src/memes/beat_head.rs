@@ -2,7 +2,7 @@ use skia_safe::{IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     canvas::CanvasExt,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::ImageExt,
@@ -13,11 +13,7 @@ use crate::{options::NoOptions, register_meme};
 
 const DEFAULT_TEXT: &str = "怎么说话的你";
 
-fn beat_head(
-    images: Vec<DecodedImage>,
-    texts: Vec<String>,
-    _: NoOptions,
-) -> Result<Vec<u8>, Error> {
+fn beat_head(images: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = if !texts.is_empty() {
         &texts[0]
     } else {
@@ -26,7 +22,7 @@ fn beat_head(
 
     let locs = [(160, 121, 76, 76), (172, 124, 69, 69), (208, 166, 52, 52)];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let (x, y, w, h) = locs[i];
         let head = images[0].circle().resize_exact((w, h));
         let frame = load_image(format!("beat_head/{i}.png"))?;

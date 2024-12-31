@@ -20,7 +20,7 @@ use tokio::{net::TcpListener, runtime::Runtime, task::spawn_blocking};
 use meme_generator::{
     error::Error,
     load_memes,
-    meme::{Meme, OptionValue, RawImage},
+    meme::{self, Meme, OptionValue},
 };
 
 use crate::config::CONFIG;
@@ -122,10 +122,10 @@ async fn meme_generate(
         }
     }
 
-    let mut images: Vec<RawImage> = Vec::new();
+    let mut images: Vec<meme::Image> = Vec::new();
     for Image { name, id } in payload.images {
         if let Some(data) = id_to_data.get(&id) {
-            images.push(RawImage {
+            images.push(meme::Image {
                 name,
                 data: data.clone(),
             });

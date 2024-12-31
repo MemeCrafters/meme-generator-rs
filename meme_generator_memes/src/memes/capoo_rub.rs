@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::ImageExt,
     tools::{load_image, local_date, new_surface},
@@ -10,7 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
-fn capoo_rub(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn capoo_rub(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let locs = [
         (178, 184, 78, 260),
         (178, 174, 84, 269),
@@ -18,7 +18,7 @@ fn capoo_rub(images: Vec<DecodedImage>, _: Vec<String>, _: NoOptions) -> Result<
         (178, 178, 84, 264),
     ];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let (w, h, x, y) = locs[i];
         let frame = load_image(format!("capoo_rub/{i}.png"))?;
         let mut surface = new_surface(frame.dimensions());

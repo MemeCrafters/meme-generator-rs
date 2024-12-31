@@ -2,7 +2,7 @@ use skia_safe::{Color, IRect, Image, Rect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{DecodedImage, MemeOptions},
+    builder::{MemeOptions, NamedImage},
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -20,7 +20,7 @@ struct Message {
     message: Option<String>,
 }
 
-fn alipay(images: Vec<DecodedImage>, _: Vec<String>, options: Message) -> Result<Vec<u8>, Error> {
+fn alipay(images: Vec<NamedImage>, _: Vec<String>, options: Message) -> Result<Vec<u8>, Error> {
     let message = options.message.as_deref().unwrap_or(DEFAULT_MESSAGE);
     let name = &images[0].name;
 
@@ -44,7 +44,7 @@ fn alipay(images: Vec<DecodedImage>, _: Vec<String>, options: Message) -> Result
     )?;
     let frame = surface.image_snapshot();
 
-    let func = |images: &Vec<Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let image = images[0]

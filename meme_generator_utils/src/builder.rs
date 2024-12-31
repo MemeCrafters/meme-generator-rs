@@ -3,11 +3,11 @@ use std::collections::{HashMap, HashSet};
 use chrono::{DateTime, Local};
 use serde::Deserialize;
 use serde_json::{Number, Value};
-use skia_safe::{Codec, Data};
+use skia_safe::{Codec, Data, ISize, ImageInfo};
 
 use meme_generator_core::{
     error::Error,
-    meme::{Meme, MemeInfo, MemeOption, MemeParams, MemeShortcut, OptionValue, RawImage},
+    meme::{self, Meme, MemeInfo, MemeOption, MemeParams, MemeShortcut, OptionValue},
 };
 
 use crate::{encoder::encode_png, tools::grid_pattern_image};
@@ -49,20 +49,28 @@ pub mod shortcut_setters {
     }
 }
 
-pub struct DecodedImage<'a> {
+pub struct NamedImage<'a> {
     pub name: String,
     pub codec: Codec<'a>,
 }
 
-impl<'a> DecodedImage<'a> {
-    pub fn from(input: &RawImage) -> Result<DecodedImage<'static>, Error> {
+impl<'a> NamedImage<'a> {
+    pub fn from(input: &meme::Image) -> Result<NamedImage<'static>, Error> {
         let data = Data::new_copy(&input.data);
         let codec = Codec::from_data(data)
             .ok_or(Error::ImageDecodeError("Skia decode error".to_string()))?;
-        Ok(DecodedImage {
+        Ok(NamedImage {
             name: input.name.clone(),
             codec: codec,
         })
+    }
+
+    pub fn info(&self) -> ImageInfo {
+        self.codec.info()
+    }
+
+    pub fn dimensions(&self) -> ISize {
+        self.codec.dimensions()
     }
 
     pub fn width(&self) -> i32 {
@@ -74,7 +82,7 @@ impl<'a> DecodedImage<'a> {
     }
 }
 
-type MemeFunction<T> = fn(Vec<DecodedImage>, Vec<String>, T) -> Result<Vec<u8>, Error>;
+type MemeFunction<T> = fn(Vec<NamedImage>, Vec<String>, T) -> Result<Vec<u8>, Error>;
 
 pub struct MemeBuilder<T>
 where
@@ -193,7 +201,7 @@ where
 
     fn generate(
         &self,
-        images: Vec<RawImage>,
+        images: Vec<meme::Image>,
         texts: Vec<String>,
         options: HashMap<String, OptionValue>,
     ) -> Result<Vec<u8>, Error> {
@@ -236,8 +244,8 @@ where
             .map_err(|err| Error::DeserializeError(err.to_string()))?;
         let images = images
             .iter()
-            .map(|image| DecodedImage::from(image))
-            .collect::<Result<Vec<DecodedImage>, Error>>()?;
+            .map(|image| NamedImage::from(image))
+            .collect::<Result<Vec<NamedImage>, Error>>()?;
         (self.function)(images, texts, options)
     }
 
@@ -251,7 +259,7 @@ where
                 } else {
                     format!("{{name{}}}", i + 1)
                 };
-                images.push(RawImage {
+                images.push(meme::Image {
                     name: name,
                     data: image.clone(),
                 });

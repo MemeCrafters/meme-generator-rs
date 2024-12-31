@@ -2,7 +2,7 @@ use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::DecodedImage,
+    builder::NamedImage,
     encoder::{make_gif_or_combined_gif, GifInfo},
     image::ImageExt,
     tools::{load_image, local_date},
@@ -10,11 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::Circle, register_meme};
 
-fn dog_dislike(
-    images: Vec<DecodedImage>,
-    _: Vec<String>,
-    options: Circle,
-) -> Result<Vec<u8>, Error> {
+fn dog_dislike(images: Vec<NamedImage>, _: Vec<String>, options: Circle) -> Result<Vec<u8>, Error> {
     let locs = [
         (36, 408),
         (36, 410),
@@ -52,7 +48,7 @@ fn dog_dislike(
         (150, 450),
     ];
 
-    let func = |i: usize, images: &Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let frame = load_image(format!("dog_dislike/{i:02}.png"))?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
