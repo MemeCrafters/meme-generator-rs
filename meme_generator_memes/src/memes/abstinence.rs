@@ -62,9 +62,9 @@ fn abstinence(images: Vec<NamedImage>, _: Vec<String>, options: Time) -> Result<
     let func = |images: Vec<Image>| {
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
-        let image = images[0].resize_fit((300, 300), Fit::Cover);
-        canvas.draw_image(&image, (80, 400), None);
-        canvas.draw_image(&stamp, (350, 650), None);
+        let image = images[0].resize_fit((270, 360), Fit::Contain);
+        canvas.draw_image(&image, (80, 380), None);
+        canvas.draw_image(&stamp, (310, 660), None);
         Ok(surface.image_snapshot())
     };
 
