@@ -18,6 +18,7 @@ use meme_generator::{
     load_memes,
     meme::{Image, Meme, MemeOption, OptionValue},
     resources::check_resources_sync,
+    VERSION,
 };
 #[cfg(feature = "server")]
 use meme_generator_server::run_server_sync;
@@ -231,7 +232,8 @@ pub(crate) fn build_command() -> Command {
     let mut command = Command::new("meme")
         .about("表情包制作")
         .subcommand_required(true)
-        .arg_required_else_help(true);
+        .arg_required_else_help(true)
+        .version(VERSION);
     command = command
         .subcommand(Command::new("list").about("查看所有可用表情").alias("ls"))
         .subcommand(

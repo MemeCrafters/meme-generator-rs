@@ -21,11 +21,10 @@ use meme_generator::{
     error::Error,
     load_memes,
     meme::{self, Meme, OptionValue},
+    VERSION,
 };
 
 use crate::config::CONFIG;
-
-const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct ImageData {

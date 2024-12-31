@@ -6,7 +6,7 @@ use std::{
 use chrono::{DateTime, Local};
 use pyo3::prelude::*;
 
-use meme_generator::{error, load_memes, meme, resources};
+use meme_generator::{error, load_memes, meme, resources, VERSION};
 
 #[pymodule(name = "meme_generator")]
 fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -27,6 +27,7 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<TextOverLength>()?;
     m.add_class::<MemeFeedback>()?;
     m.add_class::<Meme>()?;
+    m.add_function(wrap_pyfunction!(get_version, m)?)?;
     m.add_function(wrap_pyfunction!(get_meme, m)?)?;
     m.add_function(wrap_pyfunction!(get_memes, m)?)?;
     m.add_function(wrap_pyfunction!(get_meme_keys, m)?)?;
@@ -481,6 +482,11 @@ fn handle_result(result: Result<Vec<u8>, error::Error>) -> MemeResult {
 
 static LOADED_MEMES: LazyLock<HashMap<String, Box<dyn meme::Meme>>> =
     LazyLock::new(|| load_memes());
+
+#[pyfunction]
+fn get_version() -> &'static str {
+    VERSION
+}
 
 #[pyfunction]
 fn get_meme(key: &str) -> Option<Meme> {

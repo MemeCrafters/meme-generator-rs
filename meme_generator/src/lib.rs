@@ -1,5 +1,6 @@
 mod config;
 mod registry;
+mod version;
 
 pub mod resources;
 pub use meme_generator_core::{
@@ -7,3 +8,4 @@ pub use meme_generator_core::{
     error, meme,
 };
 pub use registry::load_memes;
+pub use version::VERSION;
