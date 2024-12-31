@@ -16,8 +16,8 @@ rand = "0.8"
 serde = "1.0"
 skia-safe = { version = "0.80", features = ["textlayout"] }
 
-meme_generator_core = { version = "0.0.1", path = "../meme_generator_core" }
-meme_generator_utils = { version = "0.0.2", path = "../meme_generator_utils" }
+meme_generator_core = { version = "0.0.2", path = "../meme_generator_core" }
+meme_generator_utils = { version = "0.0.3", path = "../meme_generator_utils" }
 
 [features]
 embed-freetype = ["skia-safe/embed-freetype"]
