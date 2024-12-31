@@ -87,7 +87,7 @@ pub struct MemeShortcut {
     pub humanized: Option<String>,
     pub names: Vec<String>,
     pub texts: Vec<String>,
-    pub parser_args: Vec<String>,
+    pub options: HashMap<String, OptionValue>,
 }
 
 impl Default for MemeShortcut {
@@ -97,7 +97,7 @@ impl Default for MemeShortcut {
             humanized: None,
             names: Vec::new(),
             texts: Vec::new(),
-            parser_args: Vec::new(),
+            options: HashMap::new(),
         }
     }
 }
@@ -139,6 +139,36 @@ pub enum OptionValue {
     String(String),
     Integer(i32),
     Float(f32),
+}
+
+impl Into<OptionValue> for bool {
+    fn into(self) -> OptionValue {
+        OptionValue::Boolean(self)
+    }
+}
+
+impl Into<OptionValue> for String {
+    fn into(self) -> OptionValue {
+        OptionValue::String(self)
+    }
+}
+
+impl Into<OptionValue> for &str {
+    fn into(self) -> OptionValue {
+        OptionValue::String(self.to_string())
+    }
+}
+
+impl Into<OptionValue> for i32 {
+    fn into(self) -> OptionValue {
+        OptionValue::Integer(self)
+    }
+}
+
+impl Into<OptionValue> for f32 {
+    fn into(self) -> OptionValue {
+        OptionValue::Float(self)
+    }
 }
 
 pub trait Meme: Send + Sync {

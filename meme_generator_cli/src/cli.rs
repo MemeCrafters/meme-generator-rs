@@ -394,8 +394,11 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
         .shortcuts
         .into_iter()
         .map(|shortcut| {
-            let pattern = shortcut.pattern;
-            format!(" * {pattern} ")
+            let humanized = match &shortcut.humanized {
+                Some(humanized) => humanized,
+                None => &shortcut.pattern,
+            };
+            format!(" * {humanized} ")
         })
         .collect::<Vec<_>>()
         .join("\n");

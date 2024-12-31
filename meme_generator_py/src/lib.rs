@@ -147,7 +147,7 @@ struct MemeShortcut {
     #[pyo3(get)]
     texts: Vec<String>,
     #[pyo3(get)]
-    parser_args: Vec<String>,
+    options: HashMap<String, OptionValue>,
 }
 
 #[pyclass]
@@ -172,16 +172,38 @@ struct MemeInfo {
 #[derive(FromPyObject, Clone)]
 struct Image(String, Vec<u8>);
 
-#[derive(FromPyObject, Clone)]
+#[derive(FromPyObject, IntoPyObject, Clone)]
 enum OptionValue {
-    #[pyo3(transparent, annotation = "bool")]
+    #[pyo3(transparent)]
     Boolean(bool),
-    #[pyo3(transparent, annotation = "str")]
+    #[pyo3(transparent)]
     String(String),
-    #[pyo3(transparent, annotation = "int")]
+    #[pyo3(transparent)]
     Integer(i32),
-    #[pyo3(transparent, annotation = "float")]
+    #[pyo3(transparent)]
     Float(f32),
+}
+
+impl From<meme::OptionValue> for OptionValue {
+    fn from(value: meme::OptionValue) -> Self {
+        match value {
+            meme::OptionValue::Boolean(value) => OptionValue::Boolean(value),
+            meme::OptionValue::String(value) => OptionValue::String(value),
+            meme::OptionValue::Integer(value) => OptionValue::Integer(value),
+            meme::OptionValue::Float(value) => OptionValue::Float(value),
+        }
+    }
+}
+
+impl Into<meme::OptionValue> for OptionValue {
+    fn into(self) -> meme::OptionValue {
+        match self {
+            OptionValue::Boolean(value) => meme::OptionValue::Boolean(value),
+            OptionValue::String(value) => meme::OptionValue::String(value),
+            OptionValue::Integer(value) => meme::OptionValue::Integer(value),
+            OptionValue::Float(value) => meme::OptionValue::Float(value),
+        }
+    }
 }
 
 #[pyclass]
@@ -380,7 +402,11 @@ impl Meme {
                     humanized: shortcut.humanized,
                     names: shortcut.names,
                     texts: shortcut.texts,
-                    parser_args: shortcut.parser_args,
+                    options: shortcut
+                        .options
+                        .into_iter()
+                        .map(|(name, value)| (name, OptionValue::from(value)))
+                        .collect(),
                 })
                 .collect(),
             tags: info.tags,
@@ -402,17 +428,7 @@ impl Meme {
 
         let options = options
             .into_iter()
-            .map(|(name, value)| {
-                (
-                    name,
-                    match value {
-                        OptionValue::Boolean(value) => meme::OptionValue::Boolean(value),
-                        OptionValue::String(value) => meme::OptionValue::String(value),
-                        OptionValue::Integer(value) => meme::OptionValue::Integer(value),
-                        OptionValue::Float(value) => meme::OptionValue::Float(value),
-                    },
-                )
-            })
+            .map(|(name, value)| (name, value.into()))
             .collect::<HashMap<_, _>>();
 
         let result = self.meme.generate(images, texts, options);

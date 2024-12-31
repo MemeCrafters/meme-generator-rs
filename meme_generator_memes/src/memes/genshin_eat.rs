@@ -65,16 +65,16 @@ register_meme!(
     max_images = 1,
     keywords = &["原神吃"],
     shortcuts = &[
-        shortcut!("胡桃吃", parser_args = &["--character", "hutao"]),
-        shortcut!("刻晴吃", parser_args = &["--character", "keqing"]),
-        shortcut!("可莉吃", parser_args = &["--character", "klee"]),
-        shortcut!("妮露吃", parser_args = &["--character", "nilou"]),
+        shortcut!("胡桃吃", options = &[("character", "hutao")]),
+        shortcut!("刻晴吃", options = &[("character", "keqing")]),
+        shortcut!("可莉吃", options = &[("character", "klee")]),
+        shortcut!("妮露吃", options = &[("character", "nilou")]),
         shortcut!(
             r"(?:八重神子|神子|八重)吃",
-            parser_args = &["--character", "yae_miko"],
+            options = &[("character", "yae_miko")],
             humanized = "八重神子吃"
         ),
-        shortcut!("钟离吃", parser_args = &["--character", "zhongli"]),
+        shortcut!("钟离吃", options = &[("character", "zhongli")]),
     ],
     tags = union_tags!(
         MemeTags::hutao(),

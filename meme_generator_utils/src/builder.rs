@@ -32,6 +32,9 @@ macro_rules! shortcut {
 }
 
 pub mod shortcut_setters {
+    use meme_generator_core::meme::OptionValue;
+    use std::collections::HashMap;
+
     pub fn humanized(humanized: &str) -> Option<String> {
         Some(humanized.to_string())
     }
@@ -44,8 +47,13 @@ pub mod shortcut_setters {
         texts.iter().map(|text| text.to_string()).collect()
     }
 
-    pub fn parser_args(parser_args: &[&str]) -> Vec<String> {
-        parser_args.iter().map(|arg| arg.to_string()).collect()
+    pub fn options(
+        options: &[(&str, impl Into<OptionValue> + Clone)],
+    ) -> HashMap<String, OptionValue> {
+        options
+            .iter()
+            .map(|option| (option.0.to_string(), option.1.clone().into()))
+            .collect()
     }
 }
 

@@ -51,7 +51,7 @@ class MemeShortcut:
     humanized: Optional[str]
     names: list[str]
     texts: list[str]
-    parser_args: list[str]
+    options: dict[str, OptionValue]
 
 class MemeInfo:
     key: str
