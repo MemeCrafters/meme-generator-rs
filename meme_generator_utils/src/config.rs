@@ -67,5 +67,12 @@ fn parse_config() -> Config {
 
 pub static CONFIG: LazyLock<Config> = LazyLock::new(parse_config);
 
-pub static FONTS_DIR: LazyLock<PathBuf> = LazyLock::new(|| MEME_HOME.join("resources/fonts"));
-pub static IMAGES_DIR: LazyLock<PathBuf> = LazyLock::new(|| MEME_HOME.join("resources/images"));
+pub static FONTS_DIR: LazyLock<PathBuf> = LazyLock::new(|| match option_env!("MEME_FONTS_DIR") {
+    Some(dir) => PathBuf::from(dir),
+    None => MEME_HOME.join("resources/fonts"),
+});
+
+pub static IMAGES_DIR: LazyLock<PathBuf> = LazyLock::new(|| match option_env!("MEME_IMAGES_DIR") {
+    Some(dir) => PathBuf::from(dir),
+    None => MEME_HOME.join("resources/images"),
+});

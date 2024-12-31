@@ -12,37 +12,27 @@ COPY meme_generator_server /tmp/meme_generator_server
 COPY meme_generator_utils /tmp/meme_generator_utils
 COPY meme_options_derive /tmp/meme_options_derive
 
-RUN cargo build --release --bin server
+RUN export MEME_IMAGES_DIR=/app/resources/images \
+  && cargo build --release --bin server
 
 FROM debian:bookworm-slim AS app
 
 EXPOSE 2233
 
 ENV TZ=Asia/Shanghai \
-  MEME_DISABLED_LIST="[]" \
-  GIF_MAX_FRAMES=200 \
-  DEFAULT_FONT_FAMILIES="['Noto Sans SC', 'Noto Color Emoji']"
+  MEME_HOME=/data
 
-RUN mkdir -p /root/.meme_generator \
-  && echo "\
-[meme]\n\
-meme_disabled_list = $MEME_DISABLED_LIST\n\
-[encoder]\n\
-gif_max_frames = $GIF_MAX_FRAMES\n\
-[font]\n\
-use_local_fonts = false\n\
-default_font_families = $DEFAULT_FONT_FAMILIES\n\
-[server]\n\
-host = '0.0.0.0'\n\
-port = 2233" > /root/.meme_generator/config.toml
+VOLUME /data
 
-COPY --from=builder /tmp/target/release/server /usr/local/bin/
+WORKDIR /app
+
+COPY --from=builder /tmp/target/release/server /app/server
+COPY resources/images /app/resources/images/
 COPY resources/fonts /usr/share/fonts/meme-fonts/
-COPY resources/images /root/.meme_generator/resources/images/
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends openssl fontconfig \
   && fc-cache -fv \
   && rm -rf /var/lib/apt/lists/*
 
-CMD ["server"]
+CMD ["/app/server"]
