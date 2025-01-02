@@ -6,7 +6,7 @@ pub(crate) struct NoOptions {}
 #[derive(MemeOptions)]
 pub(crate) struct Circle {
     /// 是否将图片变为圆形
-    #[option(short, long, short_aliases = ['圆'])]
+    #[option(short, long, short_aliases = ['圆'], default=false)]
     pub circle: Option<bool>,
 }
 

@@ -17,38 +17,38 @@ struct Direction {
     direction: Option<String>,
 
     /// 左
-    #[option(long, short_aliases=['左'])]
+    #[option(long, short_aliases=['左'], default=false)]
     left: Option<bool>,
 
     /// 右
-    #[option(long, short_aliases=['右'])]
+    #[option(long, short_aliases=['右'], default=false)]
     right: Option<bool>,
 
     /// 上
-    #[option(long, short_aliases=['上'])]
+    #[option(long, short_aliases=['上'], default=false)]
     top: Option<bool>,
 
     /// 下
-    #[option(long, short_aliases=['下'])]
+    #[option(long, short_aliases=['下'], default=false)]
     bottom: Option<bool>,
 }
 
 fn guichu(images: Vec<NamedImage>, _: Vec<String>, options: Direction) -> Result<Vec<u8>, Error> {
-    let direction = if options.left.unwrap_or(false) {
+    let direction = if options.left.unwrap() {
         "left"
-    } else if options.right.unwrap_or(false) {
+    } else if options.right.unwrap() {
         "right"
-    } else if options.top.unwrap_or(false) {
+    } else if options.top.unwrap() {
         "top"
-    } else if options.bottom.unwrap_or(false) {
+    } else if options.bottom.unwrap() {
         "bottom"
     } else {
         options.direction.as_deref().unwrap()
     };
 
-    let image = &images[0];
-    let img_w = image.width();
-    let img_h = image.height();
+    let img = &images[0].image;
+    let img_w = img.width();
+    let img_h = img.height();
 
     let params = match direction {
         "left" => (

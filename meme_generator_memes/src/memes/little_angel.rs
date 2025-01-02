@@ -17,9 +17,9 @@ fn little_angel(
     _: Vec<String>,
     options: Gender,
 ) -> Result<Vec<u8>, Error> {
-    let img_size = images[0].codec.dimensions();
+    let img = &images[0].image;
     let img_w = 500;
-    let img_h = img_size.height * img_w / img_size.width;
+    let img_h = img.height() * img_w / img.width();
     let mut surface = new_surface((600, img_h + 230));
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);

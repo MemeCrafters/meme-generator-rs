@@ -17,11 +17,11 @@ struct Mode {
     mode: Option<String>,
 
     /// 小丑在前
-    #[option(long, short_aliases=['前'])]
+    #[option(long, short_aliases=['前'], default=false)]
     front: Option<bool>,
 
     /// 小丑在后
-    #[option(long, short_aliases=['后'])]
+    #[option(long, short_aliases=['后'], default=false)]
     behind: Option<bool>,
 }
 
@@ -53,9 +53,9 @@ fn clown_mask(images: Vec<NamedImage>, _: Vec<String>, options: Mode) -> Result<
         Ok(surface.image_snapshot())
     };
 
-    let mode = if options.front.unwrap_or(false) {
+    let mode = if options.front.unwrap() {
         "front"
-    } else if options.behind.unwrap_or(false) {
+    } else if options.behind.unwrap() {
         "behind"
     } else {
         options.mode.as_deref().unwrap()

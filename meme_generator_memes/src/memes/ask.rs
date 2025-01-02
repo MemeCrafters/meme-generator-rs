@@ -44,40 +44,38 @@ fn ask(images: Vec<NamedImage>, _: Vec<String>, options: Gender) -> Result<Vec<u
     if name_image.longest_line() > 500.0 {
         return Err(Error::TextOverLength(name.clone()));
     }
-    let line_width = text_image.longest_line() + 200.0;
+    let line_w = text_image.longest_line() + 200.0;
 
-    let image = &images[0];
-    let image_height = 900;
-    let image_width = image.width() * image_height / image.height();
-    let image_width = image_width
-        .max((line_width + 100.0) as i32)
-        .min(image_height);
+    let img = &images[0].image;
+    let img_h = 900;
+    let img_w = img.width() * img_h / img.height();
+    let img_w = img_w.max((line_w + 100.0) as i32).min(img_h);
 
-    let mut surface = new_surface((image_width, image_height));
+    let mut surface = new_surface((img_w, img_h));
     let canvas = surface.canvas();
     let mask = load_image("ask/mask.png")?;
-    let mask = mask.resize_fit((image_width, image_height), Fit::Cover);
+    let mask = mask.resize_fit((img_w, img_h), Fit::Cover);
     canvas.draw_image(&mask, (0, 0), None);
     let line = load_image("ask/line.png")?;
-    let line = line.resize_exact((line_width as i32, line.height()));
-    canvas.draw_image(&line, ((image_width - line_width as i32) / 2, 725), None);
+    let line = line.resize_exact((line_w as i32, line.height()));
+    canvas.draw_image(&line, ((img_w - line_w as i32) / 2, 725), None);
     name_image.draw_on_canvas(
         canvas,
-        ((image_width - name_image.longest_line() as i32) / 2, 678),
+        ((img_w - name_image.longest_line() as i32) / 2, 678),
     );
     text_image.draw_on_canvas(
         canvas,
-        ((image_width - text_image.longest_line() as i32) / 2, 740),
+        ((img_w - text_image.longest_line() as i32) / 2, 740),
     );
     let dialog = surface.image_snapshot();
-    let image_height = 640;
-    let dialog = dialog.resize_height(image_height);
-    let image_width = dialog.width();
+    let img_h = 640;
+    let dialog = dialog.resize_height(img_h);
+    let img_w = dialog.width();
 
     let padding_w = 30;
     let padding_h = 80;
-    let frame_width = image_width + padding_w * 2;
-    let frame_height = image_height + padding_h * 2;
+    let frame_width = img_w + padding_w * 2;
+    let frame_height = img_h + padding_h * 2;
     let mut surface = new_surface((frame_width, frame_height));
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);
@@ -105,7 +103,7 @@ fn ask(images: Vec<NamedImage>, _: Vec<String>, options: Gender) -> Result<Vec<u
     let func = |images: Vec<Image>| {
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
-        let image = images[0].resize_fit((image_width, image_height), Fit::Cover);
+        let image = images[0].resize_fit((img_w, img_h), Fit::Cover);
         canvas.draw_image(&image, (padding_w, padding_h), None);
         canvas.draw_image(&dialog, (padding_w, padding_h), None);
         Ok(surface.image_snapshot())

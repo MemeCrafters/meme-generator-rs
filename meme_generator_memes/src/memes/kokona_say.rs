@@ -20,18 +20,18 @@ struct Position {
     position: Option<String>,
 
     /// 左
-    #[option(short, long)]
+    #[option(short, long, short_aliases=['左'], default=false)]
     left: Option<bool>,
 
     /// 右
-    #[option(short, long)]
+    #[option(short, long, short_aliases=['右'], default=false)]
     right: Option<bool>,
 }
 
 fn kokona_say(_: Vec<NamedImage>, texts: Vec<String>, options: Position) -> Result<Vec<u8>, Error> {
-    let position = if options.left.unwrap_or(false) {
+    let position = if options.left.unwrap() {
         "left"
-    } else if options.right.unwrap_or(false) {
+    } else if options.right.unwrap() {
         "right"
     } else {
         options.position.as_deref().unwrap_or({

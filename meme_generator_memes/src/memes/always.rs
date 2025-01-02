@@ -19,20 +19,21 @@ struct Mode {
     mode: Option<String>,
 
     /// 套娃模式
-    #[option(long, long_aliases = ["套娃"])]
+    #[option(long, long_aliases = ["套娃"], default=false)]
     circle: Option<bool>,
 
     /// 循环模式
-    #[option(long, long_aliases = ["循环"])]
+    #[option(long, long_aliases = ["循环"], default=false)]
     r#loop: Option<bool>,
 }
 
 fn always_normal(images: Vec<NamedImage>) -> Result<Vec<u8>, Error> {
-    let image = &images[0];
+    let img = &images[0].image;
+    let ratio = img.height() as f32 / img.width() as f32;
     let img_big_w = 500;
-    let img_big_h = ((img_big_w * image.height()) as f32 / image.width() as f32).round() as i32;
+    let img_big_h = (img_big_w as f32 * ratio).round() as i32;
     let img_small_w = 100;
-    let img_small_h = ((img_small_w * image.height()) as f32 / image.width() as f32).round() as i32;
+    let img_small_h = (img_small_w as f32 * ratio).round() as i32;
     let h1 = img_big_h;
     let h2 = img_small_h.max(80);
     let frame_w = img_big_w;
@@ -76,13 +77,14 @@ fn always_normal(images: Vec<NamedImage>) -> Result<Vec<u8>, Error> {
 }
 
 fn always_always(images: Vec<NamedImage>, loop_: bool) -> Result<Vec<u8>, Error> {
-    let image = &images[0];
+    let img = &images[0];
+    let ratio = img.image.height() as f32 / img.image.width() as f32;
     let img_big_w = 500;
-    let img_big_h = ((img_big_w * image.height()) as f32 / image.width() as f32).round() as i32;
+    let img_big_h = (img_big_w as f32 * ratio).round() as i32;
     let img_small_w = 100;
-    let img_small_h = ((img_small_w * image.height()) as f32 / image.width() as f32).round() as i32;
+    let img_small_h = (img_small_w as f32 * ratio).round() as i32;
     let img_tiny_w = 20;
-    let img_tiny_h = ((img_tiny_w * image.height()) as f32 / image.width() as f32).round() as i32;
+    let img_tiny_h = (img_tiny_w as f32 * ratio).round() as i32;
     let text_h = img_small_h + img_tiny_h + 10;
     let text_h = text_h.max(80);
     let frame_w = img_big_w;
@@ -151,9 +153,9 @@ fn always_always(images: Vec<NamedImage>, loop_: bool) -> Result<Vec<u8>, Error>
 }
 
 fn always(images: Vec<NamedImage>, _: Vec<String>, options: Mode) -> Result<Vec<u8>, Error> {
-    let mode = if options.circle.unwrap_or(false) {
+    let mode = if options.circle.unwrap() {
         "circle"
-    } else if options.r#loop.unwrap_or(false) {
+    } else if options.r#loop.unwrap() {
         "loop"
     } else {
         options.mode.as_deref().unwrap()

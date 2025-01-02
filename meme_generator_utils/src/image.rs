@@ -1,6 +1,6 @@
 use skia_safe::{
-    canvas::SrcRectConstraint, color_filters, ClipOp, ColorMatrix, IRect, ISize, Image, Matrix,
-    Paint, Path, Point, RRect, Rect, Surface,
+    canvas::SrcRectConstraint, color_filters, image_filters, ClipOp, ColorMatrix, IRect, ISize,
+    Image, ImageFilter, Matrix, Paint, Path, Point, RRect, Rect, Surface,
 };
 
 use crate::tools::{default_sampling_options, new_surface};
@@ -52,6 +52,10 @@ pub trait ImageExt {
     fn invert(&self) -> Image;
 
     fn brightness(&self, factor: f32) -> Image;
+
+    fn image_filter(&self, filter: ImageFilter) -> Image;
+
+    fn gaussian_blur(&self, sigma: f32) -> Image;
 }
 
 impl ImageExt for Image {
@@ -305,5 +309,18 @@ impl ImageExt for Image {
             0.0, 0.0, factor, 0.0, 0.0, //
             0.0, 0.0, 0.0, 1.0, 0.0,
         ))
+    }
+
+    fn image_filter(&self, filter: ImageFilter) -> Image {
+        let mut surface = new_surface(self.dimensions());
+        let canvas = surface.canvas();
+        let mut paint = Paint::default();
+        paint.set_image_filter(filter);
+        canvas.draw_image(self, (0, 0), Some(&paint));
+        surface.image_snapshot()
+    }
+
+    fn gaussian_blur(&self, sigma: f32) -> Image {
+        self.image_filter(image_filters::blur((sigma, sigma), None, None, None).unwrap())
     }
 }

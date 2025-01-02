@@ -3,14 +3,14 @@ use std::collections::{HashMap, HashSet};
 use chrono::{DateTime, Local};
 use serde::Deserialize;
 use serde_json::{Number, Value};
-use skia_safe::{Codec, Data, ISize, ImageInfo};
+use skia_safe::{Codec, Data, Image};
 
 use meme_generator_core::{
     error::Error,
     meme::{self, Meme, MemeInfo, MemeOption, MemeParams, MemeShortcut, OptionValue},
 };
 
-use crate::{encoder::encode_png, tools::grid_pattern_image};
+use crate::{decoder::CodecExt, encoder::encode_png, tools::grid_pattern_image};
 
 pub use meme_options_derive::MemeOptions;
 
@@ -59,34 +59,21 @@ pub mod shortcut_setters {
 
 pub struct NamedImage<'a> {
     pub name: String,
-    pub codec: Codec<'a>,
+    pub image: Image,
+    pub(crate) codec: Codec<'a>,
 }
 
 impl<'a> NamedImage<'a> {
     pub fn from(input: &meme::Image) -> Result<NamedImage<'static>, Error> {
         let data = Data::new_copy(&input.data);
-        let codec = Codec::from_data(data)
+        let mut codec = Codec::from_data(data)
             .ok_or(Error::ImageDecodeError("Skia decode error".to_string()))?;
+        let image = codec.first_frame()?;
         Ok(NamedImage {
             name: input.name.clone(),
-            codec: codec,
+            image,
+            codec,
         })
-    }
-
-    pub fn info(&self) -> ImageInfo {
-        self.codec.info()
-    }
-
-    pub fn dimensions(&self) -> ISize {
-        self.codec.dimensions()
-    }
-
-    pub fn width(&self) -> i32 {
-        self.codec.info().width()
-    }
-
-    pub fn height(&self) -> i32 {
-        self.codec.info().height()
     }
 }
 

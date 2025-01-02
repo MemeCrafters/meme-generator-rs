@@ -53,7 +53,7 @@ fn dog_dislike(images: Vec<NamedImage>, _: Vec<String>, options: Circle) -> Resu
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let image = images[0].square().resize_exact((122, 122));
-        let image = if options.circle.unwrap_or(false) {
+        let image = if options.circle.unwrap() {
             image.circle()
         } else {
             image

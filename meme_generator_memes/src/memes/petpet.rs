@@ -25,7 +25,7 @@ fn petpet(images: Vec<NamedImage>, _: Vec<String>, options: Circle) -> Result<Ve
         let canvas = surface.canvas();
         let (x, y, w, h) = locs[i];
         let image = images[0].square();
-        let image = if options.circle.unwrap_or(false) {
+        let image = if options.circle.unwrap() {
             image.circle()
         } else {
             image

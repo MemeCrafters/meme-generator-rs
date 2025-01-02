@@ -20,18 +20,18 @@ struct Mode {
     mode: Option<String>,
 
     /// yes 模式
-    #[option(short, long)]
+    #[option(short, long, default = false)]
     yes: Option<bool>,
 
     /// no 模式
-    #[option(short, long)]
+    #[option(short, long, default = false)]
     no: Option<bool>,
 }
 
 fn atri_pillow(_: Vec<NamedImage>, texts: Vec<String>, options: Mode) -> Result<Vec<u8>, Error> {
-    let mode = if options.yes.unwrap_or(false) {
+    let mode = if options.yes.unwrap() {
         "yes"
-    } else if options.no.unwrap_or(false) {
+    } else if options.no.unwrap() {
         "no"
     } else {
         options.mode.as_deref().unwrap_or({

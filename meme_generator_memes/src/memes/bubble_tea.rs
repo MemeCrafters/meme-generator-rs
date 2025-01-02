@@ -17,15 +17,15 @@ struct Position {
     position: Option<String>,
 
     /// 左手
-    #[option(long)]
+    #[option(long, long_aliases=["左手"], default = false)]
     left: Option<bool>,
 
     /// 右手
-    #[option(long)]
+    #[option(long, long_aliases=["右手"], default = false)]
     right: Option<bool>,
 
     /// 双手
-    #[option(long)]
+    #[option(long, long_aliases=["双手"], default = false)]
     both: Option<bool>,
 }
 
@@ -34,11 +34,11 @@ fn bubble_tea(
     _: Vec<String>,
     options: Position,
 ) -> Result<Vec<u8>, Error> {
-    let position = if options.left.unwrap_or(false) {
+    let position = if options.left.unwrap() {
         "left"
-    } else if options.right.unwrap_or(false) {
+    } else if options.right.unwrap() {
         "right"
-    } else if options.both.unwrap_or(false) {
+    } else if options.both.unwrap() {
         "both"
     } else {
         options.position.as_deref().unwrap()
