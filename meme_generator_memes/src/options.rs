@@ -17,6 +17,13 @@ pub(crate) struct Gender {
     pub gender: Option<String>,
 }
 
+#[derive(MemeOptions)]
+pub(crate) struct Gray {
+    /// 是否将图片变为黑白
+    #[option(short, long, long_aliases = ["黑白"], default=false)]
+    pub gray: Option<bool>,
+}
+
 macro_rules! number_option {
     ($name:ident, $min:tt, $max:tt) => {
         #[derive(MemeOptions)]

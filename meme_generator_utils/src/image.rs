@@ -21,6 +21,8 @@ pub trait ImageExt {
 
     fn resize_fit(&self, size: impl Into<ISize>, fit: Fit) -> Image;
 
+    fn resize_bound(&self, size: impl Into<ISize>, fit: Fit) -> Image;
+
     fn resize_width(&self, width: i32) -> Image;
 
     fn resize_height(&self, height: i32) -> Image;
@@ -131,6 +133,30 @@ impl ImageExt for Image {
             &paint,
         );
         surface.image_snapshot()
+    }
+
+    fn resize_bound(&self, size: impl Into<ISize>, fit: Fit) -> Image {
+        let size = size.into();
+        let src = IRect::from_size(self.dimensions());
+        let dst = IRect::from_size(size);
+
+        let (width, height) = match fit {
+            Fit::Contain => {
+                if dst.width() / dst.height() > src.width() / src.height() {
+                    (dst.width(), src.height() * dst.width() / src.width())
+                } else {
+                    (src.width() * dst.height() / src.height(), dst.height())
+                }
+            }
+            Fit::Cover => {
+                if dst.width() / dst.height() > src.width() / src.height() {
+                    (src.width() * dst.height() / src.height(), dst.height())
+                } else {
+                    (dst.width(), src.height() * dst.width() / src.width())
+                }
+            }
+        };
+        self.resize_exact((width, height))
     }
 
     fn resize_width(&self, width: i32) -> Image {
