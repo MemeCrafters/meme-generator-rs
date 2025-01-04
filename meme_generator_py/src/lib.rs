@@ -498,11 +498,13 @@ fn get_meme(key: &str) -> Option<Meme> {
 
 #[pyfunction]
 fn get_memes() -> Vec<Meme> {
-    LOADED_MEMES
+    let mut memes = LOADED_MEMES
         .values()
         .into_iter()
         .map(|meme| Meme { meme })
-        .collect()
+        .collect::<Vec<_>>();
+    memes.sort_by_key(|meme| meme.key());
+    memes
 }
 
 #[pyfunction]

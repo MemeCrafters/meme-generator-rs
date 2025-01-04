@@ -63,7 +63,9 @@ impl IntoResponse for ErrorResponse {
 static LOADED_MEMES: LazyLock<HashMap<String, Box<dyn Meme>>> = LazyLock::new(|| load_memes());
 
 async fn meme_keys() -> Json<Vec<String>> {
-    Json(LOADED_MEMES.keys().cloned().collect::<Vec<_>>())
+    let mut keys = LOADED_MEMES.keys().cloned().collect::<Vec<_>>();
+    keys.sort();
+    Json(keys)
 }
 
 async fn meme_info(Path(key): Path<String>) -> impl IntoResponse {

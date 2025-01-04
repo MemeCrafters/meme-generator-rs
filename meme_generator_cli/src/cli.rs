@@ -207,8 +207,8 @@ fn get_meme_keys() -> Vec<String> {
 
 pub(crate) fn build_command() -> Command {
     let mut sub_commands: Vec<Command> = Vec::new();
-    for meme in LOADED_MEMES.values() {
-        let key = meme.key();
+    for key in get_meme_keys() {
+        let meme = LOADED_MEMES.get(&key).unwrap();
         let info = meme.info();
         let options = info.params.options;
         let keywords = info.keywords.join("/");
@@ -299,13 +299,12 @@ pub(crate) fn build_command() -> Command {
 }
 
 pub(crate) fn handle_list() {
-    let list = LOADED_MEMES
-        .values()
+    let list = get_meme_keys()
         .into_iter()
         .enumerate()
-        .map(|(i, meme)| {
+        .map(|(i, key)| {
             let index = i + 1;
-            let key = meme.key();
+            let meme = LOADED_MEMES.get(&key).unwrap();
             let info = meme.info();
             let keywords = info.keywords.join("/");
             format!("{index}. {key} ({keywords})")
