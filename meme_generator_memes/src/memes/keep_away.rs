@@ -24,13 +24,14 @@ fn keep_away(images: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Resul
     let mut surface = new_surface((400, 290));
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(10, 10, 390, 80),
-        text,
-        20.0,
-        40.0,
-        text_params!(text_align = TextAlign::Left),
-    )?;
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(10, 10, 390, 80),
+            text,
+            30.0,
+            text_params!(text_align = TextAlign::Left),
+        )
+        .unwrap();
     let frame = surface.image_snapshot();
 
     let num_per_user = 8 / images.len();

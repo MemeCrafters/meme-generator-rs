@@ -20,13 +20,9 @@ fn ascension(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec
     let frame = load_image("ascension/0.png")?;
     let mut surface = frame.to_surface();
     let canvas = surface.canvas();
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(40, 30, 482, 135),
-        text,
-        20.0,
-        50.0,
-        None,
-    )?;
+    canvas
+        .draw_text_area_auto_font_size(IRect::from_ltrb(40, 30, 482, 135), text, 20.0, 50.0, None)
+        .map_err(|_| Error::TextOverLength(texts[0].to_string()))?;
 
     encode_png(surface.image_snapshot())
 }

@@ -33,27 +33,31 @@ fn little_angel(
         name = ta;
     }
     let text_params = text_params!(font_style = FontStyle::bold());
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(20, 0, 580, 110),
-        format!("请问你们看到{name}了吗?"),
-        40.0,
-        70.0,
-        text_params.clone(),
-    )?;
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(10, img_h + 120, 590, img_h + 185),
-        "非常可爱！简直就是小天使",
-        40.0,
-        48.0,
-        text_params.clone(),
-    )?;
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(20, img_h + 180, 580, img_h + 215),
-        format!("{ta}没失踪也没怎么样  我只是觉得你们都该看一下"),
-        20.0,
-        26.0,
-        text_params.clone(),
-    )?;
+    canvas
+        .draw_text_area_auto_font_size(
+            IRect::from_ltrb(20, 20, 580, 110),
+            format!("请问你们看到{name}了吗?"),
+            40.0,
+            70.0,
+            text_params.clone(),
+        )
+        .map_err(|_| Error::TextOverLength(name.to_string()))?;
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(10, img_h + 120, 590, img_h + 185),
+            "非常可爱！简直就是小天使",
+            48.0,
+            text_params.clone(),
+        )
+        .unwrap();
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(20, img_h + 180, 580, img_h + 215),
+            format!("{ta}没失踪也没怎么样  我只是觉得你们都该看一下"),
+            26.0,
+            text_params.clone(),
+        )
+        .unwrap();
     let frame = surface.image_snapshot();
 
     let func = |images: Vec<Image>| {

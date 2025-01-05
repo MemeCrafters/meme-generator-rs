@@ -1,4 +1,4 @@
-use skia_safe::{Color, IRect, Image};
+use skia_safe::{textlayout::TextAlign, Color, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
@@ -6,6 +6,7 @@ use meme_generator_utils::{
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
+    text_params,
     tools::{local_date, new_surface},
 };
 
@@ -16,20 +17,22 @@ fn alike(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);
 
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(10, 10, 185, 140),
-        "你怎么跟",
-        30.0,
-        40.0,
-        None,
-    )?;
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(365, 10, 460, 140),
-        "一样",
-        30.0,
-        40.0,
-        None,
-    )?;
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(10, 30, 185, 160),
+            "你怎么跟",
+            40.0,
+            text_params!(text_align = TextAlign::Right),
+        )
+        .unwrap();
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(365, 30, 460, 160),
+            "一样",
+            40.0,
+            text_params!(text_align = TextAlign::Left),
+        )
+        .unwrap();
 
     let frame = surface.image_snapshot();
 

@@ -71,27 +71,30 @@ fn certificate(_: Vec<NamedImage>, texts: Vec<String>, options: Time) -> Result<
         text_params!(text_align = TextAlign::Left),
     )?;
 
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(1565, 1520, 1700, 1595),
-        &time.format("%Y").to_string(),
-        40.0,
-        60.0,
-        None,
-    )?;
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(1752, 1520, 1816, 1595),
-        &time.format("%m").to_string(),
-        40.0,
-        60.0,
-        None,
-    )?;
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(1865, 1520, 1930, 1595),
-        &time.format("%d").to_string(),
-        40.0,
-        60.0,
-        None,
-    )?;
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(1565, 1520, 1700, 1610),
+            &time.format("%Y").to_string(),
+            50.0,
+            None,
+        )
+        .unwrap();
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(1752, 1520, 1816, 1610),
+            &time.format("%m").to_string(),
+            50.0,
+            None,
+        )
+        .unwrap();
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(1865, 1520, 1930, 1610),
+            &time.format("%d").to_string(),
+            50.0,
+            None,
+        )
+        .unwrap();
 
     encode_png(surface.image_snapshot())
 }

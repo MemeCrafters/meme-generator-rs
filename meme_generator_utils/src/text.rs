@@ -184,6 +184,8 @@ impl Text2Image {
                 stroke_style.set_font_style(text_params.font_style);
                 stroke_style.set_foreground_paint(&stroke_paint);
                 stroke_style.set_font_families(&font_families);
+                stroke_style.set_height(text_params.line_height);
+                stroke_style.set_height_override(true);
                 stroke_builder.push_style(&stroke_style);
                 stroke_builder.add_text(text);
                 let mut stroke_paragraph = stroke_builder.build();

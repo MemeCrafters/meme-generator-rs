@@ -43,20 +43,22 @@ fn always_normal(images: Vec<NamedImage>) -> Result<Vec<u8>, Error> {
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);
 
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(20, h1 + 5, 280, frame_h - 5),
-        "要我一直",
-        40.0,
-        60.0,
-        text_params!(text_align = TextAlign::Right),
-    )?;
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(400, h1 + 5, 480, frame_h - 5),
-        "吗",
-        40.0,
-        60.0,
-        text_params!(text_align = TextAlign::Left),
-    )?;
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(20, h1 + 5, 280, frame_h - 5),
+            "要我一直",
+            60.0,
+            text_params!(text_align = TextAlign::Right),
+        )
+        .unwrap();
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(400, h1 + 5, 480, frame_h - 5),
+            "吗",
+            60.0,
+            text_params!(text_align = TextAlign::Left),
+        )
+        .unwrap();
     let frame = surface.image_snapshot();
 
     let func = |images: Vec<Image>| {
@@ -94,20 +96,22 @@ fn always_always(images: Vec<NamedImage>, loop_: bool) -> Result<Vec<u8>, Error>
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);
 
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(20, img_big_h + 5, 280, frame_h - 5),
-        "要我一直",
-        40.0,
-        60.0,
-        text_params!(text_align = TextAlign::Right),
-    )?;
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(400, img_big_h + 5, 480, frame_h - 5),
-        "吗",
-        40.0,
-        60.0,
-        text_params!(text_align = TextAlign::Left),
-    )?;
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(20, img_big_h + 5, 280, frame_h - 5),
+            "要我一直",
+            60.0,
+            text_params!(text_align = TextAlign::Right),
+        )
+        .unwrap();
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(400, img_big_h + 5, 480, frame_h - 5),
+            "吗",
+            60.0,
+            text_params!(text_align = TextAlign::Left),
+        )
+        .unwrap();
     let text_frame = surface.image_snapshot();
 
     let frame_num = 20;

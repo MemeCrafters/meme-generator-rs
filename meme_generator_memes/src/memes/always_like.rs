@@ -20,13 +20,15 @@ fn always_like(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<
     let mut surface = frame.to_surface();
     let canvas = surface.canvas();
 
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(20, 470, frame.width() - 20, 570),
-        text,
-        30.0,
-        70.0,
-        text_params!(font_style = FontStyle::bold()),
-    )?;
+    canvas
+        .draw_text_area_auto_font_size(
+            IRect::from_ltrb(20, 470, frame.width() - 20, 570),
+            text,
+            30.0,
+            70.0,
+            text_params!(font_style = FontStyle::bold()),
+        )
+        .map_err(|_| Error::TextOverLength(name.to_string()))?;
     let frame = surface.image_snapshot();
 
     let func = |images: Vec<Image>| {

@@ -15,13 +15,14 @@ fn call_110(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec
     let mut surface = new_surface((900, 500));
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(0, 0, 900, 200),
-        "遇到困难请拨打",
-        50.0,
-        100.0,
-        None,
-    )?;
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(0, 0, 900, 200),
+            "遇到困难请拨打",
+            100.0,
+            None,
+        )
+        .unwrap();
     let frame = surface.image_snapshot();
 
     let func = |images: Vec<Image>| {

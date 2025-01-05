@@ -79,25 +79,27 @@ fn ask(images: Vec<NamedImage>, _: Vec<String>, options: Gender) -> Result<Vec<u
     let mut surface = new_surface((frame_width, frame_height));
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(padding_w, 0, frame_width - padding_w, padding_h),
-        format!("让{name}告诉你吧"),
-        20.0,
-        35.0,
-        text_params!(text_align = TextAlign::Left),
-    )?;
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(
-            padding_w,
-            frame_height - padding_h,
-            frame_width - padding_w,
-            frame_height,
-        ),
-        format!("啊这，{ta}说不知道"),
-        20.0,
-        35.0,
-        text_params!(text_align = TextAlign::Left),
-    )?;
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(padding_w, 0, frame_width - padding_w, padding_h),
+            format!("让{name}告诉你吧"),
+            35.0,
+            text_params!(text_align = TextAlign::Left),
+        )
+        .map_err(|_| Error::TextOverLength(name.clone()))?;
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(
+                padding_w,
+                frame_height - padding_h,
+                frame_width - padding_w,
+                frame_height,
+            ),
+            format!("啊这，{ta}说不知道"),
+            35.0,
+            text_params!(text_align = TextAlign::Left),
+        )
+        .unwrap();
     let frame = surface.image_snapshot();
 
     let func = |images: Vec<Image>| {

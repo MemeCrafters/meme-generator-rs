@@ -37,25 +37,28 @@ fn abstinence(images: Vec<NamedImage>, _: Vec<String>, options: Time) -> Result<
     let mut surface = frame.to_surface();
     let canvas = surface.canvas();
 
-    canvas.draw_bbcode_text_area_auto_font_size(
-        IRect::from_ltrb(150, 650, 760, 800),
-        format!("戒导人：[u]{name}[/u]"),
-        10.0,
-        20.0,
-        None,
-    )?;
-    canvas.draw_bbcode_text_area_auto_font_size(
-        IRect::from_ltrb(150, 750, 760, 800),
-        format!(
-            "[u] {} [/u]年[u] {} [/u]月[u] {} [/u]日",
-            time.year(),
-            time.month(),
-            time.day()
-        ),
-        10.0,
-        20.0,
-        None,
-    )?;
+    canvas
+        .draw_bbcode_text_area_auto_font_size(
+            IRect::from_ltrb(150, 650, 760, 800),
+            format!("戒导人：[u]{name}[/u]"),
+            10.0,
+            20.0,
+            None,
+        )
+        .map_err(|_| Error::TextOverLength(name.to_string()))?;
+    canvas
+        .draw_bbcode_text_area(
+            IRect::from_ltrb(150, 750, 760, 800),
+            format!(
+                "[u] {} [/u]年[u] {} [/u]月[u] {} [/u]日",
+                time.year(),
+                time.month(),
+                time.day()
+            ),
+            20.0,
+            None,
+        )
+        .unwrap();
     let frame = surface.image_snapshot();
     let stamp = load_image("abstinence/stamp.png")?;
 

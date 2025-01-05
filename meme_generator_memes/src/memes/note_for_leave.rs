@@ -48,12 +48,14 @@ fn note_for_leave(
     let mut surface = new_surface((800, 950));
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);
-    canvas.draw_text_area(
-        IRect::from_ltrb(40, 20, 760, 180),
-        "请假条",
-        100.0,
-        text_params!(font_style = FontStyle::bold()),
-    )?;
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(40, 20, 760, 180),
+            "请假条",
+            100.0,
+            text_params!(font_style = FontStyle::bold()),
+        )
+        .unwrap();
     canvas
         .draw_bbcode_text_area(
             IRect::from_ltrb(40, 180, 760, 270),

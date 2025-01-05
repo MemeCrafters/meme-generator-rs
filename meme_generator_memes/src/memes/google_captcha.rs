@@ -30,13 +30,14 @@ fn google_captcha(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Resu
         IRect::from_xywh(21, 21, 962, 332),
         &new_paint(color_from_hex_code("#4790E4")),
     );
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(91, 81, 921, 141),
-        "请选择包含",
-        40.0,
-        60.0,
-        text_params.clone(),
-    )?;
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(91, 81, 921, 141),
+            "请选择包含",
+            40.0,
+            text_params.clone(),
+        )
+        .unwrap();
     canvas.draw_text_area_auto_font_size(
         IRect::from_ltrb(91, 141, 921, 231),
         name,
@@ -44,13 +45,14 @@ fn google_captcha(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Resu
         80.0,
         text_params.clone(),
     )?;
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(91, 231, 921, 291),
-        "的所有图块，如果没有，请点击“跳过”",
-        40.0,
-        60.0,
-        text_params.clone(),
-    )?;
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(91, 231, 921, 291),
+            "的所有图块，如果没有，请点击“跳过”",
+            40.0,
+            text_params.clone(),
+        )
+        .unwrap();
 
     canvas.draw_irect(
         IRect::from_xywh(2, 1355, 1002, 182),
@@ -64,16 +66,17 @@ fn google_captcha(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Resu
         IRect::from_xywh(689, 1387, 283, 121),
         &new_paint(color_from_hex_code("#4790E4")),
     );
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_xywh(689, 1387, 283, 121),
-        "跳过",
-        20.0,
-        40.0,
-        text_params!(
-            paint = new_paint(Color::WHITE),
-            font_style = FontStyle::bold(),
-        ),
-    )?;
+    canvas
+        .draw_text_area(
+            IRect::from_xywh(689, 1387, 283, 121),
+            "跳过",
+            40.0,
+            text_params!(
+                paint = new_paint(Color::WHITE),
+                font_style = FontStyle::bold(),
+            ),
+        )
+        .unwrap();
     let frame = surface.image_snapshot();
 
     let func = |images: Vec<Image>| {

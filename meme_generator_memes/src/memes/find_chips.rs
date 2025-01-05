@@ -24,8 +24,7 @@ fn find_chips(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Ve
             12.0,
             30.0,
             None,
-        )?;
-        Ok::<(), Error>(())
+        )
     };
 
     draw((405, 54, 530, 130), &texts[0])?;

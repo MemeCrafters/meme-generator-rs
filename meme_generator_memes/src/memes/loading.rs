@@ -32,13 +32,14 @@ fn loading(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<
     );
     let icon = load_image("loading/icon.png")?;
     canvas.draw_image(&icon, (200, (h1 / 2) - 50), None);
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(210, h1 + 5, 480, h1 + h2 + 5),
-        "不出来",
-        40.0,
-        60.0,
-        text_params!(text_align = TextAlign::Left),
-    )?;
+    canvas
+        .draw_text_area(
+            IRect::from_ltrb(210, h1 + 5, 480, h1 + h2 + 5),
+            "不出来",
+            60.0,
+            text_params!(text_align = TextAlign::Left),
+        )
+        .unwrap();
     let frame = surface.image_snapshot();
 
     let func = |images: Vec<Image>| {

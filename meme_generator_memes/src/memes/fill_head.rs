@@ -23,13 +23,15 @@ fn fill_head(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Ve
     let frame = load_image("fill_head/0.jpg")?;
     let mut surface = frame.to_surface();
     let canvas = surface.canvas();
-    canvas.draw_text_area_auto_font_size(
-        IRect::from_ltrb(20, 458, frame.width() - 20, 550),
-        &text,
-        30.0,
-        65.0,
-        None,
-    )?;
+    canvas
+        .draw_text_area_auto_font_size(
+            IRect::from_ltrb(20, 458, frame.width() - 20, 550),
+            &text,
+            30.0,
+            65.0,
+            None,
+        )
+        .map_err(|_| Error::TextOverLength(name.to_string()))?;
     let frame = surface.image_snapshot();
 
     let func = |images: Vec<Image>| {
