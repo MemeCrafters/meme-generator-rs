@@ -5063,6 +5063,34 @@
       "hash": "5dda5c9916f762ea6420ff71f8e3ca4f30e012a1df6d62860537793626024330"
     },
     {
+      "file": "oshi_no_ko/background.png",
+      "hash": "3c04fd7b8d1193f0f502db6984f68b25ff7af8a6ab496f312d99a6f262cdc463"
+    },
+    {
+      "file": "oshi_no_ko/foreground.png",
+      "hash": "6052bae7869ef430ff4d926721a601a0bcea1c832c6507f95a3b8f973474d53e"
+    },
+    {
+      "file": "oshi_no_ko/text1.png",
+      "hash": "227870bc9ec61b47a55b9322575fd3efc77601f6b0099aedfb8438610cb26070"
+    },
+    {
+      "file": "oshi_no_ko/text2.png",
+      "hash": "1a45e80aedaefe4990454e6d01d369dabf4377a7424476eb5f6f802e1b6a710e"
+    },
+    {
+      "file": "osu/0.png",
+      "hash": "f1e7e9a0683b4520814ee62732db30f2164811c06821e0f373917141c73627af"
+    },
+    {
+      "file": "out/0.png",
+      "hash": "509e29aa9889c7b67ab0884f1f0859e94b857c7ca2ccfc741d80eae3301491b5"
+    },
+    {
+      "file": "overtime/0.png",
+      "hash": "b80011a380c07c7c26e4cfa02da13c776b4b784523132b24ecc00c8a2454cc47"
+    },
+    {
       "file": "petpet/0.png",
       "hash": "69da867cbb64df16fb2eaf43b1e312a33600963fb2e2079c074e55ef4cfa5986"
     },
