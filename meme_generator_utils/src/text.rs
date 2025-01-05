@@ -86,6 +86,7 @@ pub struct TextParams {
     pub text_align: TextAlign,
     pub paint: Paint,
     pub stroke_paint: Option<Paint>,
+    pub line_height: scalar,
 }
 
 impl Default for TextParams {
@@ -96,6 +97,7 @@ impl Default for TextParams {
             text_align: TextAlign::Center,
             paint: new_paint(Color::BLACK),
             stroke_paint: None,
+            line_height: 1.0,
         }
     }
 }
@@ -134,6 +136,10 @@ pub mod text_params_setters {
     pub fn stroke_paint(paint: Paint) -> Option<Paint> {
         Some(paint)
     }
+
+    pub fn line_height(height: f32) -> f32 {
+        height
+    }
 }
 
 pub struct Text2Image {
@@ -162,6 +168,8 @@ impl Text2Image {
         style.set_font_style(text_params.font_style);
         style.set_foreground_paint(&text_params.paint);
         style.set_font_families(&font_families);
+        style.set_height(text_params.line_height);
+        style.set_height_override(true);
         builder.push_style(&style);
         builder.add_text(text.clone());
         let mut paragraph = builder.build();
@@ -213,6 +221,8 @@ impl Text2Image {
         style.set_font_style(text_params.font_style);
         style.set_foreground_paint(&text_params.paint);
         style.set_font_families(&font_families);
+        style.set_height(text_params.line_height);
+        style.set_height_override(true);
         builder.push_style(&style);
 
         let mut stroke_builder =
@@ -224,6 +234,8 @@ impl Text2Image {
             stroke_style.set_foreground_paint(stroke_paint);
         }
         stroke_style.set_font_families(&font_families);
+        stroke_style.set_height(text_params.line_height);
+        stroke_style.set_height_override(true);
         stroke_builder.push_style(&stroke_style);
 
         let mut paint = text_params.paint;

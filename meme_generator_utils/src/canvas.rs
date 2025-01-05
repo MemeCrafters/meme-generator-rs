@@ -108,7 +108,7 @@ fn draw_text_area_auto_font_size(
 ) -> Result<(), Error> {
     let rect: Rect = rect.into();
     let text: String = text.into();
-    let text_params: TextParams = text_params.into().unwrap_or_default();
+    let mut text_params: TextParams = text_params.into().unwrap_or_default();
     let mut font_size = max_font_size;
     while font_size >= min_font_size {
         let mut text2image = if use_bbcode {
@@ -121,6 +121,11 @@ fn draw_text_area_auto_font_size(
             let top = rect.top() + (rect.height() - text2image.height()) / 2.0;
             text2image.draw_on_canvas(canvas, (rect.left(), top));
             return Ok(());
+        }
+        if let Some(stroke_paint) = &mut text_params.stroke_paint {
+            let mut stroke_width = stroke_paint.stroke_width();
+            stroke_width -= 1.0 * stroke_width / font_size;
+            stroke_paint.set_stroke_width(stroke_width);
         }
         font_size -= 1.0;
     }
