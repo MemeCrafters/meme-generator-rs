@@ -44,7 +44,7 @@ fn little_angel(
         .map_err(|_| Error::TextOverLength(name.to_string()))?;
     canvas
         .draw_text_area(
-            IRect::from_ltrb(10, img_h + 120, 590, img_h + 185),
+            IRect::from_ltrb(10, img_h + 115, 590, img_h + 190),
             "非常可爱！简直就是小天使",
             48.0,
             text_params.clone(),
@@ -52,7 +52,7 @@ fn little_angel(
         .unwrap();
     canvas
         .draw_text_area(
-            IRect::from_ltrb(20, img_h + 180, 580, img_h + 215),
+            IRect::from_ltrb(20, img_h + 175, 580, img_h + 220),
             format!("{ta}没失踪也没怎么样  我只是觉得你们都该看一下"),
             26.0,
             text_params.clone(),

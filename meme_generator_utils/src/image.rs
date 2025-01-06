@@ -1,6 +1,6 @@
 use skia_safe::{
     canvas::SrcRectConstraint, color_filters, image_filters, ClipOp, ColorMatrix, IRect, ISize,
-    Image, ImageFilter, Matrix, Paint, Path, Point, RRect, Rect, Surface,
+    Image, ImageFilter, Matrix, Paint, Path, Point, RRect, Rect, SamplingOptions, Surface,
 };
 
 use crate::tools::{default_sampling_options, new_surface};
@@ -18,6 +18,12 @@ pub trait ImageExt {
     fn to_surface(&self) -> Surface;
 
     fn resize_exact(&self, size: impl Into<ISize>) -> Image;
+
+    fn resize_exact_with_sampling_options(
+        &self,
+        size: impl Into<ISize>,
+        sampling: impl Into<SamplingOptions>,
+    ) -> Image;
 
     fn resize_fit(&self, size: impl Into<ISize>, fit: Fit) -> Image;
 
@@ -69,7 +75,16 @@ impl ImageExt for Image {
     }
 
     fn resize_exact(&self, size: impl Into<ISize>) -> Image {
+        self.resize_exact_with_sampling_options(size, default_sampling_options())
+    }
+
+    fn resize_exact_with_sampling_options(
+        &self,
+        size: impl Into<ISize>,
+        sampling: impl Into<SamplingOptions>,
+    ) -> Image {
         let size = size.into();
+        let sampling = sampling.into();
         let mut surface = new_surface(size);
         let canvas = surface.canvas();
         let paint = Paint::default();
@@ -77,7 +92,7 @@ impl ImageExt for Image {
             self,
             Some((&Rect::from_irect(self.bounds()), SrcRectConstraint::Fast)),
             Rect::from_isize(size),
-            default_sampling_options(),
+            sampling,
             &paint,
         );
         surface.image_snapshot()

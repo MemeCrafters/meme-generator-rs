@@ -32,11 +32,7 @@ fn nokia(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>
     let mut text_img = Text2Image::from_text(
         text,
         70.0,
-        text_params!(
-            font_families = &["FZXS14"],
-            text_align = TextAlign::Left,
-            line_height = 1.25
-        ),
+        text_params!(font_families = &["FZXS14"], text_align = TextAlign::Left),
     );
     text_img.layout(730.0);
     if text_img.height() > 450.0 {

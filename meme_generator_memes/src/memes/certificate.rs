@@ -73,7 +73,7 @@ fn certificate(_: Vec<NamedImage>, texts: Vec<String>, options: Time) -> Result<
 
     canvas
         .draw_text_area(
-            IRect::from_ltrb(1565, 1520, 1700, 1610),
+            IRect::from_ltrb(1565, 1520, 1700, 1600),
             &time.format("%Y").to_string(),
             50.0,
             None,
@@ -81,7 +81,7 @@ fn certificate(_: Vec<NamedImage>, texts: Vec<String>, options: Time) -> Result<
         .unwrap();
     canvas
         .draw_text_area(
-            IRect::from_ltrb(1752, 1520, 1816, 1610),
+            IRect::from_ltrb(1752, 1520, 1816, 1600),
             &time.format("%m").to_string(),
             50.0,
             None,
@@ -89,7 +89,7 @@ fn certificate(_: Vec<NamedImage>, texts: Vec<String>, options: Time) -> Result<
         .unwrap();
     canvas
         .draw_text_area(
-            IRect::from_ltrb(1865, 1520, 1930, 1610),
+            IRect::from_ltrb(1865, 1520, 1930, 1600),
             &time.format("%d").to_string(),
             50.0,
             None,
