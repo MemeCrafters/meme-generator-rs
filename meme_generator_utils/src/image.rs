@@ -1,6 +1,7 @@
 use skia_safe::{
-    canvas::SrcRectConstraint, color_filters, image_filters, ClipOp, ColorMatrix, IRect, ISize,
-    Image, ImageFilter, Matrix, Paint, Path, Point, RRect, Rect, SamplingOptions, Surface,
+    canvas::SrcRectConstraint, color_filters, image_filters, BlendMode, ClipOp, Color4f,
+    ColorMatrix, IRect, ISize, Image, ImageFilter, Matrix, Paint, Path, Point, RRect, Rect,
+    SamplingOptions, Surface,
 };
 
 use crate::tools::{default_sampling_options, new_surface};
@@ -16,6 +17,8 @@ pub enum Fit {
 
 pub trait ImageExt {
     fn to_surface(&self) -> Surface;
+
+    fn with_background(&self, color: impl Into<Color4f>) -> Image;
 
     fn resize_exact(&self, size: impl Into<ISize>) -> Image;
 
@@ -42,6 +45,8 @@ pub trait ImageExt {
     fn circle(&self) -> Image;
 
     fn round_corner(&self, radius: f32) -> Image;
+
+    fn clip_mask(&self, mask: &Image) -> Image;
 
     fn rotate(&self, degrees: f32) -> Image;
 
@@ -72,6 +77,15 @@ impl ImageExt for Image {
         let canvas = surface.canvas();
         canvas.draw_image(self, (0, 0), None);
         surface
+    }
+
+    fn with_background(&self, color: impl Into<Color4f>) -> Image {
+        let color = color.into();
+        let mut surface = new_surface(self.dimensions());
+        let canvas = surface.canvas();
+        canvas.clear(color);
+        canvas.draw_image(self, (0, 0), None);
+        surface.image_snapshot()
     }
 
     fn resize_exact(&self, size: impl Into<ISize>) -> Image {
@@ -227,6 +241,16 @@ impl ImageExt for Image {
             None,
         );
         self.clip_path(&path, ClipOp::Intersect)
+    }
+
+    fn clip_mask(&self, mask: &Image) -> Image {
+        let mut surface = new_surface(self.dimensions());
+        let canvas = surface.canvas();
+        canvas.draw_image(mask, (0, 0), None);
+        let mut paint = Paint::default();
+        paint.set_blend_mode(BlendMode::SrcIn);
+        canvas.draw_image(self, (0, 0), Some(&paint));
+        surface.image_snapshot()
     }
 
     fn rotate(&self, degrees: f32) -> Image {
