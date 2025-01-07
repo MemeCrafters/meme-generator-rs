@@ -64,6 +64,8 @@ pub trait ImageExt {
 
     fn invert(&self) -> Image;
 
+    fn transparency(&self, factor: f32) -> Image;
+
     fn brightness(&self, factor: f32) -> Image;
 
     fn image_filter(&self, filter: ImageFilter) -> Image;
@@ -364,6 +366,15 @@ impl ImageExt for Image {
             0.0, -1.0, 0.0, 0.0, 1.0, //
             0.0, 0.0, -1.0, 0.0, 1.0, //
             0.0, 0.0, 0.0, 1.0, 0.0,
+        ))
+    }
+
+    fn transparency(&self, factor: f32) -> Image {
+        self.color_filter(ColorMatrix::new(
+            1.0, 0.0, 0.0, 0.0, 0.0, //
+            0.0, 1.0, 0.0, 0.0, 0.0, //
+            0.0, 0.0, 1.0, 0.0, 0.0, //
+            0.0, 0.0, 0.0, factor, 0.0,
         ))
     }
 
