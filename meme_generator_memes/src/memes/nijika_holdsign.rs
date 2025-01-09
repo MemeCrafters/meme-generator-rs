@@ -10,7 +10,7 @@ use meme_generator_utils::{
     tools::{load_image, local_date, new_paint},
 };
 
-use crate::{options::NoOptions, register_meme};
+use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
 fn nijika_holdsign(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
@@ -36,7 +36,8 @@ register_meme!(
     min_texts = 1,
     max_texts = 1,
     default_texts = &["你可少看点二次元吧"],
-    keywords = &["伊地知虹夏举牌", "虹夏举牌"],
+    keywords = &["虹夏举牌"],
+    tags = MemeTags::nijika(),
     date_created = local_date(2023, 6, 20),
     date_modified = local_date(2023, 6, 20),
 );

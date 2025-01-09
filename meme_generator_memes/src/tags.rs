@@ -120,4 +120,5 @@ meme_tags!(
     kirby = (["星之卡比"]),
     maimai = (["舞萌"]),
     nekoha = (["猫羽雫"]),
+    persona5 = (["女神异闻录5"]),
 );
