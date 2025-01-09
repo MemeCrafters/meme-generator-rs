@@ -92,7 +92,7 @@ jobs:
       matrix:
         platform:
           - runner: ubuntu-latest
-            container: ghcr.io/memecrafters/meme-generator-container:latest
+            container: ghcr.io/memecrafters/meme-generator-build-container:latest
             target: x86_64-unknown-linux-gnu
             label: linux-x86_64
 
