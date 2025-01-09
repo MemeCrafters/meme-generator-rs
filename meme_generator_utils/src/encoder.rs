@@ -36,8 +36,13 @@ pub fn encode_gif(images: Vec<Image>, duration: f32) -> Result<Vec<u8>, Error> {
                 (0, 0),
                 CachingHint::Allow,
             );
-            let mut frame =
-                Frame::from_rgba(image.width() as u16, image.height() as u16, &mut data);
+            let speed = CONFIG.encoder.gif_encode_speed;
+            let mut frame = Frame::from_rgba_speed(
+                image.width() as u16,
+                image.height() as u16,
+                &mut data,
+                speed as i32,
+            );
             frame.delay = delay;
             frame.dispose = DisposalMethod::Background;
             encoder
