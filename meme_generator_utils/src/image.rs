@@ -1,7 +1,7 @@
 use skia_safe::{
     canvas::SrcRectConstraint, color_filters, image_filters, BlendMode, ClipOp, Color4f,
-    ColorMatrix, IRect, ISize, Image, ImageFilter, Matrix, Paint, Path, Point, RRect, Rect,
-    SamplingOptions, Surface,
+    ColorFilter, ColorMatrix, IRect, ISize, Image, ImageFilter, Matrix, Paint, Path, Point, RRect,
+    Rect, SamplingOptions, Surface,
 };
 
 use crate::tools::{default_sampling_options, new_surface};
@@ -58,9 +58,13 @@ pub trait ImageExt {
 
     fn perspective(&self, points: &[impl Into<Point> + Copy; 4]) -> Image;
 
-    fn color_filter(&self, matrix: ColorMatrix) -> Image;
+    fn color_filter(&self, filter: ColorFilter) -> Image;
+
+    fn color_matrix(&self, matrix: ColorMatrix) -> Image;
 
     fn grayscale(&self) -> Image;
+
+    fn colorize(&self, color: impl Into<Color4f>) -> Image;
 
     fn invert(&self) -> Image;
 
@@ -342,17 +346,21 @@ impl ImageExt for Image {
         surface.image_snapshot()
     }
 
-    fn color_filter(&self, matrix: ColorMatrix) -> Image {
+    fn color_filter(&self, filter: ColorFilter) -> Image {
         let mut surface = new_surface(self.dimensions());
         let canvas = surface.canvas();
         let mut paint = Paint::default();
-        paint.set_color_filter(color_filters::matrix(&matrix, None));
+        paint.set_color_filter(filter);
         canvas.draw_image(self, (0, 0), Some(&paint));
         surface.image_snapshot()
     }
 
+    fn color_matrix(&self, matrix: ColorMatrix) -> Image {
+        self.color_filter(color_filters::matrix(&matrix, None))
+    }
+
     fn grayscale(&self) -> Image {
-        self.color_filter(ColorMatrix::new(
+        self.color_matrix(ColorMatrix::new(
             0.2126, 0.7152, 0.0722, 0.0, 0.0, //
             0.2126, 0.7152, 0.0722, 0.0, 0.0, //
             0.2126, 0.7152, 0.0722, 0.0, 0.0, //
@@ -360,8 +368,14 @@ impl ImageExt for Image {
         ))
     }
 
+    fn colorize(&self, color: impl Into<Color4f>) -> Image {
+        let color: Color4f = color.into();
+        let color = color.to_color();
+        self.color_filter(color_filters::blend(color, BlendMode::Color).unwrap())
+    }
+
     fn invert(&self) -> Image {
-        self.color_filter(ColorMatrix::new(
+        self.color_matrix(ColorMatrix::new(
             -1.0, 0.0, 0.0, 0.0, 1.0, //
             0.0, -1.0, 0.0, 0.0, 1.0, //
             0.0, 0.0, -1.0, 0.0, 1.0, //
@@ -370,7 +384,7 @@ impl ImageExt for Image {
     }
 
     fn transparency(&self, factor: f32) -> Image {
-        self.color_filter(ColorMatrix::new(
+        self.color_matrix(ColorMatrix::new(
             1.0, 0.0, 0.0, 0.0, 0.0, //
             0.0, 1.0, 0.0, 0.0, 0.0, //
             0.0, 0.0, 1.0, 0.0, 0.0, //
@@ -379,7 +393,7 @@ impl ImageExt for Image {
     }
 
     fn brightness(&self, factor: f32) -> Image {
-        self.color_filter(ColorMatrix::new(
+        self.color_matrix(ColorMatrix::new(
             factor, 0.0, 0.0, 0.0, 0.0, //
             0.0, factor, 0.0, 0.0, 0.0, //
             0.0, 0.0, factor, 0.0, 0.0, //
