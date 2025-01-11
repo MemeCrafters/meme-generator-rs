@@ -1,4 +1,4 @@
-use std::{fs, path::Path};
+use std::{fs, path::Path, sync::Arc};
 
 use indicatif::{ProgressBar, ProgressStyle};
 use reqwest::Client;
@@ -8,6 +8,7 @@ use tokio::{
     fs::File,
     io::{AsyncReadExt, AsyncWriteExt},
     runtime::Runtime,
+    sync::Semaphore,
     task,
 };
 
@@ -107,6 +108,9 @@ async fn download_resources(
             )
             .progress_chars("#>-"),
     );
+
+    let semaphore = Arc::new(Semaphore::new(10));
+
     println!("Downloading {resource_type}");
 
     let mut tasks = vec![];
@@ -119,9 +123,12 @@ async fn download_resources(
             format!("{resource_type}/{}", resource.file).as_str(),
         );
 
+        let semaphore = semaphore.clone();
         tasks.push(task::spawn(async move {
+            let permit = semaphore.acquire().await.unwrap();
             download_file(&client, &file_url, &file_path).await;
             pb.inc(1);
+            drop(permit);
         }));
     }
 
