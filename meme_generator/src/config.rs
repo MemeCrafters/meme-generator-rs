@@ -47,9 +47,7 @@ pub struct ResourceConfig {
 impl Default for ResourceConfig {
     fn default() -> Self {
         ResourceConfig {
-            resource_url:
-                "https://ghfast.top/https://raw.githubusercontent.com/MemeCrafters/meme-generator-rs/"
-                    .to_string(),
+            resource_url: "https://cdn.jsdelivr.net/gh/MemeCrafters/meme-generator-rs@".to_string(),
             download_fonts: true,
         }
     }
