@@ -170,10 +170,10 @@ fn handle_error(error: Error) -> ErrorResponse {
             message,
             data: json!({ "error": err }),
         },
-        Error::IOError(err) => ErrorResponse {
+        Error::ImageAssetMissing(path) => ErrorResponse {
             code: 530,
             message,
-            data: json!({ "error": err }),
+            data: json!({ "path": path }),
         },
         Error::DeserializeError(err) => ErrorResponse {
             code: 540,

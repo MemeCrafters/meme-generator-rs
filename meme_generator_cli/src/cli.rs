@@ -26,7 +26,7 @@ use meme_generator_server::run_server_sync;
 static LOADED_MEMES: LazyLock<HashMap<String, Box<dyn Meme>>> = LazyLock::new(|| load_memes());
 
 fn build_arg(option: MemeOption) -> Arg {
-    match option {
+    let arg = match option {
         MemeOption::Boolean {
             name,
             default,
@@ -196,7 +196,9 @@ fn build_arg(option: MemeOption) -> Arg {
             }
             arg
         }
-    }
+    };
+    let arg = arg.allow_hyphen_values(true);
+    arg
 }
 
 fn get_meme_keys() -> Vec<String> {
@@ -523,8 +525,8 @@ fn handle_result(result: Result<Vec<u8>, Error>) {
         Err(Error::ImageEncodeError(err)) => {
             eprintln!("图片编码失败：{err}");
         }
-        Err(Error::IOError(err)) => {
-            eprintln!("IO 错误：{err}");
+        Err(Error::ImageAssetMissing(path)) => {
+            eprintln!("图片资源缺失：{path}");
         }
         Err(Error::DeserializeError(err)) => {
             eprintln!("反序列化失败：{err}");

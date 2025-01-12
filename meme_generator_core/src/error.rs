@@ -1,10 +1,10 @@
-use std::{error, fmt, io};
+use std::{error, fmt};
 
 #[derive(Debug)]
 pub enum Error {
     ImageDecodeError(String),
     ImageEncodeError(String),
-    IOError(String),
+    ImageAssetMissing(String),
     DeserializeError(String),
     ImageNumberMismatch(u8, u8, u8),
     TextNumberMismatch(u8, u8, u8),
@@ -17,7 +17,7 @@ impl fmt::Display for Error {
         match self {
             Error::ImageDecodeError(err) => write!(f, "Failed to decode image: {err}"),
             Error::ImageEncodeError(err) => write!(f, "Failed to encode image: {err}"),
-            Error::IOError(err) => write!(f, "IO error: {err}"),
+            Error::ImageAssetMissing(path) => write!(f, "Image asset missing: {path}"),
             Error::DeserializeError(err) => write!(f, "Failed to deserialize: {err}"),
             Error::ImageNumberMismatch(min, max, actual) => write!(
                 f,
@@ -30,12 +30,6 @@ impl fmt::Display for Error {
             Error::TextOverLength(text) => write!(f, "Text is too long: {text}"),
             Error::MemeFeedback(feedback) => write!(f, "{feedback}"),
         }
-    }
-}
-
-impl From<io::Error> for Error {
-    fn from(err: io::Error) -> Self {
-        Error::IOError(err.to_string())
     }
 }
 

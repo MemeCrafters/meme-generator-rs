@@ -62,9 +62,16 @@ pub fn local_date(year: i32, month: u32, day: u32) -> DateTime<Local> {
 }
 
 pub fn load_image(path: impl Into<String>) -> Result<Image, Error> {
-    let image_path = IMAGES_DIR.join(path.into());
-    let data = Data::new_copy(&read(image_path)?);
-    Image::from_encoded(data).ok_or(Error::ImageDecodeError("Skia decode error".to_string()))
+    let path = path.into();
+    let image_path = IMAGES_DIR.join(&path);
+    if !(image_path.exists() && image_path.is_file()) {
+        return Err(Error::ImageAssetMissing(path));
+    }
+    let data = Data::new_copy(&read(&image_path).unwrap());
+    Image::from_encoded(data).ok_or(Error::ImageDecodeError(format!(
+        "Failed to decode image: {}",
+        path
+    )))
 }
 
 pub fn grid_pattern_image() -> Image {

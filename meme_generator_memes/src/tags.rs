@@ -114,6 +114,8 @@ meme_tags!(
     gura = (["噶呜·古拉", "Gawr Gura", "鲨鲨"]),
     // VOCALOID
     miku = (["初音未来"]),
+    // 世界计划
+    project_sekai = (["世界计划"]),
     // 其他
     atri = (["亚托莉", "ATRI", "萝卜子"]),
     capoo = (["猫猫虫", "咖波"]),

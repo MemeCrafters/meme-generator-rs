@@ -20,7 +20,7 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<MemeInfo>()?;
     m.add_class::<ImageDecodeError>()?;
     m.add_class::<ImageEncodeError>()?;
-    m.add_class::<IOError>()?;
+    m.add_class::<ImageAssetMissing>()?;
     m.add_class::<DeserializeError>()?;
     m.add_class::<ImageNumberMismatch>()?;
     m.add_class::<TextNumberMismatch>()?;
@@ -223,9 +223,9 @@ struct ImageEncodeError {
 
 #[pyclass]
 #[derive(Clone)]
-struct IOError {
+struct ImageAssetMissing {
     #[pyo3(get)]
-    error: String,
+    path: String,
 }
 
 #[pyclass]
@@ -275,7 +275,7 @@ struct MemeFeedback {
 enum Error {
     ImageDecodeError(ImageDecodeError),
     ImageEncodeError(ImageEncodeError),
-    IOError(IOError),
+    ImageAssetMissing(ImageAssetMissing),
     DeserializeError(DeserializeError),
     ImageNumberMismatch(ImageNumberMismatch),
     TextNumberMismatch(TextNumberMismatch),
@@ -452,7 +452,9 @@ fn handle_result(result: Result<Vec<u8>, error::Error>) -> MemeResult {
             error::Error::ImageEncodeError(error) => {
                 MemeResult::Err(Error::ImageEncodeError(ImageEncodeError { error }))
             }
-            error::Error::IOError(error) => MemeResult::Err(Error::IOError(IOError { error })),
+            error::Error::ImageAssetMissing(path) => {
+                MemeResult::Err(Error::ImageAssetMissing(ImageAssetMissing { path }))
+            }
             error::Error::DeserializeError(error) => {
                 MemeResult::Err(Error::DeserializeError(DeserializeError { error }))
             }
