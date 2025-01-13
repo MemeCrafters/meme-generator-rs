@@ -20,7 +20,8 @@ FROM debian:bookworm-slim AS app
 EXPOSE 2233
 
 ENV TZ=Asia/Shanghai \
-  MEME_HOME=/data
+  MEME_HOME=/data \
+  RUST_LOG=info
 
 VOLUME /data
 
