@@ -32,7 +32,7 @@ fn dianzhongdian(
     let frame_w = img_w;
     let frame_h = match trans {
         Some(_) => img_h + 100,
-        None => img_h + 60,
+        None => img_h + 70,
     };
 
     let mut surface = new_surface((frame_w, frame_h));

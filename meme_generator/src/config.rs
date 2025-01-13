@@ -1,6 +1,7 @@
 use std::sync::LazyLock;
 
 use serde::Deserialize;
+use tracing::warn;
 
 use meme_generator_core::config::read_config_file;
 
@@ -59,7 +60,7 @@ fn parse_config() -> Config {
         Config::default()
     } else {
         toml::from_str(&config_content).unwrap_or_else(|_| {
-            eprintln!("Failed to parse config file, using default config");
+            warn!("Failed to parse config file, using default config");
             Config::default()
         })
     }

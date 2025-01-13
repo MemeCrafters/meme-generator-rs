@@ -5,11 +5,17 @@ use std::{
 
 use chrono::{DateTime, Local};
 use pyo3::prelude::*;
+use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
 use meme_generator::{error, load_memes, meme, resources, VERSION};
 
 #[pymodule(name = "meme_generator")]
 fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    tracing_subscriber::registry()
+        .with(fmt::layer())
+        .with(EnvFilter::try_from_default_env().unwrap_or(EnvFilter::new("info")))
+        .init();
+
     m.add_class::<ParserFlags>()?;
     m.add_class::<BooleanOption>()?;
     m.add_class::<StringOption>()?;

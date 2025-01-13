@@ -1,5 +1,7 @@
 mod cli;
 
+use tracing_subscriber::{fmt, prelude::*, EnvFilter};
+
 #[cfg(feature = "server")]
 use cli::handle_run;
 use cli::{
@@ -7,6 +9,11 @@ use cli::{
 };
 
 fn main() {
+    tracing_subscriber::registry()
+        .with(fmt::layer())
+        .with(EnvFilter::try_from_default_env().unwrap_or(EnvFilter::new("info")))
+        .init();
+
     let matches = build_command().get_matches();
 
     match matches.subcommand() {

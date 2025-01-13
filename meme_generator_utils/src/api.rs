@@ -8,6 +8,7 @@ use std::{
 
 use serde_json::{json, Value};
 use tokio::sync::mpsc;
+use tracing::warn;
 
 use crate::config::CONFIG;
 
@@ -63,7 +64,7 @@ impl ApiManager {
 
 static API_MANAGER: LazyLock<Mutex<ApiManager>> = LazyLock::new(|| Mutex::new(ApiManager::new()));
 
-pub fn call_api(name: &str, params: Value) -> Option<Value> {
+fn call_api(name: &str, params: Value) -> Option<Value> {
     let api_manager = API_MANAGER.lock().unwrap();
     api_manager.send_task(name.to_string(), params);
     api_manager.recv_result()
@@ -76,7 +77,6 @@ async fn translate_async(params: Value) -> Option<Value> {
 
     let appid = CONFIG.api.baidu_trans_appid.clone().unwrap();
     let apikey = CONFIG.api.baidu_trans_apikey.clone().unwrap();
-    println!("appid: {}, apikey: {}", appid, apikey);
 
     let salt = chrono::Utc::now().timestamp_millis().to_string();
     let sign_raw = format!("{}{}{}{}", appid, text, salt, apikey);
@@ -91,15 +91,30 @@ async fn translate_async(params: Value) -> Option<Value> {
     });
     let url = "https://fanyi-api.baidu.com/api/trans/vip/translate";
     let client = reqwest::Client::new();
-    let resp = client.get(url).query(&params).send().await.ok()?;
-    let result: Option<Value> = resp.json().await.ok()?;
-    println!("{:?}", result);
-    if let Some(result) = result {
-        return Some(json!({
-            "result": result["trans_result"][0]["dst"].as_str()
-        }));
-    }
-    None
+    let resp = match client.get(url).query(&params).send().await {
+        Ok(resp) => resp,
+        Err(err) => {
+            warn!("请求百度翻译 API 失败: {:?}", err);
+            return None;
+        }
+    };
+    let result: Value = match resp.json().await {
+        Ok(result) => result,
+        Err(err) => {
+            warn!("解析百度翻译 API 响应失败: {:?}", err);
+            return None;
+        }
+    };
+    let trans_result: &str = match result["trans_result"][0]["dst"].as_str() {
+        Some(result) => result,
+        None => {
+            warn!("百度翻译 API 响应格式错误: {:?}", result);
+            return None;
+        }
+    };
+    return Some(json!({
+        "result": trans_result
+    }));
 }
 
 fn translate_wrapper(params: Value) -> AsyncResult {
@@ -110,7 +125,7 @@ fn register_translate() -> Option<AsyncFunction> {
     let appid = &CONFIG.api.baidu_trans_appid;
     let apikey = &CONFIG.api.baidu_trans_apikey;
     if appid.is_none() || apikey.is_none() {
-        eprintln!("\"baidu_trans_appid\" 或 \"baidu_trans_apikey\" 未设置，请检查配置文件！");
+        warn!("\"baidu_trans_appid\" 或 \"baidu_trans_apikey\" 未设置，请检查配置文件！");
         return None;
     }
     Some(Box::new(translate_wrapper))

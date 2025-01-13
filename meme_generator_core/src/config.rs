@@ -1,6 +1,7 @@
 use std::{env, fs, path::PathBuf, sync::LazyLock};
 
 use directories::UserDirs;
+use tracing::warn;
 
 pub fn meme_home() -> PathBuf {
     match env::var("MEME_HOME") {
@@ -19,16 +20,16 @@ pub fn read_config_file() -> String {
     if !config_path.exists() {
         if let Some(parent) = config_path.parent() {
             fs::create_dir_all(parent).unwrap_or_else(|_| {
-                eprintln!("Failed to create config directory");
+                warn!("Failed to create config directory");
             });
             fs::write(&config_path, "").unwrap_or_else(|_| {
-                eprintln!("Failed to create config file");
+                warn!("Failed to create config file");
             });
         }
     }
     if config_path.exists() {
         return fs::read_to_string(config_path).unwrap_or_else(|_| {
-            eprintln!("Failed to read config file, using default config");
+            warn!("Failed to read config file, using default config");
             String::new()
         });
     }

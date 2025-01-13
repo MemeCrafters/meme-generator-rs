@@ -68,8 +68,8 @@ class ImageDecodeError:
 class ImageEncodeError:
     error: str
 
-class IOError:
-    error: str
+class ImageAssetMissing:
+    path: str
 
 class DeserializeError:
     error: str
@@ -95,7 +95,7 @@ OptionValue = Union[bool, str, int, float]
 MemeError = Union[
     ImageDecodeError,
     ImageEncodeError,
-    IOError,
+    ImageAssetMissing,
     DeserializeError,
     ImageNumberMismatch,
     TextNumberMismatch,

@@ -8,6 +8,7 @@ use meme_generator_core::{
     meme::{Image, Meme, MemeInfo, OptionValue},
     registry::{MemePackDeclaration, CORE_VERSION, RUSTC_VERSION},
 };
+use tracing::{info, warn};
 
 use crate::config::CONFIG;
 
@@ -104,7 +105,7 @@ unsafe fn load_library(
         .read();
 
     if declaration.rustc_version != RUSTC_VERSION {
-        eprintln!(
+        warn!(
             "Library {:?} is compiled with rustc {}, but meme_generator_core is compiled with {}, please recompile the library",
             library_path.file_name(),
             declaration.rustc_version,
@@ -113,7 +114,7 @@ unsafe fn load_library(
         return Ok(None);
     }
     if declaration.core_version != CORE_VERSION {
-        eprintln!(
+        warn!(
             "Library {:?} is compiled with meme_generator_core {}, but current version is {}, please recompile the library",
             library_path.file_name(),
             declaration.core_version,
@@ -144,7 +145,7 @@ fn load_external_memes(registry: &mut MemeRegistry) -> Result<(), std::io::Error
         }
         match unsafe { load_library(&entry) } {
             Ok(Some(memes)) => {
-                println!(
+                info!(
                     "Loaded library {:?} with {} memes",
                     entry.file_name(),
                     memes.len()
@@ -155,7 +156,7 @@ fn load_external_memes(registry: &mut MemeRegistry) -> Result<(), std::io::Error
             }
             Ok(None) => {}
             Err(err) => {
-                eprintln!("Failed to load library {:?}: {}", entry.file_name(), err);
+                warn!("Failed to load library {:?}: {}", entry.file_name(), err);
             }
         }
     }
@@ -171,7 +172,7 @@ pub fn load_memes() -> HashMap<String, Box<dyn Meme>> {
 
     if CONFIG.meme.load_external_memes {
         if let Err(err) = load_external_memes(&mut registry) {
-            eprintln!("Error while loading external memes: {}", err);
+            warn!("Error while loading external memes: {}", err);
         }
     }
 

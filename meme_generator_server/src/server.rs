@@ -16,6 +16,8 @@ use base64::{engine::general_purpose, Engine as _};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use tokio::{net::TcpListener, runtime::Runtime, task::spawn_blocking};
+use tower_http::trace::TraceLayer;
+use tracing::info;
 
 use meme_generator::{
     error::Error,
@@ -209,13 +211,14 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
         .route("/meme/keys", get(meme_keys))
         .route("/memes/:key/info", get(meme_info))
         .route("/memes/:key/preview", get(meme_preview))
-        .route("/memes/:key", post(meme_generate));
+        .route("/memes/:key", post(meme_generate))
+        .layer(TraceLayer::new_for_http());
 
     let host = host.unwrap_or(CONFIG.server.host);
     let port = port.unwrap_or(CONFIG.server.port);
     let addr = SocketAddr::new(host, port);
     let listener = TcpListener::bind(addr).await.unwrap();
-    println!("Server running on {}", addr);
+    info!("Server running on {}", addr);
     axum::serve(listener, app).await.unwrap();
 }
 

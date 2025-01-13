@@ -11,6 +11,7 @@ use tokio::{
     sync::Semaphore,
     task,
 };
+use tracing::{info, warn};
 
 use meme_generator_utils::config::{FONTS_DIR, IMAGES_DIR};
 
@@ -63,14 +64,14 @@ async fn fetch_resource_list(client: &Client, base_url: &str) -> Option<Resource
     let resp = match client.get(&url).send().await {
         Ok(resp) => resp,
         Err(e) => {
-            eprintln!("Failed to download {url}: {e}");
+            warn!("Failed to download {url}: {e}");
             return None;
         }
     };
     match resp.json::<Resources>().await {
         Ok(resources) => Some(resources),
         Err(e) => {
-            eprintln!("Failed to parse resources.json: {e}");
+            warn!("Failed to parse resources.json: {e}");
             None
         }
     }
@@ -111,7 +112,7 @@ async fn download_resources(
 
     let semaphore = Arc::new(Semaphore::new(32));
 
-    println!("Downloading {resource_type}");
+    info!("Downloading {resource_type}");
 
     let mut tasks = vec![];
     for resource in to_download {
@@ -134,7 +135,7 @@ async fn download_resources(
 
     for task in tasks {
         if let Err(e) = task.await {
-            eprintln!("Task failed: {e}");
+            warn!("Task failed: {e}");
         }
     }
 
@@ -168,7 +169,7 @@ async fn is_file_hash_equal(file_path: &Path, expected_hash: &str) -> bool {
 async fn download_file(client: &Client, url: &str, file_path: &Path) {
     if let Some(parent) = file_path.parent() {
         if let Err(e) = fs::create_dir_all(parent) {
-            eprintln!("Failed to create directory {}: {e}", parent.display());
+            warn!("Failed to create directory {}: {e}", parent.display());
             return;
         }
     }
@@ -176,13 +177,13 @@ async fn download_file(client: &Client, url: &str, file_path: &Path) {
     let mut resp = match client.get(url).send().await {
         Ok(resp) => {
             if !resp.status().is_success() {
-                eprintln!("Failed to download {}: HTTP error {}", url, resp.status());
+                warn!("Failed to download {}: HTTP error {}", url, resp.status());
                 return;
             }
             resp
         }
         Err(e) => {
-            eprintln!("Failed to download {}: {e}", url);
+            warn!("Failed to download {}: {e}", url);
             return;
         }
     };
@@ -190,7 +191,7 @@ async fn download_file(client: &Client, url: &str, file_path: &Path) {
     let mut file = match File::create(file_path).await {
         Ok(file) => file,
         Err(e) => {
-            eprintln!("Failed to create file {}: {e}", file_path.display());
+            warn!("Failed to create file {}: {e}", file_path.display());
             return;
         }
     };
@@ -198,12 +199,12 @@ async fn download_file(client: &Client, url: &str, file_path: &Path) {
     while let Some(chunk) = match resp.chunk().await {
         Ok(chunk) => chunk,
         Err(e) => {
-            eprintln!("Failed to download chunk from {}: {e}", url);
+            warn!("Failed to download chunk from {}: {e}", url);
             return;
         }
     } {
         if let Err(e) = file.write_all(&chunk).await {
-            eprintln!("Failed to write file {}: {e}", file_path.display());
+            warn!("Failed to write file {}: {e}", file_path.display());
             return;
         }
     }

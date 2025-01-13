@@ -12,6 +12,7 @@ edition.workspace = true
 chrono = { version = "0.4", features = ["serde"] }
 directories = "5.0"
 serde = { version = "1.0", features = ["derive"] }
+tracing = "0.1"
 
 [build-dependencies]
 rustc_version = "0.4"

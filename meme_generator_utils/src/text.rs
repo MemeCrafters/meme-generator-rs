@@ -11,6 +11,7 @@ use skia_safe::{
     },
     Canvas, Color, FontMgr, FontStyle, Paint, Point,
 };
+use tracing::warn;
 
 use crate::{
     config::{CONFIG, FONTS_DIR},
@@ -45,7 +46,7 @@ fn construct_font_provider() -> TypefaceFontProvider {
                             if let Some(font) = font_mgr.new_from_data(&bytes, None) {
                                 font_provider.register_typeface(font, None);
                             } else {
-                                eprintln!("Failed to create typeface from font file: {path:?}",);
+                                warn!("Failed to create typeface from font file: {path:?}",);
                             }
                         }
                     }
