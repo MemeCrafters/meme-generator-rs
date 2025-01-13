@@ -7,6 +7,7 @@ use meme_generator_core::config::{read_config_file, MEME_HOME};
 #[derive(Debug, Clone, Deserialize)]
 #[serde(default)]
 pub struct Config {
+    pub api: ApiConfig,
     pub encoder: EncoderConfig,
     pub font: FontConfig,
 }
@@ -14,8 +15,25 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         Config {
+            api: ApiConfig::default(),
             encoder: EncoderConfig::default(),
             font: FontConfig::default(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(default)]
+pub struct ApiConfig {
+    pub baidu_trans_appid: Option<String>,
+    pub baidu_trans_apikey: Option<String>,
+}
+
+impl Default for ApiConfig {
+    fn default() -> Self {
+        ApiConfig {
+            baidu_trans_appid: None,
+            baidu_trans_apikey: None,
         }
     }
 }

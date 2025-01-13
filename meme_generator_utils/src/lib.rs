@@ -1,3 +1,4 @@
+pub mod api;
 pub mod builder;
 pub mod canvas;
 pub mod config;

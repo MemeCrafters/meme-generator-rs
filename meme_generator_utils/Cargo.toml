@@ -11,9 +11,13 @@ edition.workspace = true
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
 gif = "0.13"
+md5 = "0.7"
+regex = "1.11"
+reqwest = { version = "0.11", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 skia-safe = { version = "0.80", features = ["textlayout"] }
+tokio = { version = "1.42", features = ["full"] }
 toml = "0.8"
 
 meme_generator_core = { version = "0.0.2", path = "../meme_generator_core" }

@@ -26,7 +26,7 @@ use meme_generator_server::run_server_sync;
 static LOADED_MEMES: LazyLock<HashMap<String, Box<dyn Meme>>> = LazyLock::new(|| load_memes());
 
 fn build_arg(option: MemeOption) -> Arg {
-    let arg = match option {
+    match option {
         MemeOption::Boolean {
             name,
             default,
@@ -132,6 +132,7 @@ fn build_arg(option: MemeOption) -> Arg {
             for alias in parser_flags.long_aliases {
                 arg = arg.alias(alias);
             }
+            arg = arg.allow_hyphen_values(true);
             arg
         }
         MemeOption::Float {
@@ -194,11 +195,10 @@ fn build_arg(option: MemeOption) -> Arg {
             for alias in parser_flags.long_aliases {
                 arg = arg.alias(alias);
             }
+            arg = arg.allow_hyphen_values(true);
             arg
         }
-    };
-    let arg = arg.allow_hyphen_values(true);
-    arg
+    }
 }
 
 fn get_meme_keys() -> Vec<String> {

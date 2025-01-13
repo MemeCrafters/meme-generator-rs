@@ -109,7 +109,7 @@ async fn download_resources(
             .progress_chars("#>-"),
     );
 
-    let semaphore = Arc::new(Semaphore::new(10));
+    let semaphore = Arc::new(Semaphore::new(32));
 
     println!("Downloading {resource_type}");
 

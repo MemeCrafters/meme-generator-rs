@@ -2,7 +2,7 @@ use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{
     ext::IdentExt, punctuated::Punctuated, Data, DeriveInput, Error, Expr, ExprLit, Field, Fields,
-    Ident, Lit, Meta, MetaNameValue, Token,
+    Ident, Lit, Meta, MetaNameValue, Token, UnOp,
 };
 
 pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
@@ -133,6 +133,9 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
     let mut default_lit = None;
     let mut minimum_lit = None;
     let mut maximum_lit = None;
+    let mut default_neg = false;
+    let mut minimum_neg = false;
+    let mut maximum_neg = false;
     let mut choices = None;
 
     for attr in &field.attrs {
@@ -171,6 +174,30 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                     } else if path.is_ident("default") {
                         match value {
                             Expr::Lit(lit) => default_lit = Some(lit.lit),
+                            Expr::Unary(unary) => {
+                                let op = unary.op;
+                                let expr = *unary.expr;
+                                match op {
+                                    UnOp::Neg(_) => match expr {
+                                        Expr::Lit(lit) => {
+                                            default_neg = true;
+                                            default_lit = Some(lit.lit);
+                                        }
+                                        _ => {
+                                            return Err(Error::new_spanned(
+                                                expr,
+                                                "Expected literal",
+                                            ))
+                                        }
+                                    },
+                                    _ => {
+                                        return Err(Error::new_spanned(
+                                            op,
+                                            "Only support neg operation",
+                                        ))
+                                    }
+                                }
+                            }
                             _ => return Err(Error::new_spanned(value, "Expected literal")),
                         }
                     } else if path.is_ident("minimum") {
@@ -182,6 +209,30 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                         }
                         match value {
                             Expr::Lit(lit) => minimum_lit = Some(lit.lit),
+                            Expr::Unary(unary) => {
+                                let op = unary.op;
+                                let expr = *unary.expr;
+                                match op {
+                                    UnOp::Neg(_) => match expr {
+                                        Expr::Lit(lit) => {
+                                            minimum_neg = true;
+                                            minimum_lit = Some(lit.lit);
+                                        }
+                                        _ => {
+                                            return Err(Error::new_spanned(
+                                                expr,
+                                                "Expected literal",
+                                            ))
+                                        }
+                                    },
+                                    _ => {
+                                        return Err(Error::new_spanned(
+                                            op,
+                                            "Only support neg operation",
+                                        ))
+                                    }
+                                }
+                            }
                             _ => return Err(Error::new_spanned(value, "Expected literal")),
                         }
                     } else if path.is_ident("maximum") {
@@ -193,6 +244,30 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                         }
                         match value {
                             Expr::Lit(lit) => maximum_lit = Some(lit.lit),
+                            Expr::Unary(unary) => {
+                                let op = unary.op;
+                                let expr = *unary.expr;
+                                match op {
+                                    UnOp::Neg(_) => match expr {
+                                        Expr::Lit(lit) => {
+                                            maximum_neg = true;
+                                            maximum_lit = Some(lit.lit);
+                                        }
+                                        _ => {
+                                            return Err(Error::new_spanned(
+                                                expr,
+                                                "Expected literal",
+                                            ))
+                                        }
+                                    },
+                                    _ => {
+                                        return Err(Error::new_spanned(
+                                            op,
+                                            "Only support neg operation",
+                                        ))
+                                    }
+                                }
+                            }
                             _ => return Err(Error::new_spanned(value, "Expected literal")),
                         }
                     } else if path.is_ident("choices") {
@@ -253,7 +328,8 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
             if let Some(lit) = default_lit {
                 match &lit {
                     Lit::Int(i) => {
-                        default = Some(i.base10_parse()?);
+                        let value = i.base10_parse::<i32>()?;
+                        default = Some(if default_neg { -value } else { value });
                     }
                     _ => return Err(Error::new_spanned(lit, "Expected integer")),
                 }
@@ -262,7 +338,8 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
             if let Some(lit) = minimum_lit {
                 match &lit {
                     Lit::Int(i) => {
-                        minimum = Some(i.base10_parse()?);
+                        let value = i.base10_parse::<i32>()?;
+                        minimum = Some(if minimum_neg { -value } else { value });
                     }
                     _ => return Err(Error::new_spanned(lit, "Expected integer")),
                 }
@@ -271,7 +348,8 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
             if let Some(lit) = maximum_lit {
                 match &lit {
                     Lit::Int(i) => {
-                        maximum = Some(i.base10_parse()?);
+                        let value = i.base10_parse::<i32>()?;
+                        maximum = Some(if maximum_neg { -value } else { value });
                     }
                     _ => return Err(Error::new_spanned(lit, "Expected integer")),
                 }
@@ -291,7 +369,8 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
             if let Some(lit) = default_lit {
                 match &lit {
                     Lit::Float(f) => {
-                        default = Some(f.base10_parse()?);
+                        let value = f.base10_parse::<f32>()?;
+                        default = Some(if default_neg { -value } else { value });
                     }
                     _ => return Err(Error::new_spanned(lit, "Expected float")),
                 }
@@ -300,7 +379,8 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
             if let Some(lit) = minimum_lit {
                 match &lit {
                     Lit::Float(f) => {
-                        minimum = Some(f.base10_parse()?);
+                        let value = f.base10_parse::<f32>()?;
+                        minimum = Some(if minimum_neg { -value } else { value });
                     }
                     _ => return Err(Error::new_spanned(lit, "Expected float")),
                 }
@@ -309,7 +389,8 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
             if let Some(lit) = maximum_lit {
                 match &lit {
                     Lit::Float(f) => {
-                        maximum = Some(f.base10_parse()?);
+                        let value = f.base10_parse::<f32>()?;
+                        maximum = Some(if maximum_neg { -value } else { value });
                     }
                     _ => return Err(Error::new_spanned(lit, "Expected float")),
                 }

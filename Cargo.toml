@@ -19,3 +19,9 @@ readme = "README.md"
 homepage = "https://github.com/MemeCrafters/meme-generator-rs"
 repository = "https://github.com/MemeCrafters/meme-generator-rs"
 edition = "2021"
+
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
+codegen-units = 1

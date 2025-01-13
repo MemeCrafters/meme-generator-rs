@@ -14,7 +14,7 @@ use skia_safe::{
 
 use crate::{
     config::{CONFIG, FONTS_DIR},
-    tools::{color_from_hex_code, new_decoration, new_paint, new_stroke_paint},
+    tools::{color_from_str, new_decoration, new_paint, new_stroke_paint},
 };
 
 static FONT_MANAGER: LazyLock<Mutex<FontManager>> =
@@ -256,11 +256,11 @@ impl Text2Image {
                         strikethrough_stack.push_back(true);
                     }
                     BBCodeTag::Color(color) => {
-                        let color = color_from_hex_code(&color);
+                        let color = color_from_str(&color);
                         color_stack.push_back(color);
                     }
                     BBCodeTag::Stroke(color) => {
-                        let color = color_from_hex_code(&color);
+                        let color = color_from_str(&color);
                         stroke_stack.push_back(color);
                         has_stroke = true;
                     }
