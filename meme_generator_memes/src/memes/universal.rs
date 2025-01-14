@@ -27,7 +27,7 @@ struct Options {
     pub color: Option<String>,
 
     /// 文字位置
-    #[option(short, long, default = "bottom_outer", choices = ["top_outer", "top_inner", "bottom_outer", "bottom_inner", "center"])]
+    #[option(short, long, default = "bottom_outer", choices = ["top", "bottom", "center", "top_outer", "bottom_outer"])]
     pub position: Option<String>,
 
     /// 文字是否加粗
@@ -74,9 +74,7 @@ fn universal(
     let position = options.position.unwrap();
     let (default_color, default_stroke_color, default_stroke_width) = match position.as_str() {
         "top_outer" | "bottom_outer" => (Color::BLACK, None, None),
-        "top_inner" | "bottom_inner" | "center" => {
-            (Color::WHITE, Some(Color::BLACK), Some(font_size / 10))
-        }
+        "top" | "bottom" | "center" => (Color::WHITE, Some(Color::BLACK), Some(font_size / 10)),
         _ => unreachable!(),
     };
     let font_color = options.color.map_or(default_color, |c| color_from_str(&c));
@@ -136,11 +134,11 @@ fn universal(
 
         let frame_w = img_w;
         let (frame_h, img_y, text_y) = match position.as_str() {
-            "top_outer" => (img_h + text_h + padding, text_h + padding, 0),
-            "top_inner" => (img_h, 0, 0),
-            "bottom_outer" => (img_h + text_h + padding, 0, img_h),
-            "bottom_inner" => (img_h, 0, img_h - text_h - padding),
+            "top" => (img_h, 0, 0),
+            "bottom" => (img_h, 0, img_h - text_h - padding),
             "center" => (img_h, 0, (img_h - text_h) / 2),
+            "top_outer" => (img_h + text_h + padding, text_h + padding, 0),
+            "bottom_outer" => (img_h + text_h + padding, 0, img_h),
             _ => unreachable!(),
         };
 

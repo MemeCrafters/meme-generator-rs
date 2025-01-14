@@ -192,9 +192,9 @@ pub fn get_aligned_gif_indexes(
 /// - `images` 图片列表
 /// - `func`: 图片处理函数，传入图片列表，返回处理后的图片
 ///
-pub fn make_png_or_gif<F>(images: Vec<NamedImage>, func: F) -> Result<Vec<u8>, Error>
+pub fn make_png_or_gif<F>(images: Vec<NamedImage>, mut func: F) -> Result<Vec<u8>, Error>
 where
-    F: Fn(Vec<Image>) -> Result<Image, Error>,
+    F: FnMut(Vec<Image>) -> Result<Image, Error>,
 {
     let mut images = images
         .into_iter()
@@ -283,12 +283,12 @@ where
 ///
 pub fn make_gif_or_combined_gif<F>(
     images: Vec<NamedImage>,
-    func: F,
+    mut func: F,
     target_gif_info: GifInfo,
     frame_align: impl Into<Option<FrameAlign>>,
 ) -> Result<Vec<u8>, Error>
 where
-    F: Fn(usize, Vec<Image>) -> Result<Image, Error>,
+    F: FnMut(usize, Vec<Image>) -> Result<Image, Error>,
 {
     let mut images = images
         .into_iter()
