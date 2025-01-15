@@ -13,10 +13,12 @@ edition.workspace = true
 fuzzy-matcher = "0.3"
 indicatif = "0.16"
 libloading = "0.8"
+pinyin = "0.10"
 reqwest = { version = "0.11", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 sha2 = "0.9"
+skia-safe = { version = "0.80", features = ["textlayout"] }
 tokio = { version = "1.42", features = ["full"] }
 toml = "0.8"
 tracing = "0.1"

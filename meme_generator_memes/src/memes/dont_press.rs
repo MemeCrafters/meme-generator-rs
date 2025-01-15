@@ -2,7 +2,11 @@ use skia_safe::IRect;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage, canvas::CanvasExt, encoder::encode_png, image::ImageExt, tools::load_image,
+    builder::NamedImage,
+    canvas::CanvasExt,
+    encoder::encode_png,
+    image::ImageExt,
+    tools::{load_image, local_date},
 };
 
 use crate::{options::NoOptions, register_meme};
@@ -31,4 +35,6 @@ register_meme!(
     max_texts = 1,
     default_texts = &["世界毁灭"],
     keywords = &["不要按"],
+    date_created = local_date(2024, 11, 13),
+    date_modified = local_date(2024, 11, 13),
 );

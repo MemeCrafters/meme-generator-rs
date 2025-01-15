@@ -4,7 +4,7 @@ use chrono::{DateTime, Local};
 use pyo3::prelude::*;
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
-use meme_generator::{error, meme, resources, VERSION};
+use meme_generator::{error, meme, resources, tools, VERSION};
 
 #[pymodule(name = "meme_generator")]
 fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -21,6 +21,7 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<MemeParams>()?;
     m.add_class::<MemeShortcut>()?;
     m.add_class::<MemeInfo>()?;
+    m.add_class::<Image>()?;
     m.add_class::<ImageDecodeError>()?;
     m.add_class::<ImageEncodeError>()?;
     m.add_class::<ImageAssetMissing>()?;
@@ -30,6 +31,8 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<TextOverLength>()?;
     m.add_class::<MemeFeedback>()?;
     m.add_class::<Meme>()?;
+    m.add_class::<MemeProperties>()?;
+    m.add_class::<MemeSortBy>()?;
     m.add_function(wrap_pyfunction!(get_version, m)?)?;
     m.add_function(wrap_pyfunction!(get_meme, m)?)?;
     m.add_function(wrap_pyfunction!(get_memes, m)?)?;
@@ -37,6 +40,7 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(search_memes, m)?)?;
     m.add_function(wrap_pyfunction!(check_resources, m)?)?;
     m.add_function(wrap_pyfunction!(check_resources_in_background, m)?)?;
+    m.add_function(wrap_pyfunction!(render_meme_list, m)?)?;
     Ok(())
 }
 
@@ -174,8 +178,22 @@ struct MemeInfo {
     date_modified: DateTime<Local>,
 }
 
-#[derive(FromPyObject, Clone)]
-struct Image(String, Vec<u8>);
+#[pyclass]
+#[derive(Clone)]
+struct Image {
+    #[pyo3(set)]
+    name: String,
+    #[pyo3(set)]
+    data: Vec<u8>,
+}
+
+#[pymethods]
+impl Image {
+    #[new]
+    fn new(name: String, data: Vec<u8>) -> Self {
+        Self { name, data }
+    }
+}
 
 #[derive(FromPyObject, IntoPyObject, Clone)]
 enum OptionValue {
@@ -428,7 +446,7 @@ impl Meme {
     ) -> MemeResult {
         let images = images
             .into_iter()
-            .map(|Image(name, data)| meme::Image { name, data })
+            .map(|Image { name, data }| meme::Image { name, data })
             .collect::<Vec<_>>();
 
         let options = options
@@ -526,4 +544,80 @@ fn check_resources() {
 #[pyfunction]
 fn check_resources_in_background() {
     resources::check_resources_in_background(None);
+}
+
+#[pyclass]
+#[derive(Clone)]
+struct MemeProperties {
+    #[pyo3(set)]
+    disabled: bool,
+    #[pyo3(set)]
+    hot: bool,
+    #[pyo3(set)]
+    new: bool,
+}
+
+#[pymethods]
+impl MemeProperties {
+    #[new]
+    #[pyo3(signature = (disabled=false, hot=false, new=false))]
+    fn new(disabled: bool, hot: bool, new: bool) -> Self {
+        Self { disabled, hot, new }
+    }
+}
+
+impl Into<tools::MemeProperties> for MemeProperties {
+    fn into(self) -> tools::MemeProperties {
+        tools::MemeProperties {
+            disabled: self.disabled,
+            hot: self.hot,
+            new: self.new,
+        }
+    }
+}
+
+#[pyclass(eq, eq_int)]
+#[derive(Clone, PartialEq)]
+enum MemeSortBy {
+    Key = 0,
+    Keywords = 1,
+    KeywordsPinyin = 2,
+    DateCreated = 3,
+    DateModified = 4,
+}
+
+impl Into<tools::MemeSortBy> for MemeSortBy {
+    fn into(self) -> tools::MemeSortBy {
+        match self {
+            MemeSortBy::Key => tools::MemeSortBy::Key,
+            MemeSortBy::Keywords => tools::MemeSortBy::Keywords,
+            MemeSortBy::KeywordsPinyin => tools::MemeSortBy::KeywordsPinyin,
+            MemeSortBy::DateCreated => tools::MemeSortBy::DateCreated,
+            MemeSortBy::DateModified => tools::MemeSortBy::DateModified,
+        }
+    }
+}
+
+#[pyfunction]
+#[pyo3(signature = (meme_properties=HashMap::new(), exclude_memes=Vec::new(), sort_by=MemeSortBy::KeywordsPinyin, sort_reverse=false, text_template="{index}. {keywords}".to_string(), add_category_icon=true))]
+fn render_meme_list(
+    meme_properties: HashMap<String, MemeProperties>,
+    exclude_memes: Vec<String>,
+    sort_by: MemeSortBy,
+    sort_reverse: bool,
+    text_template: String,
+    add_category_icon: bool,
+) -> MemeResult {
+    let result = tools::render_meme_list(tools::RenderMemeListParams {
+        meme_properties: meme_properties
+            .into_iter()
+            .map(|(key, value)| (key, value.into()))
+            .collect(),
+        exclude_memes,
+        sort_by: sort_by.into(),
+        sort_reverse,
+        text_template,
+        add_category_icon,
+    });
+    handle_result(result)
 }

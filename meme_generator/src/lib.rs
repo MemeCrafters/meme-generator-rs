@@ -5,6 +5,7 @@ mod search;
 mod version;
 
 pub mod resources;
+pub mod tools;
 pub use meme_generator_core::{
     config::{read_config_file, MEME_HOME},
     error, meme,

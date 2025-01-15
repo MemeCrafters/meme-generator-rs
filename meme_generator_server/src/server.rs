@@ -22,7 +22,9 @@ use meme_generator::{
     error::Error,
     get_meme, get_meme_keys,
     meme::{self, OptionValue},
-    search_memes, VERSION,
+    search_memes,
+    tools::{render_meme_list, RenderMemeListParams},
+    VERSION,
 };
 
 use crate::config::CONFIG;
@@ -165,6 +167,24 @@ async fn meme_generate(
     }
 }
 
+async fn render_list(Json(payload): Json<RenderMemeListParams>) -> impl IntoResponse {
+    let payload = payload.clone();
+    match spawn_blocking(move || render_meme_list(payload))
+        .await
+        .unwrap()
+    {
+        Ok(result) => {
+            let kind = infer::get(&result).unwrap();
+            Response::builder()
+                .status(StatusCode::OK)
+                .header("Content-Type", kind.mime_type())
+                .body(Body::from(result))
+                .unwrap()
+        }
+        Err(error) => handle_error(error).into_response(),
+    }
+}
+
 fn handle_error(error: Error) -> ErrorResponse {
     let message = format!("{error}");
     match error {
@@ -216,6 +236,7 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
         .route("/meme/version", get(|| async { VERSION }))
         .route("/meme/keys", get(meme_keys))
         .route("/meme/search", get(meme_search))
+        .route("/meme/tools/render_list", post(render_list))
         .route("/memes/:key/info", get(meme_info))
         .route("/memes/:key/preview", get(meme_preview))
         .route("/memes/:key", post(meme_generate))

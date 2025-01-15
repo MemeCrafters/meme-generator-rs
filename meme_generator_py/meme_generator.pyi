@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 from typing import Optional, Union
 
 class ParserFlags:
@@ -62,6 +63,9 @@ class MemeInfo:
     date_created: datetime
     date_modified: datetime
 
+class Image:
+    def __new__(cls, name: str, data: bytes): ...
+
 class ImageDecodeError:
     error: str
 
@@ -112,11 +116,21 @@ class Meme:
     def info(self) -> MemeInfo: ...
     def generate(
         self,
-        images: list[tuple[str, bytes]],
+        images: list[Image],
         text: list[str],
         options: dict[str, OptionValue],
     ) -> MemeResult: ...
     def generate_preview(self) -> MemeResult: ...
+
+class MemeProperties:
+    def __new__(cls, disabled: bool = False, hot: bool = False, new: bool = False): ...
+
+class MemeSortBy(Enum):
+    Key = 0
+    Keywords = 1
+    KeywordsPinyin = 2
+    DateCreated = 3
+    DateModified = 4
 
 def get_version() -> str: ...
 def get_meme(key: str) -> Meme: ...
@@ -125,3 +139,11 @@ def get_meme_keys() -> list[str]: ...
 def search_memes(query: str, include_tags: bool = False) -> list[str]: ...
 def check_resources() -> None: ...
 def check_resources_in_background() -> None: ...
+def render_meme_list(
+    meme_properties: dict[str, MemeProperties] = {},
+    exclude_memes: list[str] = [],
+    sort_by: MemeSortBy = MemeSortBy.KeywordsPinyin,
+    sort_reverse: bool = False,
+    text_template: str = "{index}. {keywords}",
+    add_category_icon: bool = True,
+) -> MemeResult: ...
