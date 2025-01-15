@@ -18,7 +18,7 @@ use meme_generator::{
     load_memes,
     meme::{Image, Meme, MemeOption, OptionValue},
     resources::check_resources_sync,
-    VERSION,
+    search_memes, VERSION,
 };
 #[cfg(feature = "server")]
 use meme_generator_server::run_server_sync;
@@ -253,6 +253,13 @@ pub(crate) fn build_command() -> Command {
                 .arg_required_else_help(true),
         )
         .subcommand(
+            Command::new("search")
+                .about("搜索表情")
+                .alias("find")
+                .arg(arg!(<KEYWORD> "关键词").value_parser(value_parser!(String)))
+                .arg_required_else_help(true),
+        )
+        .subcommand(
             Command::new("preview")
                 .about("生成表情预览")
                 .arg(
@@ -443,6 +450,34 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
         output += &format!("其他参数：\n{options}\n");
     }
     println!("{output}");
+}
+
+pub(crate) fn handle_search(sub_matches: &ArgMatches) {
+    let keyword = sub_matches.get_one::<String>("KEYWORD").unwrap();
+    let meme_keys = search_memes(&LOADED_MEMES, keyword, true);
+    if meme_keys.is_empty() {
+        eprintln!("未找到相关表情");
+    } else {
+        let list = meme_keys
+            .into_iter()
+            .enumerate()
+            .map(|(i, key)| {
+                let index = i + 1;
+                let meme = LOADED_MEMES.get(&key).unwrap();
+                let info = meme.info();
+                let keywords = info.keywords.join("/");
+                let tags = info.tags.into_iter().collect::<Vec<_>>().join("、");
+                let result = format!("{index}. {key} ({keywords})");
+                if !tags.is_empty() {
+                    format!("{result} [标签：{tags}]")
+                } else {
+                    result
+                }
+            })
+            .collect::<Vec<_>>()
+            .join("\n");
+        println!("相关表情：\n{list}");
+    }
 }
 
 pub(crate) fn handle_preview(sub_matches: &ArgMatches) {

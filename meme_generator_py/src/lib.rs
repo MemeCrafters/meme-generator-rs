@@ -37,6 +37,7 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(get_meme, m)?)?;
     m.add_function(wrap_pyfunction!(get_memes, m)?)?;
     m.add_function(wrap_pyfunction!(get_meme_keys, m)?)?;
+    m.add_function(wrap_pyfunction!(search_memes, m)?)?;
     m.add_function(wrap_pyfunction!(check_resources, m)?)?;
     m.add_function(wrap_pyfunction!(check_resources_in_background, m)?)?;
     Ok(())
@@ -520,6 +521,12 @@ fn get_meme_keys() -> Vec<String> {
     let mut keys = LOADED_MEMES.keys().cloned().collect::<Vec<_>>();
     keys.sort();
     keys
+}
+
+#[pyfunction]
+#[pyo3(signature = (query, include_tags=false))]
+fn search_memes(query: &str, include_tags: bool) -> Vec<String> {
+    meme_generator::search_memes(&LOADED_MEMES, query, include_tags)
 }
 
 #[pyfunction]

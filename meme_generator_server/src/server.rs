@@ -6,7 +6,7 @@ use std::{
 
 use axum::{
     body::Body,
-    extract::{Json, Path},
+    extract::{Json, Path, Query},
     http::StatusCode,
     response::{IntoResponse, Response},
     routing::{get, post},
@@ -23,7 +23,7 @@ use meme_generator::{
     error::Error,
     load_memes,
     meme::{self, Meme, OptionValue},
-    VERSION,
+    search_memes, VERSION,
 };
 
 use crate::config::CONFIG;
@@ -76,6 +76,21 @@ async fn meme_info(Path(key): Path<String>) -> impl IntoResponse {
     } else {
         (StatusCode::NOT_FOUND, "Meme not found").into_response()
     }
+}
+
+#[derive(Deserialize)]
+struct SearchQuery {
+    query: String,
+    include_tags: Option<bool>,
+}
+
+async fn meme_search(Query(query): Query<SearchQuery>) -> Json<Vec<String>> {
+    let keys = search_memes(
+        &LOADED_MEMES,
+        &query.query,
+        query.include_tags.unwrap_or(false),
+    );
+    Json(keys)
 }
 
 async fn meme_preview(Path(key): Path<String>) -> impl IntoResponse {
@@ -209,6 +224,7 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
     let app = Router::new()
         .route("/meme/version", get(|| async { VERSION }))
         .route("/meme/keys", get(meme_keys))
+        .route("/meme/search", get(meme_search))
         .route("/memes/:key/info", get(meme_info))
         .route("/memes/:key/preview", get(meme_preview))
         .route("/memes/:key", post(meme_generate))

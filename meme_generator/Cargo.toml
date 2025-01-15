@@ -10,6 +10,7 @@ repository.workspace = true
 edition.workspace = true
 
 [dependencies]
+fuzzy-matcher = "0.3"
 indicatif = "0.16"
 libloading = "0.8"
 reqwest = { version = "0.11", features = ["json"] }
