@@ -55,7 +55,7 @@ register_meme!(
     keywords = &["吴京中国"],
     shortcuts = &[shortcut!(
         r"吴京[\s:：]*(?P<left>\S*)中国(?P<right>\S*)",
-        texts = &["${left}", "${right}"],
+        texts = &["{left}", "{right}"],
         humanized = "吴京xx中国xx",
     )],
     date_created = local_date(2022, 6, 12),

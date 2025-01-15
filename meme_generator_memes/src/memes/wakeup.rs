@@ -46,7 +46,7 @@ register_meme!(
     keywords = &["好起来了"],
     shortcuts = &[shortcut!(
         r"(?P<text>\S{1,4})\s+起来了",
-        texts = &["${text}"],
+        texts = &["{text}"],
         humanized = "xx 起来了",
     )],
     date_created = local_date(2022, 6, 12),

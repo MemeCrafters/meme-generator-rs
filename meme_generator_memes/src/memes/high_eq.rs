@@ -45,12 +45,12 @@ register_meme!(
     shortcuts = &[
         shortcut!(
             r"低情商[\s:：]*(?P<low>\S+)\s*高情商[\s:：]*(?P<high>\S+)",
-            texts = &["${low}", "${high}"],
+            texts = &["{low}", "{high}"],
             humanized = "低情商xx高情商xx",
         ),
         shortcut!(
             r"高情商[\s:：]*(?P<high>\S+)\s*低情商[\s:：]*(?P<low>\S+)",
-            texts = &["${low}", "${high}"],
+            texts = &["{low}", "{high}"],
             humanized = "高情商xx低情商xx",
         ),
     ],

@@ -55,8 +55,8 @@ register_meme! {
     keywords = &["熊猫龙图"],
     shortcuts = &[shortcut!(
         r"(?P<name>\S{1,10})龙[\s:：]+(?P<text>\S+)",
-        texts = &["${text}"],
-        options = &[("name", "${name}龙")],
+        texts = &["{text}"],
+        options = &[("name", "{name}龙")],
         humanized = "xx龙：xx",
     )],
     date_created = local_date(2024, 10, 30),

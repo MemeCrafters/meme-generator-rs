@@ -50,7 +50,7 @@ register_meme!(
     keywords = &["无语"],
     shortcuts = &[shortcut!(
         r"(?P<text>典型的\S+思维)",
-        texts = &["${text}"],
+        texts = &["{text}"],
         humanized = "典型的xx思维"
     ),],
     date_created = local_date(2024, 11, 12),

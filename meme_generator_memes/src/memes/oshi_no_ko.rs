@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::{MemeOptions, NamedImage},
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
     shortcut,
@@ -11,19 +11,20 @@ use meme_generator_utils::{
     tools::{load_image, local_date, new_stroke_paint, new_surface},
 };
 
-use crate::{options::NoOptions, register_meme, tags::MemeTags};
+use crate::{register_meme, tags::MemeTags};
 
-const DEFAULT_TEXT: &str = "网友";
+#[derive(MemeOptions)]
+struct Name {
+    /// 我推的名字
+    #[option(short, long, default = "网友")]
+    pub name: Option<String>,
+}
 
-fn oshi_no_ko(images: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
-    let name = if !texts.is_empty() {
-        &texts[0]
-    } else {
-        DEFAULT_TEXT
-    };
+fn oshi_no_ko(images: Vec<NamedImage>, _: Vec<String>, options: Name) -> Result<Vec<u8>, Error> {
+    let name = options.name.unwrap();
 
     let name_img = Text2Image::from_text(
-        name,
+        &name,
         150.0,
         text_params!(
             font_families = &["HiraginoMin"],
@@ -70,13 +71,10 @@ register_meme!(
     oshi_no_ko,
     min_images = 1,
     max_images = 1,
-    min_texts = 0,
-    max_texts = 1,
-    default_texts = &[DEFAULT_TEXT],
     keywords = &["我推的网友"],
     shortcuts = &[shortcut!(
         r"我推的(?P<name>\S+)",
-        texts = &["${name}"],
+        options = &[("name", "{name}")],
         humanized = "我推的xx",
     )],
     tags = MemeTags::oshi_no_ko(),

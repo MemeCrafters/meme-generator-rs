@@ -53,7 +53,7 @@ register_meme!(
     keywords = &["满脑子"],
     shortcuts = &[shortcut!(
         r"满脑子都是(?P<name>\S+)",
-        names = &["${name}"],
+        names = &["{name}"],
         humanized = "满脑子都是xx"
     )],
     date_created = local_date(2023, 6, 3),
