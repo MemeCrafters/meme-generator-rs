@@ -1,15 +1,9 @@
-use std::collections::HashMap;
-
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
 
-use meme_generator_core::meme::Meme;
+use crate::memes::get_memes;
 
-pub fn search_memes(
-    memes: &HashMap<String, Box<dyn Meme>>,
-    query: &str,
-    include_tags: bool,
-) -> Vec<String> {
+pub fn search_memes(query: &str, include_tags: bool) -> Vec<String> {
     let mut results = Vec::new();
     let matcher = SkimMatcherV2::default();
 
@@ -22,9 +16,10 @@ pub fn search_memes(
         }
     }
 
-    for (key, meme) in memes {
+    for meme in get_memes() {
+        let key = meme.key();
         let info = meme.info();
-        let mut score = matcher.fuzzy_match(key, &query);
+        let mut score = matcher.fuzzy_match(&key, &query);
         for keyword in info.keywords {
             score = max(score, matcher.fuzzy_match(&keyword, &query));
         }

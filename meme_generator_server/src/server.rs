@@ -1,7 +1,6 @@
 use std::{
     collections::HashMap,
     net::{IpAddr, SocketAddr},
-    sync::LazyLock,
 };
 
 use axum::{
@@ -21,8 +20,8 @@ use tracing::info;
 
 use meme_generator::{
     error::Error,
-    load_memes,
-    meme::{self, Meme, OptionValue},
+    get_meme, get_meme_keys,
+    meme::{self, OptionValue},
     search_memes, VERSION,
 };
 
@@ -62,16 +61,12 @@ impl IntoResponse for ErrorResponse {
     }
 }
 
-static LOADED_MEMES: LazyLock<HashMap<String, Box<dyn Meme>>> = LazyLock::new(|| load_memes());
-
-async fn meme_keys() -> Json<Vec<String>> {
-    let mut keys = LOADED_MEMES.keys().cloned().collect::<Vec<_>>();
-    keys.sort();
-    Json(keys)
+async fn meme_keys() -> Json<Vec<&'static str>> {
+    Json(get_meme_keys())
 }
 
 async fn meme_info(Path(key): Path<String>) -> impl IntoResponse {
-    if let Some(meme) = LOADED_MEMES.get(&key) {
+    if let Some(meme) = get_meme(&key) {
         Json(meme.info()).into_response()
     } else {
         (StatusCode::NOT_FOUND, "Meme not found").into_response()
@@ -85,16 +80,12 @@ struct SearchQuery {
 }
 
 async fn meme_search(Query(query): Query<SearchQuery>) -> Json<Vec<String>> {
-    let keys = search_memes(
-        &LOADED_MEMES,
-        &query.query,
-        query.include_tags.unwrap_or(false),
-    );
+    let keys = search_memes(&query.query, query.include_tags.unwrap_or(false));
     Json(keys)
 }
 
 async fn meme_preview(Path(key): Path<String>) -> impl IntoResponse {
-    let meme = match LOADED_MEMES.get(&key) {
+    let meme = match get_meme(&key) {
         Some(meme) => meme,
         None => return (StatusCode::NOT_FOUND, "Meme not found").into_response(),
     };
@@ -119,7 +110,7 @@ async fn meme_generate(
     Path(key): Path<String>,
     Json(payload): Json<MemeRequest>,
 ) -> impl IntoResponse {
-    let meme = match LOADED_MEMES.get(&key) {
+    let meme = match get_meme(&key) {
         Some(meme) => meme,
         None => return (StatusCode::NOT_FOUND, "Meme not found").into_response(),
     };

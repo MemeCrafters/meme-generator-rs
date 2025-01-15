@@ -4,7 +4,6 @@ use std::{
     collections::HashMap,
     fs::{read, write},
     path::PathBuf,
-    sync::LazyLock,
 };
 
 use clap::{
@@ -15,15 +14,13 @@ use clap::{
 
 use meme_generator::{
     error::Error,
-    load_memes,
-    meme::{Image, Meme, MemeOption, OptionValue},
+    get_meme, get_meme_keys, get_memes,
+    meme::{Image, MemeOption, OptionValue},
     resources::check_resources_sync,
     search_memes, VERSION,
 };
 #[cfg(feature = "server")]
 use meme_generator_server::run_server_sync;
-
-static LOADED_MEMES: LazyLock<HashMap<String, Box<dyn Meme>>> = LazyLock::new(|| load_memes());
 
 fn build_arg(option: MemeOption) -> Arg {
     match option {
@@ -201,16 +198,10 @@ fn build_arg(option: MemeOption) -> Arg {
     }
 }
 
-fn get_meme_keys() -> Vec<String> {
-    let mut keys = LOADED_MEMES.keys().cloned().collect::<Vec<_>>();
-    keys.sort();
-    keys
-}
-
 pub(crate) fn build_command() -> Command {
     let mut sub_commands: Vec<Command> = Vec::new();
-    for key in get_meme_keys() {
-        let meme = LOADED_MEMES.get(&key).unwrap();
+    for meme in get_memes() {
+        let key = meme.key();
         let info = meme.info();
         let options = info.params.options;
         let keywords = info.keywords.join("/");
@@ -308,12 +299,12 @@ pub(crate) fn build_command() -> Command {
 }
 
 pub(crate) fn handle_list() {
-    let list = get_meme_keys()
+    let list = get_memes()
         .into_iter()
         .enumerate()
-        .map(|(i, key)| {
+        .map(|(i, meme)| {
             let index = i + 1;
-            let meme = LOADED_MEMES.get(&key).unwrap();
+            let key = meme.key();
             let info = meme.info();
             let keywords = info.keywords.join("/");
             format!("{index}. {key} ({keywords})")
@@ -325,9 +316,7 @@ pub(crate) fn handle_list() {
 
 pub(crate) fn handle_info(sub_matches: &ArgMatches) {
     let key = sub_matches.get_one::<String>("KEY").unwrap();
-    let meme = LOADED_MEMES
-        .get(key)
-        .expect(format!("表情 `{key}` 不存在").as_str());
+    let meme = get_meme(key).expect(format!("表情 `{key}` 不存在").as_str());
     let info = meme.info();
     let options = info.params.options;
     let options = options
@@ -454,7 +443,7 @@ pub(crate) fn handle_info(sub_matches: &ArgMatches) {
 
 pub(crate) fn handle_search(sub_matches: &ArgMatches) {
     let keyword = sub_matches.get_one::<String>("KEYWORD").unwrap();
-    let meme_keys = search_memes(&LOADED_MEMES, keyword, true);
+    let meme_keys = search_memes(keyword, true);
     if meme_keys.is_empty() {
         eprintln!("未找到相关表情");
     } else {
@@ -463,7 +452,7 @@ pub(crate) fn handle_search(sub_matches: &ArgMatches) {
             .enumerate()
             .map(|(i, key)| {
                 let index = i + 1;
-                let meme = LOADED_MEMES.get(&key).unwrap();
+                let meme = get_meme(&key).unwrap();
                 let info = meme.info();
                 let keywords = info.keywords.join("/");
                 let tags = info.tags.into_iter().collect::<Vec<_>>().join("、");
@@ -482,16 +471,14 @@ pub(crate) fn handle_search(sub_matches: &ArgMatches) {
 
 pub(crate) fn handle_preview(sub_matches: &ArgMatches) {
     let key = sub_matches.get_one::<String>("KEY").unwrap();
-    let meme = LOADED_MEMES
-        .get(key)
-        .expect(format!("表情 `{key}` 不存在").as_str());
+    let meme = get_meme(key).expect(format!("表情 `{key}` 不存在").as_str());
     let result = meme.generate_preview();
     handle_result(result)
 }
 
 pub(crate) fn handle_generate(sub_matches: &ArgMatches) {
     let (key, sub_matches) = sub_matches.subcommand().unwrap();
-    let meme = LOADED_MEMES.get(key).unwrap();
+    let meme = get_meme(key).expect(format!("表情 `{key}` 不存在").as_str());
     let mut images = sub_matches
         .get_many::<PathBuf>("images")
         .into_iter()

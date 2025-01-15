@@ -163,7 +163,7 @@ fn load_external_memes(registry: &mut MemeRegistry) -> Result<(), std::io::Error
     Ok(())
 }
 
-pub fn load_memes() -> HashMap<String, Box<dyn Meme>> {
+pub(crate) fn load_memes() -> HashMap<String, Box<dyn Meme>> {
     let mut registry = MemeRegistry::new();
 
     if CONFIG.meme.load_builtin_memes {

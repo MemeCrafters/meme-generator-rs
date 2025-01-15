@@ -1,13 +1,10 @@
-use std::{
-    collections::{HashMap, HashSet},
-    sync::LazyLock,
-};
+use std::collections::{HashMap, HashSet};
 
 use chrono::{DateTime, Local};
 use pyo3::prelude::*;
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
-use meme_generator::{error, load_memes, meme, resources, VERSION};
+use meme_generator::{error, meme, resources, VERSION};
 
 #[pymodule(name = "meme_generator")]
 fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -489,9 +486,6 @@ fn handle_result(result: Result<Vec<u8>, error::Error>) -> MemeResult {
     }
 }
 
-static LOADED_MEMES: LazyLock<HashMap<String, Box<dyn meme::Meme>>> =
-    LazyLock::new(|| load_memes());
-
 #[pyfunction]
 fn get_version() -> &'static str {
     VERSION
@@ -499,7 +493,7 @@ fn get_version() -> &'static str {
 
 #[pyfunction]
 fn get_meme(key: &str) -> Option<Meme> {
-    match LOADED_MEMES.get(key) {
+    match meme_generator::get_meme(key) {
         Some(meme) => Some(Meme { meme }),
         None => None,
     }
@@ -507,26 +501,21 @@ fn get_meme(key: &str) -> Option<Meme> {
 
 #[pyfunction]
 fn get_memes() -> Vec<Meme> {
-    let mut memes = LOADED_MEMES
-        .values()
+    meme_generator::get_memes()
         .into_iter()
         .map(|meme| Meme { meme })
-        .collect::<Vec<_>>();
-    memes.sort_by_key(|meme| meme.key());
-    memes
+        .collect()
 }
 
 #[pyfunction]
-fn get_meme_keys() -> Vec<String> {
-    let mut keys = LOADED_MEMES.keys().cloned().collect::<Vec<_>>();
-    keys.sort();
-    keys
+fn get_meme_keys() -> Vec<&'static str> {
+    meme_generator::get_meme_keys()
 }
 
 #[pyfunction]
 #[pyo3(signature = (query, include_tags=false))]
 fn search_memes(query: &str, include_tags: bool) -> Vec<String> {
-    meme_generator::search_memes(&LOADED_MEMES, query, include_tags)
+    meme_generator::search_memes(query, include_tags)
 }
 
 #[pyfunction]
