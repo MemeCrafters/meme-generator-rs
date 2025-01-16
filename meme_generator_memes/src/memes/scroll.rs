@@ -2,7 +2,7 @@ use skia_safe::{textlayout::TextAlign, Color, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::encode_gif,
     text::Text2Image,
     text_params,
@@ -11,7 +11,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn scroll(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn scroll(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
 
     let mut text2image =

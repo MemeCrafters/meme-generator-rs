@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
     tools::{load_image, local_date},
@@ -10,7 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::Gray, register_meme};
 
-fn mourning(images: Vec<NamedImage>, _: Vec<String>, options: Gray) -> Result<Vec<u8>, Error> {
+fn mourning(images: Vec<InputImage>, _: Vec<String>, options: Gray) -> Result<Vec<u8>, Error> {
     let frame = load_image("mourning/0.png")?;
     let gray = options.gray.unwrap();
 

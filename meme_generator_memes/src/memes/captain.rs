@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
@@ -10,7 +10,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
-fn captain(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn captain(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let bg0 = load_image("captain/0.png")?;
     let bg1 = load_image("captain/1.png")?;
     let bg2 = load_image("captain/2.png")?;

@@ -3,7 +3,7 @@ use skia_safe::IRect;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
     encoder::encode_png,
     image::ImageExt,
@@ -14,7 +14,7 @@ use crate::{options::number_option, register_meme, tags::MemeTags};
 
 number_option!(Number, 1, 13);
 
-fn jinhsi(_: Vec<NamedImage>, texts: Vec<String>, options: Number) -> Result<Vec<u8>, Error> {
+fn jinhsi(_: Vec<InputImage>, texts: Vec<String>, options: Number) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
     let num = options.number.unwrap_or({
         let mut rng = rand::thread_rng();

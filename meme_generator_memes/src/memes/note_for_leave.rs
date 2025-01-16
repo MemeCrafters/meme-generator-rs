@@ -3,7 +3,7 @@ use skia_safe::{textlayout::TextAlign, Color, FontStyle, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -23,7 +23,7 @@ struct Time {
 const DEFAULT_TEXT: &str = "想玩原神";
 
 fn note_for_leave(
-    images: Vec<NamedImage>,
+    images: Vec<InputImage>,
     texts: Vec<String>,
     options: Time,
 ) -> Result<Vec<u8>, Error> {

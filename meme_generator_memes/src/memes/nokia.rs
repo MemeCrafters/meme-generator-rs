@@ -2,7 +2,7 @@ use skia_safe::{textlayout::TextAlign, Color, IRect, Point};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     canvas::CanvasExt,
     encoder::encode_png,
     image::ImageExt,
@@ -13,7 +13,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn nokia(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn nokia(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
     let frame = load_image("nokia/0.jpg")?;
     let mut surface = frame.to_surface();

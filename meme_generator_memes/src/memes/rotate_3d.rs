@@ -2,7 +2,7 @@ use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::ImageExt,
     tools::{local_date, new_surface},
@@ -54,7 +54,7 @@ fn rotate_y(img: &Image, theta: f32, z: f32) -> Image {
     img.perspective(&points)
 }
 
-fn rotate_3d(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn rotate_3d(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let img = &images[0].image;
     let img_w = img.width();
     let img_h = img.height();

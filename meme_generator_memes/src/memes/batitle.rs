@@ -2,7 +2,7 @@ use skia_safe::{Color, Matrix};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::encode_png,
     text::Text2Image,
     text_params,
@@ -11,7 +11,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
-fn batitle(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn batitle(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let fontsize = 168.0;
     let font_families = &["Ro GSan Serif Std", "Glow Sans SC"];
     let tilt = -0.4;

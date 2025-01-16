@@ -2,7 +2,7 @@ use skia_safe::{textlayout::TextAlign, Color, Color4f, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -15,7 +15,7 @@ use meme_generator_utils::{
 
 use crate::{options::Gender, register_meme};
 
-fn ask(images: Vec<NamedImage>, _: Vec<String>, options: Gender) -> Result<Vec<u8>, Error> {
+fn ask(images: Vec<InputImage>, _: Vec<String>, options: Gender) -> Result<Vec<u8>, Error> {
     let name = &images[0].name;
     let ta = match options.gender.as_deref().unwrap() {
         "male" => "他",

@@ -57,19 +57,19 @@ pub mod shortcut_setters {
     }
 }
 
-pub struct NamedImage<'a> {
+pub struct InputImage<'a> {
     pub name: String,
     pub image: Image,
     pub(crate) codec: Codec<'a>,
 }
 
-impl<'a> NamedImage<'a> {
-    pub fn from(input: &meme::Image) -> Result<NamedImage<'static>, Error> {
+impl<'a> InputImage<'a> {
+    pub fn from(input: &meme::Image) -> Result<InputImage<'static>, Error> {
         let data = Data::new_copy(&input.data);
         let mut codec = Codec::from_data(data)
             .ok_or(Error::ImageDecodeError("Skia decode error".to_string()))?;
         let image = codec.first_frame()?;
-        Ok(NamedImage {
+        Ok(InputImage {
             name: input.name.clone(),
             image,
             codec,
@@ -77,7 +77,7 @@ impl<'a> NamedImage<'a> {
     }
 }
 
-type MemeFunction<T> = fn(Vec<NamedImage>, Vec<String>, T) -> Result<Vec<u8>, Error>;
+type MemeFunction<T> = fn(Vec<InputImage>, Vec<String>, T) -> Result<Vec<u8>, Error>;
 
 pub struct MemeBuilder<T>
 where
@@ -239,8 +239,8 @@ where
             .map_err(|err| Error::DeserializeError(err.to_string()))?;
         let images = images
             .iter()
-            .map(|image| NamedImage::from(image))
-            .collect::<Result<Vec<NamedImage>, Error>>()?;
+            .map(|image| InputImage::from(image))
+            .collect::<Result<Vec<InputImage>, Error>>()?;
         (self.function)(images, texts, options)
     }
 

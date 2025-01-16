@@ -2,7 +2,7 @@ use skia_safe::{Color, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -15,7 +15,7 @@ use crate::{options::NoOptions, register_meme, tags::MemeTags};
 const DEFAULT_TEXT: &str = "所谓的男人啊，只要送他们这种东西就会很开心";
 
 fn frieren_take(
-    images: Vec<NamedImage>,
+    images: Vec<InputImage>,
     texts: Vec<String>,
     _: NoOptions,
 ) -> Result<Vec<u8>, Error> {

@@ -2,7 +2,7 @@ use skia_safe::{Color, FontStyle, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::ImageExt,
@@ -23,7 +23,7 @@ struct Options {
     pub name: Option<String>,
 }
 
-fn my_wife(images: Vec<NamedImage>, _: Vec<String>, options: Options) -> Result<Vec<u8>, Error> {
+fn my_wife(images: Vec<InputImage>, _: Vec<String>, options: Options) -> Result<Vec<u8>, Error> {
     let img = &images[0].image;
     let img_w = 400;
     let img_h = img.height() * img_w / img.width();

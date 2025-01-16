@@ -2,7 +2,7 @@ use skia_safe::{textlayout::TextAlign, Color, Color4f, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     canvas::CanvasExt,
     encoder::encode_gif,
     image::ImageExt,
@@ -14,7 +14,7 @@ use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
 const DEFAULT_TEXT: &str = "傻逼";
 
-fn blamed_mahiro(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn blamed_mahiro(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = if !texts.is_empty() {
         &texts[0]
     } else {

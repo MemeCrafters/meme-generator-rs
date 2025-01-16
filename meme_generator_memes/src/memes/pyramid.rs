@@ -4,7 +4,7 @@ use skia_safe::{ClipOp, Image, Path, Point};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::{Fit, ImageExt},
     tools::{local_date, new_surface},
@@ -29,7 +29,7 @@ fn crop_to_triangle(img: &Image) -> Image {
     img.clip_path(&path, ClipOp::Intersect)
 }
 
-fn pyramid(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn pyramid(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let img_w = 300;
     let img_h = 300;
     let fov = 45.0 * f32::consts::PI / 180.0;

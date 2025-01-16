@@ -2,7 +2,7 @@ use skia_safe::{textlayout::TextAlign, Color, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
     encoder::{make_gif_or_combined_gif, make_png_or_gif, FrameAlign, GifInfo},
     image::ImageExt,
@@ -27,7 +27,7 @@ struct Mode {
     r#loop: Option<bool>,
 }
 
-fn always_normal(images: Vec<NamedImage>) -> Result<Vec<u8>, Error> {
+fn always_normal(images: Vec<InputImage>) -> Result<Vec<u8>, Error> {
     let img = &images[0].image;
     let ratio = img.height() as f32 / img.width() as f32;
     let img_big_w = 500;
@@ -78,7 +78,7 @@ fn always_normal(images: Vec<NamedImage>) -> Result<Vec<u8>, Error> {
     make_png_or_gif(images, func)
 }
 
-fn always_always(images: Vec<NamedImage>, loop_: bool) -> Result<Vec<u8>, Error> {
+fn always_always(images: Vec<InputImage>, loop_: bool) -> Result<Vec<u8>, Error> {
     let img = &images[0];
     let ratio = img.image.height() as f32 / img.image.width() as f32;
     let img_big_w = 500;
@@ -156,7 +156,7 @@ fn always_always(images: Vec<NamedImage>, loop_: bool) -> Result<Vec<u8>, Error>
     )
 }
 
-fn always(images: Vec<NamedImage>, _: Vec<String>, options: Mode) -> Result<Vec<u8>, Error> {
+fn always(images: Vec<InputImage>, _: Vec<String>, options: Mode) -> Result<Vec<u8>, Error> {
     let mode = if options.circle.unwrap() {
         "circle"
     } else if options.r#loop.unwrap() {

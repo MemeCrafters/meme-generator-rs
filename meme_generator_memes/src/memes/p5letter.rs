@@ -3,7 +3,7 @@ use skia_safe::{Canvas, FontStyle, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::encode_png,
     image::ImageExt,
     text::Text2Image,
@@ -169,7 +169,7 @@ impl BoxLine {
     }
 }
 
-fn p5letter(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn p5letter(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
     let lines: Vec<&str> = text.lines().collect();
     if lines.len() > 5 {

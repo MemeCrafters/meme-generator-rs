@@ -2,7 +2,7 @@ use skia_safe::{Color, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
     encoder::encode_png,
     image::ImageExt,
@@ -20,7 +20,7 @@ struct Name {
 }
 
 fn panda_dragon_figure(
-    _: Vec<NamedImage>,
+    _: Vec<InputImage>,
     texts: Vec<String>,
     options: Name,
 ) -> Result<Vec<u8>, Error> {

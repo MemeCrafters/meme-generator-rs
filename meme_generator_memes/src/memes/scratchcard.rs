@@ -2,7 +2,7 @@ use skia_safe::{Color, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     canvas::CanvasExt,
     encoder::encode_png,
     image::ImageExt,
@@ -12,7 +12,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn scratchcard(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn scratchcard(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
     let frame = load_image("scratchcard/0.png")?;
     let mut surface = frame.to_surface();

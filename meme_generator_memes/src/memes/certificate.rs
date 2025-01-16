@@ -3,7 +3,7 @@ use skia_safe::{textlayout::TextAlign, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
     encoder::encode_png,
     image::ImageExt,
@@ -20,7 +20,7 @@ pub(crate) struct Time {
     pub time: Option<String>,
 }
 
-fn certificate(_: Vec<NamedImage>, texts: Vec<String>, options: Time) -> Result<Vec<u8>, Error> {
+fn certificate(_: Vec<InputImage>, texts: Vec<String>, options: Time) -> Result<Vec<u8>, Error> {
     let mut time = Local::now().naive_local().date();
     if let Some(time_set) = &options.time {
         if let Ok(t) = NaiveDate::parse_from_str(time_set, "%Y-%m-%d") {

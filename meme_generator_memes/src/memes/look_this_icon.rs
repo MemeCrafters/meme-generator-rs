@@ -2,7 +2,7 @@ use skia_safe::{Color, FontStyle, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -15,7 +15,7 @@ use crate::{options::NoOptions, register_meme};
 const DEFAULT_TEXT: &str = "朋友\n先看看这个图标再说话";
 
 fn look_this_icon(
-    images: Vec<NamedImage>,
+    images: Vec<InputImage>,
     texts: Vec<String>,
     _: NoOptions,
 ) -> Result<Vec<u8>, Error> {

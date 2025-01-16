@@ -5,14 +5,14 @@ use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     tools::{local_date, new_surface},
 };
 
 use crate::{options::NoOptions, register_meme};
 
-fn shake_head(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn shake_head(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let img = &images[0].image;
     let img_w = img.width();
     let img_h = img.height();

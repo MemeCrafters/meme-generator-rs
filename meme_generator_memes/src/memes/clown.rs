@@ -2,7 +2,7 @@ use skia_safe::{Color, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
@@ -17,7 +17,7 @@ struct Person {
     person: Option<bool>,
 }
 
-fn clown(images: Vec<NamedImage>, _: Vec<String>, options: Person) -> Result<Vec<u8>, Error> {
+fn clown(images: Vec<InputImage>, _: Vec<String>, options: Person) -> Result<Vec<u8>, Error> {
     let (frame_path, size, angle, left_center_x, center_y) = if options.person.unwrap() {
         ("clown/person.png", (434, 467), 26.0, 174, 378)
     } else {

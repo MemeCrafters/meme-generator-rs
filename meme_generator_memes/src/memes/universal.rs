@@ -2,7 +2,7 @@ use skia_safe::{textlayout::TextAlign, Color, FontStyle, Image, Point};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     encoder::make_png_or_gif,
     image::ImageExt,
     text::Text2Image,
@@ -64,7 +64,7 @@ struct Options {
 }
 
 fn universal(
-    images: Vec<NamedImage>,
+    images: Vec<InputImage>,
     texts: Vec<String>,
     options: Options,
 ) -> Result<Vec<u8>, Error> {

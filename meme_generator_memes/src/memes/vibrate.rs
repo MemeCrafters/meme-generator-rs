@@ -2,14 +2,14 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     tools::{local_date, new_surface},
 };
 
 use crate::{options::NoOptions, register_meme};
 
-fn vibrate(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn vibrate(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let func = |i: usize, images: Vec<Image>| {
         let img = &images[0];
         let w = img.width();

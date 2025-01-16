@@ -2,7 +2,7 @@ use skia_safe::{Color, FontStyle, IRect, RRect, Rect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::encode_png,
     text::Text2Image,
     text_params,
@@ -11,7 +11,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn pornhub(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn pornhub(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let left_img = Text2Image::from_text(
         &texts[0],
         200.0,

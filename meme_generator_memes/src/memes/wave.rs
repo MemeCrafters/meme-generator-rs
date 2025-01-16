@@ -4,7 +4,7 @@ use skia_safe::{Data, IRect, Image, Paint, RuntimeEffect, SamplingOptions};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     image::ImageExt,
     tools::{local_date, new_surface},
@@ -12,7 +12,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn wave(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn wave(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let img = &images[0].image;
     let img_w = img.width().max(360).min(720);
     let period = img_w as f32 / 6.0;

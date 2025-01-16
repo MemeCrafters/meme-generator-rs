@@ -2,7 +2,7 @@ use skia_safe::{IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     encoder::make_png_or_gif,
     image::ImageExt,
     tools::{local_date, new_surface},
@@ -34,7 +34,7 @@ struct Direction {
 }
 
 fn symmetric(
-    images: Vec<NamedImage>,
+    images: Vec<InputImage>,
     _: Vec<String>,
     options: Direction,
 ) -> Result<Vec<u8>, Error> {

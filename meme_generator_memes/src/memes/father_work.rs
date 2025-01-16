@@ -2,7 +2,7 @@ use skia_safe::{IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -12,7 +12,7 @@ use meme_generator_utils::{
 use crate::{options::NoOptions, register_meme};
 
 fn father_work(
-    images: Vec<NamedImage>,
+    images: Vec<InputImage>,
     texts: Vec<String>,
     _: NoOptions,
 ) -> Result<Vec<u8>, Error> {

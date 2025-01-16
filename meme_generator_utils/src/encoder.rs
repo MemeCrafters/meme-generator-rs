@@ -3,7 +3,7 @@ use skia_safe::{image::CachingHint, AlphaType, ColorType, EncodedImageFormat, Im
 
 use meme_generator_core::error::Error;
 
-use crate::{builder::NamedImage, config::CONFIG, decoder::CodecExt};
+use crate::{builder::InputImage, config::CONFIG, decoder::CodecExt};
 
 pub fn encode_gif(images: Vec<Image>, duration: f32) -> Result<Vec<u8>, Error> {
     let mut bytes = Vec::new();
@@ -192,7 +192,7 @@ pub fn get_aligned_gif_indexes(
 /// - `images` 图片列表
 /// - `func`: 图片处理函数，传入图片列表，返回处理后的图片
 ///
-pub fn make_png_or_gif<F>(images: Vec<NamedImage>, mut func: F) -> Result<Vec<u8>, Error>
+pub fn make_png_or_gif<F>(images: Vec<InputImage>, mut func: F) -> Result<Vec<u8>, Error>
 where
     F: FnMut(Vec<Image>) -> Result<Image, Error>,
 {
@@ -282,7 +282,7 @@ where
 /// - `frame_align` gif 对齐方式
 ///
 pub fn make_gif_or_combined_gif<F>(
-    images: Vec<NamedImage>,
+    images: Vec<InputImage>,
     mut func: F,
     target_gif_info: GifInfo,
     frame_align: impl Into<Option<FrameAlign>>,

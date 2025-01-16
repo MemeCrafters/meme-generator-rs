@@ -2,7 +2,7 @@ use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     encoder::make_png_or_gif,
     image::ImageExt,
     tools::{load_image, local_date, new_surface},
@@ -25,7 +25,7 @@ struct Mode {
     behind: Option<bool>,
 }
 
-fn clown_mask(images: Vec<NamedImage>, _: Vec<String>, options: Mode) -> Result<Vec<u8>, Error> {
+fn clown_mask(images: Vec<InputImage>, _: Vec<String>, options: Mode) -> Result<Vec<u8>, Error> {
     let make_front = |images: Vec<Image>| {
         let frame = load_image("clown_mask/0.png")?;
         let mut surface = new_surface(frame.dimensions());

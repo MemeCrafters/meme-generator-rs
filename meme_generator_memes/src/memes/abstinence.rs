@@ -3,7 +3,7 @@ use skia_safe::{IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -19,7 +19,7 @@ struct Time {
     time: Option<String>,
 }
 
-fn abstinence(images: Vec<NamedImage>, _: Vec<String>, options: Time) -> Result<Vec<u8>, Error> {
+fn abstinence(images: Vec<InputImage>, _: Vec<String>, options: Time) -> Result<Vec<u8>, Error> {
     let mut time = Local::now().naive_local().date();
     if let Some(time_set) = &options.time {
         if let Ok(t) = NaiveDate::parse_from_str(time_set, "%Y-%m-%d") {

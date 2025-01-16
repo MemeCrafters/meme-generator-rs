@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
     shortcut,
@@ -20,7 +20,7 @@ struct Name {
     pub name: Option<String>,
 }
 
-fn oshi_no_ko(images: Vec<NamedImage>, _: Vec<String>, options: Name) -> Result<Vec<u8>, Error> {
+fn oshi_no_ko(images: Vec<InputImage>, _: Vec<String>, options: Name) -> Result<Vec<u8>, Error> {
     let name = options.name.unwrap();
 
     let name_img = Text2Image::from_text(

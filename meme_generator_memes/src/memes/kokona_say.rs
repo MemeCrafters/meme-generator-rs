@@ -3,7 +3,7 @@ use skia_safe::{Color, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
     encoder::encode_png,
     image::ImageExt,
@@ -28,7 +28,7 @@ struct Position {
     right: Option<bool>,
 }
 
-fn kokona_say(_: Vec<NamedImage>, texts: Vec<String>, options: Position) -> Result<Vec<u8>, Error> {
+fn kokona_say(_: Vec<InputImage>, texts: Vec<String>, options: Position) -> Result<Vec<u8>, Error> {
     let position = if options.left.unwrap() {
         "left"
     } else if options.right.unwrap() {

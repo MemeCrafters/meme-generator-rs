@@ -2,7 +2,7 @@ use skia_safe::{Color, FontStyle, IRect, RRect, Rect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     canvas::CanvasExt,
     encoder::encode_png,
     text_params,
@@ -11,7 +11,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn yeshu(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn yeshu(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let color_yellow = Color::from_rgb(254, 239, 80);
     let color_blue = Color::from_rgb(0, 33, 252);
     let color_red = Color::from_rgb(253, 0, 0);

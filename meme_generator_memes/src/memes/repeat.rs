@@ -3,7 +3,7 @@ use skia_safe::{textlayout::TextAlign, Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::encode_gif,
     image::ImageExt,
     text::Text2Image,
@@ -13,7 +13,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn repeat(images: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn repeat(images: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
     let text_img = Text2Image::from_text(text, 50.0, text_params!(text_align = TextAlign::Left));
     if text_img.longest_line() > 900.0 {

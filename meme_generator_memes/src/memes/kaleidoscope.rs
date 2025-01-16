@@ -2,7 +2,7 @@ use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::make_png_or_gif,
     image::ImageExt,
     tools::{local_date, new_surface},
@@ -11,7 +11,7 @@ use meme_generator_utils::{
 use crate::{options::Circle, register_meme};
 
 fn kaleidoscope(
-    images: Vec<NamedImage>,
+    images: Vec<InputImage>,
     _: Vec<String>,
     options: Circle,
 ) -> Result<Vec<u8>, Error> {

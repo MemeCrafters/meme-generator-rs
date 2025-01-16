@@ -2,7 +2,7 @@ use skia_safe::{Color, FontStyle, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::ImageExt,
@@ -22,7 +22,7 @@ struct Options {
 }
 
 fn jiji_king(
-    images: Vec<NamedImage>,
+    images: Vec<InputImage>,
     texts: Vec<String>,
     options: Options,
 ) -> Result<Vec<u8>, Error> {

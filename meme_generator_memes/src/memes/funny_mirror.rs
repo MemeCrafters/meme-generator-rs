@@ -4,14 +4,14 @@ use skia_safe::{Data, Image, Paint, RuntimeEffect, SamplingOptions};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
     tools::{local_date, new_surface},
 };
 
 use crate::{options::NoOptions, register_meme};
 
-fn funny_mirror(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn funny_mirror(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let sksl_code = r#"
         uniform shader image;
         uniform float2 center;

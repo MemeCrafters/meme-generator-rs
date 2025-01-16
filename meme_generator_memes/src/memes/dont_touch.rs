@@ -3,7 +3,7 @@ use skia_safe::{Canvas, Color, IRect, Image, Point};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_paint},
@@ -108,7 +108,7 @@ fn draw_random_blocks(canvas: &Canvas, colors: &Vec<Color>, mask: &Image) {
     }
 }
 
-fn dont_touch(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn dont_touch(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let frame = load_image("dont_touch/0.png")?;
     let mask = load_image("dont_touch/mask.png")?;
     let mask = mask.make_raster_image(None, None).unwrap();

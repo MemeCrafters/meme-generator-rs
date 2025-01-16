@@ -2,7 +2,7 @@ use skia_safe::{Color, IRect, RRect, Rect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::encode_png,
     image::ImageExt,
     text::Text2Image,
@@ -12,7 +12,7 @@ use meme_generator_utils::{
 
 use crate::{options::NoOptions, register_meme};
 
-fn youtube(_: Vec<NamedImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn youtube(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let left_img = Text2Image::from_text(
         &texts[0],
         200.0,

@@ -2,7 +2,7 @@ use skia_safe::{Image, SamplingOptions};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     encoder::make_png_or_gif,
     image::ImageExt,
     tools::local_date,
@@ -17,7 +17,7 @@ struct Number {
     number: Option<i32>,
 }
 
-fn pixelate(images: Vec<NamedImage>, _: Vec<String>, options: Number) -> Result<Vec<u8>, Error> {
+fn pixelate(images: Vec<InputImage>, _: Vec<String>, options: Number) -> Result<Vec<u8>, Error> {
     let num = options.number.unwrap();
 
     let func = |images: Vec<Image>| {

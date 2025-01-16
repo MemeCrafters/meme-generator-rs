@@ -3,7 +3,7 @@ use skia_safe::{Canvas, Color, Data, Image, Paint, Rect, RuntimeEffect, Sampling
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     encoder::{make_gif_or_combined_gif, GifInfo},
     image::ImageExt,
     tools::{local_date, new_paint, new_surface},
@@ -77,7 +77,7 @@ fn draw_dusts(canvas: &Canvas, dusts: &mut Vec<Dot>, step: f32) {
     }
 }
 
-fn fade_away(images: Vec<NamedImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn fade_away(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let sksl_code = r#"
         uniform shader image;
         uniform float2 center;

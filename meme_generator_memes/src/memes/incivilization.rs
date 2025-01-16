@@ -2,7 +2,7 @@ use skia_safe::{FontStyle, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::NamedImage,
+    builder::InputImage,
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::ImageExt,
@@ -15,7 +15,7 @@ use crate::{options::NoOptions, register_meme};
 const DEFAULT_TEXT: &str = "你刚才说的话不是很礼貌！";
 
 fn incivilization(
-    images: Vec<NamedImage>,
+    images: Vec<InputImage>,
     texts: Vec<String>,
     _: NoOptions,
 ) -> Result<Vec<u8>, Error> {

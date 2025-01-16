@@ -3,7 +3,7 @@ use skia_safe::{Color, Point};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     encoder::encode_png,
     image::ImageExt,
     shortcut,
@@ -207,7 +207,7 @@ struct Options {
     pub y_offset: Option<i32>,
 }
 
-fn pjsk(_: Vec<NamedImage>, texts: Vec<String>, options: Options) -> Result<Vec<u8>, Error> {
+fn pjsk(_: Vec<InputImage>, texts: Vec<String>, options: Options) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
 
     let character = match options.character {

@@ -2,7 +2,7 @@ use skia_safe::{Color, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
-    builder::{MemeOptions, NamedImage},
+    builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
     encoder::make_png_or_gif,
     image::{Fit, ImageExt},
@@ -20,7 +20,7 @@ struct Message {
     message: Option<String>,
 }
 
-fn wechat_pay(images: Vec<NamedImage>, _: Vec<String>, options: Message) -> Result<Vec<u8>, Error> {
+fn wechat_pay(images: Vec<InputImage>, _: Vec<String>, options: Message) -> Result<Vec<u8>, Error> {
     let message = match &options.message {
         Some(message) => message,
         None => DEFAULT_MESSAGE,
