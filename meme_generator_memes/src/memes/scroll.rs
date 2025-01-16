@@ -1,9 +1,9 @@
-use skia_safe::{textlayout::TextAlign, Color, IRect, Image};
+use skia_safe::{textlayout::TextAlign, Color, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::encode_gif,
+    encoder::GifEncoder,
     text::Text2Image,
     text_params,
     tools::{color_from_hex_code, load_image, local_date, new_paint, new_surface},
@@ -57,7 +57,7 @@ fn scroll(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8
     }
     let dialog = dialog_surface.image_snapshot();
 
-    let mut frames: Vec<Image> = Vec::new();
+    let mut encoder = GifEncoder::new();
     let num = 30;
     let dy = dialog.height() / num;
     for i in 0..num {
@@ -65,9 +65,9 @@ fn scroll(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8
         let frame_canvas = frame.canvas();
         frame_canvas.draw_image(&dialog, (0, -dy * i), None);
         frame_canvas.draw_image(&dialog, (0, dialog.height() - dy * i), None);
-        frames.push(frame.image_snapshot());
+        encoder.add_frame(frame.image_snapshot(), 0.05)?;
     }
-    encode_gif(frames, 0.05)
+    Ok(encoder.finish())
 }
 
 register_meme!(

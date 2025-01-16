@@ -5,52 +5,62 @@ use meme_generator_core::error::Error;
 
 use crate::{builder::InputImage, config::CONFIG, decoder::CodecExt};
 
-pub fn encode_gif(images: Vec<Image>, duration: f32) -> Result<Vec<u8>, Error> {
-    let mut bytes = Vec::new();
-    let delay = (duration * 100.0) as u16;
-    {
-        let mut encoder = Encoder::new(
-            &mut bytes,
-            images[0].width() as u16,
-            images[0].height() as u16,
-            &[],
-        )
-        .map_err(|err| Error::ImageEncodeError(err.to_string()))?;
-        encoder
-            .set_repeat(Repeat::Infinite)
-            .map_err(|err| Error::ImageEncodeError(err.to_string()))?;
-        for image in images {
-            let image_info = ImageInfo::new(
-                image.dimensions(),
-                ColorType::RGBA8888,
-                AlphaType::Unpremul,
-                None,
-            );
-            let row_bytes = image_info.min_row_bytes();
-            let data_size = image_info.compute_min_byte_size();
-            let mut data = vec![0u8; data_size];
-            image.read_pixels(
-                &image_info,
-                &mut data,
-                row_bytes,
-                (0, 0),
-                CachingHint::Allow,
-            );
-            let speed = CONFIG.encoder.gif_encode_speed;
-            let mut frame = Frame::from_rgba_speed(
-                image.width() as u16,
-                image.height() as u16,
-                &mut data,
-                speed as i32,
-            );
-            frame.delay = delay;
-            frame.dispose = DisposalMethod::Background;
-            encoder
-                .write_frame(&frame)
-                .map_err(|err| Error::ImageEncodeError(err.to_string()))?;
-        }
+pub struct GifEncoder {
+    encoder: Option<Encoder<Vec<u8>>>,
+}
+
+impl GifEncoder {
+    pub fn new() -> Self {
+        Self { encoder: None }
     }
-    Ok(bytes)
+
+    pub fn add_frame(&mut self, image: Image, duration: f32) -> Result<(), Error> {
+        if let None = self.encoder {
+            let bytes = Vec::new();
+            let mut encoder = Encoder::new(bytes, image.width() as u16, image.height() as u16, &[])
+                .map_err(|err| Error::ImageEncodeError(format!("Gif encode error: {err}")))?;
+            encoder
+                .set_repeat(Repeat::Infinite)
+                .map_err(|err| Error::ImageEncodeError(format!("Gif encode error: {err}")))?;
+            self.encoder = Some(encoder);
+        }
+        let encoder = self.encoder.as_mut().unwrap();
+
+        let image_info = ImageInfo::new(
+            image.dimensions(),
+            ColorType::RGBA8888,
+            AlphaType::Unpremul,
+            None,
+        );
+        let row_bytes = image_info.min_row_bytes();
+        let data_size = image_info.compute_min_byte_size();
+        let mut data = vec![0u8; data_size];
+        image.read_pixels(
+            &image_info,
+            &mut data,
+            row_bytes,
+            (0, 0),
+            CachingHint::Allow,
+        );
+        let speed = CONFIG.encoder.gif_encode_speed;
+        let mut frame = Frame::from_rgba_speed(
+            image.width() as u16,
+            image.height() as u16,
+            &mut data,
+            speed as i32,
+        );
+        let delay = (duration * 100.0) as u16;
+        frame.delay = delay;
+        frame.dispose = DisposalMethod::Background;
+
+        encoder
+            .write_frame(&frame)
+            .map_err(|err| Error::ImageEncodeError(format!("Gif encode error: {err}")))
+    }
+
+    pub fn finish(&mut self) -> Vec<u8> {
+        self.encoder.take().unwrap().into_inner().unwrap()
+    }
 }
 
 fn encode_image(
@@ -222,7 +232,7 @@ where
             .collect::<Result<Vec<_>, Error>>()?;
         return Ok(encode_png(func(images)?)?);
     } else if gif_infos.len() == 1 {
-        let mut frames: Vec<Image> = Vec::new();
+        let mut encoder = GifEncoder::new();
         let gif_info = &gif_infos[0];
         for i in 0..gif_info.frame_num {
             let mut frame_images: Vec<Image> = Vec::new();
@@ -234,9 +244,9 @@ where
                 }
             }
             let frame = func(frame_images)?;
-            frames.push(frame);
+            encoder.add_frame(frame, gif_info.duration)?;
         }
-        return Ok(encode_gif(frames, gif_info.duration)?);
+        return Ok(encoder.finish());
     }
 
     let mut target_gif_index = 0;
@@ -255,7 +265,7 @@ where
     let target_frame_num = target_frame_indexes.len();
     frame_indexes.insert(target_gif_index, target_frame_indexes);
 
-    let mut frames: Vec<Image> = Vec::new();
+    let mut encoder = GifEncoder::new();
     for i in 0..target_frame_num {
         let mut frame_images: Vec<Image> = Vec::new();
         let mut gif_index = 0;
@@ -268,10 +278,9 @@ where
             }
         }
         let frame = func(frame_images)?;
-        frames.push(frame);
+        encoder.add_frame(frame, target_duration)?;
     }
-
-    Ok(encode_gif(frames, target_duration)?)
+    Ok(encoder.finish())
 }
 
 /// 使用静图或动图制作 gif
@@ -310,22 +319,22 @@ where
     }
 
     if gif_infos.len() == 0 {
-        let mut frames: Vec<Image> = Vec::new();
+        let mut encoder = GifEncoder::new();
         for i in 0..target_gif_info.frame_num {
             let frame_images = images
                 .iter_mut()
                 .map(|image| image.first_frame())
                 .collect::<Result<Vec<_>, Error>>()?;
             let frame = func(i as usize, frame_images)?;
-            frames.push(frame);
+            encoder.add_frame(frame, target_gif_info.duration)?;
         }
-        return Ok(encode_gif(frames, target_gif_info.duration)?);
+        return Ok(encoder.finish());
     }
 
     let (frame_indexes, target_frame_indexes) =
         get_aligned_gif_indexes(&gif_infos, &target_gif_info, frame_align);
 
-    let mut frames: Vec<Image> = Vec::new();
+    let mut encoder = GifEncoder::new();
     for (i, target_index) in target_frame_indexes.iter().enumerate() {
         let mut frame_images: Vec<Image> = Vec::new();
         let mut gif_index = 0;
@@ -338,8 +347,7 @@ where
             }
         }
         let frame = func(*target_index, frame_images)?;
-        frames.push(frame);
+        encoder.add_frame(frame, target_gif_info.duration)?;
     }
-
-    encode_gif(frames, target_gif_info.duration)
+    Ok(encoder.finish())
 }

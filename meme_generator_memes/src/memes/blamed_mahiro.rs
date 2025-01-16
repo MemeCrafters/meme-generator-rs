@@ -1,10 +1,10 @@
-use skia_safe::{textlayout::TextAlign, Color, Color4f, IRect, Image};
+use skia_safe::{textlayout::TextAlign, Color, Color4f, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     canvas::CanvasExt,
-    encoder::encode_gif,
+    encoder::GifEncoder,
     image::ImageExt,
     text_params,
     tools::{load_image, local_date, new_paint, new_stroke_paint, new_surface},
@@ -46,7 +46,6 @@ fn blamed_mahiro(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result
         ([(76, 0), (84, 194), (58, 205), (0, 36)], (188, -9)),
     ];
 
-    let mut frames: Vec<Image> = Vec::new();
     let mut surface = new_surface((400, 80));
     let canvas = surface.canvas();
     canvas.draw_text_area_auto_font_size(
@@ -63,6 +62,7 @@ fn blamed_mahiro(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result
     )?;
     let text_image = surface.image_snapshot();
 
+    let mut encoder = GifEncoder::new();
     for i in 0..24 {
         let frame = load_image(format!("blamed_mahiro/{i:02}.png"))?;
         let mut surface = frame.to_surface();
@@ -72,10 +72,10 @@ fn blamed_mahiro(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result
             let text_image = text_image.perspective(&points);
             canvas.draw_image(&text_image, pos, None);
         }
-        frames.push(surface.image_snapshot());
+        let frame = surface.image_snapshot();
+        encoder.add_frame(frame, 0.08)?;
     }
-
-    encode_gif(frames, 0.08)
+    Ok(encoder.finish())
 }
 
 register_meme!(

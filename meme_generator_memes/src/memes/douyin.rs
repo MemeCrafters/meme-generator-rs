@@ -1,10 +1,10 @@
 use rand::Rng;
-use skia_safe::{Color, IRect, Image};
+use skia_safe::{Color, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::encode_gif,
+    encoder::GifEncoder,
     image::ImageExt,
     text::Text2Image,
     text_params,
@@ -65,9 +65,9 @@ fn douyin(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8
     let devide_num = 6;
     let seed = 20.0 * 0.05;
     let tilt = 0.17;
-    let mut frames: Vec<Image> = Vec::new();
     let mut rng = rand::thread_rng();
 
+    let mut encoder = GifEncoder::new();
     for _ in 0..frame_num {
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
@@ -111,10 +111,10 @@ fn douyin(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8
         ];
         let frame = frame.perspective(&points);
 
-        frames.push(frame.with_background(bg_color));
+        encoder.add_frame(frame, 0.2)?;
     }
 
-    encode_gif(frames, 0.2)
+    Ok(encoder.finish())
 }
 
 register_meme!(

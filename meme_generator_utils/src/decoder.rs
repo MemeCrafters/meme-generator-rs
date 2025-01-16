@@ -41,12 +41,12 @@ impl<'a> CodecExt for Codec<'a> {
             None,
         );
         let options = codec::Options {
-            zero_initialized: codec::ZeroInitialized::Yes,
+            zero_initialized: codec::ZeroInitialized::No,
             subset: None,
             frame_index: index,
-            prior_frame: if index == 0 { None } else { Some(index - 1) },
+            prior_frame: None,
         };
         self.get_image(image_info, &options)
-            .map_err(|_| Error::ImageDecodeError("Skia decode error".to_string()))
+            .map_err(|err| Error::ImageDecodeError(format!("Skia decode error: {err:?}")))
     }
 }

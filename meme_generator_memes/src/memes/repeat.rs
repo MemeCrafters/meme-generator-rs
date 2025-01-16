@@ -4,7 +4,7 @@ use skia_safe::{textlayout::TextAlign, Color, Image};
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::encode_gif,
+    encoder::GifEncoder,
     image::ImageExt,
     text::Text2Image,
     text_params,
@@ -64,16 +64,15 @@ fn repeat(images: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<V
     canvas.draw_image(&self_img, (15, 40), None);
     let input_img = surface.image_snapshot();
 
-    let mut frames = Vec::new();
+    let mut encoder = GifEncoder::new();
     for i in 0..50 {
         let mut surface = new_surface((1079, 1192));
         let canvas = surface.canvas();
         canvas.draw_image(&msg_img_twice, (0, -(20 * i)), None);
         canvas.draw_image(&input_img, (0, 1000), None);
-        frames.push(surface.image_snapshot());
+        encoder.add_frame(surface.image_snapshot(), 0.08)?;
     }
-
-    encode_gif(frames, 0.08)
+    Ok(encoder.finish())
 }
 
 register_meme!(

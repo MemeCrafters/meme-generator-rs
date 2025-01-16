@@ -4,7 +4,7 @@ use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     canvas::CanvasExt,
-    encoder::encode_gif,
+    encoder::GifEncoder,
     image::ImageExt,
     text_params,
     tools::{load_image, local_date, new_surface},
@@ -79,7 +79,7 @@ fn psyduck(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u
         ("left", [(0, 12), (154, 0), (158, 90), (17, 109)], (35, 28)),
     ];
 
-    let mut frames = Vec::new();
+    let mut encoder = GifEncoder::new();
     for i in 0..18 {
         let frame = load_image(format!("psyduck/{i:02}.jpg"))?;
         let mut surface = frame.to_surface();
@@ -90,10 +90,9 @@ fn psyduck(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u
         } else if side == "right" {
             canvas.draw_image(&right_img.perspective(&points), pos, None);
         }
-        frames.push(surface.image_snapshot());
+        encoder.add_frame(surface.image_snapshot(), 0.2)?;
     }
-
-    encode_gif(frames, 0.2)
+    Ok(encoder.finish())
 }
 
 register_meme!(
