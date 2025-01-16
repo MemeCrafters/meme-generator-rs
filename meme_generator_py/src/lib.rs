@@ -33,6 +33,7 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<Meme>()?;
     m.add_class::<MemeProperties>()?;
     m.add_class::<MemeSortBy>()?;
+    m.add_class::<MemeStatisticsType>()?;
     m.add_function(wrap_pyfunction!(get_version, m)?)?;
     m.add_function(wrap_pyfunction!(get_meme, m)?)?;
     m.add_function(wrap_pyfunction!(get_memes, m)?)?;
@@ -41,6 +42,7 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(check_resources, m)?)?;
     m.add_function(wrap_pyfunction!(check_resources_in_background, m)?)?;
     m.add_function(wrap_pyfunction!(render_meme_list, m)?)?;
+    m.add_function(wrap_pyfunction!(render_meme_statistics, m)?)?;
     Ok(())
 }
 
@@ -618,6 +620,36 @@ fn render_meme_list(
         sort_reverse,
         text_template,
         add_category_icon,
+    });
+    handle_result(result)
+}
+
+#[pyclass(eq, eq_int)]
+#[derive(Clone, PartialEq)]
+enum MemeStatisticsType {
+    MemeCount = 0,
+    TimeCount = 1,
+}
+
+impl Into<tools::MemeStatisticsType> for MemeStatisticsType {
+    fn into(self) -> tools::MemeStatisticsType {
+        match self {
+            MemeStatisticsType::MemeCount => tools::MemeStatisticsType::MemeCount,
+            MemeStatisticsType::TimeCount => tools::MemeStatisticsType::TimeCount,
+        }
+    }
+}
+
+#[pyfunction]
+fn render_meme_statistics(
+    title: String,
+    statistics_type: MemeStatisticsType,
+    data: Vec<(String, i32)>,
+) -> MemeResult {
+    let result = tools::render_meme_statistics(tools::RenderMemeStatisticsParams {
+        title,
+        statistics_type: statistics_type.into(),
+        data,
     });
     handle_result(result)
 }

@@ -23,7 +23,9 @@ use meme_generator::{
     get_meme, get_meme_keys,
     meme::{self, OptionValue},
     search_memes,
-    tools::{render_meme_list, RenderMemeListParams},
+    tools::{
+        render_meme_list, render_meme_statistics, RenderMemeListParams, RenderMemeStatisticsParams,
+    },
     VERSION,
 };
 
@@ -185,6 +187,24 @@ async fn render_list(Json(payload): Json<RenderMemeListParams>) -> impl IntoResp
     }
 }
 
+async fn render_statistics(Json(payload): Json<RenderMemeStatisticsParams>) -> impl IntoResponse {
+    let payload = payload.clone();
+    match spawn_blocking(move || render_meme_statistics(payload))
+        .await
+        .unwrap()
+    {
+        Ok(result) => {
+            let kind = infer::get(&result).unwrap();
+            Response::builder()
+                .status(StatusCode::OK)
+                .header("Content-Type", kind.mime_type())
+                .body(Body::from(result))
+                .unwrap()
+        }
+        Err(error) => handle_error(error).into_response(),
+    }
+}
+
 fn handle_error(error: Error) -> ErrorResponse {
     let message = format!("{error}");
     match error {
@@ -237,6 +257,7 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
         .route("/meme/keys", get(meme_keys))
         .route("/meme/search", get(meme_search))
         .route("/meme/tools/render_list", post(render_list))
+        .route("/meme/tools/render_statistics", post(render_statistics))
         .route("/memes/:key/info", get(meme_info))
         .route("/memes/:key/preview", get(meme_preview))
         .route("/memes/:key", post(meme_generate))

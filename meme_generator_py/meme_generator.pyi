@@ -132,6 +132,10 @@ class MemeSortBy(Enum):
     DateCreated = 3
     DateModified = 4
 
+class MemeStatisticsType(Enum):
+    MemeCount = 0
+    TimeCount = 1
+
 def get_version() -> str: ...
 def get_meme(key: str) -> Meme: ...
 def get_memes() -> list[Meme]: ...
@@ -146,4 +150,9 @@ def render_meme_list(
     sort_reverse: bool = False,
     text_template: str = "{index}. {keywords}",
     add_category_icon: bool = True,
+) -> MemeResult: ...
+def render_meme_statistics(
+    title: str,
+    statistics_type: MemeStatisticsType,
+    data: list[tuple[str, int]],
 ) -> MemeResult: ...
