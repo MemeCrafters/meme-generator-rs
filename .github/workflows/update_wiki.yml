@@ -1,0 +1,52 @@
+name: Update wiki
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "meme_generator_memes/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout wiki repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki
+
+      - uses: dtolnay/rust-toolchain@1.83.0
+      - uses: swatinem/rust-cache@v2
+
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Update memes.md
+        run: |
+          pip install virtualenv maturin[patchelf]
+          virtualenv .venv
+          maturin develop --release
+          source .venv/bin/activate
+          pip install filetype pillow
+          export MEME_HOME=..
+          python ../wiki/update_meme_list.py
+        working-directory: meme_generator_py
+
+      - name: Commit & Push changes
+        uses: actions-js/push@master
+        with:
+          directory: "wiki"
+          repository: ${{ github.repository }}.wiki
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          message: "update meme list"
+          branch: "master"
