@@ -36,7 +36,7 @@ register_meme!(
     min_texts = 1,
     max_texts = 1,
     default_texts = &["V我50"],
-    keywords = &["猫羽雫举牌"],
+    keywords = &["猫羽雫举牌", "猫猫举牌"],
     tags = MemeTags::nekoha(),
     date_created = local_date(2023, 3, 30),
     date_modified = local_date(2023, 3, 30),

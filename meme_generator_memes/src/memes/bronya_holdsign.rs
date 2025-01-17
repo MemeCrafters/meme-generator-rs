@@ -33,7 +33,7 @@ register_meme!(
     min_texts = 1,
     max_texts = 1,
     default_texts = &["V我50"],
-    keywords = &["布洛妮娅举牌"],
+    keywords = &["布洛妮娅举牌", "大鸭鸭举牌"],
     tags = MemeTags::bronya(),
     date_created = local_date(2022, 10, 27),
     date_modified = local_date(2023, 3, 30),
