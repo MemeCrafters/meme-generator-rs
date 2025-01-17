@@ -2535,6 +2535,10 @@
       "hash": "6220b9a7f8e68b7863c06ecb1a2adf5db6f87351b98a7a7d467ed800bef94d27"
     },
     {
+      "file": "forbid/0.png",
+      "hash": "ee7ab807242466495666c51e79c3b3b20e71873c45e56da8c017b0fad64d1cc6"
+    },
+    {
       "file": "frieren_take/0.png",
       "hash": "2a5b838ca9bbe806a0862f61baf0585f25a4c8f660e1ac66b294d90cf20cff22"
     },
@@ -3249,6 +3253,14 @@
     {
       "file": "gorilla_throw/41.png",
       "hash": "be16c12da68a279efc6c4d59e71009c2b29fac21f33f162f5b97ea77d25afaad"
+    },
+    {
+      "file": "grab/0.png",
+      "hash": "eecb51958f3d16bc4ddd0a5e1b178b3461464304455d65153d8ce7e29a4b984e"
+    },
+    {
+      "file": "grab_both_hands/0.png",
+      "hash": "58b403995d087989584f4cc868680da31f35bff8e1f727b9e5241a79d3d9f29c"
     },
     {
       "file": "gun/0.png",
@@ -5231,6 +5243,606 @@
       "hash": "5dda5c9916f762ea6420ff71f8e3ca4f30e012a1df6d62860537793626024330"
     },
     {
+      "file": "operator_generator/characteristic/00.jpg",
+      "hash": "eb096de5bd3cf2379b22cba9c947f7cf8a76742d3464f47a1e44edf799ba1394"
+    },
+    {
+      "file": "operator_generator/characteristic/01.jpg",
+      "hash": "073be867876e5652ddf2e0d495a69404a05f029cfa5cc084bed64f040f7ee8b1"
+    },
+    {
+      "file": "operator_generator/characteristic/02.jpg",
+      "hash": "998b48ac0160b174e59bd839beaec7700776e40c75e497867355ded7b2628bc8"
+    },
+    {
+      "file": "operator_generator/characteristic/03.jpg",
+      "hash": "29e730a5105db4ac8c0fe6eef211831737f22e9b61b511cf87ae8fdf20a1ed57"
+    },
+    {
+      "file": "operator_generator/characteristic/04.jpg",
+      "hash": "045551d89e01505baf3325ee72b9546f484a89202409eff715f42bd4dc16c2b2"
+    },
+    {
+      "file": "operator_generator/characteristic/05.jpg",
+      "hash": "e7cae24f0ad3d3dc3a1e5753f3c97e7cc2ac480c3262748b1f30c7f3f0f63993"
+    },
+    {
+      "file": "operator_generator/characteristic/06.jpg",
+      "hash": "8dd3fc00b9f5917cff3ae7cf8afc0d1cd11b0039acae1107143893b5fe770ef3"
+    },
+    {
+      "file": "operator_generator/characteristic/07.jpg",
+      "hash": "94dd651b091484312a6ff3901527e2529b7971d808399bd797606074e49bb344"
+    },
+    {
+      "file": "operator_generator/characteristic/08.jpg",
+      "hash": "c0b1a6322079447e73542fc3bf90659d0d357a5c1e4501a630a6249e6eaa0150"
+    },
+    {
+      "file": "operator_generator/characteristic/09.jpg",
+      "hash": "acd6b90f79fdbd2af2ec969d10226d2e66228c4d0b09e0dcbe8597cb6bce8e06"
+    },
+    {
+      "file": "operator_generator/characteristic/10.jpg",
+      "hash": "d2c9b082a67aa0ebe75e6d0e784a94c158b8045b85694f5d761ba0b5f709d978"
+    },
+    {
+      "file": "operator_generator/characteristic/11.jpg",
+      "hash": "0709dc10834056643037d8074b7b12b1e7336f95acc99ecb5e16d23971255ff6"
+    },
+    {
+      "file": "operator_generator/characteristic/12.jpg",
+      "hash": "309271312b81379b0dd2467283bfdf21e87be91934dfa8cee29513b1e3f8de62"
+    },
+    {
+      "file": "operator_generator/characteristic/13.jpg",
+      "hash": "4d7740f147e4bd06fcd003b1426020ee9758058e18a3ac042c0c978b4b7aa57f"
+    },
+    {
+      "file": "operator_generator/characteristic/14.jpg",
+      "hash": "dbdcd98dcafd92d6d99d3b4f4d2fdff6edf51abd1de3312483bd83910ca227fa"
+    },
+    {
+      "file": "operator_generator/characteristic/15.jpg",
+      "hash": "f452aed378e9077d29b79e5c8c803abeeb8004302d9193042568c5ac6514568e"
+    },
+    {
+      "file": "operator_generator/characteristic/16.jpg",
+      "hash": "ce1fc5747c15c16494a17c09c13df0e8e8ac009535b4d2c03f75553be5ed6473"
+    },
+    {
+      "file": "operator_generator/characteristic/17.jpg",
+      "hash": "f3791c3fb1ef6df11437055887c8df9fa86d01f174ca6a3a4df0fe62b6a40cc2"
+    },
+    {
+      "file": "operator_generator/characteristic/18.jpg",
+      "hash": "8daf01e18b27465490de04c387b213d3734a1a4297c570fc116c8defaf627b2f"
+    },
+    {
+      "file": "operator_generator/characteristic/19.jpg",
+      "hash": "536ab97f0a1e014a5dd6481ad098b751eb5c1906efe6b3a02ce1dc3dcb3f551e"
+    },
+    {
+      "file": "operator_generator/characteristic/20.jpg",
+      "hash": "10b44030bf990f0aff137bfad520898769e601dcf0b2a309382f5f4c032eb635"
+    },
+    {
+      "file": "operator_generator/characteristic/21.jpg",
+      "hash": "89b75f930b03696b7dfab80f24a70000fa6134ea40143589fe2f02b3678658ef"
+    },
+    {
+      "file": "operator_generator/characteristic/22.jpg",
+      "hash": "7cee4d92c0ae593c09d7bb1e7c114f23c00278819dd38f708bfa42ddc847bf3f"
+    },
+    {
+      "file": "operator_generator/characteristic/23.jpg",
+      "hash": "5416b578eea9143d40ccce5b80712c9c8dcde83ff6ebed97bcbf18423602289b"
+    },
+    {
+      "file": "operator_generator/characteristic/24.jpg",
+      "hash": "93b1f32c2321ca381f2ffc9b74d144d3e360678c2492ba510e2cb531ef5154fc"
+    },
+    {
+      "file": "operator_generator/range/00.jpg",
+      "hash": "b0ce7a9fd88b1f0f5b016b446f6fc0464a0617616d7cf1ce3d72e6bf5da936e9"
+    },
+    {
+      "file": "operator_generator/range/01.jpg",
+      "hash": "020b6130498a21fc5757119cfa0593c10a640723bbf0927ef25b26ba7dae078c"
+    },
+    {
+      "file": "operator_generator/range/02.jpg",
+      "hash": "2b0c9db50a39aec33cc13a308326f134ef7f9b47a5cb973e11e4b8959c708049"
+    },
+    {
+      "file": "operator_generator/range/03.jpg",
+      "hash": "191b3ac712b1cd0fc2a90c97c94f4b8828a9707c934c527df1cfc06a48dfb755"
+    },
+    {
+      "file": "operator_generator/range/04.jpg",
+      "hash": "288495b3551913c90ad04dca9add84b2752b9ef75bb78f383a366ac71b95451e"
+    },
+    {
+      "file": "operator_generator/range/05.jpg",
+      "hash": "8ee94730c9b52b2ba5b61377d9a13aa8f953125685262a766fee08a44522742b"
+    },
+    {
+      "file": "operator_generator/range/06.jpg",
+      "hash": "5e6ed26623b9ca7dfc35c6a0d25b46426ef5ea440782c12370349bfa69604e4e"
+    },
+    {
+      "file": "operator_generator/range/07.jpg",
+      "hash": "b069475dc5526127bba21052a0341dfeb34f51716b6aba3715fcc3e09ce70f61"
+    },
+    {
+      "file": "operator_generator/range/08.jpg",
+      "hash": "bd70166328b76a1fd6cfc66f9bf9f6fefec3b2922095f37e04af8e7a44f90c4b"
+    },
+    {
+      "file": "operator_generator/range/09.jpg",
+      "hash": "193697cda1be43bbe66834df1e2435743bd53b7c8f821f43a2fc7defe46d8445"
+    },
+    {
+      "file": "operator_generator/range/10.jpg",
+      "hash": "eb6221701a238d5a3dc0d49fe52f4464b89c16a73caaae9c7a344a55def58d80"
+    },
+    {
+      "file": "operator_generator/range/11.jpg",
+      "hash": "45e44f73b738d9aab96a1b5c9c4f8c07f3b10b4d81d9feb4652ae25fc59208aa"
+    },
+    {
+      "file": "operator_generator/range/12.jpg",
+      "hash": "24d961c293c630e3b255359a41014461d797cd2119b6a8518d55c23f9f3cbb46"
+    },
+    {
+      "file": "operator_generator/range/13.jpg",
+      "hash": "c250cd03944dd21f4c42865facab6e62c4ffda1dd9f1cdb467a2fab67d94334b"
+    },
+    {
+      "file": "operator_generator/range/14.jpg",
+      "hash": "46deec3b4c57d2d25e57f51adc6d32838f27505da1b7f8ec86fcb669a136c220"
+    },
+    {
+      "file": "operator_generator/range/15.jpg",
+      "hash": "226b46b8b3d62c4d3ade5ab7de152b06c2bba902208ef65aab71adb89a54dd44"
+    },
+    {
+      "file": "operator_generator/range/16.jpg",
+      "hash": "43fbf0144833affee4e0fec560d7adf3987ec9a4e1c7c1d39ab9e63f37f09a70"
+    },
+    {
+      "file": "operator_generator/range/17.jpg",
+      "hash": "859eeb506d560ace63769e3aa730c64f57dc9477d228bff9105274850efb3a02"
+    },
+    {
+      "file": "operator_generator/range/18.jpg",
+      "hash": "392165ccffe4a10185e0984968064d3aa442411f7ab4e18ff36470d53b647232"
+    },
+    {
+      "file": "operator_generator/range/19.jpg",
+      "hash": "d6889f4f15d4f07a4a0d01a3ccbddf108840a386cb80d2aa703bdb6cbcb9338e"
+    },
+    {
+      "file": "operator_generator/range/20.jpg",
+      "hash": "b565a8f75bafb13a65c30d3054c55fb3a5ddb6ec9e986d82b969290af383cc8c"
+    },
+    {
+      "file": "operator_generator/range/21.jpg",
+      "hash": "abd2eaf301777ff1d6cc4ec8897077586b2a17acc84d365908fb564eb333b813"
+    },
+    {
+      "file": "operator_generator/range/22.jpg",
+      "hash": "1c1103d6bf0a29a4f7c191427d1d58ac2e8c664b5fd48195642efb86a2cdcf07"
+    },
+    {
+      "file": "operator_generator/range/23.jpg",
+      "hash": "80be44bca0a41194c3022598491b3d42418a502101a6573e2f351810ef0fe362"
+    },
+    {
+      "file": "operator_generator/range/24.jpg",
+      "hash": "bd5fa782be4a97c503c54dd18db7b6fefe605def3516d9bdf1228cf9f2fa1c00"
+    },
+    {
+      "file": "operator_generator/skill/00.jpg",
+      "hash": "1e0e79bb0d4af479e63856fcbd7e7c7b84771d342f373a9a401bbed7d1447670"
+    },
+    {
+      "file": "operator_generator/skill/01.jpg",
+      "hash": "03628c93973422af8edbc6a855ff6695c09245e14bc1876437d7032725070e23"
+    },
+    {
+      "file": "operator_generator/skill/02.jpg",
+      "hash": "a2638bd76820df31af62ddbdeb042699659a9702da54590ea89740ca64ada15a"
+    },
+    {
+      "file": "operator_generator/skill/03.jpg",
+      "hash": "d777f91cd7e6c33742e70215388b567361f7eb2c3adcb501883f8a5f967607c3"
+    },
+    {
+      "file": "operator_generator/skill/04.jpg",
+      "hash": "996b7e387cc06d2fa924e9917f69f800868bb6759d8cac09dfab4f30b405fd23"
+    },
+    {
+      "file": "operator_generator/skill/05.jpg",
+      "hash": "f23b5554557c66ded32137f7b34ef800e5799bd5a548abbdceeaece2349c5e54"
+    },
+    {
+      "file": "operator_generator/skill/06.jpg",
+      "hash": "f50f248f141d0651eccbfe18069461e8f9ffe477c97a9337bcffa617c1f6b70e"
+    },
+    {
+      "file": "operator_generator/skill/07.jpg",
+      "hash": "8c0d38a687fe1f0e25dbe632c0287769abee005337c647457fca44fa0cd13002"
+    },
+    {
+      "file": "operator_generator/skill/08.jpg",
+      "hash": "f3e1869adecb3081a02db1c8965eb045c5e207bcc10ffa12b7b37954d37c97d5"
+    },
+    {
+      "file": "operator_generator/skill/09.jpg",
+      "hash": "a23437bed87f5f3c6b86ece879becc0b2fce1467163d671a88a8cc9859d252af"
+    },
+    {
+      "file": "operator_generator/skill/10.jpg",
+      "hash": "71a9da9a4c4f77d78be732d2b05f8550cdc6008cd65bbd5b20064523adfdabc4"
+    },
+    {
+      "file": "operator_generator/skill/11.jpg",
+      "hash": "e5c6e44ddc30c627f13028c7124c18a3e8bd967659f206f0be8a7f5bc0af6ce7"
+    },
+    {
+      "file": "operator_generator/skill/12.jpg",
+      "hash": "afcc36d468dfe4ab9b29a1e602fb0c5cf4e0a525155c8da45fcb9d616ee4fa0d"
+    },
+    {
+      "file": "operator_generator/skill/13.jpg",
+      "hash": "9ec8d07f523b03d2533b4fdf0dd10ad1554e82136b636afa9d8ebe2dfb1d4225"
+    },
+    {
+      "file": "operator_generator/skill/14.jpg",
+      "hash": "acdda85dc7e58d990ba02f15c3117385fd80ebc0d2f4c022f097ed081a34cb0a"
+    },
+    {
+      "file": "operator_generator/skill/15.jpg",
+      "hash": "d2b0bdf2e7d00e16342d4c3088fdbecf652dc12dae78fea0250383ada79578d4"
+    },
+    {
+      "file": "operator_generator/skill/16.jpg",
+      "hash": "2cc2e180fc047771178210dbfeb5fcace9dbc2fe45508d5206345da6af2bc214"
+    },
+    {
+      "file": "operator_generator/skill/17.jpg",
+      "hash": "3066be66410c36518cfd26e79864dbf47762e9740865cbdebe34628f3f66ffe4"
+    },
+    {
+      "file": "operator_generator/skill/18.jpg",
+      "hash": "6155059f546644925674bc2cb05e98e41f8b73df44c54adc02e0fec5e97c05ed"
+    },
+    {
+      "file": "operator_generator/skill/19.jpg",
+      "hash": "8338f41123cf4c463d89290809f59ff9ace9233692205e0aa02cf6f88e3dafeb"
+    },
+    {
+      "file": "operator_generator/skill/20.jpg",
+      "hash": "4e9aeeeaac0df6f0156a4ee7909b4aff5450fcbc5a835e2b98b74d3a217f32ff"
+    },
+    {
+      "file": "operator_generator/skill/21.jpg",
+      "hash": "054ba20f42d82eb62586b6dd095c95b6df8df14050dcdd3385e57232c95f6e59"
+    },
+    {
+      "file": "operator_generator/skill/22.jpg",
+      "hash": "4b3dc8b0eab7f13133fef87a7f205430dbffbc085af60d7236b55ee48a30bf84"
+    },
+    {
+      "file": "operator_generator/skill/23.jpg",
+      "hash": "1a15b00d3ea3d1d7e24b8ddcbcf29adb9c2ec6421a392edc7734cfc44854f73a"
+    },
+    {
+      "file": "operator_generator/skill/24.jpg",
+      "hash": "7973cee2ace07c2d0a06344da184ae0ec6f6d7d232a173b1d062561fb1746773"
+    },
+    {
+      "file": "operator_generator/special/00.jpg",
+      "hash": "0dc12df39dd026e99feead243fa97bb6df0ad4ae6ce9da3361548aad8624469d"
+    },
+    {
+      "file": "operator_generator/special/01.jpg",
+      "hash": "f295ac7583a2da2ab5d248fb078bc6990b67ffd1b68733ea9f2d6eb303e41079"
+    },
+    {
+      "file": "operator_generator/special/02.jpg",
+      "hash": "9bcb3d63f83a6dfe67be932e25565beebb21796a9068d7e6656910892e69d05c"
+    },
+    {
+      "file": "operator_generator/special/03.jpg",
+      "hash": "298207cce36b548d2a03dbe67620daee81f7f1fd8ca0b43ff2c2598cda236f59"
+    },
+    {
+      "file": "operator_generator/special/04.jpg",
+      "hash": "dc24a278021b8b6598e148e7d3171f44376cb348bb43a690e810c57f540bfabb"
+    },
+    {
+      "file": "operator_generator/special/05.jpg",
+      "hash": "21ec8d658f2a9d92be6ae00413336daede39ed28106df5dcb146619b9a8074a3"
+    },
+    {
+      "file": "operator_generator/special/06.jpg",
+      "hash": "a66ecd50e0416abfb83c7e97afec79bf82fbedfab0a1e354c8640478912f51e0"
+    },
+    {
+      "file": "operator_generator/special/07.jpg",
+      "hash": "5d3e13997da219302371db21a876ce22d917336af5a542cf96a6b13a641aca75"
+    },
+    {
+      "file": "operator_generator/special/08.jpg",
+      "hash": "b4d28d8d336b282d83081bd04822417964f713b497b57248e510e2ebc080bbe7"
+    },
+    {
+      "file": "operator_generator/special/09.jpg",
+      "hash": "5b3ebdfbbfbc97f8dab1a84105c479249e06bc315ee4b3098a999a7e400ded02"
+    },
+    {
+      "file": "operator_generator/special/10.jpg",
+      "hash": "724e0ba472587173e230013e407051a533e70163c29afd78d656f92ef52d3c69"
+    },
+    {
+      "file": "operator_generator/special/11.jpg",
+      "hash": "008f05f962beb985a614e503faffa56fc908645b1cb293aecff80514b188c972"
+    },
+    {
+      "file": "operator_generator/special/12.jpg",
+      "hash": "b1d4ce5fe58a83eaff82859073ea4682d1aede28817ac7fdabfd460b83b855a2"
+    },
+    {
+      "file": "operator_generator/special/13.jpg",
+      "hash": "48b4d67fc376a70f2bbd1aa5324d45c4ffe63db224a24e362696136387450d89"
+    },
+    {
+      "file": "operator_generator/special/14.jpg",
+      "hash": "68fb7a4c39b7b2768bc6287f9695a71bd76d2835294431030d3b92f15a117b3d"
+    },
+    {
+      "file": "operator_generator/special/15.jpg",
+      "hash": "9e407fa9067d5f0d58fd818e48387dd2fa94f76bf1bfa075faa62a3c30e464ca"
+    },
+    {
+      "file": "operator_generator/special/16.jpg",
+      "hash": "94547e925da175581dc922effecdcdefba4c64abaa3f0cd4270c0cf8f823387c"
+    },
+    {
+      "file": "operator_generator/special/17.jpg",
+      "hash": "f2a700e1a566154d7996535bef8fc97ff5372b3bdeaa04e1bd1c16612c36f8f4"
+    },
+    {
+      "file": "operator_generator/special/18.jpg",
+      "hash": "f93e30049200e6c64797884abdfc8defdcf651b0498bde4ff94e267038d54ea4"
+    },
+    {
+      "file": "operator_generator/special/19.jpg",
+      "hash": "c6c4a06d1181e0b00eb5ab23cc7e0be3dc9a2e9723099632890372dd9bbf23ba"
+    },
+    {
+      "file": "operator_generator/special/20.jpg",
+      "hash": "4825d74f45c9841c939ce79890704a9def4665d305d001c98fd56f66ac835e18"
+    },
+    {
+      "file": "operator_generator/special/21.jpg",
+      "hash": "82e896c6dbb56c15bdb0ff83330364bd27fb0ac3026c242679df3bf38b62d37c"
+    },
+    {
+      "file": "operator_generator/special/22.jpg",
+      "hash": "2c569e283fcb9e2d8fb09948ee5fada47bf7e4cb2d7935c718611037b9452858"
+    },
+    {
+      "file": "operator_generator/special/23.jpg",
+      "hash": "5618a0c66feb5672b6a073d91413fa2a16b6e8d0361c5390a28591325361bf3e"
+    },
+    {
+      "file": "operator_generator/special/24.jpg",
+      "hash": "36c7776945c8b398b526b43b9fd54d924035a7e1fcb53e11960937e4b0c1f0a7"
+    },
+    {
+      "file": "operator_generator/talent/00.jpg",
+      "hash": "e642270bdb6f2ce9dc937c8b82bec87d7792f91b742cf14acac3cd91dc4eb6ba"
+    },
+    {
+      "file": "operator_generator/talent/01.jpg",
+      "hash": "1f662fbe0d27865cc568fd291746eb0f910fce8458594faaea6d757bf17eb04f"
+    },
+    {
+      "file": "operator_generator/talent/02.jpg",
+      "hash": "2c1e6979fe63d48fa9da6559b7df0de551a343002b49c7ca46e7a2f4af186667"
+    },
+    {
+      "file": "operator_generator/talent/03.jpg",
+      "hash": "5d1dd8a5412b9d0966db8e0a81fd374e4818b7f072a6812603db3094b7a44359"
+    },
+    {
+      "file": "operator_generator/talent/04.jpg",
+      "hash": "297fb95dc557446b652afe783055acdda25b5a18c8162bda42c5078d1a3600a1"
+    },
+    {
+      "file": "operator_generator/talent/05.jpg",
+      "hash": "d8c705e13729751e6475bd409a724d7970f9a7c9aef14247d02300f9cd91ad73"
+    },
+    {
+      "file": "operator_generator/talent/06.jpg",
+      "hash": "019b3c685902ee1a86fcb591cdb23cb8125ec6c88981db5203ab36b5e67c3e44"
+    },
+    {
+      "file": "operator_generator/talent/07.jpg",
+      "hash": "104089841e66c8eb50239e831d6135e89afbfbfc74552d60d0072e7ffbfc41bf"
+    },
+    {
+      "file": "operator_generator/talent/08.jpg",
+      "hash": "68a433625007e21e3485b427e1db1e89e033942ede310669c8feba0d7c72815b"
+    },
+    {
+      "file": "operator_generator/talent/09.jpg",
+      "hash": "2fd4dd907c5a4575106d7306672fc6510f1c06751c7c1363832ca40365fa5d4f"
+    },
+    {
+      "file": "operator_generator/talent/10.jpg",
+      "hash": "3834ec5c664885d634db563996cfe7d8787d6fa72d1634f032ba74edf2ee7cae"
+    },
+    {
+      "file": "operator_generator/talent/11.jpg",
+      "hash": "2ecc24ed97b0b272bce32021b636793a1e3f8c17e39f62a793aa01c419f97125"
+    },
+    {
+      "file": "operator_generator/talent/12.jpg",
+      "hash": "87656ecd5cda70c31b3bd586baa2704bedfdba2c04328d6c0fa265249f9efa75"
+    },
+    {
+      "file": "operator_generator/talent/13.jpg",
+      "hash": "4e2d69d9e1ad6bb4698dc256193a42052bf57019f4f9537a34a465738f4fe2a0"
+    },
+    {
+      "file": "operator_generator/talent/14.jpg",
+      "hash": "02f8bc8421672b21d134e946967de180e02c6238a0db8a06c3585411bb99bdde"
+    },
+    {
+      "file": "operator_generator/talent/15.jpg",
+      "hash": "5736d79448c3d815b58c2a18c8bd17e79156f7660fd1c1db1b1bcf77756b6b5e"
+    },
+    {
+      "file": "operator_generator/talent/16.jpg",
+      "hash": "de86edec3e1c7605f2b59921038c1703f927998974f9e6e3bfe0d38e6686e847"
+    },
+    {
+      "file": "operator_generator/talent/17.jpg",
+      "hash": "f055d3755d426c4735e870892cfae97703a01d1912e8c59adf3b97d6993502c5"
+    },
+    {
+      "file": "operator_generator/talent/18.jpg",
+      "hash": "242326c723dbe925510161b9ddc9c611802a958ae4e1b72842ea74aa8980e2e3"
+    },
+    {
+      "file": "operator_generator/talent/19.jpg",
+      "hash": "d0667ec17456132101b4758c4205eea857fc4a7bfb29bc3979541c6d873ad6b1"
+    },
+    {
+      "file": "operator_generator/talent/20.jpg",
+      "hash": "8e4e73f3c4952c5b556184db6d4b5b82c08efaefceb2a12802c4c9a54257936b"
+    },
+    {
+      "file": "operator_generator/talent/21.jpg",
+      "hash": "2b4eb743a196bd37fc3241a7d66703a5ba40c4214c70a3376b5f922a6957c911"
+    },
+    {
+      "file": "operator_generator/talent/22.jpg",
+      "hash": "f6871bd2b9e2c80afe77a5a828dbfba7169135125b2eba0f39c681cd7b8d6b90"
+    },
+    {
+      "file": "operator_generator/talent/23.jpg",
+      "hash": "b6fde40188ef366e1a3af7f4fadd9d8c9c50be6a7d5e5a37e100074f22496a06"
+    },
+    {
+      "file": "operator_generator/talent/24.jpg",
+      "hash": "5a7561401fe9a25989eadcb53b1b5f12fcdc63980a7368529963561ef43ff20e"
+    },
+    {
+      "file": "operator_generator/value/00.jpg",
+      "hash": "eea30c5abb80dd54d28c9ab7f35759940b3be2120cda00b0f4288b9161f0df19"
+    },
+    {
+      "file": "operator_generator/value/01.jpg",
+      "hash": "dea62fc54916467fd730d180df005e860a6d66df2b1ad69a41c9af7b96dbaf6e"
+    },
+    {
+      "file": "operator_generator/value/02.jpg",
+      "hash": "8d7313ece5e61a728396f75fa3e386ae4f5ccf9eb6dd093d43f5ee3a56227739"
+    },
+    {
+      "file": "operator_generator/value/03.jpg",
+      "hash": "663e737136e911faa38ff1224d033dc5653a4bb8d17afa8b4f80d0efa9093353"
+    },
+    {
+      "file": "operator_generator/value/04.jpg",
+      "hash": "33989e37a669b7436cf5a7111f2bf29d1e026c427162d62b6f518d3aafebb15a"
+    },
+    {
+      "file": "operator_generator/value/05.jpg",
+      "hash": "9e4fa2f16d015305c2d518cb78ee903e9ba1f49f5e7c33daddcbbb66e24221b5"
+    },
+    {
+      "file": "operator_generator/value/06.jpg",
+      "hash": "ef314391e7aa53c948ad38c5e95d3062bad455113a26acff5e72a75de8aee6f7"
+    },
+    {
+      "file": "operator_generator/value/07.jpg",
+      "hash": "85885e55ab33fdcb8d26f03254374967785a362a9f83f44777c3e7a98fb79633"
+    },
+    {
+      "file": "operator_generator/value/08.jpg",
+      "hash": "b7985743342d9bd186169c67991f08fff2f8d72ce776f08669ac20620cb29718"
+    },
+    {
+      "file": "operator_generator/value/09.jpg",
+      "hash": "67f462ece57c7d7c3bf424f7f8cbc2e925c26338e3e9671809154ef12ec4a83e"
+    },
+    {
+      "file": "operator_generator/value/10.jpg",
+      "hash": "18ea7575981d22f187306b9827810f899583dd46720cda92c2dad720aaa052ad"
+    },
+    {
+      "file": "operator_generator/value/11.jpg",
+      "hash": "7d388d9460bc82c8ac4b819bcfc99e9dae080dd7554b467838ae269a93ff179c"
+    },
+    {
+      "file": "operator_generator/value/12.jpg",
+      "hash": "6fbdb9ef0496d1da86c5169b41de3b83f303ac13c24b846ba9416b727a624eb5"
+    },
+    {
+      "file": "operator_generator/value/13.jpg",
+      "hash": "3d6954cde4f5f4559f6a7b609e6119c60e2db8dad706067d45cb71ac8f6017d5"
+    },
+    {
+      "file": "operator_generator/value/14.jpg",
+      "hash": "a73db5d3bb9fa6b02b5f04d1941ee8d11b80db93934f5b4864048e3050547e8f"
+    },
+    {
+      "file": "operator_generator/value/15.jpg",
+      "hash": "ebf9f94640236a37d54bd4d8ec60f6631be1a108a475ca520c4b54b9fe6cc1e5"
+    },
+    {
+      "file": "operator_generator/value/16.jpg",
+      "hash": "f724364062287319b3045b173bfe3cea6ed55dcf3b5e95046f0ac8b10d4d9a1b"
+    },
+    {
+      "file": "operator_generator/value/17.jpg",
+      "hash": "de900aff4463427fffb69f450daeaeee2ef64d4eea86dcfdb897c65d07b20cb0"
+    },
+    {
+      "file": "operator_generator/value/18.jpg",
+      "hash": "2db7e03e0721aa3c4dfea7b4751060acc91ff072ee844cac3d33da7d8195bde4"
+    },
+    {
+      "file": "operator_generator/value/19.jpg",
+      "hash": "a9048eb1b23e508ecb100f89ae24e7ebb9fe6496a30c14bef6f090012d140617"
+    },
+    {
+      "file": "operator_generator/value/20.jpg",
+      "hash": "799132169ec6050390cbd982335a17da0cc82d4e9c58f5f7708af93a1157ac29"
+    },
+    {
+      "file": "operator_generator/value/21.jpg",
+      "hash": "6ac08df963890a40376581aeff400f96d8afc2b759a307de5ff7a4ed1d3b39d5"
+    },
+    {
+      "file": "operator_generator/value/22.jpg",
+      "hash": "0099469a39e14f4456c45f0f17519712f81017138bc3ec17d547792eca76c1c6"
+    },
+    {
+      "file": "operator_generator/value/23.jpg",
+      "hash": "bc30efce747c2c92bd9575d1bd511d95272a82916e1e7491b5de5aacf560b594"
+    },
+    {
+      "file": "operator_generator/value/24.jpg",
+      "hash": "507e972ae0950f3a562284cb867515458e41930ca5e5d1e9ef149ced0fd3c3b8"
+    },
+    {
       "file": "oshi_no_ko/background.png",
       "hash": "3c04fd7b8d1193f0f502db6984f68b25ff7af8a6ab496f312d99a6f262cdc463"
     },
@@ -7109,6 +7721,10 @@
     {
       "file": "policeman/0.png",
       "hash": "7fa435605ae95dbc06dba8009999bfe27f74c9a953770c0b79a2b494d2c08dd8"
+    },
+    {
+      "file": "potato/0.png",
+      "hash": "e4b9d1785b05c094bf1ffb054f2b37cc1a88c860db939cd3adb04f852791bba8"
     },
     {
       "file": "pound/0.png",
