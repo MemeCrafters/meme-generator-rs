@@ -10,22 +10,21 @@ inventory::collect!(MemeDeclaration);
 #[macro_export]
 macro_rules! register_meme {
     ($key:expr, $function:expr, $($field:ident = $value:expr),* $(,)?) => {
-        fn builder() -> Box<dyn meme_generator_core::meme::Meme> {
-            Box::new(
-                meme_generator_utils::builder::MemeBuilder {
-                    key: $key.to_string(),
-                    function: $function,
-                    $(
-                        $field: meme_generator_utils::builder::meme_setters::$field($value),
-                    )*
-                    ..Default::default()
-                }
-            )
-        }
         inventory::submit! {
             $crate::registry::MemeDeclaration {
                 name: $key,
-                builder,
+                builder: || -> Box<dyn meme_generator_core::meme::Meme> {
+                    Box::new(
+                        meme_generator_utils::builder::MemeBuilder {
+                            key: $key.to_string(),
+                            function: $function,
+                            $(
+                                $field: meme_generator_utils::builder::meme_setters::$field($value),
+                            )*
+                            ..Default::default()
+                        }
+                    )
+                }
             }
         }
     }
