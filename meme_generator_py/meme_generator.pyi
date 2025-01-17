@@ -37,22 +37,20 @@ class FloatOption:
     description: Optional[str]
     parser_flags: ParserFlags
 
-MemeOption = Union[BooleanOption, StringOption, IntegerOption, FloatOption]
-
 class MemeParams:
     min_images: int
     max_images: int
     min_texts: int
     max_texts: int
     default_texts: list[str]
-    options: list[MemeOption]
+    options: list[Union[BooleanOption, StringOption, IntegerOption, FloatOption]]
 
 class MemeShortcut:
     pattern: str
     humanized: Optional[str]
     names: list[str]
     texts: list[str]
-    options: dict[str, OptionValue]
+    options: dict[str, Union[bool, str, int, float]]
 
 class MemeInfo:
     key: str
@@ -94,21 +92,6 @@ class TextOverLength:
 class MemeFeedback:
     feedback: str
 
-OptionValue = Union[bool, str, int, float]
-
-MemeError = Union[
-    ImageDecodeError,
-    ImageEncodeError,
-    ImageAssetMissing,
-    DeserializeError,
-    ImageNumberMismatch,
-    TextNumberMismatch,
-    TextOverLength,
-    MemeFeedback,
-]
-
-MemeResult = Union[bytes, MemeError]
-
 class Meme:
     @property
     def key(self) -> str: ...
@@ -118,9 +101,31 @@ class Meme:
         self,
         images: list[Image],
         text: list[str],
-        options: dict[str, OptionValue],
-    ) -> MemeResult: ...
-    def generate_preview(self) -> MemeResult: ...
+        options: dict[str, Union[bool, str, int, float]],
+    ) -> Union[
+        bytes,
+        ImageDecodeError,
+        ImageEncodeError,
+        ImageAssetMissing,
+        DeserializeError,
+        ImageNumberMismatch,
+        TextNumberMismatch,
+        TextOverLength,
+        MemeFeedback,
+    ]: ...
+    def generate_preview(
+        self,
+    ) -> Union[
+        bytes,
+        ImageDecodeError,
+        ImageEncodeError,
+        ImageAssetMissing,
+        DeserializeError,
+        ImageNumberMismatch,
+        TextNumberMismatch,
+        TextOverLength,
+        MemeFeedback,
+    ]: ...
 
 class MemeProperties:
     def __new__(cls, disabled: bool = False, hot: bool = False, new: bool = False): ...
@@ -150,9 +155,9 @@ def render_meme_list(
     sort_reverse: bool = False,
     text_template: str = "{index}. {keywords}",
     add_category_icon: bool = True,
-) -> MemeResult: ...
+) -> Union[bytes, ImageEncodeError]: ...
 def render_meme_statistics(
     title: str,
     statistics_type: MemeStatisticsType,
     data: list[tuple[str, int]],
-) -> MemeResult: ...
+) -> Union[bytes, ImageEncodeError]: ...

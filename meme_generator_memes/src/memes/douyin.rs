@@ -111,6 +111,12 @@ fn douyin(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8
         ];
         let frame = frame.perspective(&points);
 
+        let mut surface = frame.to_surface();
+        let canvas = surface.canvas();
+        canvas.clear(bg_color);
+        canvas.draw_image(&frame, (0, 0), None);
+        let frame = surface.image_snapshot();
+
         encoder.add_frame(frame, 0.2)?;
     }
 

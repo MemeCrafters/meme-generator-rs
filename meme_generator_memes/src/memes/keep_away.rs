@@ -25,10 +25,11 @@ fn keep_away(images: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Resul
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);
     canvas
-        .draw_text_area(
+        .draw_text_area_auto_font_size(
             IRect::from_ltrb(10, 10, 390, 80),
             text,
-            30.0,
+            20.0,
+            40.0,
             text_params!(text_align = TextAlign::Left),
         )
         .unwrap();
