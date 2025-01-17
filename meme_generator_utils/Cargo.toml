@@ -1,7 +1,7 @@
 [package]
 name = "meme_generator_utils"
 description = "Meme generator utils"
-version = "0.0.4"
+version = "0.0.5"
 authors.workspace = true
 license.workspace = true
 homepage.workspace = true
@@ -21,5 +21,5 @@ tokio = { version = "1.42", features = ["full"] }
 toml = "0.8"
 tracing = "0.1"
 
-meme_generator_core = { version = "0.0.2", path = "../meme_generator_core" }
-meme_options_derive = { version = "0.0.4", path = "../meme_options_derive" }
+meme_generator_core = { version = "0.0.3", path = "../meme_generator_core" }
+meme_options_derive = { version = "0.0.5", path = "../meme_options_derive" }

@@ -23,9 +23,9 @@ tokio = { version = "1.42", features = ["full"] }
 toml = "0.8"
 tracing = "0.1"
 
-meme_generator_core = { version = "0.0.2", path = "../meme_generator_core" }
+meme_generator_core = { version = "0.0.3", path = "../meme_generator_core" }
 meme_generator_memes = { version = ">=0.2.0-alpha.10", path = "../meme_generator_memes" }
-meme_generator_utils = { version = "0.0.4", path = "../meme_generator_utils" }
+meme_generator_utils = { version = "0.0.5", path = "../meme_generator_utils" }
 
 [features]
 vendored = ["reqwest/native-tls-vendored"]
