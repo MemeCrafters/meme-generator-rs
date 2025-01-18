@@ -23,6 +23,12 @@ pub fn search_memes(query: &str, include_tags: bool) -> Vec<String> {
         for keyword in info.keywords {
             score = max(score, matcher.fuzzy_match(&keyword, &query));
         }
+        for shortcut in info.shortcuts {
+            score = max(score, matcher.fuzzy_match(&shortcut.pattern, &query));
+            if let Some(humanized) = &shortcut.humanized {
+                score = max(score, matcher.fuzzy_match(humanized, &query));
+            }
+        }
         if include_tags {
             for tag in info.tags {
                 score = max(score, matcher.fuzzy_match(&tag, &query));

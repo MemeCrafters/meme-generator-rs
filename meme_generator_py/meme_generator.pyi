@@ -100,7 +100,7 @@ class Meme:
     def generate(
         self,
         images: list[Image],
-        text: list[str],
+        texts: list[str],
         options: dict[str, Union[bool, str, int, float]],
     ) -> Union[
         bytes,
@@ -117,13 +117,8 @@ class Meme:
         self,
     ) -> Union[
         bytes,
-        ImageDecodeError,
         ImageEncodeError,
         ImageAssetMissing,
-        DeserializeError,
-        ImageNumberMismatch,
-        TextNumberMismatch,
-        TextOverLength,
         MemeFeedback,
     ]: ...
 

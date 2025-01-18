@@ -272,7 +272,7 @@ fn draw_bar_chart(title: &str, data: Vec<(String, i32)>) -> Image {
     }
 
     // 绘制 y 轴标签
-    let mut y = MARGIN + y_grid_padding;
+    let mut y = chart_height - MARGIN - y_grid_padding;
     let x = margin_left - 8.0;
     for tick in y_ticks {
         let text2image = Text2Image::from_text(&tick.to_string(), font_size, None);
@@ -280,7 +280,7 @@ fn draw_bar_chart(title: &str, data: Vec<(String, i32)>) -> Image {
             canvas,
             (x - text2image.longest_line(), y - text2image.height() / 2.0),
         );
-        y += y_grid_sep;
+        y -= y_grid_sep;
     }
 
     // 绘制标题
