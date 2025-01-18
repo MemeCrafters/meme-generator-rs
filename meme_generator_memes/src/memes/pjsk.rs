@@ -191,7 +191,7 @@ struct Options {
     pub number: Option<i32>,
 
     /// 字体大小
-    #[option(short, long, minimum = 20, maximum = 50)]
+    #[option(short, long, default = 50, minimum = 20, maximum = 100)]
     pub size: Option<i32>,
 
     /// 文字旋转角度
@@ -238,7 +238,7 @@ fn pjsk(_: Vec<InputImage>, texts: Vec<String>, options: Options) -> Result<Vec<
     ))?;
     let color = color_from_hex_code(character.color);
 
-    let font_size = options.size.unwrap_or(50);
+    let font_size = options.size.unwrap();
     let text2image = Text2Image::from_text(
         text,
         font_size as f32,
@@ -288,5 +288,5 @@ register_meme!(
         .as_slice(),
     tags = MemeTags::project_sekai(),
     date_created = local_date(2024, 12, 19),
-    date_modified = local_date(2024, 12, 19),
+    date_modified = local_date(2025, 1, 18),
 );
