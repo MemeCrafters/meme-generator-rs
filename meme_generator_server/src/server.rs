@@ -15,8 +15,8 @@ use base64::{engine::general_purpose, Engine as _};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use tokio::{net::TcpListener, runtime::Runtime, task::spawn_blocking};
-use tower_http::trace::TraceLayer;
-use tracing::info;
+use tower_http::trace::{self, TraceLayer};
+use tracing::{info, Level};
 
 use meme_generator::{
     error::Error,
@@ -75,6 +75,15 @@ async fn meme_info(Path(key): Path<String>) -> impl IntoResponse {
     } else {
         (StatusCode::NOT_FOUND, "Meme not found").into_response()
     }
+}
+
+async fn meme_infos() -> impl IntoResponse {
+    let keys = get_meme_keys();
+    let infos: HashMap<_, _> = keys
+        .iter()
+        .filter_map(|key| get_meme(key).map(|meme| (key, meme.info())))
+        .collect();
+    Json(infos).into_response()
 }
 
 #[derive(Deserialize)]
@@ -255,13 +264,18 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
     let app = Router::new()
         .route("/meme/version", get(|| async { VERSION }))
         .route("/meme/keys", get(meme_keys))
+        .route("/meme/infos", get(meme_infos))
         .route("/meme/search", get(meme_search))
         .route("/meme/tools/render_list", post(render_list))
         .route("/meme/tools/render_statistics", post(render_statistics))
         .route("/memes/:key/info", get(meme_info))
         .route("/memes/:key/preview", get(meme_preview))
         .route("/memes/:key", post(meme_generate))
-        .layer(TraceLayer::new_for_http());
+        .layer(
+            TraceLayer::new_for_http()
+                .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
+                .on_response(trace::DefaultOnResponse::new().level(Level::INFO)),
+        );
 
     let host = host.unwrap_or(CONFIG.server.host);
     let port = port.unwrap_or(CONFIG.server.port);
