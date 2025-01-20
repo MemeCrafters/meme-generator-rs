@@ -95,6 +95,10 @@ jobs:
             container: ghcr.io/memecrafters/meme-generator-build-container:latest
             target: x86_64-unknown-linux-gnu
             label: linux-x86_64
+          - runner: ubuntu-24.04-arm
+            container: ghcr.io/memecrafters/meme-generator-build-container:arm64
+            target: aarch64-unknown-linux-gnu
+            label: linux-aarch64
 
     steps:
       - uses: actions/checkout@v4
@@ -115,12 +119,13 @@ jobs:
             !target/${{ matrix.platform.target }}/release/meme.d
 
       - name: Build wheels
-        uses: PyO3/maturin-action@v1
-        with:
-          target: ${{ matrix.platform.target }}
-          working-directory: meme_generator_py
-          args: --release --out dist --features vendored,embed-freetype
-          container: "off"
+        run: |
+          pip3 install pipx
+          export PATH=$PATH:/github/home/.local/bin
+          pipx install maturin
+          pipx install patchelf
+          maturin build --release --out dist --features vendored,embed-freetype
+        working-directory: meme_generator_py
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
