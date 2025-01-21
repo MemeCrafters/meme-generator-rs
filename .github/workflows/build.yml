@@ -124,7 +124,7 @@ jobs:
           export PATH=$PATH:/github/home/.local/bin
           pipx install maturin
           pipx install patchelf
-          maturin build --release --out dist --features vendored,embed-freetype
+          maturin build --release --out dist --target ${{ matrix.platform.target }} --features vendored,embed-freetype
         working-directory: meme_generator_py
 
       - name: Upload wheels
@@ -133,10 +133,39 @@ jobs:
           name: meme-generator-wheels-${{ matrix.platform.label }}
           path: meme_generator_py/dist
 
+  build_android:
+    runs-on: ${{ matrix.platform.runner }}
+    container: ${{ matrix.platform.container }}
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-latest
+            container: ghcr.io/memecrafters/meme-generator-build-container:android
+            target: aarch64-linux-android
+            label: android-aarch64
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.83.0
+      - uses: swatinem/rust-cache@v2
+
+      - name: Rustup add target
+        run: rustup target add ${{ matrix.platform.target }}
+
+      - name: Build target
+        run: cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server,vendored
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "meme-generator-cli-${{ matrix.platform.label }}"
+          path: |
+            target/${{ matrix.platform.target }}/release/meme*
+            !target/${{ matrix.platform.target }}/release/meme.d
+
   crates_io_publish:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [build, build_linux]
+    needs: [build, build_linux, build_android]
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.83.0
@@ -153,7 +182,7 @@ jobs:
   pypi_publish:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [build, build_linux]
+    needs: [build, build_linux, build_android]
     steps:
       - uses: actions/download-artifact@v4
 
@@ -168,7 +197,7 @@ jobs:
   release_draft:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [build, build_linux]
+    needs: [build, build_linux, build_android]
     permissions:
       contents: write
     steps:

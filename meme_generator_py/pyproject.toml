@@ -8,9 +8,6 @@ classifiers = [
 ]
 dynamic = ["version"]
 
-[dependencies.pyo3]
-features = ["abi3-py39"]
-
 [tool.maturin]
 features = ["pyo3/extension-module"]
 
