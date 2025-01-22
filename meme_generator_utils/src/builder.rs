@@ -244,7 +244,7 @@ where
         (self.function)(images, texts, options)
     }
 
-    fn generate_preview(&self) -> Result<Vec<u8>, Error> {
+    fn generate_preview(&self, options: HashMap<String, OptionValue>) -> Result<Vec<u8>, Error> {
         let mut images = Vec::new();
         if self.min_images > 0 {
             let image = encode_png(grid_pattern_image())?;
@@ -276,7 +276,6 @@ where
             }
             texts
         };
-        let options = HashMap::new();
         self.generate(images, texts, options)
     }
 }

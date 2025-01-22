@@ -58,8 +58,8 @@ impl Meme for ExternalMeme {
         self.meme.generate(images, texts, options)
     }
 
-    fn generate_preview(&self) -> Result<Vec<u8>, Error> {
-        self.meme.generate_preview()
+    fn generate_preview(&self, options: HashMap<String, OptionValue>) -> Result<Vec<u8>, Error> {
+        self.meme.generate_preview(options)
     }
 }
 

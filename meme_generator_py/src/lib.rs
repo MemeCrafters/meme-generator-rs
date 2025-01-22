@@ -460,8 +460,14 @@ impl Meme {
         handle_result(result)
     }
 
-    fn generate_preview(&self) -> MemeResult {
-        let result = self.meme.generate_preview();
+    #[pyo3(signature = (options=HashMap::new()))]
+    fn generate_preview(&self, options: HashMap<String, OptionValue>) -> MemeResult {
+        let options = options
+            .into_iter()
+            .map(|(name, value)| (name, value.into()))
+            .collect::<HashMap<_, _>>();
+
+        let result = self.meme.generate_preview(options);
         handle_result(result)
     }
 }

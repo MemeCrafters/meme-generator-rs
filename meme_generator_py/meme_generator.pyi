@@ -115,10 +115,13 @@ class Meme:
     ]: ...
     def generate_preview(
         self,
+        options: dict[str, Union[bool, str, int, float]] = {},
     ) -> Union[
         bytes,
         ImageEncodeError,
         ImageAssetMissing,
+        DeserializeError,
+        TextOverLength,
         MemeFeedback,
     ]: ...
 

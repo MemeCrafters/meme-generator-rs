@@ -103,7 +103,7 @@ async fn meme_preview(Path(key): Path<String>) -> impl IntoResponse {
         None => return (StatusCode::NOT_FOUND, "Meme not found").into_response(),
     };
 
-    match spawn_blocking(move || meme.generate_preview())
+    match spawn_blocking(move || meme.generate_preview(HashMap::new()))
         .await
         .unwrap()
     {

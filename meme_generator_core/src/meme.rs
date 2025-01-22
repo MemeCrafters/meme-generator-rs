@@ -180,5 +180,5 @@ pub trait Meme: Send + Sync {
         texts: Vec<String>,
         options: HashMap<String, OptionValue>,
     ) -> Result<Vec<u8>, Error>;
-    fn generate_preview(&self) -> Result<Vec<u8>, Error>;
+    fn generate_preview(&self, options: HashMap<String, OptionValue>) -> Result<Vec<u8>, Error>;
 }

@@ -472,7 +472,7 @@ pub(crate) fn handle_search(sub_matches: &ArgMatches) {
 pub(crate) fn handle_preview(sub_matches: &ArgMatches) {
     let key = sub_matches.get_one::<String>("KEY").unwrap();
     let meme = get_meme(key).expect(format!("表情 `{key}` 不存在").as_str());
-    let result = meme.generate_preview();
+    let result = meme.generate_preview(HashMap::new());
     handle_result(result)
 }
 
