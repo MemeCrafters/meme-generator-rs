@@ -32,12 +32,6 @@ use meme_generator::{
 use crate::config::CONFIG;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ImageData {
-    id: String,
-    base64_data: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
 struct Image {
     name: String,
     id: String,
@@ -46,7 +40,7 @@ struct Image {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct MemeRequest {
     images: Vec<Image>,
-    image_data: Vec<ImageData>,
+    image_data: HashMap<String, String>,
     texts: Vec<String>,
     options: HashMap<String, OptionValue>,
 }
@@ -129,7 +123,7 @@ async fn meme_generate(
     };
 
     let mut id_to_data: HashMap<String, Vec<u8>> = HashMap::new();
-    for ImageData { id, base64_data } in payload.image_data {
+    for (id, base64_data) in payload.image_data {
         match general_purpose::STANDARD.decode(base64_data) {
             Ok(decoded_data) => {
                 id_to_data.insert(id, decoded_data);
