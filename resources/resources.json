@@ -227,6 +227,34 @@
       "hash": "ac084d8002d9ab5702307ba93601940c860b3180b6de3b96966c1773ded7ebc3"
     },
     {
+      "file": "ba_say/arisu.png",
+      "hash": "4e3ee8a6af81f17deacc49b31dd6d3d79e4af2a2f72bf75fd5f46e820aff698d"
+    },
+    {
+      "file": "ba_say/izuna.png",
+      "hash": "5a631f8ee0131fbd4881643da4ebd67f0d2ea6592cf68d86b4645fe20cd5e725"
+    },
+    {
+      "file": "ba_say/key.png",
+      "hash": "698dc5d9506c2001060123b450a0c03316df398e83723cc2dd38d004d110d818"
+    },
+    {
+      "file": "ba_say/kokona.png",
+      "hash": "78cc83f3ba9608419dfcca0b4758b88e66726aa7d0f21debc7edd740127f7fcc"
+    },
+    {
+      "file": "ba_say/mari.png",
+      "hash": "d21c66acc0c28ca34c15976b79d74d78a1efaff2d8b99e20cfcd1d5d012d485a"
+    },
+    {
+      "file": "ba_say/sena.png",
+      "hash": "bdd16538084e5863220761f604ce953924e83169fece612a372b3782236ee7b2"
+    },
+    {
+      "file": "ba_say/yuuka.png",
+      "hash": "ecf2d582b98e4680c93c3bbf6d8ace6a15d0ac82589fa6c1a46744fe218ee5f0"
+    },
+    {
       "file": "back_to_work/0.png",
       "hash": "9d3d86fe8800ceca19966c2a3c8c2c7338f7c582d932706f0d1bb16f3fd681d5"
     },
@@ -4345,14 +4373,6 @@
     {
       "file": "knock/7.png",
       "hash": "8ac40bca1ba857590e48e8924546375707a2a3b70b9df326f83a53f442d285b9"
-    },
-    {
-      "file": "kokona_say/01.png",
-      "hash": "f54f5b02214aa048b8677a72d44854c2bd217cc34a4eb56df92f9ddab35f7633"
-    },
-    {
-      "file": "kokona_say/02.png",
-      "hash": "048b5f246b575cfb31ead2d063bf4e7a3c09766ee496b78ac33f226b5609caca"
     },
     {
       "file": "kokona_seal/01.png",
