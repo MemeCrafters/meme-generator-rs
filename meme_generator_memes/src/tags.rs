@@ -54,6 +54,12 @@ meme_tags!(
     firefly = (["流萤"], star_rail),
     // 蔚蓝档案
     blue_archive = (["蔚蓝档案", "碧蓝档案"]),
+    arisu = (["天童爱丽丝"], blue_archive),
+    izuna = (["久田泉奈"], blue_archive),
+    key = (["key"], blue_archive),
+    mari = (["伊落玛丽"], blue_archive),
+    sena = (["冰室濑名"], blue_archive),
+    yuuka = (["早濑优香"], blue_archive),
     shiroko = (["砂狼白子"], blue_archive),
     kokona = (["春原心奈", "春原心菜"], blue_archive),
     plana = (["普拉娜"], blue_archive),
