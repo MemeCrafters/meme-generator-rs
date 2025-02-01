@@ -20,7 +20,7 @@ use tracing::{info, Level};
 
 use meme_generator::{
     error::Error,
-    get_meme, get_meme_keys,
+    get_meme, get_meme_keys, get_memes,
     meme::{self, OptionValue},
     search_memes,
     tools::{
@@ -72,11 +72,10 @@ async fn meme_info(Path(key): Path<String>) -> impl IntoResponse {
 }
 
 async fn meme_infos() -> impl IntoResponse {
-    let keys = get_meme_keys();
-    let infos: HashMap<_, _> = keys
+    let infos = get_memes()
         .iter()
-        .filter_map(|key| get_meme(key).map(|meme| (key, meme.info())))
-        .collect();
+        .map(|meme| meme.info())
+        .collect::<Vec<_>>();
     Json(infos).into_response()
 }
 
