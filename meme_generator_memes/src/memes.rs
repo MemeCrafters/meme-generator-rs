@@ -210,6 +210,7 @@ mod slogan;
 mod smash;
 mod sold_out;
 mod speechless;
+mod stare_at_you;
 mod steam_message;
 mod step_on;
 mod stew;
