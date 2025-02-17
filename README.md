@@ -27,13 +27,13 @@ _✨ 表情包生成器，用于制作各种沙雕表情包 ✨_
 
 ## 使用、配置
 
-详见 Wiki：[--> Wiki <--](https://github.com/MemeCrafters/meme-generator/wiki)
+详见 Wiki：[--> Wiki <--](https://github.com/MemeCrafters/meme-generator-rs/wiki)
 
 ## 其他
 
 meme-generator-rs 支持通过加载动态链接库的方式加载额外的表情，详见 [加载其他表情](https://github.com/MemeCrafters/meme-generator-rs/wiki/%E5%8A%A0%E8%BD%BD%E5%85%B6%E4%BB%96%E8%A1%A8%E6%83%85)
 
-某些不适合放在主仓库的表情请在 [--> 额外表情仓库 <--](https://github.com/MemeCrafters/meme-generator-contrib) 查看
+某些不适合放在主仓库的表情请在 [--> 额外表情仓库 <--](https://github.com/MemeCrafters/meme-generator-contrib-rs) 查看
 
 ## 声明
 
