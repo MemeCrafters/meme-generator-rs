@@ -113,6 +113,8 @@ register_meme! {
     symmetric,
     min_images = 1,
     max_images = 1,
+    min_texts = 0,
+    max_texts = 1,
     keywords = &["对称"],
     date_created = local_date(2022, 3, 14),
     date_modified = local_date(2023, 2, 14),
