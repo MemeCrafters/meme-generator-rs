@@ -6,7 +6,7 @@ use meme_generator_core::{
     config::MEME_HOME,
     error::Error,
     meme::{Image, Meme, MemeInfo, OptionValue},
-    registry::{MemePackDeclaration, CORE_VERSION, RUSTC_VERSION},
+    registry::{CORE_VERSION, MemePackDeclaration, RUSTC_VERSION},
 };
 use tracing::{info, warn};
 
@@ -98,11 +98,13 @@ impl meme_generator_core::registry::MemeRegistry for ExternalMemeRegistry {
 unsafe fn load_library(
     library_path: &DirEntry,
 ) -> Result<Option<HashMap<String, ExternalMeme>>, libloading::Error> {
-    let library = Rc::new(Library::new(library_path.path())?);
+    let library = Rc::new(unsafe { Library::new(library_path.path()) }?);
 
-    let declaration = library
-        .get::<*mut MemePackDeclaration>(b"MEME_PACK_DECLARATION")?
-        .read();
+    let declaration = unsafe {
+        library
+            .get::<*mut MemePackDeclaration>(b"MEME_PACK_DECLARATION")?
+            .read()
+    };
 
     if declaration.rustc_version != RUSTC_VERSION {
         warn!(
@@ -124,7 +126,7 @@ unsafe fn load_library(
     }
 
     let mut registry = ExternalMemeRegistry::new(library);
-    (declaration.register)(&mut registry);
+    unsafe { (declaration.register)(&mut registry) };
 
     Ok(Some(registry.memes))
 }
