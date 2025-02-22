@@ -12,7 +12,9 @@ edition.workspace = true
 [dependencies]
 axum = "0.7"
 base64 = "0.22"
+base64-serde = "0.8"
 infer = "0.16"
+reqwest = "0.11"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tokio = { version = "1.42", features = ["full"] }

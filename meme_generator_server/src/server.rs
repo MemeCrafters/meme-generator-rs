@@ -1,6 +1,7 @@
 use std::{
     collections::HashMap,
     net::{IpAddr, SocketAddr},
+    path::PathBuf,
 };
 
 use axum::{
@@ -11,7 +12,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use base64::{engine::general_purpose, Engine as _};
+use base64_serde::base64_serde_type;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use tokio::{net::TcpListener, runtime::Runtime, task::spawn_blocking};
@@ -31,6 +32,8 @@ use meme_generator::{
 
 use crate::config::CONFIG;
 
+base64_serde_type!(Base64Standard, base64::engine::general_purpose::STANDARD);
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Image {
     name: String,
@@ -38,9 +41,25 @@ struct Image {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type", rename_all = "snake_case")]
+enum ImageData {
+    Url {
+        url: String,
+        headers: Option<HashMap<String, String>>,
+    },
+    Path {
+        path: PathBuf,
+    },
+    Data {
+        #[serde(with = "Base64Standard")]
+        data: Vec<u8>,
+    },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MemeRequest {
     images: Vec<Image>,
-    image_data: HashMap<String, String>,
+    image_data: HashMap<String, ImageData>,
     texts: Vec<String>,
     options: HashMap<String, OptionValue>,
 }
@@ -122,19 +141,48 @@ async fn meme_generate(
     };
 
     let mut id_to_data: HashMap<String, Vec<u8>> = HashMap::new();
-    for (id, base64_data) in payload.image_data {
-        match general_purpose::STANDARD.decode(base64_data) {
-            Ok(decoded_data) => {
-                id_to_data.insert(id, decoded_data);
+    let client = reqwest::Client::new();
+    for (id, image_data) in payload.image_data {
+        let data = match image_data {
+            ImageData::Url { url, headers } => {
+                let headers = headers.unwrap_or_default();
+                let request = client.get(&url);
+                let request = headers
+                    .iter()
+                    .fold(request, |request, (key, value)| request.header(key, value));
+                match request.send().await {
+                    Ok(resp) => match resp.bytes().await {
+                        Ok(bytes) => bytes.to_vec(),
+                        Err(err) => {
+                            return (
+                                StatusCode::BAD_REQUEST,
+                                format!("Failed to read image data from URL {url}: {err}"),
+                            )
+                                .into_response();
+                        }
+                    },
+                    Err(err) => {
+                        return (
+                            StatusCode::BAD_REQUEST,
+                            format!("Failed to fetch image data from URL {url}: {err}"),
+                        )
+                            .into_response();
+                    }
+                }
             }
-            Err(err) => {
-                return (
-                    StatusCode::BAD_REQUEST,
-                    format!("Invalid Base64 data for image id {id}: {err}"),
-                )
-                    .into_response();
-            }
-        }
+            ImageData::Path { path } => match std::fs::read(&path) {
+                Ok(data) => data,
+                Err(err) => {
+                    return (
+                        StatusCode::BAD_REQUEST,
+                        format!("Failed to read image data from path {path:?}: {err}"),
+                    )
+                        .into_response();
+                }
+            },
+            ImageData::Data { data } => data,
+        };
+        id_to_data.insert(id, data);
     }
 
     let mut images: Vec<meme::Image> = Vec::new();
