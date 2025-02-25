@@ -2,7 +2,7 @@
 
 <img src="https://s2.loli.net/2023/03/26/4URd1BKj3ToycLl.png" width=200 />
 
-# meme-generator
+# meme-generator-rs
 
 _✨ 表情包生成器，用于制作各种沙雕表情包 ✨_
 
