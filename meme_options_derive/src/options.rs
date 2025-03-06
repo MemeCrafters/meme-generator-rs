@@ -1,8 +1,8 @@
 use proc_macro::TokenStream;
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::{
-    ext::IdentExt, punctuated::Punctuated, Data, DeriveInput, Error, Expr, ExprLit, Field, Fields,
-    Ident, Lit, Meta, MetaNameValue, Token, UnOp,
+    Data, DeriveInput, Error, Expr, ExprLit, Field, Fields, Ident, Lit, Meta, MetaNameValue, Token,
+    UnOp, ext::IdentExt, punctuated::Punctuated,
 };
 
 pub fn derive_options(input: &DeriveInput) -> Result<TokenStream, Error> {
@@ -187,14 +187,14 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                                             return Err(Error::new_spanned(
                                                 expr,
                                                 "Expected literal",
-                                            ))
+                                            ));
                                         }
                                     },
                                     _ => {
                                         return Err(Error::new_spanned(
                                             op,
                                             "Only support neg operation",
-                                        ))
+                                        ));
                                     }
                                 }
                             }
@@ -222,14 +222,14 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                                             return Err(Error::new_spanned(
                                                 expr,
                                                 "Expected literal",
-                                            ))
+                                            ));
                                         }
                                     },
                                     _ => {
                                         return Err(Error::new_spanned(
                                             op,
                                             "Only support neg operation",
-                                        ))
+                                        ));
                                     }
                                 }
                             }
@@ -257,14 +257,14 @@ fn parse_option(field: &Field) -> Result<MemeOption, Error> {
                                             return Err(Error::new_spanned(
                                                 expr,
                                                 "Expected literal",
-                                            ))
+                                            ));
                                         }
                                     },
                                     _ => {
                                         return Err(Error::new_spanned(
                                             op,
                                             "Only support neg operation",
-                                        ))
+                                        ));
                                     }
                                 }
                             }

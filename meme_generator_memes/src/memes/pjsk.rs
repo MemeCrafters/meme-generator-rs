@@ -1,4 +1,4 @@
-use rand::{seq::SliceRandom, Rng};
+use rand::{Rng, seq::SliceRandom};
 use skia_safe::{Color, Point};
 
 use meme_generator_core::error::Error;

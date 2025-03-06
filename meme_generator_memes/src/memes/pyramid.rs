@@ -5,7 +5,7 @@ use skia_safe::{ClipOp, Image, Path, Point};
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
+    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
     image::{Fit, ImageExt},
     tools::{local_date, new_surface},
 };

@@ -4,7 +4,7 @@ use skia_safe::Image;
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
+    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
     image::ImageExt,
     tools::local_date,
 };

@@ -7,17 +7,18 @@ use std::{
 };
 
 use clap::{
-    arg,
+    Arg, ArgAction, ArgMatches, Command, arg,
     builder::{PossibleValue, ValueParser},
-    value_parser, Arg, ArgAction, ArgMatches, Command,
+    value_parser,
 };
 
 use meme_generator::{
+    VERSION,
     error::Error,
     get_meme, get_meme_keys, get_memes,
     meme::{Image, MemeOption, OptionValue},
     resources::check_resources_sync,
-    search_memes, VERSION,
+    search_memes,
 };
 #[cfg(feature = "server")]
 use meme_generator_server::run_server_sync;

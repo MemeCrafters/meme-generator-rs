@@ -1,5 +1,5 @@
 use chrono::{Local, NaiveDate};
-use skia_safe::{textlayout::TextAlign, Color};
+use skia_safe::{Color, textlayout::TextAlign};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{

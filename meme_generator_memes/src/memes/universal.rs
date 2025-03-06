@@ -1,4 +1,4 @@
-use skia_safe::{textlayout::TextAlign, Color, FontStyle, Image, Point};
+use skia_safe::{Color, FontStyle, Image, Point, textlayout::TextAlign};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{

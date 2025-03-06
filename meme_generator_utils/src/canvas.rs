@@ -1,4 +1,4 @@
-use skia_safe::{scalar, Canvas, Point, Rect};
+use skia_safe::{Canvas, Point, Rect, scalar};
 
 use meme_generator_core::error::Error;
 

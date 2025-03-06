@@ -7,7 +7,7 @@ mod version;
 pub mod resources;
 pub mod tools;
 pub use meme_generator_core::{
-    config::{read_config_file, MEME_HOME},
+    config::{MEME_HOME, read_config_file},
     error, meme,
 };
 pub use memes::{get_meme, get_meme_keys, get_memes};

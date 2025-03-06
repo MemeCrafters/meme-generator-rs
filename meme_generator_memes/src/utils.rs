@@ -1,4 +1,4 @@
-use qrcode::{render::Pixel, EcLevel, QrCode, Version};
+use qrcode::{EcLevel, QrCode, Version, render::Pixel};
 use skia_safe::{Color, Image, Paint, Surface};
 
 use meme_generator_utils::tools::new_surface;

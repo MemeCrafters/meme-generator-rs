@@ -1,8 +1,8 @@
 use std::{collections::HashMap, sync::LazyLock};
 
-use pinyin::{to_pinyin_vec, Pinyin};
+use pinyin::{Pinyin, to_pinyin_vec};
 use serde::{Deserialize, Serialize};
-use skia_safe::{textlayout::TextAlign, Canvas, Color, Image, PaintJoin, Path, Rect};
+use skia_safe::{Canvas, Color, Image, PaintJoin, Path, Rect, textlayout::TextAlign};
 
 use meme_generator_core::{error::Error, meme::Meme};
 use meme_generator_utils::{

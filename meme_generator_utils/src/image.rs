@@ -1,7 +1,7 @@
 use skia_safe::{
-    canvas::SrcRectConstraint, color_filters, image_filters, BlendMode, ClipOp, Color4f,
-    ColorFilter, ColorMatrix, IRect, ISize, Image, ImageFilter, Matrix, Paint, Path, Point, RRect,
-    Rect, SamplingOptions, Surface,
+    BlendMode, ClipOp, Color4f, ColorFilter, ColorMatrix, IRect, ISize, Image, ImageFilter, Matrix,
+    Paint, Path, Point, RRect, Rect, SamplingOptions, Surface, canvas::SrcRectConstraint,
+    color_filters, image_filters,
 };
 
 use crate::tools::{default_sampling_options, new_surface};

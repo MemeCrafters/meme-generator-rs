@@ -3,10 +3,9 @@ use std::fs::read;
 use chrono::{DateTime, Local, TimeZone};
 use regex::Regex;
 use skia_safe::{
-    scalar, surfaces,
-    textlayout::{Decoration, TextDecoration, TextDecorationMode},
     Color, Color4f, Data, FilterMode, IRect, ISize, Image, MipmapMode, Paint, PaintJoin,
-    PaintStyle, SamplingOptions, Surface,
+    PaintStyle, SamplingOptions, Surface, scalar, surfaces,
+    textlayout::{Decoration, TextDecoration, TextDecorationMode},
 };
 
 use meme_generator_core::error::Error;

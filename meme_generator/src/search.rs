@@ -1,5 +1,4 @@
-use fuzzy_matcher::skim::SkimMatcherV2;
-use fuzzy_matcher::FuzzyMatcher;
+use fuzzy_matcher::{FuzzyMatcher, skim::SkimMatcherV2};
 
 use crate::memes::get_memes;
 

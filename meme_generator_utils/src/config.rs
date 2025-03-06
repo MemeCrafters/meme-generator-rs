@@ -3,7 +3,7 @@ use std::{path::PathBuf, sync::LazyLock};
 use serde::Deserialize;
 use tracing::warn;
 
-use meme_generator_core::config::{read_config_file, MEME_HOME};
+use meme_generator_core::config::{MEME_HOME, read_config_file};
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(default)]

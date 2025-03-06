@@ -2,9 +2,9 @@ use std::collections::{HashMap, HashSet};
 
 use chrono::{DateTime, Local};
 use pyo3::prelude::*;
-use tracing_subscriber::{fmt, prelude::*, EnvFilter};
+use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
-use meme_generator::{error, meme, resources, tools, VERSION};
+use meme_generator::{VERSION, error, meme, resources, tools};
 
 #[pymodule(name = "meme_generator")]
 fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {

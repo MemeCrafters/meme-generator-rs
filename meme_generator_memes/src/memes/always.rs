@@ -1,10 +1,10 @@
-use skia_safe::{textlayout::TextAlign, Color, IRect, Image};
+use skia_safe::{Color, IRect, Image, textlayout::TextAlign};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
-    encoder::{make_gif_or_combined_gif, make_png_or_gif, FrameAlign, GifInfo},
+    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif, make_png_or_gif},
     image::ImageExt,
     shortcut, text_params,
     tools::{local_date, new_surface},

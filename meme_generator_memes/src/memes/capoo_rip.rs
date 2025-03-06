@@ -3,7 +3,7 @@ use skia_safe::{Color, IRect, Image};
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{make_gif_or_combined_gif, GifInfo},
+    encoder::{GifInfo, make_gif_or_combined_gif},
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
 };

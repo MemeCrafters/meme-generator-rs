@@ -2,11 +2,11 @@ use std::{
     collections::HashMap,
     future::Future,
     pin::Pin,
-    sync::{mpsc as std_mpsc, LazyLock, Mutex},
+    sync::{LazyLock, Mutex, mpsc as std_mpsc},
     thread,
 };
 
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use tokio::sync::mpsc;
 use tracing::warn;
 

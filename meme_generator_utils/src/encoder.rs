@@ -1,5 +1,5 @@
 use gif::{DisposalMethod, Encoder, Frame, Repeat};
-use skia_safe::{image::CachingHint, AlphaType, ColorType, EncodedImageFormat, Image, ImageInfo};
+use skia_safe::{AlphaType, ColorType, EncodedImageFormat, Image, ImageInfo, image::CachingHint};
 
 use meme_generator_core::error::Error;
 

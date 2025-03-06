@@ -1,4 +1,4 @@
-use skia_safe::{codec, AlphaType, Codec, ColorType, Image, ImageInfo};
+use skia_safe::{AlphaType, Codec, ColorType, Image, ImageInfo, codec};
 
 use meme_generator_core::error::Error;
 

@@ -5,29 +5,29 @@ use std::{
 };
 
 use axum::{
+    Router,
     body::Body,
     extract::{Json, Path, Query},
     http::StatusCode,
     response::{IntoResponse, Response},
     routing::{get, post},
-    Router,
 };
 use base64_serde::base64_serde_type;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use tokio::{net::TcpListener, runtime::Runtime, task::spawn_blocking};
 use tower_http::trace::{self, TraceLayer};
-use tracing::{info, Level};
+use tracing::{Level, info};
 
 use meme_generator::{
+    VERSION,
     error::Error,
     get_meme, get_meme_keys, get_memes,
     meme::{self, OptionValue},
     search_memes,
     tools::{
-        render_meme_list, render_meme_statistics, RenderMemeListParams, RenderMemeStatisticsParams,
+        RenderMemeListParams, RenderMemeStatisticsParams, render_meme_list, render_meme_statistics,
     },
-    VERSION,
 };
 
 use crate::config::CONFIG;

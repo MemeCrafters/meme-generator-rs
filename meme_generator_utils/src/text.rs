@@ -4,12 +4,11 @@ use std::{
 };
 
 use skia_safe::{
-    scalar,
+    Canvas, Color, FontMgr, FontStyle, Paint, Point, scalar,
     textlayout::{
         FontCollection, Paragraph, ParagraphBuilder, ParagraphStyle, TextAlign, TextDecoration,
         TextStyle, TypefaceFontProvider,
     },
-    Canvas, Color, FontMgr, FontStyle, Paint, Point,
 };
 use tracing::warn;
 
@@ -114,7 +113,7 @@ macro_rules! text_params {
 }
 
 pub mod text_params_setters {
-    use skia_safe::{textlayout::TextAlign, FontStyle, Paint};
+    use skia_safe::{FontStyle, Paint, textlayout::TextAlign};
 
     pub fn font_style(style: FontStyle) -> FontStyle {
         style

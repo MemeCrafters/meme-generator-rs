@@ -1,4 +1,4 @@
-use tracing_subscriber::{fmt, prelude::*, EnvFilter};
+use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
 use meme_generator_server::run_server;
 
