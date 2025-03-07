@@ -2,6 +2,7 @@ use std::{
     collections::HashMap,
     net::{IpAddr, SocketAddr},
     path::PathBuf,
+    sync::LazyLock,
 };
 
 use axum::{
@@ -25,14 +26,22 @@ use meme_generator::{
     get_meme, get_meme_keys, get_memes,
     meme::{self, OptionValue},
     search_memes,
+};
+
+use crate::{
+    config::CONFIG,
     tools::{
-        RenderMemeListParams, RenderMemeStatisticsParams, render_meme_list, render_meme_statistics,
+        image_operations::{
+            crop, flip_horizontal, flip_vertical, gif_change_duration, gif_merge, gif_reverse,
+            gif_split, grayscale, invert, merge_horizontal, merge_vertical, resize, rotate,
+        },
+        render_list, render_statistics,
     },
 };
 
-use crate::config::CONFIG;
-
 base64_serde_type!(Base64Standard, base64::engine::general_purpose::STANDARD);
+
+static REQWEST_CLIENT: LazyLock<reqwest::Client> = LazyLock::new(|| reqwest::Client::new());
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Image {
@@ -42,7 +51,7 @@ struct Image {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
-enum ImageData {
+pub(crate) enum ImageData {
     Url {
         url: String,
         headers: Option<HashMap<String, String>>,
@@ -65,7 +74,7 @@ struct MemeRequest {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ErrorResponse {
+pub(crate) struct ErrorResponse {
     code: u16,
     message: String,
     data: Value,
@@ -82,7 +91,7 @@ async fn meme_keys() -> Json<Vec<&'static str>> {
     Json(get_meme_keys())
 }
 
-async fn meme_info(Path(key): Path<String>) -> impl IntoResponse {
+async fn meme_info(Path(key): Path<String>) -> Response {
     if let Some(meme) = get_meme(&key) {
         Json(meme.info()).into_response()
     } else {
@@ -90,7 +99,7 @@ async fn meme_info(Path(key): Path<String>) -> impl IntoResponse {
     }
 }
 
-async fn meme_infos() -> impl IntoResponse {
+async fn meme_infos() -> Response {
     let infos = get_memes()
         .iter()
         .map(|meme| meme.info())
@@ -109,7 +118,7 @@ async fn meme_search(Query(query): Query<SearchQuery>) -> Json<Vec<String>> {
     Json(keys)
 }
 
-async fn meme_preview(Path(key): Path<String>) -> impl IntoResponse {
+async fn meme_preview(Path(key): Path<String>) -> Response {
     let meme = match get_meme(&key) {
         Some(meme) => meme,
         None => return (StatusCode::NOT_FOUND, "Meme not found").into_response(),
@@ -131,56 +140,59 @@ async fn meme_preview(Path(key): Path<String>) -> impl IntoResponse {
     }
 }
 
-async fn meme_generate(
-    Path(key): Path<String>,
-    Json(payload): Json<MemeRequest>,
-) -> impl IntoResponse {
+pub(crate) async fn handle_image_data(image_data: ImageData) -> Result<Vec<u8>, Response> {
+    match image_data {
+        ImageData::Url { url, headers } => {
+            let headers = headers.unwrap_or_default();
+            let request = REQWEST_CLIENT.get(&url);
+            let request = headers
+                .iter()
+                .fold(request, |request, (key, value)| request.header(key, value));
+            match request.send().await {
+                Ok(response) => match response.bytes().await {
+                    Ok(bytes) => Ok(bytes.to_vec()),
+                    Err(err) => {
+                        let message = format!("Failed to read response body: {err}");
+                        Err((StatusCode::BAD_REQUEST, message).into_response())
+                    }
+                },
+                Err(err) => {
+                    let message = format!("Failed to fetch image url: {err}");
+                    Err((StatusCode::BAD_REQUEST, message).into_response())
+                }
+            }
+        }
+        ImageData::Path { path } => match std::fs::read(&path) {
+            Ok(data) => Ok(data),
+            Err(err) => {
+                let message = format!("Failed to read image file: {err}");
+                Err((StatusCode::BAD_REQUEST, message).into_response())
+            }
+        },
+        ImageData::Data { data } => Ok(data),
+    }
+}
+
+pub(crate) fn handle_image_result(data: Vec<u8>) -> Response {
+    let kind = infer::get(&data).unwrap();
+    Response::builder()
+        .status(StatusCode::OK)
+        .header("Content-Type", kind.mime_type())
+        .body(Body::from(data))
+        .unwrap()
+}
+
+async fn meme_generate(Path(key): Path<String>, Json(payload): Json<MemeRequest>) -> Response {
     let meme = match get_meme(&key) {
         Some(meme) => meme,
         None => return (StatusCode::NOT_FOUND, "Meme not found").into_response(),
     };
 
     let mut id_to_data: HashMap<String, Vec<u8>> = HashMap::new();
-    let client = reqwest::Client::new();
     for (id, image_data) in payload.image_data {
-        let data = match image_data {
-            ImageData::Url { url, headers } => {
-                let headers = headers.unwrap_or_default();
-                let request = client.get(&url);
-                let request = headers
-                    .iter()
-                    .fold(request, |request, (key, value)| request.header(key, value));
-                match request.send().await {
-                    Ok(resp) => match resp.bytes().await {
-                        Ok(bytes) => bytes.to_vec(),
-                        Err(err) => {
-                            return (
-                                StatusCode::BAD_REQUEST,
-                                format!("Failed to read image data from URL {url}: {err}"),
-                            )
-                                .into_response();
-                        }
-                    },
-                    Err(err) => {
-                        return (
-                            StatusCode::BAD_REQUEST,
-                            format!("Failed to fetch image data from URL {url}: {err}"),
-                        )
-                            .into_response();
-                    }
-                }
-            }
-            ImageData::Path { path } => match std::fs::read(&path) {
-                Ok(data) => data,
-                Err(err) => {
-                    return (
-                        StatusCode::BAD_REQUEST,
-                        format!("Failed to read image data from path {path:?}: {err}"),
-                    )
-                        .into_response();
-                }
-            },
-            ImageData::Data { data } => data,
+        let data = match handle_image_data(image_data).await {
+            Ok(data) => data,
+            Err(err) => return err,
         };
         id_to_data.insert(id, data);
     }
@@ -207,55 +219,12 @@ async fn meme_generate(
         .await
         .unwrap()
     {
-        Ok(result) => {
-            let kind = infer::get(&result).unwrap();
-            Response::builder()
-                .status(StatusCode::OK)
-                .header("Content-Type", kind.mime_type())
-                .body(Body::from(result))
-                .unwrap()
-        }
+        Ok(result) => handle_image_result(result),
         Err(error) => handle_error(error).into_response(),
     }
 }
 
-async fn render_list(Json(payload): Json<RenderMemeListParams>) -> impl IntoResponse {
-    let payload = payload.clone();
-    match spawn_blocking(move || render_meme_list(payload))
-        .await
-        .unwrap()
-    {
-        Ok(result) => {
-            let kind = infer::get(&result).unwrap();
-            Response::builder()
-                .status(StatusCode::OK)
-                .header("Content-Type", kind.mime_type())
-                .body(Body::from(result))
-                .unwrap()
-        }
-        Err(error) => handle_error(error).into_response(),
-    }
-}
-
-async fn render_statistics(Json(payload): Json<RenderMemeStatisticsParams>) -> impl IntoResponse {
-    let payload = payload.clone();
-    match spawn_blocking(move || render_meme_statistics(payload))
-        .await
-        .unwrap()
-    {
-        Ok(result) => {
-            let kind = infer::get(&result).unwrap();
-            Response::builder()
-                .status(StatusCode::OK)
-                .header("Content-Type", kind.mime_type())
-                .body(Body::from(result))
-                .unwrap()
-        }
-        Err(error) => handle_error(error).into_response(),
-    }
-}
-
-fn handle_error(error: Error) -> ErrorResponse {
+pub(crate) fn handle_error(error: Error) -> ErrorResponse {
     let message = format!("{error}");
     match error {
         Error::ImageDecodeError(err) => ErrorResponse {
@@ -307,11 +276,42 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
         .route("/meme/keys", get(meme_keys))
         .route("/meme/infos", get(meme_infos))
         .route("/meme/search", get(meme_search))
-        .route("/meme/tools/render_list", post(render_list))
-        .route("/meme/tools/render_statistics", post(render_statistics))
         .route("/memes/:key/info", get(meme_info))
         .route("/memes/:key/preview", get(meme_preview))
         .route("/memes/:key", post(meme_generate))
+        .route("/meme/tools/render_list", post(render_list))
+        .route("/meme/tools/render_statistics", post(render_statistics))
+        .route(
+            "/meme/tools/image_operations/flip_horizontal",
+            post(flip_horizontal),
+        )
+        .route(
+            "/meme/tools/image_operations/flip_vertical",
+            post(flip_vertical),
+        )
+        .route("/meme/tools/image_operations/rotate", post(rotate))
+        .route("/meme/tools/image_operations/resize", post(resize))
+        .route("/meme/tools/image_operations/crop", post(crop))
+        .route("/meme/tools/image_operations/grayscale", post(grayscale))
+        .route("/meme/tools/image_operations/invert", post(invert))
+        .route(
+            "/meme/tools/image_operations/merge_horizontal",
+            post(merge_horizontal),
+        )
+        .route(
+            "/meme/tools/image_operations/merge_vertical",
+            post(merge_vertical),
+        )
+        .route("/meme/tools/image_operations/gif_split", post(gif_split))
+        .route("/meme/tools/image_operations/gif_merge", post(gif_merge))
+        .route(
+            "/meme/tools/image_operations/gif_reverse",
+            post(gif_reverse),
+        )
+        .route(
+            "/meme/tools/image_operations/gif_change_duration",
+            post(gif_change_duration),
+        )
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))

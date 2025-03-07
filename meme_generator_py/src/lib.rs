@@ -4,7 +4,13 @@ use chrono::{DateTime, Local};
 use pyo3::prelude::*;
 use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
-use meme_generator::{VERSION, error, meme, resources, tools};
+use meme_generator::{VERSION, error, meme};
+
+mod resources;
+mod tools;
+
+use resources::register_resources_module;
+use tools::register_tools_module;
 
 #[pymodule(name = "meme_generator")]
 fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -31,18 +37,13 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<TextOverLength>()?;
     m.add_class::<MemeFeedback>()?;
     m.add_class::<Meme>()?;
-    m.add_class::<MemeProperties>()?;
-    m.add_class::<MemeSortBy>()?;
-    m.add_class::<MemeStatisticsType>()?;
     m.add_function(wrap_pyfunction!(get_version, m)?)?;
     m.add_function(wrap_pyfunction!(get_meme, m)?)?;
     m.add_function(wrap_pyfunction!(get_memes, m)?)?;
     m.add_function(wrap_pyfunction!(get_meme_keys, m)?)?;
     m.add_function(wrap_pyfunction!(search_memes, m)?)?;
-    m.add_function(wrap_pyfunction!(check_resources, m)?)?;
-    m.add_function(wrap_pyfunction!(check_resources_in_background, m)?)?;
-    m.add_function(wrap_pyfunction!(render_meme_list, m)?)?;
-    m.add_function(wrap_pyfunction!(render_meme_statistics, m)?)?;
+    register_resources_module(m)?;
+    register_tools_module(m)?;
     Ok(())
 }
 
@@ -542,120 +543,4 @@ fn get_meme_keys() -> Vec<&'static str> {
 #[pyo3(signature = (query, include_tags=false))]
 fn search_memes(query: &str, include_tags: bool) -> Vec<String> {
     meme_generator::search_memes(query, include_tags)
-}
-
-#[pyfunction]
-fn check_resources() {
-    resources::check_resources_sync(None);
-}
-
-#[pyfunction]
-fn check_resources_in_background() {
-    resources::check_resources_in_background(None);
-}
-
-#[pyclass]
-#[derive(Clone)]
-struct MemeProperties {
-    #[pyo3(set)]
-    disabled: bool,
-    #[pyo3(set)]
-    hot: bool,
-    #[pyo3(set)]
-    new: bool,
-}
-
-#[pymethods]
-impl MemeProperties {
-    #[new]
-    #[pyo3(signature = (disabled=false, hot=false, new=false))]
-    fn new(disabled: bool, hot: bool, new: bool) -> Self {
-        Self { disabled, hot, new }
-    }
-}
-
-impl Into<tools::MemeProperties> for MemeProperties {
-    fn into(self) -> tools::MemeProperties {
-        tools::MemeProperties {
-            disabled: self.disabled,
-            hot: self.hot,
-            new: self.new,
-        }
-    }
-}
-
-#[pyclass(eq, eq_int)]
-#[derive(Clone, PartialEq)]
-enum MemeSortBy {
-    Key = 0,
-    Keywords = 1,
-    KeywordsPinyin = 2,
-    DateCreated = 3,
-    DateModified = 4,
-}
-
-impl Into<tools::MemeSortBy> for MemeSortBy {
-    fn into(self) -> tools::MemeSortBy {
-        match self {
-            MemeSortBy::Key => tools::MemeSortBy::Key,
-            MemeSortBy::Keywords => tools::MemeSortBy::Keywords,
-            MemeSortBy::KeywordsPinyin => tools::MemeSortBy::KeywordsPinyin,
-            MemeSortBy::DateCreated => tools::MemeSortBy::DateCreated,
-            MemeSortBy::DateModified => tools::MemeSortBy::DateModified,
-        }
-    }
-}
-
-#[pyfunction]
-#[pyo3(signature = (meme_properties=HashMap::new(), exclude_memes=Vec::new(), sort_by=MemeSortBy::KeywordsPinyin, sort_reverse=false, text_template="{index}. {keywords}".to_string(), add_category_icon=true))]
-fn render_meme_list(
-    meme_properties: HashMap<String, MemeProperties>,
-    exclude_memes: Vec<String>,
-    sort_by: MemeSortBy,
-    sort_reverse: bool,
-    text_template: String,
-    add_category_icon: bool,
-) -> MemeResult {
-    let result = tools::render_meme_list(tools::RenderMemeListParams {
-        meme_properties: meme_properties
-            .into_iter()
-            .map(|(key, value)| (key, value.into()))
-            .collect(),
-        exclude_memes,
-        sort_by: sort_by.into(),
-        sort_reverse,
-        text_template,
-        add_category_icon,
-    });
-    handle_result(result)
-}
-
-#[pyclass(eq, eq_int)]
-#[derive(Clone, PartialEq)]
-enum MemeStatisticsType {
-    MemeCount = 0,
-    TimeCount = 1,
-}
-
-impl Into<tools::MemeStatisticsType> for MemeStatisticsType {
-    fn into(self) -> tools::MemeStatisticsType {
-        match self {
-            MemeStatisticsType::MemeCount => tools::MemeStatisticsType::MemeCount,
-            MemeStatisticsType::TimeCount => tools::MemeStatisticsType::TimeCount,
-        }
-    }
-}
-
-#[pyfunction]
-fn render_meme_statistics(
-    title: String,
-    statistics_type: MemeStatisticsType,
-    data: Vec<(String, i32)>,
-) -> MemeResult {
-    let result = tools::render_meme_statistics(tools::RenderMemeStatisticsParams {
-        title,
-        statistics_type: statistics_type.into(),
-        data,
-    });
-    handle_result(result)
 }

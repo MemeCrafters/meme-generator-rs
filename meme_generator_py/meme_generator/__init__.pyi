@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import Enum
 from typing import Optional, Union
 
 class ParserFlags:
@@ -125,37 +124,8 @@ class Meme:
         MemeFeedback,
     ]: ...
 
-class MemeProperties:
-    def __new__(cls, disabled: bool = False, hot: bool = False, new: bool = False): ...
-
-class MemeSortBy(Enum):
-    Key = 0
-    Keywords = 1
-    KeywordsPinyin = 2
-    DateCreated = 3
-    DateModified = 4
-
-class MemeStatisticsType(Enum):
-    MemeCount = 0
-    TimeCount = 1
-
 def get_version() -> str: ...
 def get_meme(key: str) -> Meme: ...
 def get_memes() -> list[Meme]: ...
 def get_meme_keys() -> list[str]: ...
 def search_memes(query: str, include_tags: bool = False) -> list[str]: ...
-def check_resources() -> None: ...
-def check_resources_in_background() -> None: ...
-def render_meme_list(
-    meme_properties: dict[str, MemeProperties] = {},
-    exclude_memes: list[str] = [],
-    sort_by: MemeSortBy = MemeSortBy.KeywordsPinyin,
-    sort_reverse: bool = False,
-    text_template: str = "{index}. {keywords}",
-    add_category_icon: bool = True,
-) -> Union[bytes, ImageEncodeError]: ...
-def render_meme_statistics(
-    title: str,
-    statistics_type: MemeStatisticsType,
-    data: list[tuple[str, int]],
-) -> Union[bytes, ImageEncodeError]: ...

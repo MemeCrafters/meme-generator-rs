@@ -23,6 +23,8 @@ use meme_generator::{
 #[cfg(feature = "server")]
 use meme_generator_server::run_server_sync;
 
+use crate::tools::{handle_gif, handle_image};
+
 fn build_arg(option: MemeOption) -> Arg {
     match option {
         MemeOption::Boolean {
@@ -277,6 +279,171 @@ pub(crate) fn build_command() -> Command {
                     .overrides_with("url")
                     .value_parser(value_parser!(String)),
             ),
+        )
+        .subcommand(
+            Command::new("tools")
+                .about("工具箱")
+                .subcommand(
+                    Command::new("image")
+                        .about("图片操作")
+                        .subcommands(vec![
+                            Command::new("flip_h")
+                                .about("水平翻转")
+                                .arg(
+                                    arg!(<IMAGE> "图片路径")
+                                        .value_parser(value_parser!(PathBuf))
+                                        .required(true),
+                                )
+                                .arg_required_else_help(true),
+                            Command::new("flip_v")
+                                .about("竖直翻转")
+                                .arg(
+                                    arg!(<IMAGE> "图片路径")
+                                        .value_parser(value_parser!(PathBuf))
+                                        .required(true),
+                                )
+                                .arg_required_else_help(true),
+                            Command::new("rotate")
+                                .about("旋转")
+                                .arg(
+                                    arg!(<IMAGE> "图片路径")
+                                        .value_parser(value_parser!(PathBuf))
+                                        .required(true),
+                                )
+                                .arg(
+                                    arg!(-d --degrees <DEGREES> "角度")
+                                        .overrides_with("degrees")
+                                        .value_parser(value_parser!(f32)),
+                                )
+                                .arg_required_else_help(true),
+                            Command::new("resize")
+                                .about("调整大小")
+                                .arg(
+                                    arg!(<IMAGE> "图片路径")
+                                        .value_parser(value_parser!(PathBuf))
+                                        .required(true),
+                                )
+                                .arg(
+                                    arg!(-w --width <WIDTH> "宽度")
+                                        .overrides_with("width")
+                                        .value_parser(value_parser!(i32)),
+                                )
+                                .arg(
+                                    arg!(-h --height <HEIGHT> "高度")
+                                        .overrides_with("height")
+                                        .value_parser(value_parser!(i32)),
+                                )
+                                .arg_required_else_help(true),
+                            Command::new("crop")
+                                .about("裁剪")
+                                .arg(
+                                    arg!(<IMAGE> "图片路径")
+                                        .value_parser(value_parser!(PathBuf))
+                                        .required(true),
+                                )
+                                .arg(
+                                    arg!(-l --left <LEFT> "左边界")
+                                        .overrides_with("left")
+                                        .value_parser(value_parser!(i32)),
+                                )
+                                .arg(
+                                    arg!(-t --top <TOP> "上边界")
+                                        .overrides_with("top")
+                                        .value_parser(value_parser!(i32)),
+                                )
+                                .arg(
+                                    arg!(-r --right <RIGHT> "右边界")
+                                        .overrides_with("right")
+                                        .value_parser(value_parser!(i32)),
+                                )
+                                .arg(
+                                    arg!(-b --bottom <BOTTOM> "下边界")
+                                        .overrides_with("bottom")
+                                        .value_parser(value_parser!(i32)),
+                                )
+                                .arg_required_else_help(true),
+                            Command::new("grayscale")
+                                .about("灰度化")
+                                .arg(
+                                    arg!(<IMAGE> "图片路径")
+                                        .value_parser(value_parser!(PathBuf))
+                                        .required(true),
+                                )
+                                .arg_required_else_help(true),
+                            Command::new("invert")
+                                .about("反色")
+                                .arg(
+                                    arg!(<IMAGE> "图片路径")
+                                        .value_parser(value_parser!(PathBuf))
+                                        .required(true),
+                                )
+                                .arg_required_else_help(true),
+                            Command::new("merge_h")
+                                .about("水平拼接")
+                                .arg(
+                                    arg!(<IMAGES> "图片路径")
+                                        .value_parser(value_parser!(PathBuf))
+                                        .num_args(2..),
+                                )
+                                .arg_required_else_help(true),
+                            Command::new("merge_v")
+                                .about("竖直拼接")
+                                .arg(
+                                    arg!(<IMAGES> "图片路径")
+                                        .value_parser(value_parser!(PathBuf))
+                                        .num_args(2..),
+                                )
+                                .arg_required_else_help(true),
+                        ])
+                        .subcommand_required(true),
+                )
+                .subcommand(
+                    Command::new("gif")
+                        .about("gif操作")
+                        .subcommands(vec![
+                            Command::new("split")
+                                .about("拆分")
+                                .arg(
+                                    arg!(<IMAGE> "gif路径")
+                                        .value_parser(value_parser!(PathBuf))
+                                        .required(true),
+                                )
+                                .arg_required_else_help(true),
+                            Command::new("merge")
+                                .about("合并")
+                                .arg(
+                                    arg!(<IMAGES> "gif路径")
+                                        .value_parser(value_parser!(PathBuf))
+                                        .num_args(2..),
+                                )
+                                .arg(
+                                    arg!(-d --duration <DURATION> "帧间隔时间")
+                                        .overrides_with("duration")
+                                        .value_parser(value_parser!(f32)),
+                                )
+                                .arg_required_else_help(true),
+                            Command::new("reverse").about("反转").arg(
+                                arg!(<IMAGE> "gif路径")
+                                    .value_parser(value_parser!(PathBuf))
+                                    .required(true),
+                            ),
+                            Command::new("duration")
+                                .about("调整帧间隔时间")
+                                .arg(
+                                    arg!(<DURATION> "帧间隔时间")
+                                        .value_parser(value_parser!(f32))
+                                        .required(true),
+                                )
+                                .arg(
+                                    arg!(<IMAGE> "gif路径")
+                                        .value_parser(value_parser!(PathBuf))
+                                        .required(true),
+                                )
+                                .arg_required_else_help(true),
+                        ])
+                        .subcommand_required(true),
+                )
+                .subcommand_required(true),
         );
     #[cfg(feature = "server")]
     {
@@ -594,6 +761,18 @@ fn handle_result(result: Result<Vec<u8>, Error>) {
 pub(crate) fn handle_download(sub_matches: &ArgMatches) {
     let resource_url = sub_matches.get_one::<String>("url");
     check_resources_sync(resource_url.cloned());
+}
+
+pub(crate) fn handle_tools(sub_matches: &ArgMatches) {
+    match sub_matches.subcommand() {
+        Some(("image", sub_matches)) => {
+            handle_image(sub_matches);
+        }
+        Some(("gif", sub_matches)) => {
+            handle_gif(sub_matches);
+        }
+        _ => {}
+    }
 }
 
 #[cfg(feature = "server")]

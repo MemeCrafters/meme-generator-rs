@@ -1,4 +1,5 @@
 mod cli;
+mod tools;
 
 use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
@@ -6,7 +7,7 @@ use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 use cli::handle_run;
 use cli::{
     build_command, handle_download, handle_generate, handle_info, handle_list, handle_preview,
-    handle_search,
+    handle_search, handle_tools,
 };
 
 fn main() {
@@ -35,6 +36,9 @@ fn main() {
         }
         Some(("download", sub_matches)) => {
             handle_download(sub_matches);
+        }
+        Some(("tools", sub_matches)) => {
+            handle_tools(sub_matches);
         }
         #[cfg(feature = "server")]
         Some(("run", sub_matches)) => {
