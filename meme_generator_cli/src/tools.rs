@@ -9,12 +9,15 @@ use meme_generator::{
     error::Error,
     tools::image_operations::{
         crop, flip_horizontal, flip_vertical, gif_change_duration, gif_merge, gif_reverse,
-        gif_split, grayscale, invert, merge_horizontal, merge_vertical, resize, rotate,
+        gif_split, grayscale, inspect, invert, merge_horizontal, merge_vertical, resize, rotate,
     },
 };
 
 pub(crate) fn handle_image(sub_matches: &ArgMatches) {
     match sub_matches.subcommand() {
+        Some(("inspect", sub_matches)) => {
+            handle_image_inspect(sub_matches);
+        }
         Some(("flip_h", sub_matches)) => {
             handle_image_flip_h(sub_matches);
         }
@@ -122,6 +125,29 @@ fn handle_results(results: Result<Vec<Vec<u8>>, Error>) {
                 write(filename, result).expect(&format!("图片 `{filename}` 保存失败"));
             }
             println!("操作成功，生成的文件保存在 `result` 目录中");
+        }
+        _ => {}
+    };
+}
+
+fn handle_image_inspect(sub_matches: &ArgMatches) {
+    let data = parse_image(sub_matches);
+    let result = inspect(data);
+    match result {
+        Err(Error::ImageDecodeError(err)) => {
+            eprintln!("图片解码失败：{err}");
+        }
+        Err(Error::ImageEncodeError(err)) => {
+            eprintln!("图片编码失败：{err}");
+        }
+        Ok(result) => {
+            println!("图片信息：");
+            println!("宽度：{}", result.width);
+            println!("高度：{}", result.height);
+            if result.is_multi_frame {
+                println!("帧数：{}", result.frame_count.unwrap());
+                println!("平均帧间隔：{:.2} 秒", result.average_duration.unwrap());
+            }
         }
         _ => {}
     };

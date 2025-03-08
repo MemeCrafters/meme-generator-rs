@@ -1,13 +1,18 @@
 use pyo3::prelude::*;
 
-use meme_generator::tools::image_operations;
+use meme_generator::{error, tools::image_operations};
 
-use crate::tools::{ImageResult, ImagesResult, handle_image_result, handle_images_result};
+use crate::{
+    Error, ImageDecodeError,
+    tools::{ImageResult, ImagesResult, handle_image_result, handle_images_result},
+};
 
 pub(crate) fn register_image_operations_module(
     parent_module: &Bound<'_, PyModule>,
 ) -> PyResult<()> {
     let m = PyModule::new(parent_module.py(), "image_operations")?;
+    m.add_class::<ImageInfo>()?;
+    m.add_function(wrap_pyfunction!(inspect, &m)?)?;
     m.add_function(wrap_pyfunction!(flip_horizontal, &m)?)?;
     m.add_function(wrap_pyfunction!(flip_vertical, &m)?)?;
     m.add_function(wrap_pyfunction!(rotate, &m)?)?;
@@ -28,6 +33,47 @@ pub(crate) fn register_image_operations_module(
             .set_item("meme_generator.tools.image_operations", m)
     })?;
     Ok(())
+}
+
+#[pyclass]
+#[derive(Clone)]
+struct ImageInfo {
+    #[pyo3(get)]
+    width: i32,
+    #[pyo3(get)]
+    height: i32,
+    #[pyo3(get)]
+    is_multi_frame: bool,
+    #[pyo3(get)]
+    frame_count: Option<i32>,
+    #[pyo3(get)]
+    average_duration: Option<f32>,
+}
+
+#[derive(IntoPyObject, Clone)]
+enum ImageInfoResult {
+    Ok(ImageInfo),
+    Err(Error),
+}
+
+#[pyfunction]
+fn inspect(image: Vec<u8>) -> ImageInfoResult {
+    let result = image_operations::inspect(image);
+    match result {
+        Ok(info) => ImageInfoResult::Ok(ImageInfo {
+            width: info.width,
+            height: info.height,
+            is_multi_frame: info.is_multi_frame,
+            frame_count: info.frame_count,
+            average_duration: info.average_duration,
+        }),
+        Err(error) => match error {
+            error::Error::ImageDecodeError(error) => {
+                ImageInfoResult::Err(Error::ImageDecodeError(ImageDecodeError { error }))
+            }
+            _ => unreachable!(),
+        },
+    }
 }
 
 #[pyfunction]

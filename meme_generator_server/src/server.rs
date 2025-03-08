@@ -33,7 +33,8 @@ use crate::{
     tools::{
         image_operations::{
             crop, flip_horizontal, flip_vertical, gif_change_duration, gif_merge, gif_reverse,
-            gif_split, grayscale, invert, merge_horizontal, merge_vertical, resize, rotate,
+            gif_split, grayscale, inspect, invert, merge_horizontal, merge_vertical, resize,
+            rotate,
         },
         render_list, render_statistics,
     },
@@ -87,8 +88,8 @@ impl IntoResponse for ErrorResponse {
     }
 }
 
-async fn meme_keys() -> Json<Vec<&'static str>> {
-    Json(get_meme_keys())
+async fn meme_keys() -> Response {
+    Json(get_meme_keys()).into_response()
 }
 
 async fn meme_info(Path(key): Path<String>) -> Response {
@@ -113,9 +114,9 @@ struct SearchQuery {
     include_tags: Option<bool>,
 }
 
-async fn meme_search(Query(query): Query<SearchQuery>) -> Json<Vec<String>> {
+async fn meme_search(Query(query): Query<SearchQuery>) -> Response {
     let keys = search_memes(&query.query, query.include_tags.unwrap_or(false));
-    Json(keys)
+    Json(keys).into_response()
 }
 
 async fn meme_preview(Path(key): Path<String>) -> Response {
@@ -281,6 +282,7 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
         .route("/memes/:key", post(meme_generate))
         .route("/meme/tools/render_list", post(render_list))
         .route("/meme/tools/render_statistics", post(render_statistics))
+        .route("/meme/tools/image_operations/inspect", post(inspect))
         .route(
             "/meme/tools/image_operations/flip_horizontal",
             post(flip_horizontal),

@@ -6,6 +6,7 @@ use meme_generator_utils::{
     image::{Fit, ImageExt},
     tools::new_surface,
 };
+use serde::{Deserialize, Serialize};
 use skia_safe::{Codec, Data, IRect, Image};
 
 fn decode_image(data: Vec<u8>) -> Result<Codec<'static>, Error> {
@@ -19,6 +20,37 @@ fn input_image(data: Vec<u8>) -> Result<InputImage<'static>, Error> {
         data,
     };
     InputImage::from(&image)
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ImageInfo {
+    pub width: i32,
+    pub height: i32,
+    pub is_multi_frame: bool,
+    pub frame_count: Option<i32>,
+    pub average_duration: Option<f32>,
+}
+
+pub fn inspect(image: Vec<u8>) -> Result<ImageInfo, Error> {
+    let mut codec = decode_image(image)?;
+    let is_multi_frame = codec.is_multi_frame();
+    let frame_count = if is_multi_frame {
+        Some(codec.get_frame_count() as i32)
+    } else {
+        None
+    };
+    let average_duration = if is_multi_frame {
+        Some(codec.get_average_duration()?)
+    } else {
+        None
+    };
+    Ok(ImageInfo {
+        width: codec.dimensions().width,
+        height: codec.dimensions().height,
+        is_multi_frame,
+        frame_count,
+        average_duration,
+    })
 }
 
 pub fn flip_horizontal(image: Vec<u8>) -> Result<Vec<u8>, Error> {

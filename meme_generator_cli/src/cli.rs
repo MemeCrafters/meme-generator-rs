@@ -287,6 +287,14 @@ pub(crate) fn build_command() -> Command {
                     Command::new("image")
                         .about("图片操作")
                         .subcommands(vec![
+                            Command::new("inspect")
+                                .about("查看图片信息")
+                                .arg(
+                                    arg!(<IMAGE> "图片路径")
+                                        .value_parser(value_parser!(PathBuf))
+                                        .required(true),
+                                )
+                                .arg_required_else_help(true),
                             Command::new("flip_h")
                                 .about("水平翻转")
                                 .arg(

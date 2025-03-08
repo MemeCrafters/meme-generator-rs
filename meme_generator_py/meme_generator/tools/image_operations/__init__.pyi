@@ -2,6 +2,16 @@ from typing import Optional, Union
 
 from ... import ImageDecodeError, ImageEncodeError
 
+class ImageInfo:
+    width: int
+    height: int
+    is_multi_frame: bool
+    frame_count: Optional[int]
+    average_duration: Optional[float]
+
+def inspect(
+    image: bytes,
+) -> Union[ImageInfo, ImageDecodeError]: ...
 def flip_horizontal(
     image: bytes,
 ) -> Union[bytes, ImageDecodeError, ImageEncodeError]: ...

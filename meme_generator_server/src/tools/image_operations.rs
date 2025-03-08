@@ -19,6 +19,21 @@ pub(crate) struct ImageRequest {
     image: ImageData,
 }
 
+pub(crate) async fn inspect(Json(payload): Json<ImageRequest>) -> Response {
+    let data = match handle_image_data(payload.image).await {
+        Ok(data) => data,
+        Err(err) => return err.into_response(),
+    };
+
+    match spawn_blocking(move || image_operations::inspect(data))
+        .await
+        .unwrap()
+    {
+        Ok(result) => Json(result).into_response(),
+        Err(error) => handle_error(error).into_response(),
+    }
+}
+
 pub(crate) async fn flip_horizontal(Json(payload): Json<ImageRequest>) -> Response {
     let data = match handle_image_data(payload.image).await {
         Ok(data) => data,
