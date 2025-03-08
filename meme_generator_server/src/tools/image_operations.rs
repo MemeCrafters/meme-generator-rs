@@ -270,13 +270,19 @@ pub(crate) async fn gif_reverse(Json(payload): Json<ImageRequest>) -> Response {
     }
 }
 
-pub(crate) async fn gif_change_duration(Json(payload): Json<ImageRequest>) -> Response {
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub(crate) struct GifDurationRequest {
+    image: ImageData,
+    duration: f32,
+}
+
+pub(crate) async fn gif_change_duration(Json(payload): Json<GifDurationRequest>) -> Response {
     let data = match handle_image_data(payload.image).await {
         Ok(data) => data,
         Err(err) => return err.into_response(),
     };
 
-    match spawn_blocking(move || image_operations::gif_change_duration(data, 0.1))
+    match spawn_blocking(move || image_operations::gif_change_duration(data, payload.duration))
         .await
         .unwrap()
     {
