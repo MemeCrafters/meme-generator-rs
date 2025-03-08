@@ -1,14 +1,10 @@
-use std::io::{Cursor, Write};
-
 use axum::{
-    body::Body,
     extract::Json,
-    http::StatusCode,
     response::{IntoResponse, Response},
 };
+use base64::{Engine as _, engine::general_purpose};
 use serde::{Deserialize, Serialize};
 use tokio::task::spawn_blocking;
-use zip::write::SimpleFileOptions;
 
 use meme_generator::tools::image_operations;
 
@@ -211,24 +207,11 @@ pub(crate) async fn merge_vertical(Json(payload): Json<ImagesRequest>) -> Respon
 }
 
 pub(crate) fn handle_images_result(images: Vec<Vec<u8>>) -> Response {
-    let mut data = Vec::new();
-    let cursor = Cursor::new(&mut data);
-    let mut zip = zip::ZipWriter::new(cursor);
-    let options = SimpleFileOptions::default()
-        .compression_method(zip::CompressionMethod::Stored)
-        .unix_permissions(0o755);
-    for (i, image) in images.iter().enumerate() {
-        zip.start_file(format!("{i}.png"), options).unwrap();
-        zip.write_all(image).unwrap();
-    }
-    zip.finish().unwrap();
-
-    let kind = infer::get(&data).unwrap();
-    Response::builder()
-        .status(StatusCode::OK)
-        .header("Content-Type", kind.mime_type())
-        .body(Body::from(data))
-        .unwrap()
+    let images = images
+        .into_iter()
+        .map(|image| general_purpose::STANDARD.encode(&image))
+        .collect::<Vec<_>>();
+    Json(images).into_response()
 }
 
 pub(crate) async fn gif_split(Json(payload): Json<ImageRequest>) -> Response {
