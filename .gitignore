@@ -6,6 +6,7 @@ avatar.jpg
 /config.toml
 test.py
 temp/
+tmp/
 libraries/
 
 *.venv/
