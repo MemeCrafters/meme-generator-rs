@@ -234,7 +234,7 @@ impl ImageExt for Image {
         let image = self.square();
         let radius = image.width() as f32 / 2.0;
         let path = Path::circle((radius, radius), radius, None);
-        self.clip_path(&path, ClipOp::Intersect)
+        image.clip_path(&path, ClipOp::Intersect)
     }
 
     fn round_corner(&self, radius: f32) -> Image {
