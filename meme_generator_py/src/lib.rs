@@ -520,10 +520,7 @@ fn get_version() -> &'static str {
 
 #[pyfunction]
 fn get_meme(key: &str) -> Option<Meme> {
-    match meme_generator::get_meme(key) {
-        Some(meme) => Some(Meme { meme }),
-        None => None,
-    }
+    meme_generator::get_meme(key).map(|meme| Meme { meme })
 }
 
 #[pyfunction]
