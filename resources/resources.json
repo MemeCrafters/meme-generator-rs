@@ -2567,6 +2567,10 @@
       "hash": "6220b9a7f8e68b7863c06ecb1a2adf5db6f87351b98a7a7d467ed800bef94d27"
     },
     {
+      "file": "fogging/0.png",
+      "hash": "f3d3a2d16361cceb5786bac67b4ced279859f302746c4e9c27f7d828f69c49b0"
+    },
+    {
       "file": "forbid/0.png",
       "hash": "ee7ab807242466495666c51e79c3b3b20e71873c45e56da8c017b0fad64d1cc6"
     },
@@ -8385,6 +8389,10 @@
     {
       "file": "read_book/0.png",
       "hash": "b0b1a01cd164dbb27430fecce6f4f7042bf5e8ffd83e8f9b3e66c6ad6a608cc0"
+    },
+    {
+      "file": "remote_control/0.png",
+      "hash": "6c3d0a582886c53c6789a5f91cbfd9b6ec0e9ca4340d76182389a92c13622ac8"
     },
     {
       "file": "repeat/0.jpg",
