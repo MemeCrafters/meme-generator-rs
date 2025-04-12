@@ -50,7 +50,7 @@ impl Default for EncoderConfig {
     fn default() -> Self {
         EncoderConfig {
             gif_max_frames: 200,
-            gif_encode_speed: 10,
+            gif_encode_speed: 1,
         }
     }
 }
