@@ -41,7 +41,7 @@ meme-generator-rs 支持通过加载动态链接库的方式加载额外的表�
 
 ## 鸣谢
 
-- 感谢本项目以及 [nonebot-plugin-petpet](https://github.com/noneplugin/nonebot-plugin-petpet)、[nonebot-plugin-memes](https://github.com/noneplugin/nonebot-plugin-memes)、[meme-generator](https://github.com/MemeCrafters/meme-generator) 项目的贡献者们
+- 感谢本项目以及 [nonebot-plugin-petpet](https://github.com/MemeCrafters/nonebot-plugin-petpet)、[nonebot-plugin-memes](https://github.com/MemeCrafters/nonebot-plugin-memes)、[meme-generator](https://github.com/MemeCrafters/meme-generator) 项目的贡献者们
 
 部分表情素材或代码参考了以下项目，感谢这些项目的开发者们
 
