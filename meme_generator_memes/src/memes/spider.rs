@@ -20,7 +20,7 @@ fn spider(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u
     let mut rng = rand::thread_rng();
 
     let func = |i: usize, images: Vec<Image>| {
-        let frame = load_image(format!("spider/{i}.png"))?;
+        let frame = load_image(format!("spider/{i:02}.png"))?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         let img = images[0].circle().resize_exact((80, 80));
@@ -45,6 +45,6 @@ register_meme!(
     min_images = 1,
     max_images = 1,
     keywords = &["蜘蛛", "蜘蛛爬"],
-    date_created = local_date(2024, 4, 28),
-    date_modified = local_date(2024, 4, 28),
+    date_created = local_date(2025, 4, 27),
+    date_modified = local_date(2025, 4, 27),
 );
