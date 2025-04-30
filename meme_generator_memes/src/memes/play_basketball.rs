@@ -54,15 +54,17 @@ fn play_basketball(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Res
 
     let func = |i: usize, images: Vec<Image>| {
         let frame = load_image(format!("play_basketball/{i:02}.png"))?;
-        let mut surface = new_surface(frame.dimensions());
-        let canvas = surface.canvas();
         if let Some((x, y, angle)) = locs[i] {
+            let mut surface = new_surface(frame.dimensions());
+            let canvas = surface.canvas();
             let img = images[0].circle().resize_exact((77, 77)).rotate(angle);
             let ISize { width, height } = img.dimensions();
             canvas.draw_image(&img, (x - width / 2, y - height / 2), None);
+            canvas.draw_image(&frame, (0, 0), None);
+            Ok(surface.image_snapshot())
+        } else {
+            Ok(frame)
         }
-        canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
     };
 
     make_gif_or_combined_gif(
@@ -83,6 +85,6 @@ register_meme!(
     max_images = 1,
     keywords = &["打篮球", "火柴人打篮球"],
     tags = MemeTags::stickman(),
-    date_created = local_date(2024, 4, 17),
-    date_modified = local_date(2024, 4, 17),
+    date_created = local_date(2024, 4, 30),
+    date_modified = local_date(2024, 4, 30),
 );
