@@ -123,6 +123,10 @@ meme_tags!(
     luotianyi = (["洛天依"]),
     // 世界计划
     project_sekai = (["世界计划"]),
+    // 魔女的夜宴
+    yuzu_soft = (["柚子社"]),
+    sabbat_of_the_witch = (["魔女的夜宴"], yuzu_soft),
+    ayachi = (["绫地宁宁"], sabbat_of_the_witch),
     // 其他
     atri = (["亚托莉", "ATRI", "萝卜子"]),
     capoo = (["猫猫虫", "咖波"]),
