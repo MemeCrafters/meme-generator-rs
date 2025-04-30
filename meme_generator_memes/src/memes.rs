@@ -176,6 +176,7 @@ mod pinch;
 mod pixelate;
 mod pjsk;
 mod plana_eat;
+mod play_basketball;
 mod play_game;
 mod play_together;
 mod police;

@@ -134,4 +134,5 @@ meme_tags!(
     maimai = (["舞萌"]),
     nekoha = (["猫羽雫"]),
     persona5 = (["女神异闻录5"]),
+    stickman = (["火柴人"]),
 );
