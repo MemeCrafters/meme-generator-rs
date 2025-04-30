@@ -221,6 +221,7 @@ mod stare_at_you;
 mod steam_message;
 mod step_on;
 mod stew;
+mod stickman_dancing;
 mod subject3;
 mod suck;
 mod support;
