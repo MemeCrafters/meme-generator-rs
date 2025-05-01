@@ -227,6 +227,10 @@
       "hash": "ac084d8002d9ab5702307ba93601940c860b3180b6de3b96966c1773ded7ebc3"
     },
     {
+      "file": "ayachi_holdsign/0.png",
+      "hash": "fb8037ab375e811f05083b2e24e887d96374843488b3d19b366c6e2df5ea1149"
+    },
+    {
       "file": "ba_say/arisu.png",
       "hash": "4e3ee8a6af81f17deacc49b31dd6d3d79e4af2a2f72bf75fd5f46e820aff698d"
     },
@@ -7607,6 +7611,158 @@
       "hash": "6c5ce831d71266d1dee3458b0cc53e698995b2aa7644a66b1bfc8b5642af60c4"
     },
     {
+      "file": "play_basketball/00.png",
+      "hash": "7fdd89de2c8b46ae0d90ca8ed9f5451d4aa05f098d50f2494cef2a9d90584b86"
+    },
+    {
+      "file": "play_basketball/01.png",
+      "hash": "c80d9e1fa5da21921a2827771949b4c9e79c9ad5b9367e713e4932c58c5d9db2"
+    },
+    {
+      "file": "play_basketball/02.png",
+      "hash": "4e4340d416e5ab838b40a62562f282085e1f0f45bba433767973b4ea21809f2a"
+    },
+    {
+      "file": "play_basketball/03.png",
+      "hash": "dc0f652d135c2b03ced28c5e466083709a1c9008bc3346696e66ef2e710e6903"
+    },
+    {
+      "file": "play_basketball/04.png",
+      "hash": "0c34c8aa823063fb19c20751d49daa10a74126a924c5c8ecb5cf2bf3619ea431"
+    },
+    {
+      "file": "play_basketball/05.png",
+      "hash": "d15abed1db6451cdef2455bc129088e688a8dbb1842592a60584b9bc9a4cf921"
+    },
+    {
+      "file": "play_basketball/06.png",
+      "hash": "56811ab8645fcb69db08fdc70a8cf643669d40372b415430c656444e35dcab45"
+    },
+    {
+      "file": "play_basketball/07.png",
+      "hash": "e965e50cf9081166d63618a8171a1d6f1998900ed8c1a3e9ade945cd445a8b9e"
+    },
+    {
+      "file": "play_basketball/08.png",
+      "hash": "e03a0bd80142e8b458c1b3169994a6c3ad1e9c50490c7409da3f94253adc6047"
+    },
+    {
+      "file": "play_basketball/09.png",
+      "hash": "f576b115bb51808f42d01813b4c4c95c3611f6b120748983c55e8762042e2df6"
+    },
+    {
+      "file": "play_basketball/10.png",
+      "hash": "2e4634232ec1b650f9a7d6959f24e3636ca6b417aa9e291068a2627a07b7029f"
+    },
+    {
+      "file": "play_basketball/11.png",
+      "hash": "4f7360c80980e79ce60acb8266456fa5d79880852c614892561891f48929aa7d"
+    },
+    {
+      "file": "play_basketball/12.png",
+      "hash": "645e755d2badf6b0a6ddf15cc7587641b3085c0fb14f9121ae2515edbfe42374"
+    },
+    {
+      "file": "play_basketball/13.png",
+      "hash": "d27b5259f188ce2b7f7a3617dc500ed52437baf44d46fa752b9b2e62fc22f9a1"
+    },
+    {
+      "file": "play_basketball/14.png",
+      "hash": "a0ecd8832e5f2f784eba08eecabc145f0aa1623d556159d7eaa0c6b01386a3ed"
+    },
+    {
+      "file": "play_basketball/15.png",
+      "hash": "8275259e86a992f2226fa738abbf09f029c61d1228bf980ba0de61c6b3dccae3"
+    },
+    {
+      "file": "play_basketball/16.png",
+      "hash": "e9bb3bbce973203c95b83802e5f7133ab0c0752ce74ca6617765887c774a7509"
+    },
+    {
+      "file": "play_basketball/17.png",
+      "hash": "c41a3c8060045774730e62e12c4b0fe5d5b3c90fd830a432f07f8b0de6152f03"
+    },
+    {
+      "file": "play_basketball/18.png",
+      "hash": "a32d0f37ae8cc9728e2d37d1b1d09c0f338234b7397cb36ee96013c7b721b410"
+    },
+    {
+      "file": "play_basketball/19.png",
+      "hash": "7336414059b52b91ae3a4cdb37fffb32491274cdddef6a35d9244bf947473744"
+    },
+    {
+      "file": "play_basketball/20.png",
+      "hash": "ec9e863181a34fe404a31f40039dc047458eba9d7be51f6e5ff0bdf43034c738"
+    },
+    {
+      "file": "play_basketball/21.png",
+      "hash": "1368d70aff9cbfc718ce07a7f242453f756cf9e89bd7fc70d4326be7cafc29b9"
+    },
+    {
+      "file": "play_basketball/22.png",
+      "hash": "80a627d6b41ddc4d0684aac1102b02df54b1182ac5aa97c1a6912ebbe85ac06e"
+    },
+    {
+      "file": "play_basketball/23.png",
+      "hash": "4429ed94a82451735104f80f3657c06fa227ceff4ecdafbdd096ae554460e741"
+    },
+    {
+      "file": "play_basketball/24.png",
+      "hash": "0f3f9f14457d0fcf2d5f2c738f98d44b60a3021369312b4648fe364bece65d6c"
+    },
+    {
+      "file": "play_basketball/25.png",
+      "hash": "204f7317dc36b0cceabf8e0d52e793b8ac66fb1eb9ba22b06e85c9bca3a9c416"
+    },
+    {
+      "file": "play_basketball/26.png",
+      "hash": "2d92cf6cff0b01810dc8440318c90b29cdf1840bfc0b7a3c13bddc7e506667b5"
+    },
+    {
+      "file": "play_basketball/27.png",
+      "hash": "b51a093a32775ca181c830a03be382d954f92939e895665dd6f13166b64fc23c"
+    },
+    {
+      "file": "play_basketball/28.png",
+      "hash": "10c819f8b58a995a85d4be774f2998fc707a721867a1ac4765ef91359a1d982f"
+    },
+    {
+      "file": "play_basketball/29.png",
+      "hash": "82b3c88c68358b52c84125cab474854391406370ee8cbe1c0fabaa194e54e14e"
+    },
+    {
+      "file": "play_basketball/30.png",
+      "hash": "b4a46df5734acd798a7a9793eaeddd9604cc789891cc4ada0609d5cd572a06a4"
+    },
+    {
+      "file": "play_basketball/31.png",
+      "hash": "28fdd420498218f3ff43d3b6d8bf05aa0f043f4a1bb9ae36e2ab627a0f4216ba"
+    },
+    {
+      "file": "play_basketball/32.png",
+      "hash": "acab26b3ee709e65262f0c8e4f990a70f9a5fa7aff9909281889b4fb9aab8ef9"
+    },
+    {
+      "file": "play_basketball/33.png",
+      "hash": "a82edb1797b4d53a3d11b9362665c23189bc036d24ea58d20a0dcc182a1824b5"
+    },
+    {
+      "file": "play_basketball/34.png",
+      "hash": "23919641b05f270079049d5998d0ace01d4b469fc048b569cec9138af50c37b8"
+    },
+    {
+      "file": "play_basketball/35.png",
+      "hash": "4d0f568beedbb464f71a240300046a5d777557ec22c88f2635004a2835a4054f"
+    },
+    {
+      "file": "play_basketball/36.png",
+      "hash": "2bcec692aeb9aa6f70a3efcc328420390407755510c8e46f5d9760e96511a00a"
+    },
+    {
+      "file": "play_basketball/37.png",
+      "hash": "5f34c58bda25f1283cb8008d7d7d2c3676b2fce4cb54ddc0c0cba7815db28b1f"
+    },
+    {
       "file": "play_game/0.png",
       "hash": "a2d9737b48bd52ac0b30be56684df9fd36aaeda995d8d3b9d97c98fd19df18f1"
     },
@@ -9373,6 +9529,442 @@
     {
       "file": "stew/0.png",
       "hash": "3680aa48ca8ed223c073e5f2b67d4477d07c52c4d4e47accc1b3d678a0cba3bc"
+    },
+    {
+      "file": "stickman_dancing/000.png",
+      "hash": "3a7433f4d49a3d742780ad961eeb22f7d5d68626a9773f769be9a3b6baabf874"
+    },
+    {
+      "file": "stickman_dancing/001.png",
+      "hash": "97cd48abdb55b1061ca2426f0515be6ed61ba5173c40485d7f89bad00ea71558"
+    },
+    {
+      "file": "stickman_dancing/002.png",
+      "hash": "1adcd0da2bd48fcca07745f808df2606f146c8e916e47d84fe9740d7634e3155"
+    },
+    {
+      "file": "stickman_dancing/003.png",
+      "hash": "c758380a0208e94e210937cce30ac860f3ce21079400428f08a26a2b1631e481"
+    },
+    {
+      "file": "stickman_dancing/004.png",
+      "hash": "009f0ba6ee6623aace3e6a7654a3f40b745b09a2a1cce240a4eaead36f1c0351"
+    },
+    {
+      "file": "stickman_dancing/005.png",
+      "hash": "48b9cbd0a49aa2b6bf7765c296d7c46ea6ea26d03c9d6dc12566628d267160e5"
+    },
+    {
+      "file": "stickman_dancing/006.png",
+      "hash": "2a076b78804e3e4f4bc27076331e54e02b89d333f466c22d559ad3b17c9d2b12"
+    },
+    {
+      "file": "stickman_dancing/007.png",
+      "hash": "82f2364b792d5bd61c8eeadd00f0434b76007c9e60617260b05b84d44bbca582"
+    },
+    {
+      "file": "stickman_dancing/008.png",
+      "hash": "032c5b8635161a9751af0abe08ecded2d05f44c1b93bcd5bf38c76331c742604"
+    },
+    {
+      "file": "stickman_dancing/009.png",
+      "hash": "c8b716c6132927eb70c6811535ece6912f5187bf0191690d7f296b807139f2ed"
+    },
+    {
+      "file": "stickman_dancing/010.png",
+      "hash": "0f5ff1f5ee072dd761346a6574d300f7c70d6eafcaecde6b03704c91e0078085"
+    },
+    {
+      "file": "stickman_dancing/011.png",
+      "hash": "663676d4e55dfa0b47b6df63fc7f5ed9b14e43ad2648775060b860abd329809f"
+    },
+    {
+      "file": "stickman_dancing/012.png",
+      "hash": "76bdffc4db663364f1a17f867da38b564ce7185fe88c80fdaa29456f3e8e8f47"
+    },
+    {
+      "file": "stickman_dancing/013.png",
+      "hash": "b6217845ac525d9bd7e7b22ce000580bd254bafae926bc79479f8b8058304a7b"
+    },
+    {
+      "file": "stickman_dancing/014.png",
+      "hash": "706f6a68ae89edb459c2a7c44f00e2ae7e88f8eb68dd7ac995bb759b929848fc"
+    },
+    {
+      "file": "stickman_dancing/015.png",
+      "hash": "f1ad74a8cc82495e6c7977d6588f3fc8cbdef66680094ecd7200750708549bea"
+    },
+    {
+      "file": "stickman_dancing/016.png",
+      "hash": "72b7c4341ab10a4ff158c5156ee4caa65118a396c582d4e7f3e29c9b6d2e9aa4"
+    },
+    {
+      "file": "stickman_dancing/017.png",
+      "hash": "dade5b6ea53cbdfe74792c36a0a9f80468c9ff3b129f75f2069804fc000fb407"
+    },
+    {
+      "file": "stickman_dancing/018.png",
+      "hash": "8dceccd21bd87921ef8514eda637f531fb720f8bc16c697f70408e9fc572fe5e"
+    },
+    {
+      "file": "stickman_dancing/019.png",
+      "hash": "d8e7df1c29fa6d741b6b56233e24780fc6c9fe27e87988542a3e1bfd70397f02"
+    },
+    {
+      "file": "stickman_dancing/020.png",
+      "hash": "0b5a0cab7d53f7e31ccfcabfe8829989caf062eb6df351befbc40a1f7f13e876"
+    },
+    {
+      "file": "stickman_dancing/021.png",
+      "hash": "0c40453cace0bbdfc7f72e752d0f3af30430dea102f0960240437701f34e6d28"
+    },
+    {
+      "file": "stickman_dancing/022.png",
+      "hash": "68e71f3575ff551d8e8e70d975b5abbdf78290fb03b3c2ce40968fe0a7099adc"
+    },
+    {
+      "file": "stickman_dancing/023.png",
+      "hash": "d4a118c02d3378c5409c66e7afb5e8fa71abd2b505d12da650f2683166ff7cdd"
+    },
+    {
+      "file": "stickman_dancing/024.png",
+      "hash": "5f0e780ba86adc54339450dc77003143655e5493cf78e9ba48a3c4e8d4df40c5"
+    },
+    {
+      "file": "stickman_dancing/025.png",
+      "hash": "5045dda4bd4dbf149bd603e293ec016a48c5943fe9284c384d6b2c6f539b0fcb"
+    },
+    {
+      "file": "stickman_dancing/026.png",
+      "hash": "af084c979ff22a44bba804d307aabe75258e346f66a608f7f19bd90d2137564b"
+    },
+    {
+      "file": "stickman_dancing/027.png",
+      "hash": "3e46f08237a53906a01177547ac1c42e74bb43cd3951c144333627613ee1a6fd"
+    },
+    {
+      "file": "stickman_dancing/028.png",
+      "hash": "d32528753ff4273fca5b621f58bf53687d6e4723f5d6173cc9dc578be4da4461"
+    },
+    {
+      "file": "stickman_dancing/029.png",
+      "hash": "26a9d3f4600393a29138524fa3c6f3290182e6704823ac984b9982c51edbc69c"
+    },
+    {
+      "file": "stickman_dancing/030.png",
+      "hash": "2804f51b7cc09ac24c9af8eff9267b5b17251688547ba05b85b221bd66ec0ec9"
+    },
+    {
+      "file": "stickman_dancing/031.png",
+      "hash": "be7e4e3b6e9d931b15f910088485f95d51d3c24b1c7ce65f044584e533ecbc88"
+    },
+    {
+      "file": "stickman_dancing/032.png",
+      "hash": "3b30ab9df63756d3740401fbb605e7dbce29b471fdf1a6a93ed2f791c657e0e7"
+    },
+    {
+      "file": "stickman_dancing/033.png",
+      "hash": "30a5b99e35813ba06457a9f4304baae1db17a4226eaa20963425cabebc185cea"
+    },
+    {
+      "file": "stickman_dancing/034.png",
+      "hash": "83153fb9508a17d1785125836035562ef55efbf800b73a1fdf2e220036f9b205"
+    },
+    {
+      "file": "stickman_dancing/035.png",
+      "hash": "28e3b94d26b7b4d8f691079b9e3fcf3a4ccdcf042452be47c24543044ec82bc0"
+    },
+    {
+      "file": "stickman_dancing/036.png",
+      "hash": "ad0c1ddf02fe5a9ef11a7e156deb34183652b9ddb20e464bed23af21aa4817b4"
+    },
+    {
+      "file": "stickman_dancing/037.png",
+      "hash": "82f215f4d8fdf43cc25d11fb30f29df4e5bbb20ed64fbbc7faff7fc2defa75a5"
+    },
+    {
+      "file": "stickman_dancing/038.png",
+      "hash": "df93ffc3fa90981873020fa9c95d33d65c57b6513008a4451fe1cee86c6781e9"
+    },
+    {
+      "file": "stickman_dancing/039.png",
+      "hash": "f74bdf3f1aa9835b8c2526c73bbc708ef149df6679c5810a7c572922880fc4f5"
+    },
+    {
+      "file": "stickman_dancing/040.png",
+      "hash": "2f658062181a12c91966c57d0d70d9b79fc76b097c9acdd5defc1c652f722124"
+    },
+    {
+      "file": "stickman_dancing/041.png",
+      "hash": "1562d18b819d80e712b28c28515c75a8a96d625fb10bcd2d2f9cf9ffd25a6ad3"
+    },
+    {
+      "file": "stickman_dancing/042.png",
+      "hash": "b1f8d2f8fa1de2828e08b181ee295248f398976c4149a1c3a6e1633f4d3064c1"
+    },
+    {
+      "file": "stickman_dancing/043.png",
+      "hash": "3141968b1b4586c4488ea3de8aca1d129504e2653eabb94b62d48ce6458ebb69"
+    },
+    {
+      "file": "stickman_dancing/044.png",
+      "hash": "3cc92a1ed68b9e7b642c96b1c030e660cad71fa2e5af189871967e4abea9107f"
+    },
+    {
+      "file": "stickman_dancing/045.png",
+      "hash": "85b0cb0f5abf10dc8d701b2cbb7bb2474f67d8760b853c9b56ea95a0dafbae9f"
+    },
+    {
+      "file": "stickman_dancing/046.png",
+      "hash": "e457af684f59810797dc3023450b24d2a1a8c8e3bb2aef9f51bb7bb9d2486535"
+    },
+    {
+      "file": "stickman_dancing/047.png",
+      "hash": "17784633590ef0965426d60a69413a4b1797315b0c0d7a67a50ee983a4e23ced"
+    },
+    {
+      "file": "stickman_dancing/048.png",
+      "hash": "a1184724fe8f2169eab59b8c0708c9698a259e49ef2f4897b8e8b32abb130c69"
+    },
+    {
+      "file": "stickman_dancing/049.png",
+      "hash": "3d19079a038f29b322cc2388ef51bd8ff5fab1bbe6ef7ad2fcfd9db578af7adf"
+    },
+    {
+      "file": "stickman_dancing/050.png",
+      "hash": "3d161ca5307633f88114cb8eb14858ad75daeb23ae0094d94a34a866eb48fa46"
+    },
+    {
+      "file": "stickman_dancing/051.png",
+      "hash": "089382151292f2c6925168dea0f1237e21f41400512f6f314a3fb1292a6bca32"
+    },
+    {
+      "file": "stickman_dancing/052.png",
+      "hash": "f2cc1199e932b7ca395f257f2c44d906b8d975afbe181970549d5944c940149d"
+    },
+    {
+      "file": "stickman_dancing/053.png",
+      "hash": "3492f4032de28de38f6f2fbe0550986bf7fb1bbacccfe18bb67d21244db4c936"
+    },
+    {
+      "file": "stickman_dancing/054.png",
+      "hash": "f9f223717c185a76f77ecad0b8b02c5ace355437072749752bf408c7ba3ca022"
+    },
+    {
+      "file": "stickman_dancing/055.png",
+      "hash": "e45dc044a1a27e1b2f26a82ffc5a5e83bd73acab5bb6ba763cc8aafdf2686dfe"
+    },
+    {
+      "file": "stickman_dancing/056.png",
+      "hash": "86f710abeffc2331b28240f0b0a46801beeaf606f5f351bf8b08357a35d52034"
+    },
+    {
+      "file": "stickman_dancing/057.png",
+      "hash": "ceec6b67dddb521d73eb6c8e7e3e4695776c87496e0cdc28194c2986bd5224d4"
+    },
+    {
+      "file": "stickman_dancing/058.png",
+      "hash": "d88bff586b8e6efac1de6a8f3947f33d8eba6582345e892440c3d10d3c841321"
+    },
+    {
+      "file": "stickman_dancing/059.png",
+      "hash": "4323b2d9d8978de0f439eb5ff14aeca6831e669cce9adee17c8dddc1e00859c3"
+    },
+    {
+      "file": "stickman_dancing/060.png",
+      "hash": "a8f938806c07d7b1842b7211974402e1969f510e4aa54caf205371617116bc15"
+    },
+    {
+      "file": "stickman_dancing/061.png",
+      "hash": "1af7a6f395ef6055166388e01aaf5a376775e684070a094cdd3d69c40f249d83"
+    },
+    {
+      "file": "stickman_dancing/062.png",
+      "hash": "3f429e1313038e7d4225535f8e8c907c9c3b1131bb19dc60110525e67fb21058"
+    },
+    {
+      "file": "stickman_dancing/063.png",
+      "hash": "a2d11a5517b476d61a6c9c08adf7a5d86cfa3a884d8ddddfe6e3ce6c64d22b7d"
+    },
+    {
+      "file": "stickman_dancing/064.png",
+      "hash": "18330cc7e1ceac455442b8f1c044b8fe2958b8d29504f30a7a37762b44183c4f"
+    },
+    {
+      "file": "stickman_dancing/065.png",
+      "hash": "0c7abc3552ea09c0e059f94ed831a0e7719aa150474a1a6218f6cfb034a4cd87"
+    },
+    {
+      "file": "stickman_dancing/066.png",
+      "hash": "2e42bfc3a4ad75d4e3d86e0be903534eef9003db9ab30a4d8c94113fd5313371"
+    },
+    {
+      "file": "stickman_dancing/067.png",
+      "hash": "f94a339f2d7ed8b42d08fa94fcdab6bf600df641d6800b532ebbe7e0ca5263f0"
+    },
+    {
+      "file": "stickman_dancing/068.png",
+      "hash": "1d8602cfb5ea82b36ea8eb61fac5aa257f8b362e42ef44bb2b0c9f25c135788f"
+    },
+    {
+      "file": "stickman_dancing/069.png",
+      "hash": "5ee970412284926dd2ff31aad9789a3b498def8c004d12bf6ff69bed23561ce4"
+    },
+    {
+      "file": "stickman_dancing/070.png",
+      "hash": "47135ab0dbb9030cdb661032958686945754d778aac6090abde211a9fbec60f1"
+    },
+    {
+      "file": "stickman_dancing/071.png",
+      "hash": "a127f61040cf0ec63f3fcddd129ab2166486698291479cd5a025a661d532e956"
+    },
+    {
+      "file": "stickman_dancing/072.png",
+      "hash": "215d5449597288695afce4142463dc4953f3b7fc14dd3cf8ed492b2f6cc4f0b0"
+    },
+    {
+      "file": "stickman_dancing/073.png",
+      "hash": "d6af89abf084809f338409b26852f2911bad4e3a7a7dddf8cdc70a983a1b8983"
+    },
+    {
+      "file": "stickman_dancing/074.png",
+      "hash": "3e22e26eb95ad93be36e24abd72656f2f72ecd5c55f5cca2e138dd322d1f00c9"
+    },
+    {
+      "file": "stickman_dancing/075.png",
+      "hash": "2affb7ccbf94c1d3c7dd2df7a18ab990c9f16de2e2975456a03505bafe18ebac"
+    },
+    {
+      "file": "stickman_dancing/076.png",
+      "hash": "82a892482dc00050e4a7c695bf636025f4af4dc2d20ec567cfe4092944062dae"
+    },
+    {
+      "file": "stickman_dancing/077.png",
+      "hash": "5cf37c4d7c488cd0e473335c0aa25f0fc56fe2a374b687145fb543610e9b9b4c"
+    },
+    {
+      "file": "stickman_dancing/078.png",
+      "hash": "292a70f7e9e1c485e898982b1dbbf258bd543bf59d0d5b95ab2d173fd446e913"
+    },
+    {
+      "file": "stickman_dancing/079.png",
+      "hash": "f077459dc9851ae25c0bd2e92c0df71d67e8e983f5f0e77c7cbcc6f681945cfe"
+    },
+    {
+      "file": "stickman_dancing/080.png",
+      "hash": "4f5844710ff23c2ee19902c9cdb60358a066199086c63384e64487673512eab7"
+    },
+    {
+      "file": "stickman_dancing/081.png",
+      "hash": "16caf9605b482e85431d8708fdbd6529d9c44f5eb5575e51c6211ba7e927519c"
+    },
+    {
+      "file": "stickman_dancing/082.png",
+      "hash": "d5af877aa879e91d72f06eb86de667f59b5ad3a9c6dec82a019a343e30ac90d4"
+    },
+    {
+      "file": "stickman_dancing/083.png",
+      "hash": "712c8730afe078bdd295aebfba5983d1523c759a04aefa842b38c8f67e6ee0f2"
+    },
+    {
+      "file": "stickman_dancing/084.png",
+      "hash": "1bff29326f3f26d337705761b74bc4714b624af06a7605a217eefd99f8d90896"
+    },
+    {
+      "file": "stickman_dancing/085.png",
+      "hash": "83aecab151b2776020b8d0763d92ab8099b71df32b615630451c51921c71c384"
+    },
+    {
+      "file": "stickman_dancing/086.png",
+      "hash": "486690a22c408873304c7998d24f1bcfa7d84b2841563b362ed8d03311a5367c"
+    },
+    {
+      "file": "stickman_dancing/087.png",
+      "hash": "11e37d65d1c0a356614cff835eeaf52317664450dfe4fef7af8deca80771bb96"
+    },
+    {
+      "file": "stickman_dancing/088.png",
+      "hash": "e64278a7323f76689f75a242c087aafc0f9f0e0493975cf99d96f4ba1ea5126d"
+    },
+    {
+      "file": "stickman_dancing/089.png",
+      "hash": "ac9e43c6dae419b865201d48dd0c7c56360f4e8061d2b8d71554750ead43d44d"
+    },
+    {
+      "file": "stickman_dancing/090.png",
+      "hash": "768b0f61682eee70c9afe93a39442945452d83fc9f8b87bd452cef9781f2689c"
+    },
+    {
+      "file": "stickman_dancing/091.png",
+      "hash": "d5842bb282d3904987669383f0130dc23639e6c76dc0c211133654bf340d5c53"
+    },
+    {
+      "file": "stickman_dancing/092.png",
+      "hash": "e8d8c918d2960526c592ad29ec16d5739914855171abf8e2e0d81042c5078750"
+    },
+    {
+      "file": "stickman_dancing/093.png",
+      "hash": "e3e4bfc902b960be131e0d30a3ab81ba22faabd56585b6f6be7c73f7445d6bca"
+    },
+    {
+      "file": "stickman_dancing/094.png",
+      "hash": "869969c0ea5a76b9fc07c587796aad4a3c99324651dbdfadda32198f74d0059d"
+    },
+    {
+      "file": "stickman_dancing/095.png",
+      "hash": "592e6e8324036ad9addaa0e3cf1ec7ab03f649bda6c4763c50fbe0eff5b9e1ec"
+    },
+    {
+      "file": "stickman_dancing/096.png",
+      "hash": "7a4d0dc27511d75ffe3375486f86457d62d274faf5db3404dfcdd0d9200e1b58"
+    },
+    {
+      "file": "stickman_dancing/097.png",
+      "hash": "1bb09501a1b94521db486390bef8beb7fadafbbf792e518170333392890855db"
+    },
+    {
+      "file": "stickman_dancing/098.png",
+      "hash": "26bbf0d05abf332517477bd139cb1412e36d498c0d311a97883732e5db1ddcf8"
+    },
+    {
+      "file": "stickman_dancing/099.png",
+      "hash": "605530f9388530d7952ffd26fe993b7486b563861ff16ce140973831c3216bee"
+    },
+    {
+      "file": "stickman_dancing/100.png",
+      "hash": "6f0b61042fb47dcb2e0cac04f6d17ee828272ea75591f44492dac2750bce8850"
+    },
+    {
+      "file": "stickman_dancing/101.png",
+      "hash": "8baf90c03c242eaad4cbdf09fa46a7242ef560bae954501a7c954057adf852e5"
+    },
+    {
+      "file": "stickman_dancing/102.png",
+      "hash": "793d8231062ab4e1868084d3c9a5981abbed154d6a05b809925fd23d5c308379"
+    },
+    {
+      "file": "stickman_dancing/103.png",
+      "hash": "88f9ae7266d91069d9fb8f7c7118cc5ff9d96e01506d1eda19662829a1f0b541"
+    },
+    {
+      "file": "stickman_dancing/104.png",
+      "hash": "7d7ccbfab12d3b26ebfd34013f504c7b052358cb50f8a7907aea04595aa03f10"
+    },
+    {
+      "file": "stickman_dancing/105.png",
+      "hash": "b475f3cb0763dea03263b446259c62326c0f6236a431e0d4d687e6c8914fb089"
+    },
+    {
+      "file": "stickman_dancing/106.png",
+      "hash": "4d47e37a6b8a6ad3da1f097288a17b91ae6500d3d97d70f60147f09fb7634bf1"
+    },
+    {
+      "file": "stickman_dancing/107.png",
+      "hash": "78e60afdc0db84dfe5166217e00a4f95ab8ff1fe2a983c37e30602c1d18d98f4"
+    },
+    {
+      "file": "stickman_dancing/108.png",
+      "hash": "dd08f42c0ff0755628de827c5cfc5520542cc87f92d850d36ccb870c1631e1f5"
     },
     {
       "file": "subject3/00.png",
