@@ -9,7 +9,7 @@ use meme_generator_utils::{
     tools::{load_image, local_date},
 };
 
-use crate::{options::NoOptions, register_meme};
+use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
 fn throw(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let func = |images: Vec<Image>| {
@@ -35,6 +35,7 @@ register_meme!(
     min_images = 1,
     max_images = 1,
     keywords = &["丢", "扔"],
+    tags = MemeTags::touhou(),
     date_created = local_date(2021, 5, 5),
     date_modified = local_date(2023, 3, 30),
 );
