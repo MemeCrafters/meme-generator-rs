@@ -85,6 +85,6 @@ register_meme!(
     max_images = 1,
     keywords = &["打篮球", "火柴人打篮球"],
     tags = MemeTags::stickman(),
-    date_created = local_date(2024, 4, 30),
-    date_modified = local_date(2024, 4, 30),
+    date_created = local_date(2025, 4, 30),
+    date_modified = local_date(2025, 4, 30),
 );
