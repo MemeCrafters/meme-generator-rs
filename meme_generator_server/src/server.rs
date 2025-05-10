@@ -9,6 +9,7 @@ use std::{
 use axum::{
     Router,
     body::Body,
+    extract::DefaultBodyLimit,
     extract::{Json, Path, Query},
     http::StatusCode,
     response::{IntoResponse, Response},
@@ -365,6 +366,7 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
     clear_temp_dir();
     let app = Router::new()
         .route("/image/upload", post(upload_image))
+        .layer(DefaultBodyLimit::disable())
         .route("/image/:id", get(get_image))
         .route("/meme/version", get(|| async { VERSION }))
         .route("/meme/keys", get(meme_keys))
