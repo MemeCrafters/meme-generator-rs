@@ -10,7 +10,7 @@ repository.workspace = true
 edition.workspace = true
 
 [dependencies]
-axum = "0.7"
+axum = { version = "0.7", features = ["multipart"] }
 base64 = "0.22"
 base64-serde = "0.8"
 infer = "0.16"

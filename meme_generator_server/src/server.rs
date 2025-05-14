@@ -9,8 +9,7 @@ use std::{
 use axum::{
     Router,
     body::Body,
-    extract::DefaultBodyLimit,
-    extract::{Json, Path, Query},
+    extract::{DefaultBodyLimit, Json, Multipart, Path, Query},
     http::StatusCode,
     response::{IntoResponse, Response},
     routing::{get, post},
@@ -172,6 +171,25 @@ pub(crate) async fn upload_image(Json(image_data): Json<ImageData>) -> Response 
         }
         Err(err) => handle_server_error(err).into_response(),
     }
+}
+
+pub(crate) async fn upload_image_multipart(mut multipart: Multipart) -> Response {
+    while let Some(field) = multipart.next_field().await.unwrap() {
+        let name = field.name().unwrap();
+        if name == "file" {
+            let data = field.bytes().await.unwrap().to_vec();
+            match create_temp_file(data).await {
+                Ok(id) => {
+                    let response = UploadImageResponse { image_id: id };
+                    return Json(response).into_response();
+                }
+                Err(err) => {
+                    return handle_server_error(err).into_response();
+                }
+            }
+        }
+    }
+    (StatusCode::BAD_REQUEST, "The field 'file' is required").into_response()
 }
 
 pub(crate) async fn get_image(Path(id): Path<String>) -> Response {
@@ -366,6 +384,8 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
     clear_temp_dir();
     let app = Router::new()
         .route("/image/upload", post(upload_image))
+        .layer(DefaultBodyLimit::disable())
+        .route("/image/upload/multipart", post(upload_image_multipart))
         .layer(DefaultBodyLimit::disable())
         .route("/image/:id", get(get_image))
         .route("/meme/version", get(|| async { VERSION }))
