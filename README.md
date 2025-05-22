@@ -35,7 +35,6 @@ meme-generator-rs 支持通过加载动态链接库的方式加载额外的表�
 
 其他表情仓库：
 - [MemeCrafters/meme-generator-contrib-rs](https://github.com/MemeCrafters/meme-generator-contrib-rs) meme-generator-rs 额外表情仓库
-- [anyliew/meme_emoji_rust](https://github.com/anyliew/meme_emoji_rust) 更多趣味表情生成
 
 ## 声明
 
