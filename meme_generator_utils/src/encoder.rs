@@ -1,4 +1,5 @@
-use gif::{DisposalMethod, Encoder, Frame, Repeat};
+use std::thread::{self, JoinHandle};
+
 use skia_safe::{AlphaType, ColorType, EncodedImageFormat, Image, ImageInfo, image::CachingHint};
 
 use meme_generator_core::error::Error;
@@ -6,25 +7,46 @@ use meme_generator_core::error::Error;
 use crate::{builder::InputImage, config::CONFIG, decoder::CodecExt};
 
 pub struct GifEncoder {
-    encoder: Option<Encoder<Vec<u8>>>,
+    collector: Option<gifski::Collector>,
+    writer_handle: Option<JoinHandle<Result<Vec<u8>, Error>>>,
+    frame_index: usize,
+    frame_timestamp: f64,
 }
 
 impl GifEncoder {
     pub fn new() -> Self {
-        Self { encoder: None }
+        Self {
+            collector: None,
+            writer_handle: None,
+            frame_index: 0,
+            frame_timestamp: 0.0,
+        }
     }
 
     pub fn add_frame(&mut self, image: Image, duration: f32) -> Result<(), Error> {
-        if let None = self.encoder {
-            let bytes = Vec::new();
-            let mut encoder = Encoder::new(bytes, image.width() as u16, image.height() as u16, &[])
-                .map_err(|err| Error::ImageEncodeError(format!("Gif encode error: {err}")))?;
-            encoder
-                .set_repeat(Repeat::Infinite)
-                .map_err(|err| Error::ImageEncodeError(format!("Gif encode error: {err}")))?;
-            self.encoder = Some(encoder);
+        if self.collector.is_none() {
+            let mut settings = gifski::Settings::default();
+            settings.repeat = gifski::Repeat::Infinite;
+            settings.width = Some(image.width() as u32);
+            settings.height = Some(image.height() as u32);
+
+            let (collector, writer) = gifski::new(settings)
+                .map_err(|e| Error::ImageEncodeError(format!("gifski new failed: {e:?}")))?;
+            self.collector = Some(collector);
+
+            let writer_handle = {
+                thread::spawn(move || {
+                    let mut output = Vec::new();
+                    writer
+                        .write(&mut output, &mut gifski::progress::NoProgress {})
+                        .map_err(|e| {
+                            Error::ImageEncodeError(format!("gifski write failed: {e}"))
+                        })?;
+                    Ok(output)
+                })
+            };
+            self.writer_handle = Some(writer_handle);
         }
-        let encoder = self.encoder.as_mut().unwrap();
 
         let image_info = ImageInfo::new(
             image.dimensions(),
@@ -42,24 +64,32 @@ impl GifEncoder {
             (0, 0),
             CachingHint::Allow,
         );
-        let speed = CONFIG.encoder.gif_encode_speed;
-        let mut frame = Frame::from_rgba_speed(
-            image.width() as u16,
-            image.height() as u16,
-            &mut data,
-            speed as i32,
-        );
-        let delay = (duration * 100.0) as u16;
-        frame.delay = delay;
-        frame.dispose = DisposalMethod::Background;
 
-        encoder
-            .write_frame(&frame)
-            .map_err(|err| Error::ImageEncodeError(format!("Gif encode error: {err}")))
+        let pixels = data
+            .chunks_exact(4)
+            .map(|px| gifski::collector::RGBA8::new(px[0], px[1], px[2], px[3]))
+            .collect::<Vec<_>>();
+        let frame =
+            gifski::collector::ImgVec::new(pixels, image.width() as usize, image.height() as usize);
+        let collector = self.collector.as_mut().unwrap();
+        collector
+            .add_frame_rgba(self.frame_index, frame, self.frame_timestamp)
+            .map_err(|e| Error::ImageEncodeError(format!("gifski add_frame failed: {e:?}")))?;
+        self.frame_index += 1;
+        self.frame_timestamp += duration as f64;
+        Ok(())
     }
 
-    pub fn finish(&mut self) -> Vec<u8> {
-        self.encoder.take().unwrap().into_inner().unwrap()
+    pub fn finish(&mut self) -> Result<Vec<u8>, Error> {
+        drop(self.collector.take());
+
+        if let Some(handle) = self.writer_handle.take() {
+            return handle
+                .join()
+                .map_err(|_| Error::ImageEncodeError("gifski writer thread panicked".into()))?;
+        }
+
+        Err(Error::ImageEncodeError("no gifski writer thread".into()))
     }
 }
 
@@ -246,7 +276,7 @@ where
             let frame = func(frame_images)?;
             encoder.add_frame(frame, gif_info.duration)?;
         }
-        return Ok(encoder.finish());
+        return Ok(encoder.finish()?);
     }
 
     let mut target_gif_index = 0;
@@ -280,7 +310,7 @@ where
         let frame = func(frame_images)?;
         encoder.add_frame(frame, target_duration)?;
     }
-    Ok(encoder.finish())
+    Ok(encoder.finish()?)
 }
 
 /// 使用静图或动图制作 gif
@@ -328,7 +358,7 @@ where
             let frame = func(i as usize, frame_images)?;
             encoder.add_frame(frame, target_gif_info.duration)?;
         }
-        return Ok(encoder.finish());
+        return Ok(encoder.finish()?);
     }
 
     let (frame_indexes, target_frame_indexes) =
@@ -349,5 +379,5 @@ where
         let frame = func(*target_index, frame_images)?;
         encoder.add_frame(frame, target_gif_info.duration)?;
     }
-    Ok(encoder.finish())
+    Ok(encoder.finish()?)
 }

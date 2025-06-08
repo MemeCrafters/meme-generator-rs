@@ -64,7 +64,7 @@ fn gif_subtitle(
         encoder.add_frame(frame, duration)?;
     }
 
-    Ok(encoder.finish())
+    Ok(encoder.finish()?)
 }
 
 macro_rules! register_gif_subtitle {

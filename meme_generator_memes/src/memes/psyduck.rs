@@ -92,7 +92,7 @@ fn psyduck(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u
         }
         encoder.add_frame(surface.image_snapshot(), 0.2)?;
     }
-    Ok(encoder.finish())
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

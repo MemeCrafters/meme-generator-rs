@@ -120,7 +120,7 @@ fn douyin(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8
         encoder.add_frame(frame, 0.2)?;
     }
 
-    Ok(encoder.finish())
+    Ok(encoder.finish()?)
 }
 
 register_meme!(
