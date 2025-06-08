@@ -108,21 +108,19 @@ unsafe fn load_library(
 
     if declaration.rustc_version != RUSTC_VERSION {
         warn!(
-            "Library {:?} is compiled with rustc {}, but meme_generator_core is compiled with {}, please recompile the library",
+            "Library {:?} is compiled with rustc {}, but meme_generator_core is compiled with {}, it may not work correctly.",
             library_path.file_name(),
             declaration.rustc_version,
             RUSTC_VERSION,
         );
-        return Ok(None);
     }
     if declaration.core_version != CORE_VERSION {
         warn!(
-            "Library {:?} is compiled with meme_generator_core {}, but current version is {}, please recompile the library",
+            "Library {:?} is compiled with meme_generator_core {}, but current version is {}, it may not work correctly.",
             library_path.file_name(),
             declaration.core_version,
             CORE_VERSION,
         );
-        return Ok(None);
     }
 
     let mut registry = ExternalMemeRegistry::new(library);
