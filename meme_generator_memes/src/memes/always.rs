@@ -44,17 +44,19 @@ fn always_normal(images: Vec<InputImage>) -> Result<Vec<u8>, Error> {
     canvas.clear(Color::WHITE);
 
     canvas
-        .draw_text_area(
+        .draw_text_area_auto_font_size(
             IRect::from_ltrb(20, h1 + 5, 280, frame_h - 5),
             "要我一直",
+            20.0,
             60.0,
             text_params!(text_align = TextAlign::Right),
         )
         .unwrap();
     canvas
-        .draw_text_area(
+        .draw_text_area_auto_font_size(
             IRect::from_ltrb(400, h1 + 5, 480, frame_h - 5),
             "吗",
+            20.0,
             60.0,
             text_params!(text_align = TextAlign::Left),
         )
@@ -97,17 +99,19 @@ fn always_always(images: Vec<InputImage>, loop_: bool) -> Result<Vec<u8>, Error>
     canvas.clear(Color::WHITE);
 
     canvas
-        .draw_text_area(
+        .draw_text_area_auto_font_size(
             IRect::from_ltrb(20, img_big_h + 5, 280, frame_h - 5),
             "要我一直",
+            20.0,
             60.0,
             text_params!(text_align = TextAlign::Right),
         )
         .unwrap();
     canvas
-        .draw_text_area(
+        .draw_text_area_auto_font_size(
             IRect::from_ltrb(400, img_big_h + 5, 480, frame_h - 5),
             "吗",
+            20.0,
             60.0,
             text_params!(text_align = TextAlign::Left),
         )

@@ -4,7 +4,7 @@ use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
-    image::ImageExt,
+    image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
 };
 
@@ -36,7 +36,7 @@ fn play_together(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Resul
 
     let func = |i: usize, images: Vec<Image>| {
         let (x, y, w, h) = params[i];
-        let screen = images[0].resize_exact((w, h));
+        let screen = images[0].resize_fit((w, h), Fit::Cover);
         let frame = load_image(format!("play_together/{i:02}.png"))?;
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
