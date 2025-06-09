@@ -10,7 +10,7 @@ edition.workspace = true
 
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
-gif = "0.13"
+gifski = { version = "1.33", default-features = false }
 md5 = "0.7"
 regex = "1.11"
 reqwest = { version = "0.11", features = ["json"] }

@@ -43,14 +43,12 @@ impl Default for ApiConfig {
 #[serde(default)]
 pub struct EncoderConfig {
     pub gif_max_frames: u16,
-    pub gif_encode_speed: u8,
 }
 
 impl Default for EncoderConfig {
     fn default() -> Self {
         EncoderConfig {
             gif_max_frames: 200,
-            gif_encode_speed: 1,
         }
     }
 }

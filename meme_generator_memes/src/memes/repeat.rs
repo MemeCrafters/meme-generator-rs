@@ -72,7 +72,7 @@ fn repeat(images: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<V
         canvas.draw_image(&input_img, (0, 1000), None);
         encoder.add_frame(surface.image_snapshot(), 0.08)?;
     }
-    Ok(encoder.finish())
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

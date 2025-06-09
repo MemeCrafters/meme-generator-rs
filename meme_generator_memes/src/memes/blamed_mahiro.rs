@@ -75,7 +75,7 @@ fn blamed_mahiro(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result
         let frame = surface.image_snapshot();
         encoder.add_frame(frame, 0.08)?;
     }
-    Ok(encoder.finish())
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

@@ -222,7 +222,7 @@ pub fn gif_merge(images: Vec<Vec<u8>>, duration: Option<f32>) -> Result<Vec<u8>,
     for frame in frames {
         encoder.add_frame(frame.resize_fit((min_w, min_h), Fit::Contain), duration)?;
     }
-    Ok(encoder.finish())
+    Ok(encoder.finish()?)
 }
 
 pub fn gif_reverse(image: Vec<u8>) -> Result<Vec<u8>, Error> {
@@ -239,7 +239,7 @@ pub fn gif_reverse(image: Vec<u8>) -> Result<Vec<u8>, Error> {
     for i in 0..count {
         encoder.add_frame(frames[count - i - 1].clone(), duration)?;
     }
-    Ok(encoder.finish())
+    Ok(encoder.finish()?)
 }
 
 pub fn gif_change_duration(image: Vec<u8>, duration: f32) -> Result<Vec<u8>, Error> {
@@ -250,5 +250,5 @@ pub fn gif_change_duration(image: Vec<u8>, duration: f32) -> Result<Vec<u8>, Err
         let frame = codec.get_frame(i)?;
         encoder.add_frame(frame, duration)?;
     }
-    Ok(encoder.finish())
+    Ok(encoder.finish()?)
 }

@@ -67,7 +67,7 @@ fn scroll(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8
         frame_canvas.draw_image(&dialog, (0, dialog.height() - dy * i), None);
         encoder.add_frame(frame.image_snapshot(), 0.05)?;
     }
-    Ok(encoder.finish())
+    Ok(encoder.finish()?)
 }
 
 register_meme!(
