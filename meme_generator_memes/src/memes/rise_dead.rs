@@ -1,9 +1,9 @@
-use skia_safe::{Color, Image};
+use skia_safe::Color;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date, new_surface},
 };
@@ -17,8 +17,10 @@ fn rise_dead(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Ve
         ((-66, 36), [(0, 0), (182, 5), (184, 194), (1, 185)]),
         ((-231, 55), [(0, 0), (259, 4), (276, 281), (13, 278)]),
     ];
+    let img = images[0].image.square().resize_exact((150, 150));
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..34 {
         let frame = load_image(format!("rise_dead/{i:02}.png"))?;
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
@@ -29,26 +31,14 @@ fn rise_dead(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Ve
             let (loc, points) = params[idx];
             let (x, y) = loc;
             let (x, y) = if i % 2 == 1 { (x + 1, y - 1) } else { (x, y) };
-            let img = images[0]
-                .square()
-                .resize_exact((150, 150))
-                .perspective(&points);
+            let img = img.perspective(&points);
             canvas.draw_image(&img, (x, y), None);
         }
 
         canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 34,
-            duration: 0.15,
-        },
-        FrameAlign::ExtendLoop,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.15)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

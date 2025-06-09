@@ -1,10 +1,10 @@
-use skia_safe::{Color, IRect, Image};
+use skia_safe::{Color, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     canvas::CanvasExt,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::ImageExt,
     tools::{load_image, local_date, new_surface},
 };
@@ -21,8 +21,13 @@ fn time_to_go(images: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Resu
     };
 
     let frame = load_image("time_to_go/0.png")?;
-    let mut surface = frame.to_surface();
+
+    let mut surface = new_surface(frame.dimensions());
     let canvas = surface.canvas();
+    canvas.clear(Color::WHITE);
+    let img = images[0].image.square().resize_exact((105, 105));
+    canvas.draw_image(&img, (230, 82), None);
+    canvas.draw_image(&frame, (0, 0), None);
     canvas.draw_text_area_auto_font_size(
         IRect::from_ltrb(20, 232, 330, 312),
         text,
@@ -30,19 +35,8 @@ fn time_to_go(images: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Resu
         40.0,
         None,
     )?;
-    let frame = surface.image_snapshot();
 
-    let func = |images: Vec<Image>| {
-        let mut surface = new_surface(frame.dimensions());
-        let canvas = surface.canvas();
-        canvas.clear(Color::WHITE);
-        let img = images[0].square().resize_exact((105, 105));
-        canvas.draw_image(&img, (230, 82), None);
-        canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

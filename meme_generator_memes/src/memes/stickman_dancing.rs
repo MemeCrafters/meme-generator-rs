@@ -1,16 +1,18 @@
-use skia_safe::Image;
-
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date},
 };
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
-fn stickman_dancing(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn stickman_dancing(
+    images: Vec<InputImage>,
+    _: Vec<String>,
+    _: NoOptions,
+) -> Result<Vec<u8>, Error> {
     let locs = [
         (194, 53),
         (194, 53),
@@ -122,25 +124,17 @@ fn stickman_dancing(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Re
         (190, 54),
         (189, 58),
     ];
+    let img = images[0].image.circle().resize_exact((138, 138));
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..109 {
         let frame = load_image(format!("stickman_dancing/{i:03}.png"))?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
-        let img = images[0].circle().resize_exact((138, 138));
         canvas.draw_image(&img, locs[i], None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 109,
-            duration: 0.03,
-        },
-        FrameAlign::ExtendLoop,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.03)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

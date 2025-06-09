@@ -1,10 +1,10 @@
-use skia_safe::{Color, IRect, Image};
+use skia_safe::{Color, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     canvas::CanvasExt,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::ImageExt,
     text_params,
     tools::{load_image, local_date, new_paint, new_surface},
@@ -31,28 +31,21 @@ fn interview(images: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Resul
         50.0,
         text_params!(paint = new_paint(Color::BLACK)),
     )?;
-    let frame = surface.image_snapshot();
     let huaji = load_image("interview/huaji.png")?;
     let microphone = load_image("interview/microphone.png")?;
 
-    let func = |images: Vec<Image>| {
-        let (self_img, user_img) = if images.len() == 2 {
-            (&images[0], &images[1])
-        } else {
-            (&huaji, &images[0])
-        };
-        let self_img = self_img.square().resize_exact((124, 124));
-        let user_img = user_img.square().resize_exact((124, 124));
-
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        canvas.draw_image(&microphone, (330, 103), None);
-        canvas.draw_image(&self_img, (419, 40), None);
-        canvas.draw_image(&user_img, (57, 40), None);
-        Ok(surface.image_snapshot())
+    let (self_img, user_img) = if images.len() == 2 {
+        (&images[0].image, &images[1].image)
+    } else {
+        (&huaji, &images[0].image)
     };
+    let self_img = self_img.square().resize_exact((124, 124));
+    let user_img = user_img.square().resize_exact((124, 124));
 
-    make_png_or_gif(images, func)
+    canvas.draw_image(&microphone, (330, 103), None);
+    canvas.draw_image(&self_img, (419, 40), None);
+    canvas.draw_image(&user_img, (57, 40), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

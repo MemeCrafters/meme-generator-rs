@@ -1,10 +1,10 @@
-use skia_safe::{Color, FontStyle, IRect, Image, textlayout::TextAlign};
+use skia_safe::{Color, FontStyle, IRect, textlayout::TextAlign};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     canvas::CanvasExt,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::ImageExt,
     text_params,
     tools::{color_from_hex_code, local_date, new_paint, new_surface},
@@ -77,26 +77,19 @@ fn google_captcha(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Resu
             ),
         )
         .unwrap();
-    let frame = surface.image_snapshot();
 
-    let func = |images: Vec<Image>| {
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        let image = images[0].square().resize_exact((932, 932));
-        let length = 233;
-        for i in 0..4 {
-            for j in 0..4 {
-                canvas.draw_image(
-                    &image.crop(IRect::from_xywh(233 * i, 233 * j, length, length)),
-                    (21 + i * (233 + 10), 372 + j * (233 + 10)),
-                    None,
-                );
-            }
+    let image = images[0].image.square().resize_exact((932, 932));
+    let length = 233;
+    for i in 0..4 {
+        for j in 0..4 {
+            canvas.draw_image(
+                &image.crop(IRect::from_xywh(233 * i, 233 * j, length, length)),
+                (21 + i * (233 + 10), 372 + j * (233 + 10)),
+                None,
+            );
         }
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    }
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

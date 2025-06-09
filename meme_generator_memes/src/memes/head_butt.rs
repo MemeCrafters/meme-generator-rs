@@ -1,9 +1,9 @@
-use skia_safe::{Color, Image};
+use skia_safe::Color;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date, new_surface},
 };
@@ -31,8 +31,10 @@ fn head_butt(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Ve
         (183, 71, 90, 96),
         (180, 131, 92, 101),
     ];
+    let image = images[0].image.square();
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..58 {
         let index = if (32..58).contains(&i) {
             i - 20
         } else if (24..32).contains(&i) {
@@ -44,29 +46,21 @@ fn head_butt(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Ve
         };
 
         let frame = load_image(format!("head_butt/{index:02}.png"))?;
-        if (0..18).contains(&index) {
+        let frame = if (0..18).contains(&index) {
             let mut surface = new_surface(frame.dimensions());
             let canvas = surface.canvas();
             canvas.clear(Color::WHITE);
             let (x, y, w, h) = locs[index];
-            let img = images[0].square().resize_exact((w, h));
+            let img = image.resize_exact((w, h));
             canvas.draw_image(&img, (x, y), None);
             canvas.draw_image(&frame, (0, 0), None);
-            Ok(surface.image_snapshot())
+            surface.image_snapshot()
         } else {
-            Ok(frame)
-        }
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 58,
-            duration: 0.06,
-        },
-        None,
-    )
+            frame
+        };
+        encoder.add_frame(frame, 0.06)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

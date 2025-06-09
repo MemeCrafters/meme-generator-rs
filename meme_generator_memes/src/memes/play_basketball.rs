@@ -1,16 +1,20 @@
-use skia_safe::{ISize, Image};
+use skia_safe::ISize;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{make_gif_or_combined_gif, FrameAlign, GifInfo},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date, new_surface},
 };
 
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
-fn play_basketball(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn play_basketball(
+    images: Vec<InputImage>,
+    _: Vec<String>,
+    _: NoOptions,
+) -> Result<Vec<u8>, Error> {
     let locs = [
         Some((297, 321, 0.0)),
         Some((300, 327, 7.2)),
@@ -51,31 +55,25 @@ fn play_basketball(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Res
         Some((283, 280, 32.0)),
         Some((287, 315, 32.0)),
     ];
+    let img = images[0].image.circle().resize_exact((77, 77));
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..38 {
         let frame = load_image(format!("play_basketball/{i:02}.png"))?;
-        if let Some((x, y, angle)) = locs[i] {
+        let frame = if let Some((x, y, angle)) = locs[i] {
             let mut surface = new_surface(frame.dimensions());
             let canvas = surface.canvas();
-            let img = images[0].circle().resize_exact((77, 77)).rotate(angle);
+            let img = img.rotate(angle);
             let ISize { width, height } = img.dimensions();
             canvas.draw_image(&img, (x - width / 2, y - height / 2), None);
             canvas.draw_image(&frame, (0, 0), None);
-            Ok(surface.image_snapshot())
+            surface.image_snapshot()
         } else {
-            Ok(frame)
-        }
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 38,
-            duration: 0.08,
-        },
-        FrameAlign::ExtendLoop,
-    )
+            frame
+        };
+        encoder.add_frame(frame, 0.08)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

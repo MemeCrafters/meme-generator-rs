@@ -4,7 +4,7 @@ use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     canvas::CanvasExt,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::{Fit, ImageExt},
     text_params,
     tools::{local_date, new_surface},
@@ -33,46 +33,38 @@ fn keep_away(images: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Resul
             text_params!(text_align = TextAlign::Left),
         )
         .unwrap();
-    let frame = surface.image_snapshot();
 
     let num_per_user = 8 / images.len();
     let total_images = images.len();
+    let mut count = 0;
 
-    let func = |images: Vec<Image>| {
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        let mut count = 0;
-
-        let trans = |image: &Image, n: usize| -> Image {
-            let img = image.square().resize_fit((100, 100), Fit::Cover);
-            if n < 4 {
-                img.rotate(n as f32 * 90.0)
-            } else {
-                img.flip_horizontal().rotate((n - 4) as f32 * 90.0)
-            }
-        };
-
-        let mut paste = |image: Image| {
-            let y = if count < 4 { 90 } else { 190 };
-            canvas.draw_image(&image, (count % 4 * 100, y), None);
-            count += 1;
-        };
-
-        for image in images.iter() {
-            for n in 0..num_per_user {
-                paste(trans(image, n));
-            }
+    let trans = |image: &Image, n: usize| -> Image {
+        let img = image.square().resize_fit((100, 100), Fit::Cover);
+        if n < 4 {
+            img.rotate(n as f32 * 90.0)
+        } else {
+            img.flip_horizontal().rotate((n - 4) as f32 * 90.0)
         }
-
-        let num_left = 8 - num_per_user * total_images;
-        for n in 0..num_left {
-            paste(trans(&images[images.len() - 1], n + num_per_user));
-        }
-
-        Ok(surface.image_snapshot())
     };
 
-    make_png_or_gif(images, func)
+    let mut paste = |image: Image| {
+        let y = if count < 4 { 90 } else { 190 };
+        canvas.draw_image(&image, (count % 4 * 100, y), None);
+        count += 1;
+    };
+
+    for image in images.iter() {
+        for n in 0..num_per_user {
+            paste(trans(&image.image, n));
+        }
+    }
+
+    let num_left = 8 - num_per_user * total_images;
+    for n in 0..num_left {
+        paste(trans(&images[images.len() - 1].image, n + num_per_user));
+    }
+
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

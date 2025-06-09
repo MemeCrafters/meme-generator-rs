@@ -1,10 +1,10 @@
-use skia_safe::{IRect, Image};
+use skia_safe::IRect;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     canvas::CanvasExt,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date, new_surface},
 };
@@ -19,12 +19,14 @@ fn beat_head(images: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Resul
     } else {
         DEFAULT_TEXT
     };
+    let image = images[0].image.circle();
 
     let locs = [(160, 121, 76, 76), (172, 124, 69, 69), (208, 166, 52, 52)];
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..3 {
         let (x, y, w, h) = locs[i];
-        let head = images[0].circle().resize_exact((w, h));
+        let head = image.resize_exact((w, h));
         let frame = load_image(format!("beat_head/{i}.png"))?;
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
@@ -37,18 +39,9 @@ fn beat_head(images: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Resul
             50.0,
             None,
         )?;
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 3,
-            duration: 0.05,
-        },
-        FrameAlign::ExtendLoop,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.05)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

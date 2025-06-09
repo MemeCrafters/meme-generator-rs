@@ -1,9 +1,9 @@
-use skia_safe::{Color, Image};
+use skia_safe::Color;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::ImageExt,
     tools::{load_image, local_date},
 };
@@ -12,21 +12,17 @@ use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
 fn why_at_me(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let frame = load_image("why_at_me/0.png")?;
-
-    let func = |images: Vec<Image>| {
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        canvas.clear(Color::WHITE);
-        let img = images[0]
-            .square()
-            .resize_exact((265, 265))
-            .rotate_crop(-19.0);
-        canvas.draw_image(&img, (42, 13), None);
-        canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let mut surface = frame.to_surface();
+    let canvas = surface.canvas();
+    canvas.clear(Color::WHITE);
+    let img = images[0]
+        .image
+        .square()
+        .resize_exact((265, 265))
+        .rotate_crop(-19.0);
+    canvas.draw_image(&img, (42, 13), None);
+    canvas.draw_image(&frame, (0, 0), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

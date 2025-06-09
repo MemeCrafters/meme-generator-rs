@@ -1,9 +1,7 @@
-use skia_safe::Image;
-
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date},
 };
@@ -11,7 +9,10 @@ use meme_generator_utils::{
 use crate::{options::NoOptions, register_meme};
 
 fn trolley(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
-    let func = |i: usize, images: Vec<Image>| {
+    let img = images[0].image.circle();
+
+    let mut encoder = GifEncoder::new();
+    for i in 0..50 {
         let frame = load_image(format!("trolley/{i:02}.png"))?;
         let (w, h, x, y, angle) = if i < 25 {
             (65, 65, 21, 101, 0)
@@ -38,27 +39,16 @@ fn trolley(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<
                 (18, 18, -15, 8, -90),
             ][i - 31]
         } else {
-            return Ok(frame);
+            encoder.add_frame(frame, 0.05)?;
+            continue;
         };
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
-        let img = images[0]
-            .circle()
-            .resize_exact((w, h))
-            .rotate_crop(angle as f32);
+        let img = img.resize_exact((w, h)).rotate_crop(angle as f32);
         canvas.draw_image(&img, (x, y), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 50,
-            duration: 0.05,
-        },
-        None,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.05)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

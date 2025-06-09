@@ -1,10 +1,10 @@
-use skia_safe::{Color, IRect, Image};
+use skia_safe::{Color, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     canvas::CanvasExt,
-    encoder::{GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     text_params,
     tools::{load_image, local_date, new_paint, new_stroke_paint},
@@ -24,12 +24,13 @@ fn jiubingfufa(
     } else {
         DEFAULT_TEXT
     };
+    let img = images[0].image.circle().resize_exact((120, 120));
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..26 {
         let frame = load_image(format!("jiubingfufa/{i:02}.jpg"))?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
-        let img = images[0].circle().resize_exact((120, 120));
         canvas.draw_image(&img, (32, frame.height() - 162), None);
         if i > 9 {
             canvas.draw_text_area_auto_font_size(
@@ -43,18 +44,9 @@ fn jiubingfufa(
                 ),
             )?;
         }
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 26,
-            duration: 0.06,
-        },
-        None,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.06)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

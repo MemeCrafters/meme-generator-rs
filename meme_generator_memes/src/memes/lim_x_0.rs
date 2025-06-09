@@ -1,9 +1,7 @@
-use skia_safe::Image;
-
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::ImageExt,
     tools::{load_image, local_date},
 };
@@ -55,19 +53,16 @@ fn lim_x_0(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<
         (1555, 1197),
     ];
 
-    let func = |images: Vec<Image>| {
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        let img_c = images[0].circle().resize_exact((72, 72));
-        let img_tp = images[0].circle().resize_exact((51, 51));
-        for loc in locs {
-            canvas.draw_image(&img_c, loc, None);
-        }
-        canvas.draw_image(&img_tp, (948, 247), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let mut surface = frame.to_surface();
+    let canvas = surface.canvas();
+    let image = images[0].image.circle();
+    let img_c = image.resize_exact((72, 72));
+    let img_tp = image.resize_exact((51, 51));
+    for loc in locs {
+        canvas.draw_image(&img_c, loc, None);
+    }
+    canvas.draw_image(&img_tp, (948, 247), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

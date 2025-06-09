@@ -1,10 +1,10 @@
-use skia_safe::{Color, FontStyle, IRect, Image};
+use skia_safe::{Color, FontStyle, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::ImageExt,
     text_params,
     tools::{load_image, local_date, new_paint, new_surface},
@@ -62,17 +62,10 @@ fn jiji_king(
         100.0,
         text_params!(font_style = FontStyle::bold()),
     )?;
-    let frame = surface.image_snapshot();
 
-    let func = |images: Vec<Image>| {
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        let img = images[0].circle().resize_exact((125, 125));
-        canvas.draw_image(&img, (237, 5), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let img = images[0].image.circle().resize_exact((125, 125));
+    canvas.draw_image(&img, (237, 5), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

@@ -1,11 +1,11 @@
 use chrono::{Datelike, Local, NaiveDate};
-use skia_safe::{IRect, Image};
+use skia_safe::IRect;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::{Fit, ImageExt},
     tools::{load_image, local_date},
 };
@@ -59,19 +59,12 @@ fn abstinence(images: Vec<InputImage>, _: Vec<String>, options: Time) -> Result<
             None,
         )
         .unwrap();
-    let frame = surface.image_snapshot();
     let stamp = load_image("abstinence/stamp.png")?;
 
-    let func = |images: Vec<Image>| {
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        let image = images[0].resize_fit((270, 360), Fit::Contain);
-        canvas.draw_image(&image, (80, 380), None);
-        canvas.draw_image(&stamp, (310, 660), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let image = images[0].image.resize_fit((270, 360), Fit::Contain);
+    canvas.draw_image(&image, (80, 380), None);
+    canvas.draw_image(&stamp, (310, 660), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(
