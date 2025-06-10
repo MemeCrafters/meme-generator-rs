@@ -1,9 +1,9 @@
-use skia_safe::{Color, Image};
+use skia_safe::Color;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::{Fit, ImageExt},
     tools::{load_image, local_date},
 };
@@ -14,22 +14,15 @@ fn mourning(images: Vec<InputImage>, _: Vec<String>, options: Gray) -> Result<Ve
     let frame = load_image("mourning/0.png")?;
     let gray = options.gray.unwrap();
 
-    let func = |images: Vec<Image>| {
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        canvas.clear(Color::WHITE);
-        let img = if gray {
-            &images[0].grayscale()
-        } else {
-            &images[0]
-        };
-        let img = img.resize_fit((635, 725), Fit::Cover);
-        canvas.draw_image(&img, (645, 145), None);
-        canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let mut surface = frame.to_surface();
+    let canvas = surface.canvas();
+    canvas.clear(Color::WHITE);
+    let img = &images[0].image;
+    let img = if gray { &img.grayscale() } else { &img };
+    let img = img.resize_fit((635, 725), Fit::Cover);
+    canvas.draw_image(&img, (645, 145), None);
+    canvas.draw_image(&frame, (0, 0), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

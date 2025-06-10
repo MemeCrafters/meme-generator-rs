@@ -1,9 +1,9 @@
-use skia_safe::{Color, Image, Point};
+use skia_safe::{Color, Point};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::ImageExt,
     text::Text2Image,
     text_params,
@@ -41,17 +41,13 @@ fn make_friend(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<
     canvas.reset_matrix();
     let frame = surface.image_snapshot();
 
-    let func = |images: Vec<Image>| {
-        let mut surface = new_surface(frame.dimensions());
-        let canvas = surface.canvas();
-        canvas.clear(Color::WHITE);
-        let img = images[0].resize_width(frame.width());
-        canvas.draw_image(&img, (0, 0), None);
-        canvas.draw_image(&frame, (0, img.height() - frame.height()), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let mut surface = new_surface(frame.dimensions());
+    let canvas = surface.canvas();
+    canvas.clear(Color::WHITE);
+    let img = images[0].image.resize_width(frame.width());
+    canvas.draw_image(&img, (0, 0), None);
+    canvas.draw_image(&frame, (0, img.height() - frame.height()), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

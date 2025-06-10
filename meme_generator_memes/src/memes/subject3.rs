@@ -1,9 +1,7 @@
-use skia_safe::Image;
-
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date},
 };
@@ -98,25 +96,17 @@ fn subject3(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec
         (65, 72),
         (65, 79),
     ];
+    let img = images[0].image.circle().resize_exact((120, 120));
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..85 {
         let frame = load_image(format!("subject3/{i:02}.png"))?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
-        let img = images[0].circle().resize_exact((120, 120));
         canvas.draw_image(&img, locs[i], None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 85,
-            duration: 0.08,
-        },
-        FrameAlign::ExtendLoop,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.08)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

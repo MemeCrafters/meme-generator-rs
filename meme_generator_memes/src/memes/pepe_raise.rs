@@ -1,9 +1,7 @@
-use skia_safe::Image;
-
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date},
 };
@@ -27,27 +25,19 @@ fn pepe_raise(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<V
         (300, 50),
         (323, 80),
     ];
+    let left_img = images[0].image.circle().resize_exact((100, 100));
+    let right_img = images[1].image.circle().resize_exact((100, 100));
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..6 {
         let frame = load_image(format!("pepe_raise/{i}.png"))?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
-        let left_img = images[0].circle().resize_exact((100, 100));
-        let right_img = images[1].circle().resize_exact((100, 100));
         canvas.draw_image(&left_img, left_locs[i], None);
         canvas.draw_image(&right_img, right_locs[i], None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 6,
-            duration: 0.06,
-        },
-        FrameAlign::ExtendLoop,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.06)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

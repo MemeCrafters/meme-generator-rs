@@ -1,9 +1,9 @@
-use skia_safe::{Color, Data, Image, Paint, RuntimeEffect, SamplingOptions};
+use skia_safe::{Color, Data, Paint, RuntimeEffect, SamplingOptions};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
 };
@@ -50,34 +50,30 @@ fn lost_dog(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec
     }
     let uniforms = Data::new_copy(&values);
 
-    let func = |images: Vec<Image>| {
-        let img = images[0].resize_fit((w_, h), Fit::Cover);
+    let img = images[0].image.resize_fit((w_, h), Fit::Cover);
 
-        let image_shader = img
-            .to_shader(None, SamplingOptions::default(), None)
-            .unwrap();
-        let shader = effect
-            .make_shader(&uniforms, &[image_shader.into()], None)
-            .unwrap();
+    let image_shader = img
+        .to_shader(None, SamplingOptions::default(), None)
+        .unwrap();
+    let shader = effect
+        .make_shader(&uniforms, &[image_shader.into()], None)
+        .unwrap();
 
-        let mut surface = new_surface((w, h));
-        let canvas = surface.canvas();
-        let mut paint = Paint::default();
-        paint.set_shader(shader);
-        canvas.draw_paint(&paint);
-        let img = surface.image_snapshot();
+    let mut surface = new_surface((w, h));
+    let canvas = surface.canvas();
+    let mut paint = Paint::default();
+    paint.set_shader(shader);
+    canvas.draw_paint(&paint);
+    let img = surface.image_snapshot();
 
-        let frame = load_image("lost_dog/0.png")?;
-        let mut surface = new_surface(frame.dimensions());
-        let canvas = surface.canvas();
-        canvas.clear(Color::WHITE);
-        let img = img.resize_exact((w / k, h / k));
-        canvas.draw_image(&img, (295, 165), None);
-        canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let frame = load_image("lost_dog/0.png")?;
+    let mut surface = new_surface(frame.dimensions());
+    let canvas = surface.canvas();
+    canvas.clear(Color::WHITE);
+    let img = img.resize_exact((w / k, h / k));
+    canvas.draw_image(&img, (295, 165), None);
+    canvas.draw_image(&frame, (0, 0), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

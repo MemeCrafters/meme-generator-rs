@@ -1,9 +1,9 @@
-use skia_safe::{Color, Image};
+use skia_safe::Color;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date, new_surface},
 };
@@ -11,33 +11,27 @@ use meme_generator_utils::{
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
 fn thump_wildly(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
-    let func = |i: usize, images: Vec<Image>| {
+    let img = images[0].image.square().resize_exact((122, 122));
+
+    let mut encoder = GifEncoder::new();
+    for i in 0..37 {
         let i = if i >= 31 { 0 } else { i };
         let frame = load_image(format!("thump_wildly/{i:02}.png"))?;
 
-        if (15..31).contains(&i) {
-            Ok(frame)
+        let frame = if (15..31).contains(&i) {
+            frame
         } else {
             let mut surface = new_surface(frame.dimensions());
             let canvas = surface.canvas();
             canvas.clear(Color::WHITE);
-            let img = images[0].square().resize_exact((122, 122));
             let pos = if i == 14 { (207, 239) } else { (203, 196) };
             canvas.draw_image(&img, pos, None);
             canvas.draw_image(&frame, (0, 0), None);
-            Ok(surface.image_snapshot())
-        }
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 37,
-            duration: 0.04,
-        },
-        FrameAlign::ExtendFirst,
-    )
+            surface.image_snapshot()
+        };
+        encoder.add_frame(frame, 0.04)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

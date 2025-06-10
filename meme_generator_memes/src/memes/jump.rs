@@ -1,9 +1,7 @@
-use skia_safe::Image;
-
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date},
 };
@@ -21,25 +19,17 @@ fn jump(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>
         (14, 4),
         (15, 31),
     ];
+    let image = images[0].image.circle().resize_exact((40, 40));
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..8 {
         let frame = load_image(format!("jump/{i}.png"))?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
-        let image = images[0].circle().resize_exact((40, 40));
         canvas.draw_image(&image, locs[i], None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 8,
-            duration: 0.05,
-        },
-        FrameAlign::ExtendLoop,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.05)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

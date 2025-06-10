@@ -1,10 +1,10 @@
-use skia_safe::{FontStyle, IRect, Image};
+use skia_safe::{FontStyle, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     canvas::CanvasExt,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::ImageExt,
     text_params,
     tools::{load_image, local_date},
@@ -35,19 +35,12 @@ fn incivilization(
         50.0,
         text_params!(font_style = FontStyle::bold()),
     )?;
-    let frame = surface.image_snapshot();
 
-    let func = |images: Vec<Image>| {
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        let image = images[0].circle().resize_exact((150, 150));
-        let image = image.perspective(&[(0, 20), (154, 0), (164, 153), (22, 180)]);
-        let image = image.brightness(0.8);
-        canvas.draw_image(&image, (137, 151), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let image = images[0].image.circle().resize_exact((150, 150));
+    let image = image.perspective(&[(0, 20), (154, 0), (164, 153), (22, 180)]);
+    let image = image.brightness(0.8);
+    canvas.draw_image(&image, (137, 151), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

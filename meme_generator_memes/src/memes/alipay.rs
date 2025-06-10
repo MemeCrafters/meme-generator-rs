@@ -1,10 +1,10 @@
-use skia_safe::{Color, IRect, Image, Rect};
+use skia_safe::{Color, IRect, Rect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_paint},
 };
@@ -42,19 +42,13 @@ fn alipay(images: Vec<InputImage>, _: Vec<String>, options: Message) -> Result<V
         70.0,
         None,
     )?;
-    let frame = surface.image_snapshot();
 
-    let func = |images: Vec<Image>| {
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        let image = images[0]
-            .resize_fit((108, 108), Fit::Cover)
-            .round_corner(8.0);
-        canvas.draw_image(&image, (486, 881), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let image = images[0]
+        .image
+        .resize_fit((108, 108), Fit::Cover)
+        .round_corner(8.0);
+    canvas.draw_image(&image, (486, 881), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

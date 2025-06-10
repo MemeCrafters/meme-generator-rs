@@ -1,10 +1,10 @@
-use skia_safe::{Color, IRect, Image};
+use skia_safe::{Color, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     canvas::CanvasExt,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::{Fit, ImageExt},
     text_params,
     tools::{load_image, local_date, new_paint, new_surface},
@@ -33,23 +33,16 @@ fn read_book(images: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Resul
     let text_image = text_surface.image_snapshot().rotate(88.0);
 
     let frame = load_image("read_book/0.png")?;
-    let mut surface = frame.to_surface();
+    let mut surface = new_surface(frame.dimensions());
     let canvas = surface.canvas();
+    canvas.clear(Color::WHITE);
+    let img = &images[0].image.resize_fit((1000, 1100), Fit::Cover);
+    let img = img.perspective(&[(0, 108), (1092, 0), (1023, 1134), (29, 1134)]);
+    canvas.draw_image(&img, (1138, 1172), None);
+    canvas.draw_image(&frame, (0, 0), None);
     canvas.draw_image(&text_image, (826, 1496), None);
-    let frame = surface.image_snapshot();
 
-    let func = |images: Vec<Image>| {
-        let mut surface = new_surface(frame.dimensions());
-        let canvas = surface.canvas();
-        canvas.clear(Color::WHITE);
-        let img = &images[0].resize_fit((1000, 1100), Fit::Cover);
-        let img = img.perspective(&[(0, 108), (1092, 0), (1023, 1134), (29, 1134)]);
-        canvas.draw_image(&img, (1138, 1172), None);
-        canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

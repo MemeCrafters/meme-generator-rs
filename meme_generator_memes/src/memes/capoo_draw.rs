@@ -1,9 +1,9 @@
-use skia_safe::{Color, Image};
+use skia_safe::Color;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
 };
@@ -20,8 +20,10 @@ fn capoo_draw(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<V
         raw_frames.push(load_image(format!("capoo_draw/{i}.png"))?);
     }
     let indexes = [0, 1, 2, 1, 2, 3, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5];
+    let image = images[0].image.resize_fit((175, 120), Fit::Cover);
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..16 {
         let index = indexes[i];
         let frame = &raw_frames[index];
         let mut surface = new_surface(frame.dimensions());
@@ -29,23 +31,13 @@ fn capoo_draw(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<V
         canvas.clear(Color::WHITE);
         if (4..6).contains(&index) {
             let (points, pos) = params[index - 4];
-            let image = images[0].resize_fit((175, 120), Fit::Cover);
             let image = image.perspective(&points);
             canvas.draw_image(&image, pos, None);
         }
         surface.canvas().draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 16,
-            duration: 0.1,
-        },
-        FrameAlign::ExtendLast,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.1)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme! {

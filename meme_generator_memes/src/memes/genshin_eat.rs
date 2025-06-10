@@ -1,10 +1,9 @@
 use rand::seq::SliceRandom;
-use skia_safe::Image;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::{InputImage, MemeOptions},
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     shortcut,
     tools::{load_image, local_date},
@@ -32,30 +31,24 @@ fn genshin_eat(
     });
 
     let locs = [(106, 245), (115, 224), (116, 205), (115, 198), (120, 217)];
+    let image = images[0].image.circle().resize_exact((44, 44));
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..16 {
         let frame = load_image(format!("genshin_eat/{character}/{:02}.png", i))?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
         if (4..9).contains(&i) {
-            let mut image = images[0].circle().resize_exact((44, 44));
-            if i == 8 {
-                image = image.resize_exact((44, 33));
-            }
+            let image = if i == 8 {
+                &image.resize_exact((44, 33))
+            } else {
+                &image
+            };
             canvas.draw_image(&image, locs[i - 4], None);
         }
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 16,
-            duration: 0.08,
-        },
-        FrameAlign::ExtendLoop,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.08)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

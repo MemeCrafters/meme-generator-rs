@@ -1,9 +1,9 @@
-use skia_safe::{Color, Image};
+use skia_safe::Color;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::ImageExt,
     text::Text2Image,
     text_params,
@@ -40,17 +40,10 @@ fn follow(images: Vec<InputImage>, _: Vec<String>, options: Gender) -> Result<Ve
     canvas.clear(Color::WHITE);
     name_image.draw_on_canvas(canvas, (300.0, 135.0 - name_image.height() as f32));
     follow_image.draw_on_canvas(canvas, (300.0, 145.0));
-    let frame = surface.image_snapshot();
 
-    let func = |images: Vec<Image>| {
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        let image = images[0].circle().resize_exact((200, 200));
-        canvas.draw_image(&image, (50, 50), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let image = images[0].image.circle().resize_exact((200, 200));
+    canvas.draw_image(&image, (50, 50), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

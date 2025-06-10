@@ -1,11 +1,11 @@
 use rand::seq::SliceRandom;
-use skia_safe::{Color, FontStyle, Image};
+use skia_safe::{Color, FontStyle};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     canvas::CanvasExt,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::{Fit, ImageExt},
     text_params,
     tools::{color_from_hex_code, load_image, local_date, new_paint, new_surface},
@@ -257,26 +257,19 @@ fn name_generator(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Resu
             font_style = FontStyle::bold()
         ),
     );
-    let frame = surface.image_snapshot();
 
-    let func = |images: Vec<Image>| {
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        let img = images[0].resize_fit((490, 490), Fit::Cover);
-        canvas.draw_image(&img, (310, 235), None);
-        canvas.draw_text(
-            (20, 620),
-            &name,
-            60.0,
-            text_params!(
-                paint = new_paint(color_from_hex_code(color)),
-                font_style = FontStyle::bold()
-            ),
-        );
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let img = images[0].image.resize_fit((490, 490), Fit::Cover);
+    canvas.draw_image(&img, (310, 235), None);
+    canvas.draw_text(
+        (20, 620),
+        &name,
+        60.0,
+        text_params!(
+            paint = new_paint(color_from_hex_code(color)),
+            font_style = FontStyle::bold()
+        ),
+    );
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

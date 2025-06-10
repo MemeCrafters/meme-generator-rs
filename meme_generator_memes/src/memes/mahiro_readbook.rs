@@ -1,9 +1,9 @@
-use skia_safe::{Color, Image};
+use skia_safe::Color;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
 };
@@ -16,29 +16,23 @@ fn mahiro_readbook(
     _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
     let positions = [(0, 118), (0, 117), (0, 116), (0, 116), (-3, 116), (-7, 117)];
+    let img = images[0]
+        .image
+        .resize_fit((70, 100), Fit::Cover)
+        .perspective(&[(0, 6), (77, -5), (100, 100), (32, 100)]);
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..48 {
         let frame = load_image(format!("mahiro_readbook/{i:02}.png"))?;
         let mut surface = new_surface((240, 240));
         let canvas = surface.canvas();
         canvas.clear(Color::WHITE);
-        let img = images[0].resize_fit((70, 100), Fit::Cover);
-        let img = img.perspective(&[(0, 6), (77, -5), (100, 100), (32, 100)]);
         let idx = (i - 16).max(0).min(5) as usize;
         canvas.draw_image(&img, positions[idx], None);
         canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 48,
-            duration: 0.08,
-        },
-        FrameAlign::ExtendLoop,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.08)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

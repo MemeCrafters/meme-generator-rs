@@ -1,4 +1,4 @@
-use skia_safe::{Color, FontStyle, IRect};
+use skia_safe::{Color, FontStyle, IRect, Image};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
@@ -36,7 +36,7 @@ fn look_this_icon(
     )?;
     let frame = surface.image_snapshot();
 
-    let func = |images: Vec<skia_safe::Image>| {
+    let func = |images: Vec<Image>| {
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
         canvas.clear(Color::WHITE);

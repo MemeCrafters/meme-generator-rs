@@ -1,9 +1,9 @@
-use skia_safe::{Color, Image};
+use skia_safe::Color;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
 };
@@ -11,26 +11,18 @@ use meme_generator_utils::{
 use crate::{options::NoOptions, register_meme};
 
 fn jiujiu(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
-    let func = |i: usize, images: Vec<Image>| {
+    let image = images[0].image.resize_fit((75, 51), Fit::Cover);
+    let mut encoder = GifEncoder::new();
+    for i in 0..8 {
         let frame = load_image(format!("jiujiu/{i}.png"))?;
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
         canvas.clear(Color::WHITE);
-        let image = images[0].resize_fit((75, 51), Fit::Cover);
         canvas.draw_image(&image, (0, 0), None);
         canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 8,
-            duration: 0.06,
-        },
-        FrameAlign::ExtendLoop,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.06)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

@@ -1,14 +1,15 @@
-use skia_safe::{Color, Image};
+use skia_safe::Color;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date, new_surface},
 };
 
 use crate::{options::NoOptions, register_meme};
+
 fn hug_leg(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let locs = [
         (50, 73, 68, 92),
@@ -18,28 +19,21 @@ fn hug_leg(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<
         (55, 44, 65, 106),
         (66, 85, 60, 98),
     ];
+    let image = images[0].image.square();
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..6 {
         let frame = load_image(format!("hug_leg/{i}.png"))?;
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
         canvas.clear(Color::WHITE);
         let (x, y, w, h) = locs[i];
-        let image = images[0].square().resize_exact((w, h));
+        let image = image.resize_exact((w, h));
         canvas.draw_image(&image, (x, y), None);
         canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 6,
-            duration: 0.06,
-        },
-        FrameAlign::ExtendLoop,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.06)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

@@ -1,10 +1,10 @@
-use skia_safe::{IRect, Image};
+use skia_safe::IRect;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     canvas::CanvasExt,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date},
 };
@@ -26,8 +26,10 @@ fn pass_the_buck(
         (3, 31),
         (1, 30),
     ];
+    let img = images[0].image.square().resize_exact((27, 27));
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..8 {
         let frame = load_image(format!("pass_the_buck/{i}.png"))?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
@@ -41,20 +43,10 @@ fn pass_the_buck(
                 None,
             )?;
         }
-        let img = images[0].square().resize_exact((27, 27));
         canvas.draw_image(&img, locs[i], None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 8,
-            duration: 0.1,
-        },
-        FrameAlign::ExtendLoop,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.1)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

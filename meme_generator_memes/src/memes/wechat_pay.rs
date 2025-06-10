@@ -1,10 +1,10 @@
-use skia_safe::{Color, IRect, Image};
+use skia_safe::{Color, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::{InputImage, MemeOptions},
     canvas::CanvasExt,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_paint},
 };
@@ -43,21 +43,15 @@ fn wechat_pay(images: Vec<InputImage>, _: Vec<String>, options: Message) -> Resu
         80.0,
         None,
     )?;
-    let frame = surface.image_snapshot();
+
     let logo = load_image("wechat_pay/logo.png")?;
-
-    let func = |images: Vec<Image>| {
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        let image = images[0]
-            .resize_fit((166, 166), Fit::Cover)
-            .round_corner(8.0);
-        canvas.draw_image(&image, (538, 621), None);
-        canvas.draw_image(&logo, (649, 734), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let image = images[0]
+        .image
+        .resize_fit((166, 166), Fit::Cover)
+        .round_corner(8.0);
+    canvas.draw_image(&image, (538, 621), None);
+    canvas.draw_image(&logo, (649, 734), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

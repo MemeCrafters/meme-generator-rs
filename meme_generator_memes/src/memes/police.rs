@@ -1,10 +1,10 @@
-use skia_safe::{Color, IRect, Image};
+use skia_safe::{Color, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     canvas::CanvasExt,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::ImageExt,
     text_params,
     tools::{load_image, local_date, new_surface},
@@ -20,9 +20,15 @@ fn police(images: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<V
     } else {
         &texts[0]
     };
+
     let frame = load_image("police/0.png")?;
-    let mut surface = frame.to_surface();
+    let mut surface = new_surface(frame.dimensions());
     let canvas = surface.canvas();
+    canvas.clear(Color::WHITE);
+    let img = images[0].image.square().resize_exact((245, 245));
+    canvas.draw_image(&img, (224, 46), None);
+    canvas.draw_image(&frame, (0, 0), None);
+
     canvas.draw_text_area_auto_font_size(
         IRect::from_xywh(220, 395, 250, 85),
         text,
@@ -30,19 +36,8 @@ fn police(images: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<V
         40.0,
         text_params!(font_families = &["Noto Serif SC"]),
     )?;
-    let frame = surface.image_snapshot();
 
-    let func = |images: Vec<Image>| {
-        let mut surface = new_surface(frame.dimensions());
-        let canvas = surface.canvas();
-        canvas.clear(Color::WHITE);
-        let img = images[0].square().resize_exact((245, 245));
-        canvas.draw_image(&img, (224, 46), None);
-        canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

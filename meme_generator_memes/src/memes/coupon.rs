@@ -1,10 +1,10 @@
-use skia_safe::{IRect, Image};
+use skia_safe::IRect;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     canvas::CanvasExt,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
 };
@@ -30,19 +30,15 @@ fn coupon(images: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<V
     )?;
     let text_image = surface.image_snapshot();
 
-    let func = |images: Vec<Image>| {
-        let frame = load_image("coupon/0.png")?;
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        let image = images[0].circle().resize_fit((60, 60), Fit::Cover);
-        let image = image.rotate(-22.0);
-        let text_image = text_image.rotate(-22.0);
-        canvas.draw_image(&image, (164, 85), None);
-        canvas.draw_image(&text_image, (94, 108), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let frame = load_image("coupon/0.png")?;
+    let mut surface = frame.to_surface();
+    let canvas = surface.canvas();
+    let image = images[0].image.circle().resize_fit((60, 60), Fit::Cover);
+    let image = image.rotate(-22.0);
+    let text_image = text_image.rotate(-22.0);
+    canvas.draw_image(&image, (164, 85), None);
+    canvas.draw_image(&text_image, (94, 108), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

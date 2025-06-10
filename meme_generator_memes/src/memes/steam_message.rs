@@ -1,9 +1,9 @@
-use skia_safe::{IRect, Image};
+use skia_safe::IRect;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::{Fit, ImageExt},
     shortcut,
     text::Text2Image,
@@ -87,17 +87,10 @@ fn steam_message(
             frame_h as f32 - padding_v as f32 - 40.0 - text_game.height() / 2.0,
         ),
     );
-    let frame = surface.image_snapshot();
 
-    let func = |images: Vec<Image>| {
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        let avatar = images[0].resize_fit((avatar_w, avatar_w), Fit::Cover);
-        canvas.draw_image(&avatar, (padding_h as f32, padding_v as f32), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let avatar = images[0].image.resize_fit((avatar_w, avatar_w), Fit::Cover);
+    canvas.draw_image(&avatar, (padding_h as f32, padding_v as f32), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

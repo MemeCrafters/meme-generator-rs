@@ -1,9 +1,9 @@
-use skia_safe::{Color, IRect, Image};
+use skia_safe::{Color, IRect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
 };
@@ -34,8 +34,12 @@ fn capoo_rip(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Ve
         raw_frames.push(load_image(format!("capoo_rip/{i}.png"))?);
     }
     let indexes = [0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5, 6, 7, 7];
+    let image = images[0].image.resize_fit((150, 100), Fit::Cover);
+    let image_left = image.crop(IRect::from_ltrb(0, 0, 75, 100));
+    let image_right = image.crop(IRect::from_ltrb(75, 0, 150, 100));
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..15 {
         let index = indexes[i];
         let frame = &raw_frames[index];
         let mut surface = new_surface(frame.dimensions());
@@ -43,34 +47,21 @@ fn capoo_rip(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Ve
         canvas.clear(Color::WHITE);
         if (0..6).contains(&index) {
             let (pos, points) = params1[index];
-            let image = images[0].resize_fit((150, 100), Fit::Cover);
             let image = image.perspective(&points);
             canvas.draw_image(&image, pos, None);
         } else {
             let (params1, params2) = params2[index - 6];
             let (pos1, points1) = params1;
             let (pos2, points2) = params2;
-            let image = images[0].resize_fit((150, 100), Fit::Cover);
-            let image_left = image.crop(IRect::from_ltrb(0, 0, 75, 100));
-            let image_right = image.crop(IRect::from_ltrb(75, 0, 150, 100));
             let image_left = image_left.perspective(&points1);
             let image_right = image_right.perspective(&points2);
             canvas.draw_image(&image_left, pos1, None);
             canvas.draw_image(&image_right, pos2, None);
         }
         canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 15,
-            duration: 0.1,
-        },
-        None,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.1)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme! {

@@ -1,9 +1,7 @@
-use skia_safe::Image;
-
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
 };
@@ -27,28 +25,20 @@ fn bocchi_draft(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result
     let idx = [
         0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10,
     ];
+    let image = images[0].image.resize_fit((350, 400), Fit::Cover);
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..23 {
         let frame = load_image(format!("bocchi_draft/{i:02}.png"))?;
         let (points, pos) = params[idx[i]];
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
-        let image = images[0].resize_fit((350, 400), Fit::Cover);
         let image = image.perspective(&points);
         canvas.draw_image(&image, pos, None);
         canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 23,
-            duration: 0.08,
-        },
-        FrameAlign::ExtendLast,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.08)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

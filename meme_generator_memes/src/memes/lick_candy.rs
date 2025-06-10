@@ -1,9 +1,7 @@
-use skia_safe::Image;
-
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date},
 };
@@ -104,29 +102,27 @@ fn lick_candy(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<V
         ([(76, 0), (76, 73), (0, 73), (0, 0)], (172, 125)),
         ([(76, 0), (76, 73), (0, 73), (0, 0)], (172, 125)),
     ];
+    let img = images[0]
+        .image
+        .circle()
+        .resize_exact((76, 76))
+        .rotate(-90.0);
 
-    let func = |i: usize, images: Vec<Image>| {
-        let img = images[0].resize_exact((76, 76)).circle().rotate(-90.0);
+    let mut encoder = GifEncoder::new();
+    for i in 0..91 {
         let frame = load_image(format!("lick_candy/{i:02}.png"))?;
-        if [19, 20, 27, 28].contains(&i) {
-            return Ok(frame);
-        }
-        let mut surface = frame.to_surface();
-        let canvas = surface.canvas();
-        let (points, pos) = params[i];
-        canvas.draw_image(&img.perspective(&points), pos, None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 91,
-            duration: 0.03,
-        },
-        FrameAlign::ExtendFirst,
-    )
+        let frame = if [19, 20, 27, 28].contains(&i) {
+            frame
+        } else {
+            let mut surface = frame.to_surface();
+            let canvas = surface.canvas();
+            let (points, pos) = params[i];
+            canvas.draw_image(&img.perspective(&points), pos, None);
+            surface.image_snapshot()
+        };
+        encoder.add_frame(frame, 0.03)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme! {

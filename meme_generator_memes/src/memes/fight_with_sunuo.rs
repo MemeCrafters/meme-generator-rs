@@ -1,9 +1,7 @@
-use skia_safe::Image;
-
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::make_png_or_gif,
+    encoder::encode_png,
     image::{Fit, ImageExt},
     tools::{load_image, local_date, new_surface},
 };
@@ -16,17 +14,15 @@ fn fight_with_sunuo(
     _: NoOptions,
 ) -> Result<Vec<u8>, Error> {
     let frame = load_image("fight_with_sunuo/0.png")?;
-
-    let func = |images: Vec<Image>| {
-        let mut surface = new_surface(frame.dimensions());
-        let canvas = surface.canvas();
-        let image = images[0].resize_fit((565, 1630), Fit::Cover).grayscale();
-        canvas.draw_image(&image, (0, 245), None);
-        canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_png_or_gif(images, func)
+    let mut surface = new_surface(frame.dimensions());
+    let canvas = surface.canvas();
+    let image = images[0]
+        .image
+        .resize_fit((565, 1630), Fit::Cover)
+        .grayscale();
+    canvas.draw_image(&image, (0, 245), None);
+    canvas.draw_image(&frame, (0, 0), None);
+    encode_png(surface.image_snapshot())
 }
 
 register_meme!(

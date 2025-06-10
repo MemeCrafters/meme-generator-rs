@@ -1,9 +1,9 @@
-use skia_safe::{Color, Image};
+use skia_safe::Color;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date, new_surface},
 };
@@ -37,28 +37,21 @@ fn tease(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8
         ((0, 66), [(88, 1), (173, 17), (123, 182), (0, 131)]),
         ((0, 29), [(118, 3), (201, 48), (111, 220), (1, 168)]),
     ];
+    let img = images[0].image.square();
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..24 {
         let frame = load_image(format!("tease/{i:02}.png"))?;
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
         canvas.clear(Color::WHITE);
         let (pos, points) = params[i];
-        let img = images[0].square().perspective(&points);
+        let img = img.perspective(&points);
         canvas.draw_image(&img, pos, None);
         canvas.draw_image(&frame, (0, 0), None);
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 24,
-            duration: 0.05,
-        },
-        FrameAlign::ExtendLoop,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.05)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme!(

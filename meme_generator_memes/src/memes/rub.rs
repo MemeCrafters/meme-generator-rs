@@ -1,9 +1,7 @@
-use skia_safe::Image;
-
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
-    encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
+    encoder::GifEncoder,
     image::ImageExt,
     tools::{load_image, local_date},
 };
@@ -27,17 +25,18 @@ fn rub(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>,
         (95, 57, 100, 55, 70),
         (109, 107, 65, 75, 0),
     ];
+    let user_head = images[1].image.circle();
+    let self_head = images[0].image.circle();
 
-    let func = |i: usize, images: Vec<Image>| {
+    let mut encoder = GifEncoder::new();
+    for i in 0..6 {
         let frame = load_image(format!("rub/{i}.png"))?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
 
-        let user_head = images[1].circle();
         let (x, y, w, h) = user_locs[i];
         canvas.draw_image(&user_head.resize_exact((w, h)), (x, y), None);
 
-        let self_head = images[0].circle();
         let (x, y, w, h, a) = self_locs[i];
         canvas.draw_image(
             &self_head.resize_exact((w, h)).rotate(a as f32),
@@ -45,18 +44,9 @@ fn rub(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>,
             None,
         );
 
-        Ok(surface.image_snapshot())
-    };
-
-    make_gif_or_combined_gif(
-        images,
-        func,
-        GifInfo {
-            frame_num: 6,
-            duration: 0.05,
-        },
-        FrameAlign::ExtendLoop,
-    )
+        encoder.add_frame(surface.image_snapshot(), 0.05)?;
+    }
+    Ok(encoder.finish()?)
 }
 
 register_meme! {
