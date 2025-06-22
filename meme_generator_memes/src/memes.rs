@@ -73,6 +73,7 @@ mod find_chips;
 mod firefly_holdsign;
 mod fivethousand_choyen;
 mod flash_blind;
+mod flick;
 mod flush;
 mod fogging;
 mod follow;
