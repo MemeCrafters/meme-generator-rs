@@ -8,22 +8,21 @@ use meme_generator_utils::{
     tools::{load_image, local_date, new_surface},
 };
 
-use crate::{options::NoOptions, register_meme, tags::MemeTags};
+use crate::{options::NoOptions, register_meme};
 
-fn wallpaper(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
+fn rip_clothes(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
     let func = |i: usize, images: Vec<Image>| {
-        let frame = load_image(format!("wallpaper/{i:02}.png"))?;
-
-        if i < 8 {
-            Ok(frame)
-        } else {
+        let img = images[0].resize_fit((480, 270), Fit::Cover);
+        if i <= 15 {
+            let frame = load_image(format!("rip_clothes/{i:02}.png"))?;
             let mut surface = new_surface(frame.dimensions());
             let canvas = surface.canvas();
             canvas.clear(Color::WHITE);
-            let img = images[0].resize_fit((515, 383), Fit::Cover);
-            canvas.draw_image(&img, (176, -9), None);
+            canvas.draw_image(&img, (0, 0), None);
             canvas.draw_image(&frame, (0, 0), None);
             Ok(surface.image_snapshot())
+        } else {
+            Ok(img)
         }
     };
 
@@ -32,19 +31,18 @@ fn wallpaper(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Ve
         func,
         GifInfo {
             frame_num: 20,
-            duration: 0.07,
+            duration: 0.1,
         },
         FrameAlign::ExtendLast,
     )
 }
 
 register_meme!(
-    "wallpaper",
-    wallpaper,
+    "rip_clothes",
+    rip_clothes,
     min_images = 1,
     max_images = 1,
-    keywords = &["墙纸"],
-    tags = MemeTags::rick(),
-    date_created = local_date(2022, 3, 9),
-    date_modified = local_date(2023, 2, 14),
+    keywords = &["撕衣服"],
+    date_created = local_date(2025, 5, 7),
+    date_modified = local_date(2025, 6, 3),
 );
