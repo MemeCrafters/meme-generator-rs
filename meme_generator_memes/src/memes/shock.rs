@@ -1,12 +1,12 @@
 use rand::Rng;
-use skia_safe::{Data, Image, Paint, RuntimeEffect, SamplingOptions};
+use skia_safe::{Data, Image, Paint, RuntimeEffect};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
     builder::InputImage,
     encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
     image::ImageExt,
-    tools::{local_date, new_surface},
+    tools::{default_sampling_options, local_date, new_surface},
 };
 
 use crate::{options::NoOptions, register_meme};
@@ -57,7 +57,7 @@ fn shock(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8
         let uniforms = Data::new_copy(&values);
 
         let image_shader = img
-            .to_shader(None, SamplingOptions::default(), None)
+            .to_shader(None, default_sampling_options(), None)
             .unwrap();
         let shader = effect
             .make_shader(&uniforms, &[image_shader.into()], None)
