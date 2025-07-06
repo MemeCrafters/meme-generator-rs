@@ -29,7 +29,7 @@ fn backflip(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec
     let flip_range = 0.65..0.95;
     let land_range = 0.95..1.0;
 
-    let func = move |i: usize, images: Vec<Image>| {
+    let func = |i: usize, images: Vec<Image>| {
         let t = i as f32 / total_frames as f32;
 
         let (y, angle) = if bounce1_range.contains(&t) {
