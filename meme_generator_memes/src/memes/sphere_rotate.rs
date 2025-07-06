@@ -4,7 +4,7 @@ use meme_generator_utils::{
     encoder::{FrameAlign, GifInfo, make_gif_or_combined_gif},
     tools::{default_sampling_options, local_date, new_surface},
 };
-use skia_safe::{Data, IRect, Image, Paint, RuntimeEffect};
+use skia_safe::{Data, Image, Paint, RuntimeEffect};
 
 use crate::{options::NoOptions, register_meme};
 
@@ -145,7 +145,7 @@ fn sphere_rotate(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Resul
 
         let mut paint = Paint::default();
         paint.set_shader(shader);
-        canvas.draw_irect(IRect::from_xywh(0, 0, canvas_w, canvas_h), &paint);
+        canvas.draw_paint(&paint);
 
         Ok(surface.image_snapshot())
     };
