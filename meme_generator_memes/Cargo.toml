@@ -17,7 +17,7 @@ serde = "1.0"
 skia-safe = { version = "0.80", features = ["textlayout"] }
 
 meme_generator_core = { version = "0.0.4", path = "../meme_generator_core" }
-meme_generator_utils = { version = "0.0.7", path = "../meme_generator_utils" }
+meme_generator_utils = { version = "0.0.8", path = "../meme_generator_utils" }
 
 [features]
 embed-freetype = ["skia-safe/embed-freetype"]
