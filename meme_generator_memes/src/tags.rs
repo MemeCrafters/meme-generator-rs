@@ -52,6 +52,7 @@ meme_tags!(
     captain = (["休伯利安号", "舰长"], honkai3),
     griseo = (["格蕾修"], honkai3),
     firefly = (["流萤"], star_rail),
+    elysia = (["爱莉", "爱莉希雅"], honkai3),
     // 蔚蓝档案
     blue_archive = (["蔚蓝档案", "碧蓝档案"]),
     arisu = (["天童爱丽丝"], blue_archive),
