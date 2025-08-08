@@ -4,6 +4,7 @@ members = [
     "meme_generator_cli",
     "meme_generator_core",
     "meme_generator_memes",
+    "meme_generator_node",
     "meme_generator_py",
     "meme_generator_server",
     "meme_generator_utils",
@@ -19,3 +20,15 @@ readme = "README.md"
 homepage = "https://github.com/MemeCrafters/meme-generator-rs"
 repository = "https://github.com/MemeCrafters/meme-generator-rs"
 edition = "2024"
+
+[workspace.dependencies]
+chrono = { version = "0.4" }
+tokio = { version = "1.42", features = ["full"] }
+reqwest = { version = "0.12.22", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0" }
+skia-safe = { version = "0.80", features = ["textlayout"] }
+toml = { version = "0.9.5" }
+tracing = { version = "0.1" }
+infer = { version = "0.19.0" }
+md5 = { version = "0.8.0" }

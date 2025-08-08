@@ -1,0 +1,20 @@
+[package]
+name = "meme_generator_node"
+version.workspace = true
+authors.workspace = true
+license.workspace = true
+readme.workspace = true
+homepage.workspace = true
+repository.workspace = true
+edition.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "3.2.0", default-features = false, features = ["napi4"] }
+napi-derive = { version = "3.2.0" }
+meme_generator = { path = "../meme_generator" }
+
+[build-dependencies]
+napi-build = "2.2.3"
