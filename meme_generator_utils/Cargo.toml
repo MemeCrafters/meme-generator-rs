@@ -9,17 +9,17 @@ repository.workspace = true
 edition.workspace = true
 
 [dependencies]
-chrono = { version = "0.4", features = ["serde"] }
 gifski = { version = "1.33", default-features = false }
-md5 = "0.7"
 regex = "1.11"
-reqwest = { version = "0.11", features = ["json"] }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-skia-safe = { version = "0.80", features = ["textlayout"] }
-tokio = { version = "1.42", features = ["full"] }
-toml = "0.8"
-tracing = "0.1"
+chrono = { workspace = true }
+md5 = { workspace = true }
+reqwest = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+skia-safe = { workspace = true}
+tokio = { workspace = true }
+toml = { workspace = true }
+tracing = { workspace = true }
 
 meme_generator_core = { version = "0.0.4", path = "../meme_generator_core" }
 meme_options_derive = { version = "0.0.5", path = "../meme_options_derive" }

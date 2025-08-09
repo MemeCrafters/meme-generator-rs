@@ -1,7 +1,7 @@
 mod cli;
 mod tools;
 
-use tracing_subscriber::{EnvFilter, fmt, prelude::*};
+use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
 #[cfg(feature = "server")]
 use cli::handle_run;

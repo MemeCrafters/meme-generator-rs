@@ -12,3 +12,6 @@ libraries/
 *.venv/
 *__pycache__/
 *.so
+node_modules
+dist
+.idea
