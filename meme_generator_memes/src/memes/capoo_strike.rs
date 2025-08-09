@@ -26,7 +26,7 @@ fn capoo_strike(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result
         let mut surface = new_surface(frame.dimensions());
         let canvas = surface.canvas();
         canvas.clear(Color::WHITE);
-        let image = images[0].circle().resize_fit((200, 160), Fit::Cover);
+        let image = images[0].resize_fit((200, 160), Fit::Cover);
         let (points, pos) = params[i];
         let image = image.perspective(&points);
         canvas.draw_image(&image, pos, None);
