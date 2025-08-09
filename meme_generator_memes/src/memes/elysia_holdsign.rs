@@ -8,9 +8,7 @@ use meme_generator_utils::{
     encoder::encode_png,
     image::ImageExt,
     text_params,
-    tools::{
-        color_from_hex_code, load_image, local_date, new_paint, new_stroke_paint, new_surface,
-    },
+    tools::{color_from_hex_code, load_image, local_date, new_paint, new_surface},
 };
 
 use crate::{options::number_option, register_meme, tags::MemeTags};
@@ -24,28 +22,67 @@ fn elysia_holdsign(
     texts: Vec<String>,
     options: Number,
 ) -> Result<Vec<u8>, Error> {
-    let text = if !texts.is_empty() { &texts[0] } else { DEFAULT_TEXT };
+    let text = if !texts.is_empty() {
+        &texts[0]
+    } else {
+        DEFAULT_TEXT
+    };
 
     let img_num = 8;
     let num = match options.number {
         None => rand::thread_rng().gen_range(1..=img_num),
         Some(n) => {
             if n < 1 || n > img_num {
-                return Err(Error::MemeFeedback(format!("图片编号错误，请输入 1-{}", img_num)));
+                return Err(Error::MemeFeedback(format!(
+                    "图片编号错误，请输入 1-{}",
+                    img_num
+                )));
             }
             n
         }
     };
 
     let text_loc = [
-        ((300, 200), (144, 322), [(0, 66), (276, 0), (319, 178), (43, 244)]),
-        ((300, 250), (-46, -50), [(0, 83), (312, 0), (348, 243), (46, 314)]),
-        ((300, 150), (106, 351), [(0, 0), (286, 0), (276, 149), (12, 149)]),
-        ((250, 200), (245, -6), [(31, 0), (288, 49), (256, 239), (0, 190)]),
-        ((500, 200), (0, 0), [(0, 0), (492, 0), (462, 198), (25, 198)]),
-        ((350, 150), (74, 359), [(0, 52), (345, 0), (364, 143), (31, 193)]),
-        ((270, 200), (231, -9), [(31, 0), (305, 49), (270, 245), (0, 192)]),
-        ((350, 150), (64, 340), [(0, 44), (345, 0), (358, 153), (34, 197)]),
+        (
+            (300, 200),
+            (144, 322),
+            [(0, 66), (276, 0), (319, 178), (43, 244)],
+        ),
+        (
+            (300, 250),
+            (-46, -50),
+            [(0, 83), (312, 0), (348, 243), (46, 314)],
+        ),
+        (
+            (300, 150),
+            (106, 351),
+            [(0, 0), (286, 0), (276, 149), (12, 149)],
+        ),
+        (
+            (250, 200),
+            (245, -6),
+            [(31, 0), (288, 49), (256, 239), (0, 190)],
+        ),
+        (
+            (500, 200),
+            (0, 0),
+            [(0, 0), (492, 0), (462, 198), (25, 198)],
+        ),
+        (
+            (350, 150),
+            (74, 359),
+            [(0, 52), (345, 0), (364, 143), (31, 193)],
+        ),
+        (
+            (270, 200),
+            (231, -9),
+            [(31, 0), (305, 49), (270, 245), (0, 192)],
+        ),
+        (
+            (350, 150),
+            (64, 340),
+            [(0, 44), (345, 0), (358, 153), (34, 197)],
+        ),
     ];
 
     let frame = load_image(format!("elysia_holdsign/{num:02}.png"))?;
@@ -63,7 +100,6 @@ fn elysia_holdsign(
             text_align = TextAlign::Center,
             font_families = &["FZShaoEr-M11S"],
             paint = new_paint(color_from_hex_code("#3b0b07")),
-            stroke_paint = new_stroke_paint(color_from_hex_code("#ff5995"), 1.0),
         ),
     )?;
     let text_image = text_surface.image_snapshot();
@@ -82,6 +118,6 @@ register_meme!(
     max_texts = 1,
     keywords = &["爱莉举牌"],
     default_texts = &[DEFAULT_TEXT],
-    date_created = local_date(2024, 6, 1),
-    date_modified = local_date(2024, 6, 1),
+    date_created = local_date(2025, 8, 9),
+    date_modified = local_date(2025, 8, 9),
 );
