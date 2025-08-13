@@ -1,7 +1,10 @@
 mod resources;
 mod tools;
 
-use meme_generator::{self, error, meme::{self, OptionValue as MemeOptionValue}, VERSION};
+use meme_generator::{
+    self, VERSION, error,
+    meme::{self, OptionValue as MemeOptionValue},
+};
 use napi::bindgen_prelude::Buffer;
 use napi_derive::napi;
 use std::collections::{HashMap, HashSet};
@@ -297,7 +300,6 @@ pub enum MemeResult {
     Err(Error),
 }
 
-
 #[napi]
 pub struct Meme {
     meme: &'static dyn meme::Meme,
@@ -339,7 +341,11 @@ impl Meme {
                             parser_flags: ParserFlags {
                                 short: parser_flags.short,
                                 long: parser_flags.long,
-                                short_aliases: parser_flags.short_aliases.into_iter().map(|c| c.to_string()).collect(),
+                                short_aliases: parser_flags
+                                    .short_aliases
+                                    .into_iter()
+                                    .map(|c| c.to_string())
+                                    .collect(),
                                 long_aliases: parser_flags.long_aliases,
                             },
                         }),
@@ -349,13 +355,22 @@ impl Meme {
                             choices,
                             description,
                             parser_flags,
-                        } => MemeOption::String(StringOption { name, default, choices, description,
+                        } => MemeOption::String(StringOption {
+                            name,
+                            default,
+                            choices,
+                            description,
                             parser_flags: ParserFlags {
                                 short: parser_flags.short,
                                 long: parser_flags.long,
-                                short_aliases: parser_flags.short_aliases.into_iter().map(|c| c.to_string()).collect(),
+                                short_aliases: parser_flags
+                                    .short_aliases
+                                    .into_iter()
+                                    .map(|c| c.to_string())
+                                    .collect(),
                                 long_aliases: parser_flags.long_aliases,
-                            }, }),
+                            },
+                        }),
                         meme::MemeOption::Integer {
                             name,
                             default,
@@ -372,7 +387,11 @@ impl Meme {
                             parser_flags: ParserFlags {
                                 short: parser_flags.short,
                                 long: parser_flags.long,
-                                short_aliases: parser_flags.short_aliases.into_iter().map(|c| c.to_string()).collect(),
+                                short_aliases: parser_flags
+                                    .short_aliases
+                                    .into_iter()
+                                    .map(|c| c.to_string())
+                                    .collect(),
                                 long_aliases: parser_flags.long_aliases,
                             },
                         }),
@@ -392,7 +411,11 @@ impl Meme {
                             parser_flags: ParserFlags {
                                 short: parser_flags.short,
                                 long: parser_flags.long,
-                                short_aliases: parser_flags.short_aliases.into_iter().map(|c| c.to_string()).collect(),
+                                short_aliases: parser_flags
+                                    .short_aliases
+                                    .into_iter()
+                                    .map(|c| c.to_string())
+                                    .collect(),
                                 long_aliases: parser_flags.long_aliases,
                             },
                         }),
@@ -433,7 +456,7 @@ impl Meme {
             .into_iter()
             .map(|Image { name, data }| meme::Image {
                 name,
-                data: data.to_vec()
+                data: data.to_vec(),
             })
             .collect::<Vec<_>>();
 
@@ -509,7 +532,9 @@ pub fn version() -> String {
 #[napi(js_name = "get_meme")]
 /// 获取meme对象
 pub fn get_meme(key: String) -> Option<Meme> {
-    meme_generator::get_meme(key.as_str()).map(|meme| Meme { meme: meme.as_ref() })
+    meme_generator::get_meme(key.as_str()).map(|meme| Meme {
+        meme: meme.as_ref(),
+    })
 }
 
 #[napi(js_name = "get_memes")]
@@ -517,7 +542,9 @@ pub fn get_meme(key: String) -> Option<Meme> {
 pub fn get_memes() -> Vec<Meme> {
     meme_generator::get_memes()
         .into_iter()
-        .map(|meme| Meme { meme: meme.as_ref() })
+        .map(|meme| Meme {
+            meme: meme.as_ref(),
+        })
         .collect()
 }
 
@@ -529,6 +556,6 @@ pub fn get_meme_keys() -> Vec<&'static str> {
 
 #[napi(js_name = "search_memes")]
 /// 搜索meme
-pub fn search_memes(query: String, include_tags: Option< bool>) -> Vec<String> {
+pub fn search_memes(query: String, include_tags: Option<bool>) -> Vec<String> {
     meme_generator::search_memes(query.as_str(), include_tags.unwrap_or(false))
 }

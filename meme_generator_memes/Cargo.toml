@@ -9,12 +9,12 @@ repository.workspace = true
 edition.workspace = true
 
 [dependencies]
-chrono = { workspace = true }
-inventory = { version = "0.3" }
+chrono = "0.4"
+inventory = "0.3"
 qrcode = { version = "0.14", default-features = false }
-rand = { version = "0.8" }
-serde = { workspace = true }
-skia-safe = { workspace = true }
+rand = "0.8"
+serde = "1.0"
+skia-safe = { version = "0.80", features = ["textlayout"] }
 
 meme_generator_core = { version = "0.0.4", path = "../meme_generator_core" }
 meme_generator_utils = { version = "0.0.8", path = "../meme_generator_utils" }

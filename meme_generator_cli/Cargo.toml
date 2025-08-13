@@ -11,9 +11,9 @@ edition.workspace = true
 
 [dependencies]
 clap = { version = "4.5", features = ["string"] }
+infer = "0.16"
+tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-infer = { workspace = true}
-tracing = { workspace = true }
 
 meme_generator = { path = "../meme_generator" }
 meme_generator_server = { path = "../meme_generator_server", optional = true }

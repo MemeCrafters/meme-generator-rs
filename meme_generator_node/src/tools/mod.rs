@@ -29,7 +29,6 @@ fn handle_image_result(result: Result<Vec<u8>, error::Error>) -> ImageResult {
     }
 }
 
-
 #[napi]
 /// 图片结果
 pub enum ImagesResult {
@@ -68,7 +67,6 @@ pub struct MemeProperties {
     /// 是否最新
     pub new: bool,
 }
-
 
 impl Into<tools::MemeProperties> for MemeProperties {
     fn into(self) -> tools::MemeProperties {

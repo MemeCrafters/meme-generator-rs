@@ -1,6 +1,6 @@
 use crate::{
-    tools::{handle_image_result, handle_images_result, ImageResult, ImagesResult}, Error,
-    ImageDecodeError,
+    Error, ImageDecodeError,
+    tools::{ImageResult, ImagesResult, handle_image_result, handle_images_result},
 };
 use meme_generator::{error, tools::image_operations};
 use napi::bindgen_prelude::Buffer;
@@ -22,7 +22,6 @@ pub struct ImageInfo {
     pub average_duration: Option<f64>,
 }
 
-
 #[napi]
 #[derive(Clone)]
 /// 图片信息结果
@@ -43,7 +42,7 @@ pub fn inspect(image: Buffer) -> ImageInfoResult {
             height: info.height,
             is_multi_frame: info.is_multi_frame,
             frame_count: info.frame_count,
-            average_duration: info.average_duration.map(|a| a as f64)
+            average_duration: info.average_duration.map(|a| a as f64),
         })),
         Err(error) => match error {
             error::Error::ImageDecodeError(error) => {
@@ -113,7 +112,8 @@ pub fn invert(image: Buffer) -> ImageResult {
 #[napi(js_name = "merge_horizontal")]
 /// 水平合并图片
 pub fn merge_horizontal(images: Vec<Buffer>) -> ImageResult {
-    let result = image_operations::merge_horizontal(images.into_iter().map(|i| i.to_vec()).collect());
+    let result =
+        image_operations::merge_horizontal(images.into_iter().map(|i| i.to_vec()).collect());
     handle_image_result(result)
 }
 
@@ -134,7 +134,10 @@ pub fn gif_split(image: Buffer) -> ImagesResult {
 #[napi(js_name = "gif_merge")]
 /// 合并gif图片
 pub fn gif_merge(images: Vec<Buffer>, duration: Option<f64>) -> ImageResult {
-    let result = image_operations::gif_merge(images.into_iter().map(|i| i.to_vec()).collect(), duration.map(|d| d as f32));
+    let result = image_operations::gif_merge(
+        images.into_iter().map(|i| i.to_vec()).collect(),
+        duration.map(|d| d as f32),
+    );
     handle_image_result(result)
 }
 

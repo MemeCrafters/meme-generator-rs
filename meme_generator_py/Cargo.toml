@@ -10,10 +10,10 @@ repository.workspace = true
 edition.workspace = true
 
 [dependencies]
-chrono = { workspace = true }
-pyo3 = { version = "0.24", features = ["extension-module", "abi3-py39", "chrono"] }
-serde_json = { workspace = true }
-tracing = { workspace = true }
+chrono = "0.4"
+pyo3 = { version = "0.23", features = ["extension-module", "abi3-py39", "chrono"] }
+serde_json = "1.0"
+tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 meme_generator = { path = "../meme_generator" }
