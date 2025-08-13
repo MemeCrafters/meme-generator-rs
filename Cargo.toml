@@ -4,6 +4,7 @@ members = [
     "meme_generator_cli",
     "meme_generator_core",
     "meme_generator_memes",
+    "meme_generator_node",
     "meme_generator_py",
     "meme_generator_server",
     "meme_generator_utils",
