@@ -1343,6 +1343,7 @@ dependencies = [
 name = "meme_generator_node"
 version = "0.2.2"
 dependencies = [
+ "chrono",
  "meme_generator",
  "napi",
  "napi-build",
@@ -1474,6 +1475,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "96671d5c84cee3ae4cab96386b9f953b22569ece9677b9fdd1492550a165eca5"
 dependencies = [
  "bitflags 2.6.0",
+ "chrono",
  "ctor",
  "napi-build",
  "napi-sys",

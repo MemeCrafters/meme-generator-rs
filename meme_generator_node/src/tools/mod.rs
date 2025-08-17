@@ -1,16 +1,17 @@
-mod image_operations;
+use std::collections::HashMap;
 
-use crate::{Error, ImageDecodeError, ImageEncodeError};
-use meme_generator::{error, tools};
 use napi::bindgen_prelude::Buffer;
 use napi_derive::napi;
-use std::collections::HashMap;
+
+use meme_generator::{error, tools};
+
+use crate::{Error, ImageDecodeError, ImageEncodeError};
+
+mod image_operations;
+
 #[napi]
-/// 图片结果
 pub enum ImageResult {
-    /// 成功
     Ok(Buffer),
-    /// 错误信息
     Err(Error),
 }
 
@@ -30,11 +31,8 @@ fn handle_image_result(result: Result<Vec<u8>, error::Error>) -> ImageResult {
 }
 
 #[napi]
-/// 图片结果
 pub enum ImagesResult {
-    /// 成功
     Ok(Vec<Buffer>),
-    /// 错误信息
     Err(Error),
 }
 
@@ -55,16 +53,12 @@ fn handle_images_result(result: Result<Vec<Vec<u8>>, error::Error>) -> ImagesRes
 
 #[napi(object)]
 #[derive(Clone)]
-/// 表情属性
 pub struct MemeProperties {
     #[napi(setter)]
-    /// 是否禁用
     pub disabled: bool,
     #[napi(setter)]
-    /// 是否最热
     pub hot: bool,
     #[napi(setter)]
-    /// 是否最新
     pub new: bool,
 }
 
@@ -81,17 +75,13 @@ impl Into<tools::MemeProperties> for MemeProperties {
 #[napi]
 #[derive(Clone, PartialEq)]
 pub enum MemeSortBy {
-    /// 按键
     Key = 0,
-    /// 关键词
     Keywords = 1,
-    /// 关键词拼音
     KeywordsPinyin = 2,
-    /// 创建时间
     DateCreated = 3,
-    /// 修改时间
     DateModified = 4,
 }
+
 impl Into<tools::MemeSortBy> for MemeSortBy {
     fn into(self) -> tools::MemeSortBy {
         match self {
@@ -104,8 +94,7 @@ impl Into<tools::MemeSortBy> for MemeSortBy {
     }
 }
 
-#[napi(js_name = "render_meme_list")]
-/// 渲染表情列表
+#[napi]
 pub fn render_meme_list(
     meme_properties: Option<HashMap<String, MemeProperties>>,
     exclude_memes: Option<Vec<String>>,
@@ -137,11 +126,8 @@ pub fn render_meme_list(
 
 #[napi]
 #[derive(Clone, PartialEq)]
-/// 统计类型
 pub enum MemeStatisticsType {
-    /// 按表情数量统计
     MemeCount = 0,
-    /// 按时间数量统计
     TimeCount = 1,
 }
 
@@ -154,8 +140,7 @@ impl Into<tools::MemeStatisticsType> for MemeStatisticsType {
     }
 }
 
-#[napi(js_name = "render_meme_statistics")]
-/// 渲染表情统计
+#[napi]
 pub fn render_meme_statistics(
     title: String,
     statistics_type: MemeStatisticsType,

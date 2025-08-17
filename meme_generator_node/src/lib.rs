@@ -1,152 +1,103 @@
-mod resources;
-mod tools;
+use std::collections::{HashMap, HashSet};
+
+use chrono::{DateTime, Local};
+use napi::bindgen_prelude::Buffer;
+use napi_derive::napi;
 
 use meme_generator::{
     self, VERSION, error,
     meme::{self, OptionValue as MemeOptionValue},
 };
-use napi::bindgen_prelude::Buffer;
-use napi_derive::napi;
-use std::collections::{HashMap, HashSet};
+
+mod resources;
+mod tools;
 
 #[napi(object)]
 #[derive(Clone)]
-/// 解析参数标志
 pub struct ParserFlags {
-    /// 是否使用短参数
     pub short: bool,
-    /// 是否使用长参数
     pub long: bool,
-    /// 短参数别名
     pub short_aliases: Vec<String>,
-    /// 长参数别名
     pub long_aliases: Vec<String>,
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 布尔型选项
 pub struct BooleanOption {
-    /// 选项名称
     pub name: String,
-    /// 默认值
     pub default: Option<bool>,
-    /// 选项描述
     pub description: Option<String>,
-    /// 解析参数标志
     pub parser_flags: ParserFlags,
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 字符串选项
 pub struct StringOption {
-    /// 选项名称
     pub name: String,
-    /// 默认值
     pub default: Option<String>,
-    /// 可选值
     pub choices: Option<Vec<String>>,
-    /// 选项描述
     pub description: Option<String>,
-    /// 解析参数标志
     pub parser_flags: ParserFlags,
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 整型选项
 pub struct IntegerOption {
-    /// 选项名称
     pub name: String,
-    /// 默认值
     pub default: Option<i32>,
-    /// 最小值
     pub minimum: Option<i32>,
-    /// 最大值
     pub maximum: Option<i32>,
-    /// 选项描述
     pub description: Option<String>,
-    /// 解析参数标志
     pub parser_flags: ParserFlags,
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 浮点型选项
 pub struct FloatOption {
-    /// 选项名称
     pub name: String,
-    /// 默认值
     pub default: Option<f64>,
-    /// 最小值
     pub minimum: Option<f64>,
-    /// 最大值
     pub maximum: Option<f64>,
-    /// 选项描述
     pub description: Option<String>,
-    /// 解析参数标志
     pub parser_flags: ParserFlags,
 }
 
 #[napi]
 #[derive(Clone)]
-/// 表情选项
 pub enum MemeOption {
-    /// 布尔型选项
     Boolean(BooleanOption),
-    /// 字符串型选项
     String(StringOption),
-    /// 整型选项
     Integer(IntegerOption),
-    /// 浮点型选项
     Float(FloatOption),
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 表情参数
 pub struct MemeParams {
-    /// 最小图片数量
     pub min_images: u8,
-    /// 最大图片数量
     pub max_images: u8,
-    /// 最小文字数量
     pub min_texts: u8,
-    /// 最大文字数量
     pub max_texts: u8,
-    /// 默认文字
     pub default_texts: Vec<String>,
-    /// 选项
     pub options: Vec<MemeOption>,
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 表情快捷方式
 pub struct MemeShortcut {
-    /// 快捷方式模式
     pub pattern: String,
-    /// 快捷方式描述
     pub humanized: Option<String>,
-    /// 快捷方式名称
     pub names: Vec<String>,
-    /// 快捷方式文字
     pub texts: Vec<String>,
-    /// 快捷方式选项
     pub options: HashMap<String, OptionValue>,
 }
 
 #[napi]
 #[derive(Clone)]
 pub enum OptionValue {
-    /// 布尔型选项
     Boolean(bool),
-    /// 字符串型选项
     String(String),
-    /// 整型选项
     Integer(i32),
-    /// 浮点型选项
     Float(f64),
 }
 
@@ -173,147 +124,107 @@ impl From<OptionValue> for MemeOptionValue {
 }
 
 #[napi(object)]
-/// 图片属性对象
 pub struct Image {
-    /// 图片名称
     pub name: String,
-    /// 图片数据
     pub data: Buffer,
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 表情信息
 pub struct MemeInfo {
-    /// 表情键
     pub key: String,
-    /// 表情参数
     pub params: MemeParams,
-    /// 表情关键词
     pub keywords: Vec<String>,
-    /// 表情快捷方式
     pub shortcuts: Vec<MemeShortcut>,
-    /// 表情标签
     pub tags: HashSet<String>,
-    /// 表情创建时间
-    pub date_created: String,
-    /// 表情修改时间
-    pub date_modified: String,
+    pub date_created: DateTime<Local>,
+    pub date_modified: DateTime<Local>,
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 图片解码错误
 pub struct ImageDecodeError {
     pub error: String,
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 图片编码错误
 pub struct ImageEncodeError {
     pub error: String,
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 图片资源缺失错误
 pub struct ImageAssetMissing {
-    /// 图片路径
     pub path: String,
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 反序列化错误
 pub struct DeserializeError {
-    /// 错误信息
     pub error: String,
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 图片数量不匹配错误
 pub struct ImageNumberMismatch {
-    /// 最小数量
     pub min: u8,
-    /// 最大数量
     pub max: u8,
-    /// 实际数量
     pub actual: u8,
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 文字数量不匹配错误
 pub struct TextNumberMismatch {
-    /// 最小数量
     pub min: u8,
-    /// 最大数量
     pub max: u8,
-    /// 实际数量
     pub actual: u8,
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 文字长度超过最大限制错误
 pub struct TextOverLength {
-    /// 文字内容
     pub text: String,
 }
 
 #[napi(object)]
 #[derive(Clone)]
-/// 表情反馈错误
 pub struct MemeFeedback {
-    /// 反馈内容
     pub feedback: String,
 }
 
 #[napi]
 #[derive(Clone)]
 pub enum Error {
-    /// 图片解码错误
     ImageDecodeError(ImageDecodeError),
-    /// 图片编码错误
     ImageEncodeError(ImageEncodeError),
-    /// 图片资源缺失错误
     ImageAssetMissing(ImageAssetMissing),
-    /// 反序列化错误
     DeserializeError(DeserializeError),
-    /// 图片数量不匹配错误
     ImageNumberMismatch(ImageNumberMismatch),
-    /// 文字数量不匹配错误
     TextNumberMismatch(TextNumberMismatch),
-    /// 文字长度超过最大限制错误
     TextOverLength(TextOverLength),
-    /// 表情反馈错误
     MemeFeedback(MemeFeedback),
 }
 
 #[napi]
 pub enum MemeResult {
-    /// 成功生成
     Ok(Buffer),
-    /// 生成失败
     Err(Error),
 }
 
 #[napi]
 pub struct Meme {
-    meme: &'static dyn meme::Meme,
+    meme: &'static Box<dyn meme::Meme>,
 }
 
 #[napi]
 impl Meme {
     #[napi(getter)]
-    /// 获取表情键
     pub fn key(&self) -> String {
         self.meme.key()
     }
+
     #[napi(getter)]
-    /// 获取表情参数
     pub fn info(&self) -> MemeInfo {
         let info = self.meme.info();
         MemeInfo {
@@ -439,13 +350,12 @@ impl Meme {
                 })
                 .collect(),
             tags: info.tags,
-            date_created: info.date_created.to_rfc3339(),
-            date_modified: info.date_modified.to_rfc3339(),
+            date_created: info.date_created,
+            date_modified: info.date_modified,
         }
     }
 
     #[napi]
-    /// 生成表情
     pub fn generate(
         &self,
         images: Vec<Image>,
@@ -470,7 +380,6 @@ impl Meme {
     }
 
     #[napi]
-    /// 生成预览图片
     pub fn generate_preview(&self, options: Option<HashMap<String, OptionValue>>) -> MemeResult {
         let options = options.unwrap_or_default();
 
@@ -523,39 +432,31 @@ fn handle_result(result: Result<Vec<u8>, error::Error>) -> MemeResult {
         },
     }
 }
+
 #[napi]
-/// 获取版本号
 pub fn version() -> String {
     VERSION.to_string()
 }
 
-#[napi(js_name = "get_meme")]
-/// 获取meme对象
+#[napi]
 pub fn get_meme(key: String) -> Option<Meme> {
-    meme_generator::get_meme(key.as_str()).map(|meme| Meme {
-        meme: meme.as_ref(),
-    })
+    meme_generator::get_meme(key.as_str()).map(|meme| Meme { meme })
 }
 
-#[napi(js_name = "get_memes")]
-/// 获取所有meme对象
+#[napi]
 pub fn get_memes() -> Vec<Meme> {
     meme_generator::get_memes()
         .into_iter()
-        .map(|meme| Meme {
-            meme: meme.as_ref(),
-        })
+        .map(|meme| Meme { meme })
         .collect()
 }
 
-#[napi(js_name = "get_meme_keys")]
-/// 获取所有meme键
+#[napi]
 pub fn get_meme_keys() -> Vec<&'static str> {
     meme_generator::get_meme_keys()
 }
 
-#[napi(js_name = "search_memes")]
-/// 搜索meme
+#[napi]
 pub fn search_memes(query: String, include_tags: Option<bool>) -> Vec<String> {
     meme_generator::search_memes(query.as_str(), include_tags.unwrap_or(false))
 }

@@ -12,12 +12,14 @@ edition.workspace = true
 crate-type = ["cdylib"]
 
 [dependencies]
-napi = { version = "3.2.0", default-features = false, features = ["napi4"] }
-napi-derive = { version = "3.2.0" }
+chrono = "0.4"
+napi = { version = "3.2", default-features = false, features = ["chrono_date"] }
+napi-derive = { version = "3.2" }
+
 meme_generator = { path = "../meme_generator" }
 
 [build-dependencies]
-napi-build = "2.2.3"
+napi-build = "2"
 
 [features]
 vendored = ["meme_generator/vendored"]
