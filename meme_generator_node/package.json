@@ -1,5 +1,5 @@
 {
-  "name": "meme-generator",
+  "name": "@memecrafters/meme-generator",
   "version": "0.2.2",
   "description": "表情包生成器，用于制作各种沙雕表情包",
   "keywords": [
