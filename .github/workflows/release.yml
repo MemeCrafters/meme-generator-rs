@@ -1,0 +1,119 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "Cargo.toml"
+      - "meme_generator/**"
+      - "meme_generator_cli/**"
+      - "meme_generator_core/**"
+      - "meme_generator_memes/**"
+      - "meme_generator_node/**"
+      - "meme_generator_py/**"
+      - "meme_generator_server/**"
+      - "meme_generator_utils/**"
+      - "meme_options_derive/**"
+    tags:
+      - "v*"
+  pull_request_target:
+    paths:
+      - "Cargo.toml"
+      - "meme_generator/**"
+      - "meme_generator_cli/**"
+      - "meme_generator_core/**"
+      - "meme_generator_memes/**"
+      - "meme_generator_node/**"
+      - "meme_generator_py/**"
+      - "meme_generator_server/**"
+      - "meme_generator_utils/**"
+      - "meme_options_derive/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
+  crates_io_publish:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.88.0
+      - uses: swatinem/rust-cache@v2
+
+      - name: Cargo login
+        run: cargo login ${{ secrets.CRATES_IO_API_TOKEN }}
+
+      - name: Cargo Publish
+        run: |
+          cargo publish --package meme_generator_memes
+          cargo publish --package meme_generator
+
+  pypi_publish:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/download-artifact@v4
+
+      - name: Publish to PyPI
+        uses: PyO3/maturin-action@v1
+        env:
+          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        with:
+          command: upload
+          args: --non-interactive --skip-existing meme-generator-wheels-*/*
+
+  node_publish:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    steps:
+      - name: 下载 package 包
+        uses: actions/download-artifact@v4
+        with:
+          name: npm-package
+          path: ./
+          merge-multiple: true
+
+      - name: 下载 构建产物
+        uses: actions/download-artifact@v4
+        with:
+          pattern: meme-generator-node-*
+          path: artifacts
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: 构建
+        run: |
+          mv meme_generator_node/* .
+          pnpm install
+          pnpm napi install
+          pnpm napi artifacts
+
+      - name: 发布到 NPM
+        id: publish-to-npm
+        run: |
+          npm config set provenance true
+          npm config set registry https://registry.npmjs.org/
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+          npm publish --access public || exit 0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

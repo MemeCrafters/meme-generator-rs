@@ -18,3 +18,7 @@ meme_generator = { path = "../meme_generator" }
 
 [build-dependencies]
 napi-build = "2.2.3"
+
+[features]
+vendored = ["meme_generator/vendored"]
+embed-freetype = ["meme_generator/embed-freetype"]

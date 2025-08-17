@@ -1,0 +1,54 @@
+{
+  "name": "meme-generator-rs",
+  "version": "1.0.0",
+  "description": "表情包生成器，用于制作各种沙雕表情包",
+  "keywords": [
+    "napi",
+    "napi-rs",
+    "meme-generator",
+    "meme-generator-rs"
+  ],
+  "homepage": "https://github.com/MemeCrafters/meme-generator-rs",
+  "bugs": {
+    "url": "https://github.com/MemeCrafters/meme-generator-rs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MemeCrafters/meme-generator-rs.git"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --esm --package meme_generator_node -o ./dist",
+    "build:debug": "napi build --platform",
+    "prepublishOnly": "napi prepublish --no-gh-release",
+    "universal": "napi universal",
+    "version": "napi version"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^3.1.0",
+    "@types/node": "^24.2.0"
+  },
+  "packageManager": "pnpm@10.13.1",
+  "engines": {
+    "node": ">= 20"
+  },
+  "napi": {
+    "binaryName": "meme-generator-rs",
+    "targets": [
+      "x86_64-pc-windows-msvc",
+      "x86_64-apple-darwin",
+      "x86_64-unknown-linux-gnu",
+      "aarch64-apple-darwin",
+      "aarch64-unknown-linux-gnu"
+    ]
+  },
+  "optionalDependencies": {
+    "meme-generator-rs-win32-x64-msvc": "1.0.0",
+    "meme-generator-rs-darwin-x64": "1.0.0",
+    "meme-generator-rs-linux-x64-gnu": "1.0.0",
+    "meme-generator-rs-darwin-arm64": "1.0.0",
+    "meme-generator-rs-linux-arm64-gnu": "1.0.0"
+  }
+}
