@@ -34,7 +34,7 @@ fn capoo_draw(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<V
             let image = image.perspective(&points);
             canvas.draw_image(&image, pos, None);
         }
-        surface.canvas().draw_image(&frame, (0, 0), None);
+        canvas.draw_image(&frame, (0, 0), None);
         encoder.add_frame(surface.image_snapshot(), 0.1)?;
     }
     Ok(encoder.finish()?)

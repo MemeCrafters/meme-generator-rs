@@ -4,6 +4,7 @@ use std::{
     net::{IpAddr, SocketAddr},
     path::PathBuf,
     sync::LazyLock,
+    time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
 use axum::{
@@ -23,9 +24,10 @@ use tokio::{
     net::TcpListener,
     runtime::Runtime,
     task::spawn_blocking,
+    time::interval,
 };
 use tower_http::trace::{self, TraceLayer};
-use tracing::{Level, info};
+use tracing::{Level, info, warn};
 
 use meme_generator::{
     MEME_HOME, VERSION,
@@ -56,6 +58,42 @@ pub static TEMP_DIR: LazyLock<PathBuf> = LazyLock::new(|| MEME_HOME.join("tmp"))
 fn clear_temp_dir() {
     let _ = std::fs::remove_dir_all(&*TEMP_DIR);
     let _ = std::fs::create_dir(&*TEMP_DIR);
+}
+
+async fn cleanup_temp_files() {
+    let temp_dir = &*TEMP_DIR;
+    if !temp_dir.exists() {
+        return;
+    }
+
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
+    let max_age_seconds = 10 * 60;
+    let mut deleted_count = 0;
+
+    if let Ok(entries) = std::fs::read_dir(temp_dir) {
+        for entry in entries {
+            if let Ok(entry) = entry
+                && let Ok(metadata) = entry.metadata()
+                && metadata.is_file()
+                && let Ok(modified) = metadata.modified()
+                && let Ok(modified_secs) = modified.duration_since(UNIX_EPOCH)
+                && now - modified_secs.as_secs() > max_age_seconds
+            {
+                if let Err(e) = std::fs::remove_file(entry.path()) {
+                    warn!("Failed to delete temp file {:?}: {}", entry.path(), e);
+                } else {
+                    deleted_count += 1;
+                }
+            }
+        }
+    }
+
+    if deleted_count > 0 {
+        info!("Cleaned up {} temporary files", deleted_count);
+    }
 }
 
 #[derive(Debug)]
@@ -382,6 +420,17 @@ pub(crate) fn handle_error(error: Error) -> ErrorResponse {
 
 pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
     clear_temp_dir();
+
+    let cleanup_task = {
+        let mut interval = interval(Duration::from_secs(10 * 60));
+        tokio::spawn(async move {
+            loop {
+                interval.tick().await;
+                cleanup_temp_files().await;
+            }
+        })
+    };
+
     let app = Router::new()
         .route("/image/upload", post(upload_image))
         .layer(DefaultBodyLimit::disable())
@@ -451,7 +500,13 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
     let addr = SocketAddr::new(host, port);
     let listener = TcpListener::bind(addr).await.unwrap();
     info!("Server running on {}", addr);
-    axum::serve(listener, app).await.unwrap();
+
+    tokio::select! {
+        _ = axum::serve(listener, app) => {
+            info!("Server stopped");
+        }
+        _ = cleanup_task => {}
+    }
 }
 
 pub fn run_server_sync(host: Option<IpAddr>, port: Option<u16>) {

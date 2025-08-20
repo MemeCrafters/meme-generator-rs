@@ -52,6 +52,7 @@ meme_tags!(
     captain = (["休伯利安号", "舰长"], honkai3),
     griseo = (["格蕾修"], honkai3),
     firefly = (["流萤"], star_rail),
+    elysia = (["爱莉", "爱莉希雅"], honkai3),
     // 蔚蓝档案
     blue_archive = (["蔚蓝档案", "碧蓝档案"]),
     arisu = (["天童爱丽丝"], blue_archive),
@@ -127,6 +128,8 @@ meme_tags!(
     yuzu_soft = (["柚子社"]),
     sabbat_of_the_witch = (["魔女的夜宴"], yuzu_soft),
     ayachi = (["绫地宁宁"], sabbat_of_the_witch),
+    // 请问您今天要来点兔子吗？
+    kafu_chino = (["香风智乃"]),
     // 其他
     atri = (["亚托莉", "ATRI", "萝卜子"]),
     capoo = (["猫猫虫", "咖波"]),

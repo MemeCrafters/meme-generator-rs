@@ -1179,6 +1179,90 @@
       "hash": "18b312820efe7617f9546d2fbf48e9b94d332044db5a0847878d7db2fc2e7ce6"
     },
     {
+      "file": "chino_throw/00.png",
+      "hash": "7c1efe03a69f55afdc11006177eeab20dc95acf8196685a60d192e7daf4c50b4"
+    },
+    {
+      "file": "chino_throw/01.png",
+      "hash": "8933b95f414b95416abb5274d9d6817599e551359ef5ade6ec33a2c74dd5043c"
+    },
+    {
+      "file": "chino_throw/02.png",
+      "hash": "3a9170bde514ba03b1cfab78dc0294d4358b2dd03aad89ff6909c921075ff225"
+    },
+    {
+      "file": "chino_throw/03.png",
+      "hash": "a143ac235e2cb5caed9d00dbf7d66a7550caf890be9011e642f35678ef7a3c87"
+    },
+    {
+      "file": "chino_throw/04.png",
+      "hash": "627a85e55831e86c0c270b3fc3b91afa2ffa060292fa91a819411120e7fc88ca"
+    },
+    {
+      "file": "chino_throw/05.png",
+      "hash": "8c9e5c248193627eee501727a1f1a00f2312cb9a2480e9cdffc5705b5273cf61"
+    },
+    {
+      "file": "chino_throw/06.png",
+      "hash": "d5b89ccd8746550ebc0544731f8c7ec004cf032bfa58658a3a4327655de546a6"
+    },
+    {
+      "file": "chino_throw/07.png",
+      "hash": "a2eac94508d079e07e2980fa80c967c9d0d6665d1c2ce61b32e6475580ef037e"
+    },
+    {
+      "file": "chino_throw/08.png",
+      "hash": "48bdef9a876dab74ae3386964d78af689ab9748d663b1183301101a7e3fdbb72"
+    },
+    {
+      "file": "chino_throw/09.png",
+      "hash": "d7fe3ae7eef396370e3cb35c0b726114c8cfe52e32566946ee269273e2926f00"
+    },
+    {
+      "file": "chino_throw/10.png",
+      "hash": "a903fd7b4fd9595d57fc864031fad47aae2255f5b392d6b269521cf5e88a86e3"
+    },
+    {
+      "file": "chino_throw/11.png",
+      "hash": "4ecad3985bfdf90a23943908f0805333770ea71075699723f59afdb1b120a4ee"
+    },
+    {
+      "file": "chino_throw/12.png",
+      "hash": "14cab277e28725fdce18afd232c800416e5239d334e29848a1071358a1769989"
+    },
+    {
+      "file": "chino_throw/13.png",
+      "hash": "ca6035391a0ea3265cd2a0740fa621992635a8fc7c414047f83f0bcab2782e62"
+    },
+    {
+      "file": "chino_throw/14.png",
+      "hash": "97cfa01f0917c208fb351eeb880feaea6fe596c6037876724b6205f278c79c86"
+    },
+    {
+      "file": "chino_throw/15.png",
+      "hash": "a941f17c59920ec71c9c78d40cb3bce9f8ebc30665c9db7b2083edec6c908a07"
+    },
+    {
+      "file": "chino_throw/16.png",
+      "hash": "a8b542c139ea63677ba7d6adc305c243b7ed77f7e20b52cdab40ce71518ce0cc"
+    },
+    {
+      "file": "chino_throw/17.png",
+      "hash": "2edf3f343d3ef0b159ea6aca10774db66fe0e454f57371e5c838dad50a046bb9"
+    },
+    {
+      "file": "chino_throw/18.png",
+      "hash": "324429a0ea42dd504d8cc434053cbc2c2a5db001f66621dfa231aa0c81c8dd61"
+    },
+    {
+      "file": "chino_throw/19.png",
+      "hash": "324429a0ea42dd504d8cc434053cbc2c2a5db001f66621dfa231aa0c81c8dd61"
+    },
+    {
+      "file": "chino_throw/20.png",
+      "hash": "324429a0ea42dd504d8cc434053cbc2c2a5db001f66621dfa231aa0c81c8dd61"
+    },
+    {
       "file": "clauvio_twist/00.png",
       "hash": "c4c14d38f1b2319b17b675c6a87466e6d76b8eaad090d288bf36841ab97f2cff"
     },
@@ -2337,6 +2421,38 @@
     {
       "file": "eat/2.png",
       "hash": "4e1b80fc0cd83e66e7febda718a4441b39af6f2e01851206270261ec554e7faa"
+    },
+    {
+      "file": "elysia_holdsign/01.png",
+      "hash": "3dba21664585e8c2c7251a29e5e06529b52ebf3cdefd651bc69181913bd48b53"
+    },
+    {
+      "file": "elysia_holdsign/02.png",
+      "hash": "b58763cc4f6b8ccaf238c654bebf55fd95d132e84f46e1a792fe57264c0a9a38"
+    },
+    {
+      "file": "elysia_holdsign/03.png",
+      "hash": "bab6fefd1bd7a3e08ef50bfe2ff4f19a7baa4190b80c50bcf9b35cf22f30ee96"
+    },
+    {
+      "file": "elysia_holdsign/04.png",
+      "hash": "338b7e8ad97b71e1a59358ef95567169855613a0844de2c34f7fb9ccff20bad5"
+    },
+    {
+      "file": "elysia_holdsign/05.png",
+      "hash": "715128f92b4700b3bc9a42b4805418765dd9d117cf5fe504c9f4ed0ed9065f6a"
+    },
+    {
+      "file": "elysia_holdsign/06.png",
+      "hash": "6dd77a72f589cf20d9d821b560dc9d6900debc0b86f4a21a064ec1c764b9c627"
+    },
+    {
+      "file": "elysia_holdsign/07.png",
+      "hash": "e6793acf59941d463c320fc745a4e01de4c7d905a80583c6ed52643d0727476c"
+    },
+    {
+      "file": "elysia_holdsign/08.png",
+      "hash": "83af3230826587ba2dff818a1e5e71b83b98da36b0d84a6a51c88aa6ee84dd54"
     },
     {
       "file": "erised_mirror/0.png",
@@ -7651,6 +7767,30 @@
       "hash": "6c5ce831d71266d1dee3458b0cc53e698995b2aa7644a66b1bfc8b5642af60c4"
     },
     {
+      "file": "play_baseball/0.png",
+      "hash": "2cc6249e5c5666b0572e6b204ab10b756d365ed131016b952466db4489f3256e"
+    },
+    {
+      "file": "play_baseball/1.png",
+      "hash": "583dcdd0c27e50b26d1aa1ef8380f610ead06cf45fd3f614f12e4d85ce41e5de"
+    },
+    {
+      "file": "play_baseball/2.png",
+      "hash": "83c5a74b09bd9b356847164abf0809a1f9f43c6784a6ef0c41d048e23419d47e"
+    },
+    {
+      "file": "play_baseball/3.png",
+      "hash": "6b79175c7b9452aa994cc3f8ff44120d307e62552899cab2354e2a0249ae653d"
+    },
+    {
+      "file": "play_baseball/4.png",
+      "hash": "e7de8a4d909ca684474e19cd364f942136e51ff419a69c17d2aab86fd77265bb"
+    },
+    {
+      "file": "play_baseball/5.png",
+      "hash": "f7f0fca6be624041da19cb001055fb2e53706e394af53e369aad7ee13a4a7cbe"
+    },
+    {
       "file": "play_basketball/00.png",
       "hash": "7fdd89de2c8b46ae0d90ca8ed9f5451d4aa05f098d50f2494cef2a9d90584b86"
     },
@@ -8771,6 +8911,70 @@
       "hash": "f30458e9603c3be0ad53acb2b469c5573ff99f4c13c0ef993541ee72be2c58c9"
     },
     {
+      "file": "rip_clothes/00.png",
+      "hash": "6dcb36a6c1a7a139d073695fe0f46501ab6f62877d528edb23c619f3ec81d554"
+    },
+    {
+      "file": "rip_clothes/01.png",
+      "hash": "2e95cb0a82f2c258378f91c4a666454fa06768ae7b401ef24a944ae19ef971f5"
+    },
+    {
+      "file": "rip_clothes/02.png",
+      "hash": "3bedce1fab34bbea53a0dee26ca10cd46a11353c6754595deba1a204a41af26b"
+    },
+    {
+      "file": "rip_clothes/03.png",
+      "hash": "377f18666fa86e6884ba51fd886fb721df5ba6f4e52eb04258d5616177212f89"
+    },
+    {
+      "file": "rip_clothes/04.png",
+      "hash": "404b28690fc042892425906d0d9648d4c74841af056dee5008f772e46e2cdc55"
+    },
+    {
+      "file": "rip_clothes/05.png",
+      "hash": "341d4c1a1ad77c2488caf0abe49c43cad311de796bda5c2eeea164bc3b36f8e9"
+    },
+    {
+      "file": "rip_clothes/06.png",
+      "hash": "c68eac9d56bb4bb54d7845608e5bef933e0d3883c2d36f8c49167f1f7b088598"
+    },
+    {
+      "file": "rip_clothes/07.png",
+      "hash": "dc2c610b53c7fe87f850eaf92b3069968d67b955502745ef5d4d360e798b1540"
+    },
+    {
+      "file": "rip_clothes/08.png",
+      "hash": "6419f6a050e40e6b6d1c1509f63487ee40fd3c05b60c7d3f9789f2c0c25122cf"
+    },
+    {
+      "file": "rip_clothes/09.png",
+      "hash": "5c2c0489b9b8ae6e6b0c201a49d8af1f07c689662887d9bbb2dede16f482566c"
+    },
+    {
+      "file": "rip_clothes/10.png",
+      "hash": "cc1497afd707ad8723ab1439e6284c77aaf34cc785b54de9e103d1038cdbf4f3"
+    },
+    {
+      "file": "rip_clothes/11.png",
+      "hash": "c6415c1df778b18c2fe39c74c4ed71c879142b615d7f272d4e7a24f5549a0841"
+    },
+    {
+      "file": "rip_clothes/12.png",
+      "hash": "2ce6b0111c22a0e962e7a3c909a552d3d63226ba2d4392bbde08c24d8117e585"
+    },
+    {
+      "file": "rip_clothes/13.png",
+      "hash": "4f074dd77f8281a58f421650e187a2f1b764f6ef05db79507f0c3e57937a61d6"
+    },
+    {
+      "file": "rip_clothes/14.png",
+      "hash": "6c0769b5c049cef1414eb5a4e0f351a175a1fc4d796a0be5e9adf268caafc870"
+    },
+    {
+      "file": "rip_clothes/15.png",
+      "hash": "5bb624e09ff07c15df938093e14bafbf300af11235f4a655056c28c63f788bef"
+    },
+    {
       "file": "rise_dead/00.png",
       "hash": "25762275ed55c28654b6d5b2e5a06816feacc4cb6c77c7fe9038c24d184d6b54"
     },
@@ -9285,6 +9489,10 @@
     {
       "file": "scroll/corner4.png",
       "hash": "ab451c7a3fb77f862a42b03a78f7d7ac5a578f4173ca5a9e194c141b278fc3e7"
+    },
+    {
+      "file": "seal/0.png",
+      "hash": "9602da4e5b9d7e6fae15288c346535ea68085efc182aa2a0e675330f165a78c5"
     },
     {
       "file": "sekaiichi_kawaii/0.png",
@@ -11909,6 +12117,10 @@
     {
       "file": "wujing/0.jpg",
       "hash": "2b58fb75d5687c5c6c5ca20b9b4b618756c1b607ee476b96ff38acf0bed1a82e"
+    },
+    {
+      "file": "you_dont_get/0.png",
+      "hash": "962d5d7278fe2a738376709fe1af7e12a396e3bc782f8dc2efa796793e72b5d1"
     },
     {
       "file": "you_should_call/0.png",
