@@ -395,34 +395,51 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
         .route("/memes/:key/info", get(meme_info))
         .route("/memes/:key/preview", get(meme_preview))
         .route("/memes/:key", post(meme_generate))
+        .layer(DefaultBodyLimit::disable())
         .route("/tools/render_list", post(render_list))
+        .layer(DefaultBodyLimit::disable())
         .route("/tools/render_statistics", post(render_statistics))
+        .layer(DefaultBodyLimit::disable())
         .route("/tools/image_operations/inspect", post(inspect))
+        .layer(DefaultBodyLimit::disable())
         .route(
             "/tools/image_operations/flip_horizontal",
             post(flip_horizontal),
         )
+        .layer(DefaultBodyLimit::disable())
         .route("/tools/image_operations/flip_vertical", post(flip_vertical))
+        .layer(DefaultBodyLimit::disable())
         .route("/tools/image_operations/rotate", post(rotate))
+        .layer(DefaultBodyLimit::disable())
         .route("/tools/image_operations/resize", post(resize))
+        .layer(DefaultBodyLimit::disable())
         .route("/tools/image_operations/crop", post(crop))
+        .layer(DefaultBodyLimit::disable())
         .route("/tools/image_operations/grayscale", post(grayscale))
+        .layer(DefaultBodyLimit::disable())
         .route("/tools/image_operations/invert", post(invert))
+        .layer(DefaultBodyLimit::disable())
         .route(
             "/tools/image_operations/merge_horizontal",
             post(merge_horizontal),
         )
+        .layer(DefaultBodyLimit::disable())
         .route(
             "/tools/image_operations/merge_vertical",
             post(merge_vertical),
         )
+        .layer(DefaultBodyLimit::disable())
         .route("/tools/image_operations/gif_split", post(gif_split))
+        .layer(DefaultBodyLimit::disable())
         .route("/tools/image_operations/gif_merge", post(gif_merge))
+        .layer(DefaultBodyLimit::disable())
         .route("/tools/image_operations/gif_reverse", post(gif_reverse))
+        .layer(DefaultBodyLimit::disable())
         .route(
             "/tools/image_operations/gif_change_duration",
             post(gif_change_duration),
         )
+        .layer(DefaultBodyLimit::disable())
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
