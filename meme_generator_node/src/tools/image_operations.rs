@@ -21,7 +21,7 @@ pub struct ImageInfo {
 #[napi]
 #[derive(Clone)]
 pub enum ImageInfoResult {
-    Ok(Option<ImageInfo>),
+    Ok(ImageInfo),
     Err(Error),
 }
 
@@ -29,13 +29,13 @@ pub enum ImageInfoResult {
 pub fn inspect(image: Buffer) -> ImageInfoResult {
     let result = image_operations::inspect(image.to_vec());
     match result {
-        Ok(info) => ImageInfoResult::Ok(Some(ImageInfo {
+        Ok(info) => ImageInfoResult::Ok(ImageInfo {
             width: info.width,
             height: info.height,
             is_multi_frame: info.is_multi_frame,
             frame_count: info.frame_count,
             average_duration: info.average_duration.map(|a| a as f64),
-        })),
+        }),
         Err(error) => match error {
             error::Error::ImageDecodeError(error) => {
                 ImageInfoResult::Err(Error::ImageDecodeError(ImageDecodeError { error }))
@@ -57,28 +57,57 @@ pub fn flip_vertical(image: Buffer) -> ImageResult {
     handle_image_result(result)
 }
 
+#[napi(object)]
+#[derive(Clone)]
+pub struct RotateOptions {
+    #[napi(setter)]
+    pub degrees: Option<f64>,
+}
+
 #[napi]
-pub fn rotate(image: Buffer, degrees: Option<f64>) -> ImageResult {
-    let degrees = Some(degrees.unwrap_or(90.0));
+pub fn rotate(image: Buffer, options: RotateOptions) -> ImageResult {
+    let degrees = Some(options.degrees.unwrap_or(90.0));
     let result = image_operations::rotate(image.to_vec(), degrees.map(|d| d as f32));
     handle_image_result(result)
 }
 
-#[napi]
-pub fn resize(image: Buffer, width: Option<i32>, height: Option<i32>) -> ImageResult {
-    let result = image_operations::resize(image.to_vec(), width, height);
-    handle_image_result(result)
+#[napi(object)]
+#[derive(Clone)]
+pub struct ResizeOptions {
+    #[napi(setter)]
+    pub width: Option<i32>,
+    #[napi(setter)]
+    pub height: Option<i32>,
 }
 
 #[napi]
-pub fn crop(
-    image: Buffer,
-    left: Option<i32>,
-    top: Option<i32>,
-    right: Option<i32>,
-    bottom: Option<i32>,
-) -> ImageResult {
-    let result = image_operations::crop(image.to_vec(), left, top, right, bottom);
+pub fn resize(image: Buffer, options: ResizeOptions) -> ImageResult {
+    let result = image_operations::resize(image.to_vec(), options.width, options.height);
+    handle_image_result(result)
+}
+
+#[napi(object)]
+#[derive(Clone)]
+pub struct CropOptions {
+    #[napi(setter)]
+    pub left: Option<i32>,
+    #[napi(setter)]
+    pub top: Option<i32>,
+    #[napi(setter)]
+    pub right: Option<i32>,
+    #[napi(setter)]
+    pub bottom: Option<i32>,
+}
+
+#[napi]
+pub fn crop(image: Buffer, options: CropOptions) -> ImageResult {
+    let result = image_operations::crop(
+        image.to_vec(),
+        options.left,
+        options.top,
+        options.right,
+        options.bottom,
+    );
     handle_image_result(result)
 }
 
@@ -113,8 +142,16 @@ pub fn gif_split(image: Buffer) -> ImagesResult {
     handle_images_result(result)
 }
 
+#[napi(object)]
+#[derive(Clone)]
+pub struct GifMergeOptions {
+    #[napi(setter)]
+    pub duration: Option<f64>,
+}
+
 #[napi]
-pub fn gif_merge(images: Vec<Buffer>, duration: Option<f64>) -> ImageResult {
+pub fn gif_merge(images: Vec<Buffer>, options: GifMergeOptions) -> ImageResult {
+    let duration = options.duration;
     let result = image_operations::gif_merge(
         images.into_iter().map(|i| i.to_vec()).collect(),
         duration.map(|d| d as f32),
@@ -128,8 +165,15 @@ pub fn gif_reverse(image: Buffer) -> ImageResult {
     handle_image_result(result)
 }
 
+#[napi(object)]
+#[derive(Clone)]
+pub struct GifChangeDurationOptions {
+    #[napi(setter)]
+    pub duration: f64,
+}
+
 #[napi]
-pub fn gif_change_duration(image: Buffer, duration: f64) -> ImageResult {
-    let result = image_operations::gif_change_duration(image.to_vec(), duration as f32);
+pub fn gif_change_duration(image: Buffer, options: GifChangeDurationOptions) -> ImageResult {
+    let result = image_operations::gif_change_duration(image.to_vec(), options.duration as f32);
     handle_image_result(result)
 }

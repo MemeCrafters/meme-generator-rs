@@ -434,7 +434,7 @@ fn handle_result(result: Result<Vec<u8>, error::Error>) -> MemeResult {
 }
 
 #[napi]
-pub fn version() -> String {
+pub fn get_version() -> String {
     VERSION.to_string()
 }
 

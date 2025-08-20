@@ -55,19 +55,19 @@ fn handle_images_result(result: Result<Vec<Vec<u8>>, error::Error>) -> ImagesRes
 #[derive(Clone)]
 pub struct MemeProperties {
     #[napi(setter)]
-    pub disabled: bool,
+    pub disabled: Option<bool>,
     #[napi(setter)]
-    pub hot: bool,
+    pub hot: Option<bool>,
     #[napi(setter)]
-    pub new: bool,
+    pub new: Option<bool>,
 }
 
 impl Into<tools::MemeProperties> for MemeProperties {
     fn into(self) -> tools::MemeProperties {
         tools::MemeProperties {
-            disabled: self.disabled,
-            hot: self.hot,
-            new: self.new,
+            disabled: self.disabled.unwrap_or(false),
+            hot: self.hot.unwrap_or(false),
+            new: self.new.unwrap_or(false),
         }
     }
 }
@@ -94,21 +94,35 @@ impl Into<tools::MemeSortBy> for MemeSortBy {
     }
 }
 
+#[napi(object)]
+#[derive(Clone)]
+pub struct RenderMemeListParams {
+    #[napi(setter)]
+    pub meme_properties: Option<HashMap<String, MemeProperties>>,
+    #[napi(setter)]
+    pub exclude_memes: Option<Vec<String>>,
+    #[napi(setter)]
+    pub sort_by: Option<MemeSortBy>,
+    #[napi(setter)]
+    pub sort_reverse: Option<bool>,
+    #[napi(setter)]
+    pub text_template: Option<String>,
+    #[napi(setter)]
+    pub add_category_icon: Option<bool>,
+}
+
 #[napi]
-pub fn render_meme_list(
-    meme_properties: Option<HashMap<String, MemeProperties>>,
-    exclude_memes: Option<Vec<String>>,
-    sort_by: Option<MemeSortBy>,
-    sort_reverse: Option<bool>,
-    text_template: Option<String>,
-    add_category_icon: Option<bool>,
-) -> ImageResult {
-    let meme_properties = meme_properties.unwrap_or_default();
-    let exclude_memes = exclude_memes.unwrap_or_default();
-    let sort_by = sort_by.unwrap_or(MemeSortBy::KeywordsPinyin);
-    let sort_reverse = sort_reverse.unwrap_or(false);
-    let text_template = text_template.unwrap_or_else(|| "{index}. {keywords}".to_string());
-    let add_category_icon = add_category_icon.unwrap_or(true);
+pub fn render_meme_list(render_meme_list_params: RenderMemeListParams) -> ImageResult {
+    let meme_properties = render_meme_list_params.meme_properties.unwrap_or_default();
+    let exclude_memes = render_meme_list_params.exclude_memes.unwrap_or_default();
+    let sort_by = render_meme_list_params
+        .sort_by
+        .unwrap_or(MemeSortBy::KeywordsPinyin);
+    let sort_reverse = render_meme_list_params.sort_reverse.unwrap_or(false);
+    let text_template = render_meme_list_params
+        .text_template
+        .unwrap_or_else(|| "{index}. {keywords}".to_string());
+    let add_category_icon = render_meme_list_params.add_category_icon.unwrap_or(true);
 
     let result = tools::render_meme_list(tools::RenderMemeListParams {
         meme_properties: meme_properties
@@ -140,16 +154,25 @@ impl Into<tools::MemeStatisticsType> for MemeStatisticsType {
     }
 }
 
+#[napi(object)]
+#[derive(Clone)]
+pub struct RenderMemeStatisticsParams {
+    #[napi(setter)]
+    pub title: String,
+    #[napi(setter)]
+    pub statistics_type: MemeStatisticsType,
+    #[napi(setter)]
+    pub data: Vec<(String, i32)>,
+}
+
 #[napi]
 pub fn render_meme_statistics(
-    title: String,
-    statistics_type: MemeStatisticsType,
-    data: Vec<(String, i32)>,
+    render_meme_statistics_params: RenderMemeStatisticsParams,
 ) -> ImageResult {
     let result = tools::render_meme_statistics(tools::RenderMemeStatisticsParams {
-        title,
-        statistics_type: statistics_type.into(),
-        data,
+        title: render_meme_statistics_params.title,
+        statistics_type: render_meme_statistics_params.statistics_type.into(),
+        data: render_meme_statistics_params.data,
     });
     handle_image_result(result)
 }
