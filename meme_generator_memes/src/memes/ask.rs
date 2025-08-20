@@ -13,10 +13,14 @@ use meme_generator_utils::{
     },
 };
 
-use crate::{options::Gender, register_meme};
+use crate::{options::UserInfo, register_meme};
 
-fn ask(images: Vec<InputImage>, _: Vec<String>, options: Gender) -> Result<Vec<u8>, Error> {
-    let name = &images[0].name;
+fn ask(images: Vec<InputImage>, _: Vec<String>, options: UserInfo) -> Result<Vec<u8>, Error> {
+    let name = &if let Some(name) = options.name && !name.is_empty(){
+            name
+        }else{
+            images[0].name.clone()
+        };
     let ta = match options.gender.as_deref().unwrap() {
         "male" => "他",
         _ => "她",

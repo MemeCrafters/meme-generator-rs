@@ -18,6 +18,16 @@ pub(crate) struct Gender {
 }
 
 #[derive(MemeOptions)]
+pub(crate) struct UserInfo {
+    /// 性别
+    #[option(short, long, default = "unknown", choices = ["male", "female", "unknown"])]
+    pub gender: Option<String>,
+    /// 自定义默认文字的name字段
+    #[option(short, long, long_aliases = ["名称"], default = "")]
+    pub name: Option<String>,
+}
+
+#[derive(MemeOptions)]
 pub(crate) struct Gray {
     /// 是否将图片变为黑白
     #[option(short, long, long_aliases = ["黑白"], default=false)]
