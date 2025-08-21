@@ -1,9 +1,45 @@
-name: Build Package
+name: Build
+
 on:
-  workflow_call:
+  push:
+    branches:
+      - main
+    paths:
+      - "Cargo.toml"
+      - "meme_generator/**"
+      - "meme_generator_cli/**"
+      - "meme_generator_core/**"
+      - "meme_generator_memes/**"
+      - "meme_generator_node/**"
+      - "meme_generator_py/**"
+      - "meme_generator_server/**"
+      - "meme_generator_utils/**"
+      - "meme_options_derive/**"
+    tags:
+      - "v*"
+  pull_request:
+    paths:
+      - "Cargo.toml"
+      - "meme_generator/**"
+      - "meme_generator_cli/**"
+      - "meme_generator_core/**"
+      - "meme_generator_memes/**"
+      - "meme_generator_node/**"
+      - "meme_generator_py/**"
+      - "meme_generator_server/**"
+      - "meme_generator_utils/**"
+      - "meme_options_derive/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
 
 jobs:
-  build-windows:
+  build_windows:
     runs-on: ${{ matrix.platform.runner }}
     strategy:
       matrix:
@@ -11,65 +47,47 @@ jobs:
           - runner: windows-latest
             target: x86_64-pc-windows-msvc
             label: windows-x86_64
+
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.88.0
+      - uses: swatinem/rust-cache@v2
+
+      - name: Build target
+        run: |
+          rustup target add ${{ matrix.platform.target }}
+          cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server
+
+      - uses: actions/upload-artifact@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          name: "meme-generator-cli-${{ matrix.platform.label }}"
+          path: |
+            target/${{ matrix.platform.target }}/release/meme*
+            !target/${{ matrix.platform.target }}/release/meme.pdb
 
-      - name: 设置 Rust 工具链
-        uses: dtolnay/rust-toolchain@1.88.0
-
-      - name: 设置 Rust 缓存
-        uses: swatinem/rust-cache@v2
-
-      - name: 设置 pnpm
-        uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - name: 安装依赖
-        run: pnpm install
+      - name: Build nodejs addon
+        run: pnpm install && pnpm build --release --target ${{ matrix.platform.target }}
         working-directory: meme_generator_node
 
-      - name: 添加目标平台
-        run: rustup target add ${{ matrix.platform.target }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "meme-generator-node-${{ matrix.platform.target }}"
+          path: meme_generator_node/meme_generator*
 
-      - name: 构建
-        run: cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server
-
-      - name: 构建 node 原生模块
-        run: pnpm build --release --target ${{ matrix.platform.target }}
-        working-directory: meme_generator_node
-
-
-      - name: 构建 wheels
+      - name: Build python wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
           working-directory: meme_generator_py
           args: --release --out dist
 
-      - name: 上传 node 原生模块构建产物
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: "meme-generator-node-${{ matrix.platform.target }}"
-          path: meme_generator_node/dist/meme-generator-rs*
-
-      - name: 上传 Rust 构建产物
-        uses: actions/upload-artifact@v4
-        with:
-          name: "meme-generator-cli-${{ matrix.platform.label }}"
-          path: |
-            target/${{ matrix.platform.target }}/release/meme*
-            !target/${{ matrix.platform.target }}/release/meme.d
-            !target/${{ matrix.platform.target }}/release/meme.pdb
-
-      - name: 上传 wheels 构建产物
-        uses: actions/upload-artifact@v4
-        with:
-          name: meme-generator-wheels-${{ matrix.platform.label }}
+          name: meme-generator-py-${{ matrix.platform.label }}
           path: meme_generator_py/dist
 
   build_macos:
@@ -83,62 +101,50 @@ jobs:
           - runner: macos-latest
             target: aarch64-apple-darwin
             label: macos-aarch64
+
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.88.0
+      - uses: swatinem/rust-cache@v2
+
+      - name: Build target
+        run: |
+          rustup target add ${{ matrix.platform.target }}
+          cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server
+
+      - uses: actions/upload-artifact@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          name: "meme-generator-cli-${{ matrix.platform.label }}"
+          path: |
+            target/${{ matrix.platform.target }}/release/meme*
+            !target/${{ matrix.platform.target }}/release/meme.d
 
-      - name: 设置 Rust 工具链
-        uses: dtolnay/rust-toolchain@1.88.0
-
-      - name: 设置 Rust 缓存
-        uses: swatinem/rust-cache@v2
-
-      - name: 设置 pnpm
-        uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - name: 安装依赖
-        run: pnpm install
+      - name: Build nodejs addon
+        run: pnpm install && pnpm build --release --target ${{ matrix.platform.target }}
         working-directory: meme_generator_node
 
-      - name: 添加目标平台
-        run: rustup target add ${{ matrix.platform.target }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "meme-generator-node-${{ matrix.platform.target }}"
+          path: meme_generator_node/meme_generator*
 
-      - name: 构建
-        run: cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server
-
-      - name: 构建 node 原生模块
-        run: pnpm build --release --target ${{ matrix.platform.target }}
-        working-directory: meme_generator_node
-
-
-      - name: 构建 wheels
+      - name: Build python wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
           working-directory: meme_generator_py
           args: --release --out dist
 
-      - name: 上传 node 原生模块构建产物
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: "meme-generator-node-${{ matrix.platform.target }}"
-          path: meme_generator_node/dist/meme-generator-rs*
+          name: meme-generator-py-${{ matrix.platform.label }}
+          path: meme_generator_py/dist
 
-      - name: 上传 Rust 构建产物
-        uses: actions/upload-artifact@v4
-        with:
-          name: "meme-generator-cli-${{ matrix.platform.label }}"
-          path: |
-            target/${{ matrix.platform.target }}/release/meme*
-            !target/${{ matrix.platform.target }}/release/meme.d
-            !target/${{ matrix.platform.target }}/release/meme.pdb
-
-  build-linux:
+  build_linux:
     runs-on: ${{ matrix.platform.runner }}
     container: ${{ matrix.platform.container }}
     strategy:
@@ -154,43 +160,36 @@ jobs:
             label: linux-aarch64
 
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.88.0
+      - uses: swatinem/rust-cache@v2
+
+      - name: Build target
+        run: |
+          rustup target add ${{ matrix.platform.target }}
+          cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server,vendored,embed-freetype
+
+      - uses: actions/upload-artifact@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          name: "meme-generator-cli-${{ matrix.platform.label }}"
+          path: |
+            target/${{ matrix.platform.target }}/release/meme*
+            !target/${{ matrix.platform.target }}/release/meme.d
 
-      - name: 设置 Rust 工具链
-        uses: dtolnay/rust-toolchain@1.88.0
-
-      - name: 设置 Rust 缓存
-        uses: swatinem/rust-cache@v2
-
-      - name: 设置 Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: 设置 pnpm
-        uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - name: 安装依赖
-        run: pnpm install
+      - name: Build nodejs addon
+        run: pnpm install && pnpm build --release --target ${{ matrix.platform.target }} --features vendored,embed-freetype
         working-directory: meme_generator_node
 
-      - name: 添加目标平台
-        run: rustup target add ${{ matrix.platform.target }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "meme-generator-node-${{ matrix.platform.target }}"
+          path: meme_generator_node/meme_generator*
 
-      - name: 构建
-        run: cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server,vendored,embed-freetype
-
-      - name: 构建 node 模块
-        run: pnpm build --release --target ${{ matrix.platform.target }} --features vendored,embed-freetype
-        working-directory: meme_generator_node
-
-      - name: 构建 wheels
+      - name: Build python wheels
         run: |
           pip3 install pipx
           export PATH=$PATH:/github/home/.local/bin
@@ -199,36 +198,9 @@ jobs:
           maturin build --release --out dist --target ${{ matrix.platform.target }} --features vendored,embed-freetype
         working-directory: meme_generator_py
 
-      - name: 上传 Rust 构建产物
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: "meme-generator-cli-${{ matrix.platform.label }}"
-          path: |
-            target/${{ matrix.platform.target }}/release/meme*
-            !target/${{ matrix.platform.target }}/release/meme.d
-
-      - name: 上传 node 原生模块构建产物
-        uses: actions/upload-artifact@v4
-        with:
-          name: "meme-generator-node-${{ matrix.platform.target }}"
-          path: meme_generator_node/dist/meme-generator-rs*
-
-      - name: 上传npm包文件
-        if: ${{ matrix.platform.label == 'linux-x86_64' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: npm-package
-          path: |
-            meme_generator_node/dist/index.js
-            meme_generator_node/dist/index.d.ts
-            meme_generator_node/package.json
-            README.md
-          if-no-files-found: error
-
-      - name: 上传 wheels 构建产物
-        uses: actions/upload-artifact@v4
-        with:
-          name: meme-generator-wheels-${{ matrix.platform.label }}
+          name: meme-generator-py-${{ matrix.platform.label }}
           path: meme_generator_py/dist
 
   build_android:
@@ -243,29 +215,17 @@ jobs:
             label: android-aarch64
 
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.88.0
+      - uses: swatinem/rust-cache@v2
 
-      - name: 设置 Rust 工具链
-        uses: dtolnay/rust-toolchain@1.88.0
-
-      - name: 设置 Rust 缓存
-        uses: swatinem/rust-cache@v2
-
-      - name: 设置 Rust 缓存
-        uses: swatinem/rust-cache@v2
-
-      - name: 添加目标平台
+      - name: Rustup add target
         run: rustup target add ${{ matrix.platform.target }}
 
-      - name: 构建
+      - name: Build target
         run: cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server,vendored
 
-      - name: 上传 Rust 构建产物
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: "meme-generator-cli-${{ matrix.platform.label }}"
           path: |
