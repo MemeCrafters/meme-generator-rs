@@ -16,12 +16,17 @@
     "type": "git",
     "url": "git+https://github.com/MemeCrafters/meme-generator-rs.git"
   },
-  "main": "meme_generator/index.js",
-  "types": "meme_generator/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.d.ts",
+    "index.js",
+    "js-binding.js"
+  ],
   "scripts": {
     "artifacts": "napi artifacts",
-    "build": "napi build --platform --esm --js js-binding.js --dts js-binding.d.ts --package meme_generator_node -o ./meme_generator",
-    "build:debug": "napi build --platform",
+    "build": "napi build --platform --release --js js-binding.js",
+    "build:debug": "napi build --platform --js js-binding.js",
     "prepublishOnly": "napi prepublish --no-gh-release",
     "universal": "napi universal",
     "version": "napi version"

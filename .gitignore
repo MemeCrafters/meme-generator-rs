@@ -15,5 +15,5 @@ libraries/
 node_modules
 dist
 .idea
-js-binding.*
 *.node
+npm
