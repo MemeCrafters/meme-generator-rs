@@ -76,7 +76,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: "meme-generator-node-${{ matrix.platform.target }}"
-          path: meme_generator_node/meme_generator*
+          path: meme_generator_node/meme-generator*
 
       - name: Build python wheels
         uses: PyO3/maturin-action@v1
@@ -130,7 +130,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: "meme-generator-node-${{ matrix.platform.target }}"
-          path: meme_generator_node/meme_generator*
+          path: meme_generator_node/meme-generator*
 
       - name: Build python wheels
         uses: PyO3/maturin-action@v1
@@ -180,6 +180,10 @@ jobs:
         with:
           version: 10
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
       - name: Build nodejs addon
         run: pnpm install && pnpm build --release --target ${{ matrix.platform.target }} --features vendored,embed-freetype
         working-directory: meme_generator_node
@@ -187,7 +191,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: "meme-generator-node-${{ matrix.platform.target }}"
-          path: meme_generator_node/meme_generator*
+          path: meme_generator_node/meme-generator*
 
       - name: Build python wheels
         run: |
