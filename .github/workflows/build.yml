@@ -75,7 +75,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: "meme-generator-node-${{ matrix.platform.target }}"
+          name: "meme-generator-node-${{ matrix.platform.label }}"
           path: meme_generator_node/meme-generator*
 
       - name: Build python wheels
@@ -129,7 +129,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: "meme-generator-node-${{ matrix.platform.target }}"
+          name: "meme-generator-node-${{ matrix.platform.label }}"
           path: meme_generator_node/meme-generator*
 
       - name: Build python wheels
@@ -190,7 +190,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: "meme-generator-node-${{ matrix.platform.target }}"
+          name: "meme-generator-node-${{ matrix.platform.label }}"
           path: meme_generator_node/meme-generator*
 
       - name: Build python wheels

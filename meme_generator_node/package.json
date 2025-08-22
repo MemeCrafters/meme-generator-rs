@@ -1,6 +1,5 @@
 {
   "name": "@memecrafters/meme-generator",
-  "version": "0.2.2",
   "description": "表情包生成器，用于制作各种沙雕表情包",
   "keywords": [
     "meme-generator",
@@ -27,11 +26,13 @@
     "artifacts": "napi artifacts",
     "build": "napi build --platform --release --js js-binding.js",
     "build:debug": "napi build --platform --js js-binding.js",
-    "prepublishOnly": "napi prepublish --no-gh-release",
+    "prepublishOnly": "pnpm sync-version && napi prepublish --no-gh-release",
     "universal": "napi universal",
-    "version": "napi version"
+    "version": "napi version",
+    "sync-version": "node ./scripts/sync-version.js"
   },
   "devDependencies": {
+    "@iarna/toml": "^2.2.5",
     "@napi-rs/cli": "^3.1.5",
     "@types/node": "^24.3.0"
   },

@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@iarna/toml':
+        specifier: ^2.2.5
+        version: 2.2.5
       '@napi-rs/cli':
         specifier: ^3.1.5
         version: 3.1.5(@emnapi/runtime@1.4.5)(@types/node@24.3.0)
@@ -25,6 +28,9 @@ packages:
 
   '@emnapi/wasi-threads@1.0.4':
     resolution: {integrity: sha512-PJR+bOmMOPH8AtcTGAyYNiuJ3/Fcoj2XN/gBEWzDIKh254XO+mM9XoXHk5GNEhodxeMznbg7BlRojVbKN+gC6g==}
+
+  '@iarna/toml@2.2.5':
+    resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
 
   '@inquirer/checkbox@4.2.1':
     resolution: {integrity: sha512-bevKGO6kX1eM/N+pdh9leS5L7TBF4ICrzi9a+cbWkrxeAeIcwlo/7OfWGCDERdRCI2/Q6tjltX4bt07ALHDwFw==}
@@ -716,6 +722,8 @@ snapshots:
     dependencies:
       tslib: 2.8.1
     optional: true
+
+  '@iarna/toml@2.2.5': {}
 
   '@inquirer/checkbox@4.2.1(@types/node@24.3.0)':
     dependencies:
