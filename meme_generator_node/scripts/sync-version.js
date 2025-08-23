@@ -1,8 +1,11 @@
-const fs = require("fs");
-const path = require("path");
-const toml = require("@iarna/toml");
-const { execSync } = require("child_process");
+import fs from "fs";
+import path from "path";
+import toml from "@iarna/toml";
+import { execSync } from "child_process";
 
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, "..");
 const cargoTomlPath = path.join(rootDir, "Cargo.toml");
 const packageJsonPath = path.join(rootDir, "package.json");
