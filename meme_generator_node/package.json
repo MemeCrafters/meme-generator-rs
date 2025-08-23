@@ -15,6 +15,7 @@
     "type": "git",
     "url": "git+https://github.com/MemeCrafters/meme-generator-rs.git"
   },
+  "type": "module",
   "main": "index.js",
   "types": "index.d.ts",
   "files": [
