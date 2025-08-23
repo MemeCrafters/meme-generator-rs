@@ -159,17 +159,17 @@ export interface MemeFeedback {
 }
 
 export namespace Resources {
-  export declare function checkResources(): void;
+  export function checkResources(): void;
 
-  export declare function checkResourcesInBackground(): void;
+  export function checkResourcesInBackground(): void;
 }
 
 export namespace Tools {
-  export declare function renderMemeList(
+  export function renderMemeList(
     renderMemeListParams: RenderMemeListParams
   ): ImageResult;
 
-  export declare function renderMemeStatistics(
+  export function renderMemeStatistics(
     renderMemeStatisticsParams: RenderMemeStatisticsParams
   ): ImageResult;
 
@@ -188,7 +188,7 @@ export namespace Tools {
     new?: boolean;
   }
 
-  export declare const enum MemeSortBy {
+  export const enum MemeSortBy {
     Key = 0,
     Keywords = 1,
     KeywordsPinyin = 2,
@@ -202,51 +202,50 @@ export namespace Tools {
     data: Array<[string, number]>;
   }
 
-  export declare const enum MemeStatisticsType {
+  export const enum MemeStatisticsType {
     MemeCount = 0,
     TimeCount = 1,
   }
 
+  export type ImageResult =
+    | { type: "Ok"; field0: Buffer }
+    | { type: "Err"; field0: Error };
+
+  export type ImagesResult =
+    | { type: "Ok"; field0: Array<Buffer> }
+    | { type: "Err"; field0: Error };
+
   export namespace ImageOperations {
-    export declare function inspect(image: Buffer): ImageInfoResult;
+    export function inspect(image: Buffer): ImageInfoResult;
 
-    export declare function flipHorizontal(image: Buffer): ImageResult;
+    export function flipHorizontal(image: Buffer): ImageResult;
 
-    export declare function flipVertical(image: Buffer): ImageResult;
+    export function flipVertical(image: Buffer): ImageResult;
 
-    export declare function rotate(
-      image: Buffer,
-      options: RotateOptions
-    ): ImageResult;
+    export function rotate(image: Buffer, options: RotateOptions): ImageResult;
 
-    export declare function resize(
-      image: Buffer,
-      options: ResizeOptions
-    ): ImageResult;
+    export function resize(image: Buffer, options: ResizeOptions): ImageResult;
 
-    export declare function crop(
-      image: Buffer,
-      options: CropOptions
-    ): ImageResult;
+    export function crop(image: Buffer, options: CropOptions): ImageResult;
 
-    export declare function grayscale(image: Buffer): ImageResult;
+    export function grayscale(image: Buffer): ImageResult;
 
-    export declare function invert(image: Buffer): ImageResult;
+    export function invert(image: Buffer): ImageResult;
 
-    export declare function mergeHorizontal(images: Array<Buffer>): ImageResult;
+    export function mergeHorizontal(images: Array<Buffer>): ImageResult;
 
-    export declare function mergeVertical(images: Array<Buffer>): ImageResult;
+    export function mergeVertical(images: Array<Buffer>): ImageResult;
 
-    export declare function gifSplit(image: Buffer): ImagesResult;
+    export function gifSplit(image: Buffer): ImagesResult;
 
-    export declare function gifMerge(
+    export function gifMerge(
       images: Array<Buffer>,
       options: GifMergeOptions
     ): ImageResult;
 
-    export declare function gifReverse(image: Buffer): ImageResult;
+    export function gifReverse(image: Buffer): ImageResult;
 
-    export declare function gifChangeDuration(
+    export function gifChangeDuration(
       image: Buffer,
       options: GifChangeDurationOptions
     ): ImageResult;
@@ -262,14 +261,6 @@ export namespace Tools {
       frameCount?: number;
       averageDuration?: number;
     }
-
-    export type ImageResult =
-      | { type: "Ok"; field0: Buffer }
-      | { type: "Err"; field0: Error };
-
-    export type ImagesResult =
-      | { type: "Ok"; field0: Array<Buffer> }
-      | { type: "Err"; field0: Error };
 
     export interface RotateOptions {
       degrees?: number;
