@@ -24,8 +24,8 @@
   ],
   "scripts": {
     "artifacts": "napi artifacts",
-    "build": "napi build --platform --release --js js-binding.js",
-    "build:debug": "napi build --platform --js js-binding.js",
+    "build": "napi build --platform --release --esm --js js-binding.js",
+    "build:debug": "napi build --platform --esm --js js-binding.js",
     "prepublishOnly": "pnpm sync-version && napi prepublish --no-gh-release",
     "universal": "napi universal",
     "version": "napi version",
