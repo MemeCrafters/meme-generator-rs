@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - completed
+
+jobs:
+  crates_io_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.88.0
+      - uses: swatinem/rust-cache@v2
+
+      - name: Cargo login
+        run: cargo login ${{ secrets.CRATES_IO_API_TOKEN }}
+
+      - name: Cargo Publish
+        run: |
+          cargo publish --package meme_generator_memes
+          cargo publish --package meme_generator
+
+  pypi_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: meme-generator-py-*
+
+      - name: Publish to PyPI
+        uses: PyO3/maturin-action@v1
+        env:
+          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        with:
+          command: upload
+          args: --non-interactive --skip-existing meme-generator-py-*/*
+
+  npm_publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: meme-generator-node-*
+          path: meme_generator_node/artifacts
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Publish to NPM
+        working-directory: meme_generator_node
+        run: |
+          pnpm install
+          pnpm napi create-npm-dirs
+          pnpm artifacts
+          npm config set provenance true
+          npm config set registry https://registry.npmjs.org/
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+          npm publish --access public
+
+  release_draft:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dawidd6/action-download-artifact@v11
+        with:
+          skip_unpack: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref }}
+          draft: true
+          files: |
+            meme-generator-cli-*

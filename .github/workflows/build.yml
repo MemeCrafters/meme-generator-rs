@@ -10,19 +10,21 @@ on:
       - "meme_generator_cli/**"
       - "meme_generator_core/**"
       - "meme_generator_memes/**"
+      - "meme_generator_node/**"
       - "meme_generator_py/**"
       - "meme_generator_server/**"
       - "meme_generator_utils/**"
       - "meme_options_derive/**"
     tags:
       - "v*"
-  pull_request_target:
+  pull_request:
     paths:
       - "Cargo.toml"
       - "meme_generator/**"
       - "meme_generator_cli/**"
       - "meme_generator_core/**"
       - "meme_generator_memes/**"
+      - "meme_generator_node/**"
       - "meme_generator_py/**"
       - "meme_generator_server/**"
       - "meme_generator_utils/**"
@@ -37,7 +39,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  build_windows:
     runs-on: ${{ matrix.platform.runner }}
     strategy:
       matrix:
@@ -45,6 +47,54 @@ jobs:
           - runner: windows-latest
             target: x86_64-pc-windows-msvc
             label: windows-x86_64
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.88.0
+      - uses: swatinem/rust-cache@v2
+
+      - name: Build target
+        run: |
+          rustup target add ${{ matrix.platform.target }}
+          cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "meme-generator-cli-${{ matrix.platform.label }}"
+          path: |
+            target/${{ matrix.platform.target }}/release/meme*
+            !target/${{ matrix.platform.target }}/release/meme.pdb
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Build nodejs addon
+        run: pnpm install && pnpm build --release --target ${{ matrix.platform.target }}
+        working-directory: meme_generator_node
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "meme-generator-node-${{ matrix.platform.label }}"
+          path: meme_generator_node/meme-generator*
+
+      - name: Build python wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          working-directory: meme_generator_py
+          args: --release --out dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: meme-generator-py-${{ matrix.platform.label }}
+          path: meme_generator_py/dist
+
+  build_macos:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
           - runner: macos-latest
             target: x86_64-apple-darwin
             label: macos-x86_64
@@ -55,14 +105,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.88.0
-
       - uses: swatinem/rust-cache@v2
 
-      - name: Rustup add target
-        run: rustup target add ${{ matrix.platform.target }}
-
       - name: Build target
-        run: cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server
+        run: |
+          rustup target add ${{ matrix.platform.target }}
+          cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server
 
       - uses: actions/upload-artifact@v4
         with:
@@ -70,19 +118,30 @@ jobs:
           path: |
             target/${{ matrix.platform.target }}/release/meme*
             !target/${{ matrix.platform.target }}/release/meme.d
-            !target/${{ matrix.platform.target }}/release/meme.pdb
 
-      - name: Build wheels
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Build nodejs addon
+        run: pnpm install && pnpm build --release --target ${{ matrix.platform.target }}
+        working-directory: meme_generator_node
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "meme-generator-node-${{ matrix.platform.label }}"
+          path: meme_generator_node/meme-generator*
+
+      - name: Build python wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
           working-directory: meme_generator_py
           args: --release --out dist
 
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: meme-generator-wheels-${{ matrix.platform.label }}
+          name: meme-generator-py-${{ matrix.platform.label }}
           path: meme_generator_py/dist
 
   build_linux:
@@ -105,11 +164,10 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.88.0
       - uses: swatinem/rust-cache@v2
 
-      - name: Rustup add target
-        run: rustup target add ${{ matrix.platform.target }}
-
       - name: Build target
-        run: cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server,vendored,embed-freetype
+        run: |
+          rustup target add ${{ matrix.platform.target }}
+          cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server,vendored,embed-freetype
 
       - uses: actions/upload-artifact@v4
         with:
@@ -118,7 +176,24 @@ jobs:
             target/${{ matrix.platform.target }}/release/meme*
             !target/${{ matrix.platform.target }}/release/meme.d
 
-      - name: Build wheels
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build nodejs addon
+        run: pnpm install && pnpm build --release --target ${{ matrix.platform.target }} --features vendored,embed-freetype
+        working-directory: meme_generator_node
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "meme-generator-node-${{ matrix.platform.label }}"
+          path: meme_generator_node/meme-generator*
+
+      - name: Build python wheels
         run: |
           pip3 install pipx
           export PATH=$PATH:/github/home/.local/bin
@@ -127,10 +202,9 @@ jobs:
           maturin build --release --out dist --target ${{ matrix.platform.target }} --features vendored,embed-freetype
         working-directory: meme_generator_py
 
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: meme-generator-wheels-${{ matrix.platform.label }}
+          name: meme-generator-py-${{ matrix.platform.label }}
           path: meme_generator_py/dist
 
   build_android:
@@ -161,53 +235,3 @@ jobs:
           path: |
             target/${{ matrix.platform.target }}/release/meme*
             !target/${{ matrix.platform.target }}/release/meme.d
-
-  crates_io_publish:
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: [build, build_linux, build_android]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.88.0
-      - uses: swatinem/rust-cache@v2
-
-      - name: Cargo login
-        run: cargo login ${{ secrets.CRATES_IO_API_TOKEN }}
-
-      - name: Cargo Publish
-        run: |
-          cargo publish --package meme_generator_memes
-          cargo publish --package meme_generator
-
-  pypi_publish:
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: [build, build_linux, build_android]
-    steps:
-      - uses: actions/download-artifact@v4
-
-      - name: Publish to PyPI
-        uses: PyO3/maturin-action@v1
-        env:
-          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-        with:
-          command: upload
-          args: --non-interactive --skip-existing meme-generator-wheels-*/*
-
-  release_draft:
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: [build, build_linux, build_android]
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dawidd6/action-download-artifact@v11
-        with:
-          skip_unpack: true
-      - uses: softprops/action-gh-release@v2
-        with:
-          name: ${{ github.ref }}
-          draft: true
-          files: |
-            meme-generator-cli-*

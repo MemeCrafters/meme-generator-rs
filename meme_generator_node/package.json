@@ -1,0 +1,54 @@
+{
+  "name": "@memecrafters/meme-generator",
+  "description": "表情包生成器，用于制作各种沙雕表情包",
+  "keywords": [
+    "meme-generator",
+    "memes",
+    "petpet",
+    "napi-rs"
+  ],
+  "homepage": "https://github.com/MemeCrafters/meme-generator-rs",
+  "bugs": {
+    "url": "https://github.com/MemeCrafters/meme-generator-rs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MemeCrafters/meme-generator-rs.git"
+  },
+  "type": "module",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.d.ts",
+    "index.js",
+    "js-binding.js"
+  ],
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release --esm --js js-binding.js",
+    "build:debug": "napi build --platform --esm --js js-binding.js",
+    "prepublishOnly": "pnpm sync-version && napi prepublish --no-gh-release",
+    "universal": "napi universal",
+    "version": "napi version",
+    "sync-version": "node ./scripts/sync-version.js"
+  },
+  "devDependencies": {
+    "@iarna/toml": "^2.2.5",
+    "@napi-rs/cli": "^3.1.5",
+    "@types/node": "^24.3.0"
+  },
+  "packageManager": "pnpm@10.14.0",
+  "engines": {
+    "node": ">= 20"
+  },
+  "napi": {
+    "binaryName": "meme-generator",
+    "targets": [
+      "x86_64-pc-windows-msvc",
+      "x86_64-apple-darwin",
+      "x86_64-unknown-linux-gnu",
+      "aarch64-apple-darwin",
+      "aarch64-unknown-linux-gnu"
+    ]
+  }
+}
