@@ -25,7 +25,7 @@ def generate_resources_json(resources_dir: Path) -> dict:
         if file.is_file():
             relative_path = file.relative_to(images_dir)
             hash = calculate_sha256(file)
-            images.append({"file": str(relative_path), "hash": hash})
+            images.append({"file": str(relative_path.as_posix()), "hash": hash})
     images.sort(key=lambda i: i["file"])
 
     return {"fonts": fonts, "images": images}
