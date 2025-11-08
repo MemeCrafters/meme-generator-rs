@@ -7,6 +7,7 @@ mod alike;
 mod alipay;
 mod always;
 mod always_like;
+mod anan;
 mod anti_kidnap;
 mod anya_suki;
 mod applaud;
