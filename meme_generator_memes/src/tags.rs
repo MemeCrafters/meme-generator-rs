@@ -130,6 +130,9 @@ meme_tags!(
     ayachi = (["绫地宁宁"], sabbat_of_the_witch),
     // 请问您今天要来点兔子吗？
     kafu_chino = (["香风智乃"]),
+    // 魔法少女的魔女审判
+    magical_girl_witch_trials = (["魔法少女的魔女审判"]),
+    natsume_anan = (["夏目安安"], magical_girl_witch_trials),
     // 其他
     atri = (["亚托莉", "ATRI", "萝卜子"]),
     capoo = (["猫猫虫", "咖波"]),
