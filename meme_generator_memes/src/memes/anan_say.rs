@@ -29,7 +29,7 @@ fn anan_say(_: Vec<InputImage>, texts: Vec<String>, options: Expression) -> Resu
             .unwrap()
     });
 
-    let base_image = load_image(&format!("anan/{}.png", expression))?;
+    let base_image = load_image(&format!("anan_say/{}.png", expression))?;
     let mut surface = base_image.to_surface();
     let canvas = surface.canvas();
 
@@ -45,7 +45,7 @@ fn anan_say(_: Vec<InputImage>, texts: Vec<String>, options: Expression) -> Resu
         ),
     )?;
 
-    let hand_image = load_image("anan/hand.png")?;
+    let hand_image = load_image("anan_say/hand.png")?;
     canvas.draw_image(&hand_image, (0, 0), None);
 
     encode_png(surface.image_snapshot())
