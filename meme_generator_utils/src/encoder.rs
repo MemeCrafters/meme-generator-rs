@@ -248,7 +248,7 @@ where
             gif_flags.push(true);
             gif_infos.push(GifInfo {
                 frame_num: image.get_frame_count() as u32,
-                duration: image.get_average_duration()?.max(0.02),
+                duration: image.get_average_duration()?,
             });
         } else {
             gif_flags.push(false);
@@ -341,7 +341,7 @@ where
             gif_flags.push(true);
             gif_infos.push(GifInfo {
                 frame_num: image.get_frame_count() as u32,
-                duration: image.get_average_duration()?.max(0.02),
+                duration: image.get_average_duration()?,
             });
         } else {
             gif_flags.push(false);
