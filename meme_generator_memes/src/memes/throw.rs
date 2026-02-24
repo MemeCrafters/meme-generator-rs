@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::RngExt;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
@@ -11,8 +11,7 @@ use meme_generator_utils::{
 use crate::{options::NoOptions, register_meme, tags::MemeTags};
 
 fn throw(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
-    let mut rng = rand::thread_rng();
-    let angle = rng.gen_range(1..=360);
+    let angle = rand::rng().random_range(1..=360);
     let img = images[0]
         .image
         .circle()

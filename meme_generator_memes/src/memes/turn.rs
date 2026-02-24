@@ -1,4 +1,4 @@
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use skia_safe::Image;
 
 use meme_generator_core::error::Error;
@@ -12,7 +12,7 @@ use meme_generator_utils::{
 use crate::{options::NoOptions, register_meme};
 
 fn turn(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8>, Error> {
-    let direction = [-1, 1].choose(&mut rand::thread_rng()).unwrap();
+    let direction = [-1, 1].choose(&mut rand::rng()).unwrap();
 
     let func = |i: usize, images: Vec<Image>| {
         let angle = i as f32 * 10.0 * (*direction) as f32;

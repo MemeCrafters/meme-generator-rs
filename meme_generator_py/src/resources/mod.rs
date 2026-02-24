@@ -7,11 +7,11 @@ pub(crate) fn register_resources_module(parent_module: &Bound<'_, PyModule>) -> 
     m.add_function(wrap_pyfunction!(check_resources, &m)?)?;
     m.add_function(wrap_pyfunction!(check_resources_in_background, &m)?)?;
     parent_module.add_submodule(&m)?;
-    Python::with_gil(|py| {
-        py.import("sys")?
-            .getattr("modules")?
-            .set_item("meme_generator.resources", m)
-    })?;
+    parent_module
+        .py()
+        .import("sys")?
+        .getattr("modules")?
+        .set_item("meme_generator.resources", m)?;
     Ok(())
 }
 

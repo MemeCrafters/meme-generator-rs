@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::RngExt;
 use skia_safe::IRect;
 
 use meme_generator_core::error::Error;
@@ -22,8 +22,8 @@ fn firefly_holdsign(
 ) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
     let num = options.number.unwrap_or({
-        let mut rng = rand::thread_rng();
-        rng.gen_range(1..=21)
+        let mut rng = rand::rng();
+        rng.random_range(1..=21)
     });
 
     let params = [

@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::RngExt;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
@@ -17,14 +17,14 @@ fn spider(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u
         123, 131, 134, 143, 154, 158, 161, 163, 169, 174, 173, 174, 173,
     ];
     let img = images[0].image.circle().resize_exact((80, 80));
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
 
     let mut encoder = GifEncoder::new();
     for i in 0..52 {
         let frame = load_image(format!("spider/{i:02}.png"))?;
         let mut surface = frame.to_surface();
         let canvas = surface.canvas();
-        canvas.draw_image(&img, (xs[i], 24 + rng.gen_range(-1..=1)), None);
+        canvas.draw_image(&img, (xs[i], 24 + rng.random_range(-1..=1)), None);
         encoder.add_frame(surface.image_snapshot(), 0.04)?;
     }
     Ok(encoder.finish()?)

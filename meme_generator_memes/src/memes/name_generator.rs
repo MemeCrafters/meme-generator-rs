@@ -1,4 +1,4 @@
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use skia_safe::{Color, FontStyle};
 
 use meme_generator_core::error::Error;
@@ -234,7 +234,7 @@ fn name_generator(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Resu
         "糖",
     ];
 
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     let color = colors.choose(&mut rng).unwrap();
     let name = format!(
         "{}{}{}",

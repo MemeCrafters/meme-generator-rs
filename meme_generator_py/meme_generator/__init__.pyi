@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional, Union
 
 class ParserFlags:
     short: bool
@@ -9,31 +8,31 @@ class ParserFlags:
 
 class BooleanOption:
     name: str
-    default: Optional[bool]
-    description: Optional[str]
+    default: bool | None
+    description: str | None
     parser_flags: ParserFlags
 
 class StringOption:
     name: str
-    default: Optional[str]
-    choices: Optional[list[str]]
-    description: Optional[str]
+    default: str | None
+    choices: list[str] | None
+    description: str | None
     parser_flags: ParserFlags
 
 class IntegerOption:
     name: str
-    default: Optional[int]
-    minimum: Optional[int]
-    maximum: Optional[int]
-    description: Optional[str]
+    default: int | None
+    minimum: int | None
+    maximum: int | None
+    description: str | None
     parser_flags: ParserFlags
 
 class FloatOption:
     name: str
-    default: Optional[float]
-    minimum: Optional[float]
-    maximum: Optional[float]
-    description: Optional[str]
+    default: float | None
+    minimum: float | None
+    maximum: float | None
+    description: str | None
     parser_flags: ParserFlags
 
 class MemeParams:
@@ -42,14 +41,14 @@ class MemeParams:
     min_texts: int
     max_texts: int
     default_texts: list[str]
-    options: list[Union[BooleanOption, StringOption, IntegerOption, FloatOption]]
+    options: list[BooleanOption | StringOption | IntegerOption | FloatOption]
 
 class MemeShortcut:
     pattern: str
-    humanized: Optional[str]
+    humanized: str | None
     names: list[str]
     texts: list[str]
-    options: dict[str, Union[bool, str, int, float]]
+    options: dict[str, bool | str | int | float]
 
 class MemeInfo:
     key: str
@@ -100,29 +99,29 @@ class Meme:
         self,
         images: list[Image],
         texts: list[str],
-        options: dict[str, Union[bool, str, int, float]],
-    ) -> Union[
-        bytes,
-        ImageDecodeError,
-        ImageEncodeError,
-        ImageAssetMissing,
-        DeserializeError,
-        ImageNumberMismatch,
-        TextNumberMismatch,
-        TextOverLength,
-        MemeFeedback,
-    ]: ...
+        options: dict[str, bool | str | int | float],
+    ) -> (
+        bytes
+        | ImageDecodeError
+        | ImageEncodeError
+        | ImageAssetMissing
+        | DeserializeError
+        | ImageNumberMismatch
+        | TextNumberMismatch
+        | TextOverLength
+        | MemeFeedback
+    ): ...
     def generate_preview(
         self,
-        options: dict[str, Union[bool, str, int, float]] = {},
-    ) -> Union[
-        bytes,
-        ImageEncodeError,
-        ImageAssetMissing,
-        DeserializeError,
-        TextOverLength,
-        MemeFeedback,
-    ]: ...
+        options: dict[str, bool | str | int | float] = {},
+    ) -> (
+        bytes
+        | ImageEncodeError
+        | ImageAssetMissing
+        | DeserializeError
+        | TextOverLength
+        | MemeFeedback
+    ): ...
 
 def get_version() -> str: ...
 def get_meme(key: str) -> Meme: ...

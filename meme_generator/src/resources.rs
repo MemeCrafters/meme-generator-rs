@@ -107,6 +107,7 @@ async fn download_resources(
             .template(
                 "{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})",
             )
+            .unwrap()
             .progress_chars("#>-"),
     );
 

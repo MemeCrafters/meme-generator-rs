@@ -1,4 +1,4 @@
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
@@ -24,7 +24,7 @@ fn genshin_eat(
     options: Character,
 ) -> Result<Vec<u8>, Error> {
     let character = options.character.as_deref().unwrap_or({
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         ["hutao", "keqing", "klee", "nilou", "yae_miko", "zhongli"]
             .choose(&mut rng)
             .unwrap()

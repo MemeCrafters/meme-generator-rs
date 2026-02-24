@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::RngExt;
 use skia_safe::{Canvas, Color, IRect, Image, Point};
 
 use meme_generator_core::error::Error;
@@ -86,11 +86,11 @@ pub fn get_dominant_colors(image: &Image) -> Vec<Color> {
 fn draw_random_blocks(canvas: &Canvas, colors: &Vec<Color>, mask: &Image) {
     let (x1, y1, x2, y2) = (200, 300, 400, 650);
     let mut block_locs: Vec<(i32, i32)> = Vec::new();
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     let mask_pixmap = mask.peek_pixels().unwrap();
     for _ in 0..150 {
-        let x = rng.gen_range(x1..=x2);
-        let y = rng.gen_range(y1..=y2);
+        let x = rng.random_range(x1..=x2);
+        let y = rng.random_range(y1..=y2);
         if mask_pixmap.get_color((x, y)) == Color::BLACK {
             continue;
         }
@@ -101,7 +101,7 @@ fn draw_random_blocks(canvas: &Canvas, colors: &Vec<Color>, mask: &Image) {
             continue;
         }
         block_locs.push((x, y));
-        let color = colors[rng.gen_range(0..colors.len())];
+        let color = colors[rng.random_range(0..colors.len())];
         canvas.rotate(45.0, Some(Point::new(x as f32, y as f32)));
         canvas.draw_irect(IRect::from_xywh(x, y, 10, 10), &new_paint(color));
         canvas.reset_matrix();

@@ -1,4 +1,4 @@
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use skia_safe::{Color, Image};
 
 use meme_generator_core::error::Error;
@@ -24,7 +24,7 @@ fn keep_your_money(
     options: Character,
 ) -> Result<Vec<u8>, Error> {
     let character = options.character.as_deref().unwrap_or({
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         ["arona", "plana"].choose(&mut rng).unwrap()
     });
     let frame = load_image(format!("keep_your_money/{character}.png"))?;

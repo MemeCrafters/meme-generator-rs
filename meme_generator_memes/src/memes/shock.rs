@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::RngExt;
 use skia_safe::{Data, Image, Paint, RuntimeEffect};
 
 use meme_generator_core::error::Error;
@@ -36,12 +36,12 @@ fn shock(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8
 
     let func = |_: usize, images: Vec<Image>| {
         let img = images[0].square().resize_exact((300, 300));
-        let mut rng = rand::thread_rng();
-        let angle = rng.gen_range(-90..=90);
+        let mut rng = rand::rng();
+        let angle = rng.random_range(-90..=90);
         let angle = (angle as f32).to_radians();
         let direction = (angle.cos(), angle.sin());
-        let steps = rng.gen_range(0..=50) as f32;
-        let rotate = rng.gen_range(-20..=20) as f32;
+        let steps = rng.random_range(0..=50) as f32;
+        let rotate = rng.random_range(-20..=20) as f32;
 
         let mut values = Vec::new();
         for uniform in effect.uniforms() {

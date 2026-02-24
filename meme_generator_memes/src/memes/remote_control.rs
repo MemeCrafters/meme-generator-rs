@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::RngExt;
 use skia_safe::Image;
 
 use meme_generator_core::error::Error;
@@ -20,12 +20,12 @@ fn remote_control(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Resu
         let img_h = img.height();
         let mut surface = new_surface((img_w, img_h));
         let canvas = surface.canvas();
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let pos = if i < 4 {
             (0, 0)
         } else {
-            let dx = (img_w as f32 * rng.gen_range(-1.0..1.0) / 60.0) as i32;
-            let dy = (img_h as f32 * rng.gen_range(-1.0..1.0) / 60.0) as i32;
+            let dx = (img_w as f32 * rng.random_range(-1.0..1.0) / 60.0) as i32;
+            let dy = (img_h as f32 * rng.random_range(-1.0..1.0) / 60.0) as i32;
             (dx, dy)
         };
         canvas.draw_image(&img, pos, None);

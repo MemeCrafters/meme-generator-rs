@@ -27,15 +27,15 @@ pub(crate) fn register_image_operations_module(
     m.add_function(wrap_pyfunction!(gif_reverse, &m)?)?;
     m.add_function(wrap_pyfunction!(gif_change_duration, &m)?)?;
     parent_module.add_submodule(&m)?;
-    Python::with_gil(|py| {
-        py.import("sys")?
-            .getattr("modules")?
-            .set_item("meme_generator.tools.image_operations", m)
-    })?;
+    parent_module
+        .py()
+        .import("sys")?
+        .getattr("modules")?
+        .set_item("meme_generator.tools.image_operations", m)?;
     Ok(())
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct ImageInfo {
     #[pyo3(get)]

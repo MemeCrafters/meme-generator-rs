@@ -1,4 +1,4 @@
-use rand::{Rng, seq::SliceRandom};
+use rand::{RngExt, seq::IndexedRandom};
 use skia_safe::{Color, Point};
 
 use meme_generator_core::error::Error;
@@ -212,14 +212,14 @@ fn pjsk(_: Vec<InputImage>, texts: Vec<String>, options: Options) -> Result<Vec<
 
     let character = match options.character {
         None => {
-            let mut rng = rand::thread_rng();
+            let mut rng = rand::rng();
             CHARACTERS.choose(&mut rng).unwrap()
         }
         Some(name) => CHARACTERS.iter().find(|c| c.name_en == name).unwrap(),
     };
 
     let num = match options.number {
-        None => rand::thread_rng().gen_range(1..=character.img_num),
+        None => rand::rng().random_range(1..=character.img_num),
         Some(n) => {
             if n < 1 || n > character.img_num {
                 return Err(Error::MemeFeedback(format!(
@@ -253,7 +253,7 @@ fn pjsk(_: Vec<InputImage>, texts: Vec<String>, options: Options) -> Result<Vec<
 
     let angle = options
         .rotate
-        .unwrap_or_else(|| rand::thread_rng().gen_range(-40..40)) as f32;
+        .unwrap_or_else(|| rand::rng().random_range(-40..40)) as f32;
     let x_offset = options.x_offset.unwrap();
     let y_offset = options.y_offset.unwrap();
 

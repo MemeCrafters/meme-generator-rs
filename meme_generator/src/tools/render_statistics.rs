@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use skia_safe::{Color, Image, Path, PathEffect, Rect};
+use skia_safe::{Color, Image, Path, PathBuilder, PathEffect, Rect};
 
 use meme_generator_utils::{
     encoder::encode_png,
@@ -64,12 +64,13 @@ fn draw_line_chart(title: &str, data: Vec<(String, i32)>) -> Image {
 
     // 绘制外边框
     let paint = new_stroke_paint(color_from_hex_code(AXIS_COLOR), 2.0);
-    let mut path = Path::new();
-    path.move_to((MARGIN, MARGIN));
-    path.line_to((MARGIN, MARGIN + AXIS_HEIGHT));
-    path.line_to((MARGIN + AXIS_WIDTH, MARGIN + AXIS_HEIGHT));
-    path.line_to((MARGIN + AXIS_WIDTH, MARGIN));
-    path.close();
+    let mut builder = PathBuilder::new();
+    builder.move_to((MARGIN, MARGIN));
+    builder.line_to((MARGIN, MARGIN + AXIS_HEIGHT));
+    builder.line_to((MARGIN + AXIS_WIDTH, MARGIN + AXIS_HEIGHT));
+    builder.line_to((MARGIN + AXIS_WIDTH, MARGIN));
+    builder.close();
+    let path: Path = builder.into();
     canvas.draw_path(&path, &paint);
 
     let x_grid_padding: f32 = 20.0;
@@ -106,18 +107,19 @@ fn draw_line_chart(title: &str, data: Vec<(String, i32)>) -> Image {
     // 绘制数据点和连线
     let line_paint = new_stroke_paint(color_from_hex_code(LINE_COLOR), 2.0);
     let point_paint = new_paint(color_from_hex_code(LINE_COLOR));
-    let mut path = Path::new();
+    let mut builder = PathBuilder::new();
     let mut x = MARGIN + x_grid_padding;
     for (i, y) in y_data.iter().enumerate() {
         let y = MARGIN + (AXIS_HEIGHT - (y_grid_padding + **y as f32 * y_sep));
         if i == 0 {
-            path.move_to((x, y));
+            builder.move_to((x, y));
         } else {
-            path.line_to((x, y));
+            builder.line_to((x, y));
         }
         canvas.draw_circle((x, y), 5.0, &point_paint);
         x += x_sep;
     }
+    let path: Path = builder.into();
     canvas.draw_path(&path, &line_paint);
 
     // 绘制 x 轴标签
@@ -218,12 +220,13 @@ fn draw_bar_chart(title: &str, data: Vec<(String, i32)>) -> Image {
 
     // 绘制外边框
     let paint = new_stroke_paint(color_from_hex_code(AXIS_COLOR), 2.0);
-    let mut path = Path::new();
-    path.move_to((margin_left, MARGIN));
-    path.line_to((margin_left, MARGIN + axis_height));
-    path.line_to((margin_left + AXIS_WIDTH, MARGIN + axis_height));
-    path.line_to((margin_left + AXIS_WIDTH, MARGIN));
-    path.close();
+    let mut builder = PathBuilder::new();
+    builder.move_to((margin_left, MARGIN));
+    builder.line_to((margin_left, MARGIN + axis_height));
+    builder.line_to((margin_left + AXIS_WIDTH, MARGIN + axis_height));
+    builder.line_to((margin_left + AXIS_WIDTH, MARGIN));
+    builder.close();
+    let path: Path = builder.into();
     canvas.draw_path(&path, &paint);
 
     // 绘制网格和刻度线

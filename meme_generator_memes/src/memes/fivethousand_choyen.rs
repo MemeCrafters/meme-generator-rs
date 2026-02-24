@@ -1,4 +1,8 @@
-use skia_safe::{Color, Image, Matrix, Paint, PaintJoin, PaintStyle, Shader, TileMode};
+use skia_safe::{
+    Color, Color4f, Image, Matrix, Paint, PaintJoin, PaintStyle, TileMode,
+    gradient::{Colors as GradientColors, Gradient, Interpolation},
+    shaders,
+};
 
 use meme_generator_core::error::Error;
 use meme_generator_utils::{
@@ -65,20 +69,23 @@ fn fivethousand_choyen(
                              dir: (i32, i32, i32, i32),
                              color_stops: Vec<(f32, (u8, u8, u8))>,
                              pos: (i32, i32)| {
-        let shader = Shader::linear_gradient(
+        let colors: Vec<Color4f> = color_stops
+            .iter()
+            .map(|(_, c)| {
+                Color4f::new(
+                    c.0 as f32 / 255.0,
+                    c.1 as f32 / 255.0,
+                    c.2 as f32 / 255.0,
+                    1.0,
+                )
+            })
+            .collect();
+        let positions: Vec<f32> = color_stops.iter().map(|(p, _)| *p).collect();
+        let grad_colors = GradientColors::new(&colors, Some(&positions), TileMode::default(), None);
+        let grad = Gradient::new(grad_colors, Interpolation::default());
+        let shader = shaders::linear_gradient(
             ((dir.0 as f32, dir.1 as f32), (dir.2 as f32, dir.3 as f32)),
-            color_stops
-                .iter()
-                .map(|(_, color)| Color::from_rgb(color.0, color.1, color.2))
-                .collect::<Vec<_>>()
-                .as_slice(),
-            color_stops
-                .iter()
-                .map(|(pos, _)| *pos)
-                .collect::<Vec<_>>()
-                .as_slice(),
-            TileMode::default(),
-            None,
+            &grad,
             None,
         );
         let mut paint = Paint::default();

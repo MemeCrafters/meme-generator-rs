@@ -1,4 +1,4 @@
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use skia_safe::{Color, FontStyle, IRect};
 
 use meme_generator_core::error::Error;
@@ -23,7 +23,7 @@ struct Expression {
 fn anan_say(_: Vec<InputImage>, texts: Vec<String>, options: Expression) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
     let expression = options.expression.as_deref().unwrap_or({
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         ["angry", "black", "happy", "shy", "speechless"]
             .choose(&mut rng)
             .unwrap()

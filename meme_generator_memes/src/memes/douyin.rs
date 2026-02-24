@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::RngExt;
 use skia_safe::{Color, IRect};
 
 use meme_generator_core::error::Error;
@@ -65,7 +65,7 @@ fn douyin(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8
     let devide_num = 6;
     let seed = 20.0 * 0.05;
     let tilt = 0.17;
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
 
     let mut encoder = GifEncoder::new();
     for _ in 0..frame_num {
@@ -73,7 +73,7 @@ fn douyin(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u8
         let canvas = surface.canvas();
 
         let h_seeds: Vec<f32> = (0..devide_num)
-            .map(|_| rng.gen_range(0.0..devide_num as f32).sin().abs())
+            .map(|_| rng.random_range(0.0..devide_num as f32).sin().abs())
             .collect();
         let h_seed_sum: f32 = h_seeds.iter().sum();
         let h_seeds: Vec<f32> = h_seeds.iter().map(|s| s / h_seed_sum).collect();

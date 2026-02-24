@@ -9,10 +9,11 @@ repository.workspace = true
 edition.workspace = true
 
 [dependencies]
-chrono = { version = "0.4", features = ["serde"] }
-directories = "5.0"
-serde = { version = "1.0", features = ["derive"] }
-tracing = "0.1"
+directories = "6.0"
+
+chrono = { workspace = true, features = ["serde"] }
+serde.workspace = true
+tracing.workspace = true
 
 [build-dependencies]
 rustc_version = "0.4"
