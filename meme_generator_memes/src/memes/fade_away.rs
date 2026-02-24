@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::RngExt;
 use skia_safe::{Canvas, Color, Data, Image, Paint, Rect, RuntimeEffect};
 
 use meme_generator_core::error::Error;
@@ -24,7 +24,7 @@ struct Dot {
 
 impl Dot {
     fn new(positon: (f32, f32), direction: (f32, f32)) -> Self {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         Self {
             x: positon.0,
             y: positon.1,
@@ -32,7 +32,7 @@ impl Dot {
             vy: 0.0,
             dx: direction.0,
             dy: direction.1,
-            radius: rng.gen_range(1.0..=3.0),
+            radius: rng.random_range(1.0..=3.0),
             out_of_rect: false,
         }
     }
@@ -43,8 +43,8 @@ impl Dot {
         self.vy += a * self.dy;
         self.x += self.vx;
         self.y += self.vy;
-        let mut rng = rand::thread_rng();
-        if rng.gen_range(0.0..1.0) < 0.25 {
+        let mut rng = rand::rng();
+        if rng.random_range(0.0..1.0) < 0.25 {
             self.radius -= 1.0;
         }
     }
@@ -164,7 +164,7 @@ fn fade_away(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Ve
             paint.set_shader(shader);
             canvas.draw_paint(&paint);
 
-            let mut rng = rand::thread_rng();
+            let mut rng = rand::rng();
             let pixmap = img.peek_pixels().unwrap();
             for r in r1 as i32..r2 as i32 {
                 for theta in 0..180 {
@@ -178,7 +178,7 @@ fn fade_away(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Ve
                     if color.a() == 0 {
                         continue;
                     }
-                    if rng.gen_range(0.0..1.0) < 0.1 {
+                    if rng.random_range(0.0..1.0) < 0.1 {
                         let dx = (x as f32 - center_x) / r as f32;
                         let dy = 1.5 * (y as f32 - center_y) / r as f32;
                         dusts.push(Dot::new((x as f32, y as f32), (dx, dy)));

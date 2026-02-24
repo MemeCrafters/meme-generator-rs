@@ -1,4 +1,4 @@
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use skia_safe::{Color4f, IRect};
 
 use meme_generator_core::error::Error;
@@ -35,7 +35,7 @@ fn atri_pillow(_: Vec<InputImage>, texts: Vec<String>, options: Mode) -> Result<
         "no"
     } else {
         options.mode.as_deref().unwrap_or({
-            let mut rng = rand::thread_rng();
+            let mut rng = rand::rng();
             ["yes", "no"].choose(&mut rng).unwrap()
         })
     };

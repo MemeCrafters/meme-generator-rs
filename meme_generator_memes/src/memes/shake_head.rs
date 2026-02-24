@@ -1,6 +1,6 @@
 use core::f32;
 
-use rand::Rng;
+use rand::RngExt;
 use skia_safe::Image;
 
 use meme_generator_core::error::Error;
@@ -29,12 +29,12 @@ fn shake_head(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<V
         let mut surface = new_surface((frame_w, frame_h));
         let canvas = surface.canvas();
         let img = &images[0];
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let x = (padding_w as f32 * (-(i as f32) * dt).sin() - padding_w as f32
-            + rng.gen_range(-1.0..1.0) * dw as f32)
+            + rng.random_range(-1.0..1.0) * dw as f32)
             .round() as i32;
         let y = (padding_h as f32 * (-(i as f32) * dt).cos() - padding_h as f32
-            + rng.gen_range(-1.0..1.0) * dh as f32)
+            + rng.random_range(-1.0..1.0) * dh as f32)
             .round() as i32;
         canvas.draw_image(&img, (x, y), None);
         Ok(surface.image_snapshot())

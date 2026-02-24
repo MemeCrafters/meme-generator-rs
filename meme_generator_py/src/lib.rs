@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use chrono::{DateTime, Local};
+use chrono::{DateTime, FixedOffset};
 use pyo3::prelude::*;
 use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
@@ -47,7 +47,7 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     Ok(())
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct ParserFlags {
     #[pyo3(get)]
@@ -60,7 +60,7 @@ struct ParserFlags {
     long_aliases: Vec<String>,
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct BooleanOption {
     #[pyo3(get)]
@@ -73,7 +73,7 @@ struct BooleanOption {
     parser_flags: ParserFlags,
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct StringOption {
     #[pyo3(get)]
@@ -88,7 +88,7 @@ struct StringOption {
     parser_flags: ParserFlags,
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct IntegerOption {
     #[pyo3(get)]
@@ -105,7 +105,7 @@ struct IntegerOption {
     parser_flags: ParserFlags,
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct FloatOption {
     #[pyo3(get)]
@@ -130,7 +130,7 @@ enum MemeOption {
     Float(FloatOption),
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct MemeParams {
     #[pyo3(get)]
@@ -147,7 +147,7 @@ struct MemeParams {
     options: Vec<MemeOption>,
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct MemeShortcut {
     #[pyo3(get)]
@@ -162,7 +162,7 @@ struct MemeShortcut {
     options: HashMap<String, OptionValue>,
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct MemeInfo {
     #[pyo3(get)]
@@ -176,12 +176,12 @@ struct MemeInfo {
     #[pyo3(get)]
     tags: HashSet<String>,
     #[pyo3(get)]
-    date_created: DateTime<Local>,
+    date_created: DateTime<FixedOffset>,
     #[pyo3(get)]
-    date_modified: DateTime<Local>,
+    date_modified: DateTime<FixedOffset>,
 }
 
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 struct Image {
     #[pyo3(set)]
@@ -232,35 +232,35 @@ impl Into<meme::OptionValue> for OptionValue {
     }
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct ImageDecodeError {
     #[pyo3(get)]
     error: String,
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct ImageEncodeError {
     #[pyo3(get)]
     error: String,
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct ImageAssetMissing {
     #[pyo3(get)]
     path: String,
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct DeserializeError {
     #[pyo3(get)]
     error: String,
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct ImageNumberMismatch {
     #[pyo3(get)]
@@ -271,7 +271,7 @@ struct ImageNumberMismatch {
     actual: u8,
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct TextNumberMismatch {
     #[pyo3(get)]
@@ -282,14 +282,14 @@ struct TextNumberMismatch {
     actual: u8,
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct TextOverLength {
     #[pyo3(get)]
     text: String,
 }
 
-#[pyclass]
+#[pyclass(skip_from_py_object)]
 #[derive(Clone)]
 struct MemeFeedback {
     #[pyo3(get)]
@@ -436,8 +436,8 @@ impl Meme {
                 })
                 .collect(),
             tags: info.tags,
-            date_created: info.date_created,
-            date_modified: info.date_modified,
+            date_created: info.date_created.fixed_offset(),
+            date_modified: info.date_modified.fixed_offset(),
         }
     }
 

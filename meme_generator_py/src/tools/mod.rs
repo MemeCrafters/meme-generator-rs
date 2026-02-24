@@ -19,11 +19,11 @@ pub(crate) fn register_tools_module(parent_module: &Bound<'_, PyModule>) -> PyRe
     m.add_function(wrap_pyfunction!(render_meme_statistics, &m)?)?;
     register_image_operations_module(&m)?;
     parent_module.add_submodule(&m)?;
-    Python::with_gil(|py| {
-        py.import("sys")?
-            .getattr("modules")?
-            .set_item("meme_generator.tools", m)
-    })?;
+    parent_module
+        .py()
+        .import("sys")?
+        .getattr("modules")?
+        .set_item("meme_generator.tools", m)?;
     Ok(())
 }
 
@@ -69,7 +69,7 @@ fn handle_images_result(result: Result<Vec<Vec<u8>>, error::Error>) -> ImagesRes
     }
 }
 
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 struct MemeProperties {
     #[pyo3(set)]
@@ -99,7 +99,7 @@ impl Into<tools::MemeProperties> for MemeProperties {
     }
 }
 
-#[pyclass(eq, eq_int)]
+#[pyclass(eq, eq_int, from_py_object)]
 #[derive(Clone, PartialEq)]
 enum MemeSortBy {
     Key = 0,
@@ -145,7 +145,7 @@ fn render_meme_list(
     handle_image_result(result)
 }
 
-#[pyclass(eq, eq_int)]
+#[pyclass(eq, eq_int, from_py_object)]
 #[derive(Clone, PartialEq)]
 enum MemeStatisticsType {
     MemeCount = 0,

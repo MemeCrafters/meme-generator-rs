@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::RngExt;
 use skia_safe::IRect;
 
 use meme_generator_core::error::Error;
@@ -18,8 +18,7 @@ number_option!(Number, 1, 12);
 fn kokona_seal(_: Vec<InputImage>, texts: Vec<String>, options: Number) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
     let num = options.number.unwrap_or({
-        let mut rng = rand::thread_rng();
-        rng.gen_range(1..=12)
+        rand::rng().random_range(1..=12)
     });
 
     let size = (320, 155);

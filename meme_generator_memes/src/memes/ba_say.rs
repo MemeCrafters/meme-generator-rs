@@ -1,4 +1,4 @@
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use skia_safe::IRect;
 
 use meme_generator_core::error::Error;
@@ -34,7 +34,7 @@ struct Position {
 
 fn ba_say(_: Vec<InputImage>, texts: Vec<String>, options: Position) -> Result<Vec<u8>, Error> {
     let character = options.character.as_deref().unwrap_or({
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         ["arisu", "izuna", "key", "kokona", "mari", "sena", "yuuka"]
             .choose(&mut rng)
             .unwrap()
@@ -45,7 +45,7 @@ fn ba_say(_: Vec<InputImage>, texts: Vec<String>, options: Position) -> Result<V
         "right"
     } else {
         options.position.as_deref().unwrap_or({
-            let mut rng = rand::thread_rng();
+            let mut rng = rand::rng();
             ["left", "right"].choose(&mut rng).unwrap()
         })
     };

@@ -1,4 +1,4 @@
-use rand::{Rng, seq::SliceRandom};
+use rand::{RngExt, seq::IndexedRandom};
 use skia_safe::{Canvas, FontStyle, Image};
 
 use meme_generator_core::error::Error;
@@ -33,15 +33,15 @@ const COLOR_BLACK: &str = "#0F0F0F";
 
 impl BoxChar {
     fn new(char: char, mode: CharMode, font_size: f32) -> Self {
-        let mut rng = rand::thread_rng();
-        let angle = rng.gen_range(-10.0..0.0);
+        let mut rng = rand::rng();
+        let angle = rng.random_range(-10.0..0.0);
         let angle = match mode {
             CharMode::First => angle,
             _ => angle * [-1.0, 1.0].choose(&mut rng).unwrap(),
         };
         let scale = match mode {
             CharMode::First => 1.1,
-            _ => 1.0 - rng.gen_range(0..3) as f32 / 10.0,
+            _ => 1.0 - rng.random_range(0..3) as f32 / 10.0,
         };
         let font_size = font_size * scale;
         let color = match mode {
@@ -78,7 +78,7 @@ impl BoxChar {
             let mut surface = new_surface((extra_bg_w, extra_bg_h));
             let canvas = surface.canvas();
             canvas.clear(color_from_hex_code(COLOR_BLACK));
-            let extra_angle = rng.gen_range(0.0..5.0) * [-1.0, 1.0].choose(&mut rng).unwrap();
+            let extra_angle = rng.random_range(0.0..5.0) * [-1.0, 1.0].choose(&mut rng).unwrap();
             let bg = bg.rotate(extra_angle);
             canvas.draw_image(
                 &bg,
@@ -186,7 +186,7 @@ fn p5letter(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<
             let mode = if box_chars.is_empty() {
                 CharMode::First
             } else {
-                if rand::thread_rng().gen_range(0.0..1.0) < 0.4 {
+                if rand::rng().random_range(0.0..1.0) < 0.4 {
                     CharMode::Red
                 } else {
                     CharMode::White

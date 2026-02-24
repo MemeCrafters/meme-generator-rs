@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::RngExt;
 use skia_safe::{Color, Color4f, IRect, Image};
 
 use meme_generator_core::error::Error;
@@ -25,9 +25,9 @@ fn flush(images: Vec<InputImage>, _: Vec<String>, _: NoOptions) -> Result<Vec<u8
             return Ok(frame.resize_exact((w, h)));
         }
 
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let padding_ratio = 0.01 * i as f32;
-        let jitter_ratio = padding_ratio * 0.4 * rng.gen_range(-0.5..0.5);
+        let jitter_ratio = padding_ratio * 0.4 * rng.random_range(-0.5..0.5);
         let padding = (w as f32 * padding_ratio).round() as i32;
         let jitter = (w as f32 * jitter_ratio).round() as i32;
         let alpha = i as f32 * 0.03;

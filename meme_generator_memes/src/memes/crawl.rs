@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::RngExt;
 use skia_safe::Image;
 
 use meme_generator_core::error::Error;
@@ -15,8 +15,8 @@ number_option!(Number, 1, 92);
 
 fn crawl(images: Vec<InputImage>, _: Vec<String>, options: Number) -> Result<Vec<u8>, Error> {
     let num = options.number.unwrap_or({
-        let mut rng = rand::thread_rng();
-        rng.gen_range(1..=92)
+        let mut rng = rand::rng();
+        rng.random_range(1..=92)
     });
 
     let func = |images: Vec<Image>| {

@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Union
 
 from .. import ImageEncodeError
 
@@ -24,9 +23,9 @@ def render_meme_list(
     sort_reverse: bool = False,
     text_template: str = "{index}. {keywords}",
     add_category_icon: bool = True,
-) -> Union[bytes, ImageEncodeError]: ...
+) -> bytes | ImageEncodeError: ...
 def render_meme_statistics(
     title: str,
     statistics_type: MemeStatisticsType,
     data: list[tuple[str, int]],
-) -> Union[bytes, ImageEncodeError]: ...
+) -> bytes | ImageEncodeError: ...

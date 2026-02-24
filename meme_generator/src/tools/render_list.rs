@@ -2,7 +2,7 @@ use std::{collections::HashMap, sync::LazyLock};
 
 use pinyin::{Pinyin, to_pinyin_vec};
 use serde::{Deserialize, Serialize};
-use skia_safe::{Canvas, Color, Image, PaintJoin, Path, Rect, textlayout::TextAlign};
+use skia_safe::{Canvas, Color, Image, PaintJoin, Path, PathBuilder, Rect, textlayout::TextAlign};
 
 use meme_generator_core::{error::Error, meme::Meme};
 use meme_generator_utils::{
@@ -25,24 +25,27 @@ fn draw_image_icon(color: Color) -> Image {
     let mut paint = new_stroke_paint(color, 10.0);
     paint.set_stroke_join(PaintJoin::Miter);
 
-    let mut path = Path::new();
-    path.move_to((5.0, 5.0));
-    path.line_to((5.0, 95.0));
-    path.line_to((95.0, 95.0));
-    path.line_to((95.0, 5.0));
-    path.close();
+    let mut builder = PathBuilder::new();
+    builder.move_to((5.0, 5.0));
+    builder.line_to((5.0, 95.0));
+    builder.line_to((95.0, 95.0));
+    builder.line_to((95.0, 5.0));
+    builder.close();
+    let path: Path = builder.into();
     canvas.draw_path(&path, &paint);
 
-    let mut path = Path::new();
-    path.move_to((5.0, 77.0));
-    path.line_to((37.5, 42.5));
-    path.line_to((61.5, 56.5));
+    let mut builder = PathBuilder::new();
+    builder.move_to((5.0, 77.0));
+    builder.line_to((37.5, 42.5));
+    builder.line_to((61.5, 56.5));
+    let path: Path = builder.into();
     canvas.draw_path(&path, &paint);
 
-    let mut path = Path::new();
-    path.move_to((34.0, 95.0));
-    path.line_to((69.5, 52.5));
-    path.line_to((95.0, 67.0));
+    let mut builder = PathBuilder::new();
+    builder.move_to((34.0, 95.0));
+    builder.line_to((69.5, 52.5));
+    builder.line_to((95.0, 67.0));
+    let path: Path = builder.into();
     canvas.draw_path(&path, &paint);
 
     surface.image_snapshot().resize_exact((30, 30))
@@ -55,12 +58,13 @@ fn draw_text_icon(color: Color) -> Image {
     let mut paint = new_stroke_paint(color, 10.0);
     paint.set_stroke_join(PaintJoin::Miter);
 
-    let mut path = Path::new();
-    path.move_to((5.0, 5.0));
-    path.line_to((5.0, 95.0));
-    path.line_to((95.0, 95.0));
-    path.line_to((95.0, 5.0));
-    path.close();
+    let mut builder = PathBuilder::new();
+    builder.move_to((5.0, 5.0));
+    builder.line_to((5.0, 95.0));
+    builder.line_to((95.0, 95.0));
+    builder.line_to((95.0, 5.0));
+    builder.close();
+    let path: Path = builder.into();
     canvas.draw_path(&path, &paint);
 
     canvas.draw_line((20.0, 25.0), (80.0, 25.0), &paint);

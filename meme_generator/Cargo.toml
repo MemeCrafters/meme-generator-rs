@@ -11,21 +11,22 @@ edition.workspace = true
 
 [dependencies]
 fuzzy-matcher = "0.3"
-indicatif = "0.16"
-libloading = "0.8"
-pinyin = "0.10"
-reqwest = { version = "0.11", features = ["json"] }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-sha2 = "0.9"
-skia-safe = { version = "0.80", features = ["textlayout"] }
-tokio = { version = "1.42", features = ["full"] }
-toml = "0.8"
-tracing = "0.1"
+indicatif = "0.18"
+libloading = "0.9"
+pinyin = "0.11"
+sha2 = "0.10"
 
-meme_generator_core = { version = "0.0.4", path = "../meme_generator_core" }
+reqwest = { workspace = true, features = ["json"] }
+serde.workspace = true
+serde_json.workspace = true
+skia-safe.workspace = true
+tokio.workspace = true
+toml.workspace = true
+tracing.workspace = true
+
+meme_generator_core.workspace = true
 meme_generator_memes = { version = "0.2", path = "../meme_generator_memes" }
-meme_generator_utils = { version = "0.0.8", path = "../meme_generator_utils" }
+meme_generator_utils.workspace = true
 
 [features]
 vendored = ["reqwest/native-tls-vendored"]

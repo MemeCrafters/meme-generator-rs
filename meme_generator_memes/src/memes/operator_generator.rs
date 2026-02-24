@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::RngExt;
 use skia_safe::{Color, FontStyle, IRect};
 
 use meme_generator_core::error::Error;
@@ -39,46 +39,46 @@ fn operator_generator(
         )
         .map_err(|_| Error::TextOverLength(name.clone()))?;
 
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
 
     let range = load_image(&format!(
         "operator_generator/range/{:02}.jpg",
-        rng.gen_range(0..=24)
+        rng.random_range(0..=24)
     ))?
     .resize_width(320);
     canvas.draw_image(&range, (0, 100), None);
 
     let characteristic = load_image(&format!(
         "operator_generator/characteristic/{:02}.jpg",
-        rng.gen_range(0..=24)
+        rng.random_range(0..=24)
     ))?
     .resize_width(320);
     canvas.draw_image(&characteristic, (320, 100), None);
 
     let value = load_image(&format!(
         "operator_generator/value/{:02}.jpg",
-        rng.gen_range(0..=24)
+        rng.random_range(0..=24)
     ))?
     .resize_width(320);
     canvas.draw_image(&value, (0, 280), None);
 
     let talent = load_image(&format!(
         "operator_generator/talent/{:02}.jpg",
-        rng.gen_range(0..=24)
+        rng.random_range(0..=24)
     ))?
     .resize_width(320);
     canvas.draw_image(&talent, (320, 280), None);
 
     let skill = load_image(&format!(
         "operator_generator/skill/{:02}.jpg",
-        rng.gen_range(0..=24)
+        rng.random_range(0..=24)
     ))?
     .resize_width(320);
     canvas.draw_image(&skill, (0, 460), None);
 
     let special = load_image(&format!(
         "operator_generator/special/{:02}.jpg",
-        rng.gen_range(0..=24)
+        rng.random_range(0..=24)
     ))?
     .resize_width(320);
     canvas.draw_image(&special, (320, 460), None);

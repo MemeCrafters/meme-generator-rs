@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::RngExt;
 use skia_safe::{IRect, textlayout::TextAlign};
 
 use meme_generator_core::error::Error;
@@ -30,7 +30,7 @@ fn elysia_holdsign(
 
     let img_num = 8;
     let num = match options.number {
-        None => rand::thread_rng().gen_range(1..=img_num),
+        None => rand::rng().random_range(1..=img_num),
         Some(n) => {
             if n < 1 || n > img_num {
                 return Err(Error::MemeFeedback(format!(
