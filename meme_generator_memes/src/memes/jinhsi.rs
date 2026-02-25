@@ -16,9 +16,9 @@ number_option!(Number, 1, 13);
 
 fn jinhsi(_: Vec<InputImage>, texts: Vec<String>, options: Number) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
-    let num = options.number.unwrap_or({
-        rand::rng().random_range(1..=13)
-    });
+    let num = options
+        .number
+        .unwrap_or({ rand::rng().random_range(1..=13) });
 
     let frame = load_image(format!("jinhsi/{:02}.png", num))?;
     let paddings = [55, 43, 50, 36, 40, 33, 36, 38, 33, 46, 26, 33, 28];
