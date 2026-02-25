@@ -43,7 +43,7 @@ jobs:
             label: linux-arm64
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: docker/setup-buildx-action@v3
 
       - name: Docker meta
@@ -83,7 +83,7 @@ jobs:
           touch "${{ runner.temp }}/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: digests-${{ matrix.platform.label }}
           path: ${{ runner.temp }}/digests/*
@@ -96,7 +96,7 @@ jobs:
       - build
     steps:
       - name: Download digests
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: ${{ runner.temp }}/digests
           pattern: digests-*

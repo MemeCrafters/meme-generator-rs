@@ -1,4 +1,4 @@
-FROM rust:1.93.0 AS builder
+FROM rust:stable AS builder
 
 WORKDIR /tmp
 

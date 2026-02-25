@@ -49,8 +49,8 @@ jobs:
             label: windows-x86_64
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.93.0
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
       - uses: swatinem/rust-cache@v2
 
       - name: Build target
@@ -58,7 +58,7 @@ jobs:
           rustup target add ${{ matrix.platform.target }}
           cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: "meme-generator-cli-${{ matrix.platform.label }}"
           path: |
@@ -73,7 +73,7 @@ jobs:
         run: pnpm install && pnpm build --release --target ${{ matrix.platform.target }}
         working-directory: meme_generator_node
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: "meme-generator-node-${{ matrix.platform.label }}"
           path: meme_generator_node/meme-generator*
@@ -85,7 +85,7 @@ jobs:
           working-directory: meme_generator_py
           args: --release --out dist
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: meme-generator-py-${{ matrix.platform.label }}
           path: meme_generator_py/dist
@@ -103,8 +103,8 @@ jobs:
             label: macos-aarch64
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.93.0
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
       - uses: swatinem/rust-cache@v2
 
       - name: Build target
@@ -112,7 +112,7 @@ jobs:
           rustup target add ${{ matrix.platform.target }}
           cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: "meme-generator-cli-${{ matrix.platform.label }}"
           path: |
@@ -127,7 +127,7 @@ jobs:
         run: pnpm install && pnpm build --release --target ${{ matrix.platform.target }}
         working-directory: meme_generator_node
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: "meme-generator-node-${{ matrix.platform.label }}"
           path: meme_generator_node/meme-generator*
@@ -139,7 +139,7 @@ jobs:
           working-directory: meme_generator_py
           args: --release --out dist
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: meme-generator-py-${{ matrix.platform.label }}
           path: meme_generator_py/dist
@@ -160,8 +160,8 @@ jobs:
             label: linux-aarch64
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.93.0
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
       - uses: swatinem/rust-cache@v2
 
       - name: Build target
@@ -169,7 +169,7 @@ jobs:
           rustup target add ${{ matrix.platform.target }}
           cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server,vendored,embed-freetype
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: "meme-generator-cli-${{ matrix.platform.label }}"
           path: |
@@ -180,15 +180,15 @@ jobs:
         with:
           version: 10
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Build nodejs addon
         run: pnpm install && pnpm build --release --target ${{ matrix.platform.target }} --features vendored,embed-freetype
         working-directory: meme_generator_node
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: "meme-generator-node-${{ matrix.platform.label }}"
           path: meme_generator_node/meme-generator*
@@ -202,7 +202,7 @@ jobs:
           maturin build --release --out dist --target ${{ matrix.platform.target }} --features vendored,embed-freetype
         working-directory: meme_generator_py
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: meme-generator-py-${{ matrix.platform.label }}
           path: meme_generator_py/dist
@@ -219,8 +219,8 @@ jobs:
             label: android-aarch64
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.93.0
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
       - uses: swatinem/rust-cache@v2
 
       - name: Rustup add target
@@ -229,7 +229,7 @@ jobs:
       - name: Build target
         run: cargo build --release --target ${{ matrix.platform.target }} --bin meme --features server,vendored
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: "meme-generator-cli-${{ matrix.platform.label }}"
           path: |
