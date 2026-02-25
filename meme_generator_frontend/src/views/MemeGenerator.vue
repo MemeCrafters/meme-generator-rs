@@ -2,7 +2,14 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import type { MemeInfo, MemeOption, ImageItem } from '../types'
-import { getMemeInfo, getMemePreview, uploadImage, generateMeme, getImageUrl, MemeError } from '../api'
+import {
+  getMemeInfo,
+  getMemePreview,
+  uploadImage,
+  generateMeme,
+  getImageUrl,
+  MemeError,
+} from '../api'
 import ImageUploader from '../components/ImageUploader.vue'
 import OptionField from '../components/OptionField.vue'
 
@@ -102,7 +109,7 @@ const canGenerate = computed(() => {
   const imgCount = images.value.length
   const txtCount = texts.value.filter((t) => t.trim()).length
   const hasEnoughImages = imgCount >= p.min_images
-  const hasEnoughTexts = txtCount >= p.min_texts || (p.min_texts === 0)
+  const hasEnoughTexts = txtCount >= p.min_texts || p.min_texts === 0
   return hasEnoughImages && hasEnoughTexts && !generating.value
 })
 
@@ -121,9 +128,12 @@ function initFormState() {
   const p = memeInfo.value.params
 
   // Init texts
-  texts.value = p.default_texts.length > 0
-    ? [...p.default_texts]
-    : Array(Math.max(p.min_texts, 1)).fill('').slice(0, p.max_texts || 1)
+  texts.value =
+    p.default_texts.length > 0
+      ? [...p.default_texts]
+      : Array(Math.max(p.min_texts, 1))
+          .fill('')
+          .slice(0, p.max_texts || 1)
 
   if (!needsTexts.value) {
     texts.value = []
@@ -136,10 +146,18 @@ function initFormState() {
       optionEnabled[opt.name] = true
     } else {
       switch (opt.type) {
-        case 'boolean': options[opt.name] = false; break
-        case 'string': options[opt.name] = ''; break
-        case 'integer': options[opt.name] = opt.minimum ?? 0; break
-        case 'float': options[opt.name] = opt.minimum ?? 0; break
+        case 'boolean':
+          options[opt.name] = false
+          break
+        case 'string':
+          options[opt.name] = ''
+          break
+        case 'integer':
+          options[opt.name] = opt.minimum ?? 0
+          break
+        case 'float':
+          options[opt.name] = opt.minimum ?? 0
+          break
       }
       optionEnabled[opt.name] = false
     }
@@ -183,18 +201,15 @@ async function generate() {
     }
 
     // Filter non-empty texts
-    const filteredTexts = texts.value.filter((t) => t.trim() !== '' || memeInfo.value!.params.min_texts > 0)
+    const filteredTexts = texts.value.filter(
+      (t) => t.trim() !== '' || memeInfo.value!.params.min_texts > 0,
+    )
     const finalTexts = filteredTexts.length > 0 ? filteredTexts : texts.value
 
     // Build options, only send enabled options
     const finalOptions = buildFinalOptions()
 
-    const resp = await generateMeme(
-      memeInfo.value.key,
-      uploadedImages,
-      finalTexts,
-      finalOptions
-    )
+    const resp = await generateMeme(memeInfo.value.key, uploadedImages, finalTexts, finalOptions)
     resultId.value = resp.image_id
     resultUrl.value = getImageUrl(resp.image_id)
   } catch (err: any) {
@@ -254,7 +269,7 @@ watch(
       refreshPreview()
     }, 500)
   },
-  { deep: true }
+  { deep: true },
 )
 
 onMounted(async () => {
@@ -278,10 +293,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
     <!-- Back button -->
     <button @click="router.push('/')" class="btn-secondary mb-6 gap-2">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
       返回列表
@@ -290,9 +305,20 @@ onMounted(async () => {
     <!-- Loading -->
     <div v-if="loading" class="flex justify-center py-20">
       <div class="flex items-center gap-3 text-gray-500">
-        <svg class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        <svg class="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+          />
         </svg>
         <span>加载中...</span>
       </div>
@@ -301,7 +327,7 @@ onMounted(async () => {
     <template v-else-if="memeInfo">
       <!-- Header -->
       <div class="mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">
+        <h2 class="mb-2 text-2xl font-bold text-gray-900">
           {{ memeInfo.keywords[0] || memeInfo.key }}
         </h2>
         <div class="flex flex-wrap items-center gap-2">
@@ -310,20 +336,19 @@ onMounted(async () => {
             v-for="tag in memeInfo.tags"
             :key="tag"
             :to="{ name: 'home', query: { tag } }"
-            class="badge-gray hover:bg-gray-200 transition-colors cursor-pointer"
-          >{{ tag }}</router-link>
+            class="badge-gray cursor-pointer transition-colors hover:bg-gray-200"
+            >{{ tag }}</router-link
+          >
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <!-- Left: Form -->
         <div class="space-y-6">
           <!-- Image Upload Section -->
           <div v-if="needsImages" class="card p-6">
-            <h3 class="text-base font-semibold text-gray-900 mb-1">
-              上传图片
-            </h3>
-            <p class="text-sm text-gray-500 mb-4">
+            <h3 class="mb-1 text-base font-semibold text-gray-900">上传图片</h3>
+            <p class="mb-4 text-sm text-gray-500">
               需要 {{ memeInfo.params.min_images }}
               <template v-if="memeInfo.params.min_images !== memeInfo.params.max_images">
                 ~ {{ memeInfo.params.max_images }}
@@ -340,10 +365,8 @@ onMounted(async () => {
 
           <!-- Text Input Section -->
           <div v-if="needsTexts" class="card p-6">
-            <h3 class="text-base font-semibold text-gray-900 mb-1">
-              输入文字
-            </h3>
-            <p class="text-sm text-gray-500 mb-4">
+            <h3 class="mb-1 text-base font-semibold text-gray-900">输入文字</h3>
+            <p class="mb-4 text-sm text-gray-500">
               需要 {{ memeInfo.params.min_texts }}
               <template v-if="memeInfo.params.min_texts !== memeInfo.params.max_texts">
                 ~ {{ memeInfo.params.max_texts }}
@@ -352,19 +375,20 @@ onMounted(async () => {
             </p>
             <div class="space-y-3">
               <div v-for="(_, idx) in texts" :key="idx" class="flex gap-2">
-                <input
-                  v-model="texts[idx]"
-                  :placeholder="`文字 ${idx + 1}`"
-                  class="input flex-1"
-                />
+                <input v-model="texts[idx]" :placeholder="`文字 ${idx + 1}`" class="input flex-1" />
                 <button
                   v-if="texts.length > memeInfo.params.min_texts"
                   @click="removeText(idx)"
-                  class="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                  class="p-2 text-gray-400 transition-colors hover:text-red-500"
                   title="删除"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -373,8 +397,13 @@ onMounted(async () => {
                 @click="addText"
                 class="btn-secondary w-full gap-1 text-xs"
               >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4v16m8-8H4"
+                  />
                 </svg>
                 添加文字
               </button>
@@ -383,7 +412,7 @@ onMounted(async () => {
 
           <!-- Options Section -->
           <div v-if="memeInfo.params.options.length > 0" class="card p-6">
-            <h3 class="text-base font-semibold text-gray-900 mb-4">选项</h3>
+            <h3 class="mb-4 text-base font-semibold text-gray-900">选项</h3>
             <div class="space-y-4">
               <OptionField
                 v-for="opt in memeInfo.params.options"
@@ -401,27 +430,53 @@ onMounted(async () => {
           <button
             @click="generate"
             :disabled="!canGenerate"
-            class="btn-primary w-full py-3 text-base gap-2"
+            class="btn-primary w-full gap-2 py-3 text-base"
           >
-            <svg v-if="generating" class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            <svg v-if="generating" class="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              />
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
             </svg>
-            <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
             </svg>
             {{ generating ? '生成中...' : '生成表情包' }}
           </button>
 
           <!-- Error -->
-          <div v-if="error" class="rounded-lg bg-red-50 border border-red-200 p-4">
+          <div v-if="error" class="rounded-lg border border-red-200 bg-red-50 p-4">
             <div class="flex gap-2">
-              <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                class="mt-0.5 h-5 w-5 shrink-0 text-red-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               <div>
                 <p class="text-sm font-medium text-red-700">{{ error }}</p>
-                <p v-if="errorHint" class="text-xs text-red-500 mt-1">{{ errorHint }}</p>
+                <p v-if="errorHint" class="mt-1 text-xs text-red-500">{{ errorHint }}</p>
               </div>
             </div>
           </div>
@@ -431,39 +486,47 @@ onMounted(async () => {
         <div class="space-y-6">
           <!-- Result -->
           <div v-if="resultUrl" class="card p-6">
-            <div class="flex items-center justify-between mb-4">
+            <div class="mb-4 flex items-center justify-between">
               <h3 class="text-base font-semibold text-gray-900">生成结果</h3>
-              <button @click="downloadResult" class="btn-secondary text-xs gap-1">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              <button @click="downloadResult" class="btn-secondary gap-1 text-xs">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
                 </svg>
                 下载
               </button>
             </div>
-            <div class="bg-gray-50 rounded-lg p-4 flex justify-center">
-              <img :src="resultUrl" alt="Generated meme" class="max-w-full max-h-96 object-contain rounded" />
+            <div class="flex justify-center rounded-lg bg-gray-50 p-4">
+              <img
+                :src="resultUrl"
+                alt="Generated meme"
+                class="max-h-96 max-w-full rounded object-contain"
+              />
             </div>
           </div>
 
           <!-- Preview -->
           <div class="card p-6">
-            <h3 class="text-base font-semibold text-gray-900 mb-4">预览</h3>
-            <div class="bg-gray-50 rounded-lg p-4 flex justify-center min-h-48">
+            <h3 class="mb-4 text-base font-semibold text-gray-900">预览</h3>
+            <div class="flex min-h-48 justify-center rounded-lg bg-gray-50 p-4">
               <img
                 v-if="previewUrl"
                 :src="previewUrl"
                 alt="Preview"
-                class="max-w-full max-h-80 object-contain rounded"
+                class="max-h-80 max-w-full rounded object-contain"
               />
               <div v-else class="flex items-center justify-center text-gray-400">
                 <div class="text-center">
-                  <div class="text-4xl mb-2">🖼️</div>
+                  <div class="mb-2 text-4xl">🖼️</div>
                   <p class="text-sm">暂无预览</p>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </template>

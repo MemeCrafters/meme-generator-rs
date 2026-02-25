@@ -9,12 +9,18 @@ on:
       - "Cargo.toml"
       - "Cargo.lock"
       - "rustfmt.toml"
+      - "meme_generator_frontend/src/**"
+      - "meme_generator_frontend/package.json"
+      - "meme_generator_frontend/.prettierrc"
   pull_request:
     paths:
       - "**.rs"
       - "Cargo.toml"
       - "Cargo.lock"
       - "rustfmt.toml"
+      - "meme_generator_frontend/src/**"
+      - "meme_generator_frontend/package.json"
+      - "meme_generator_frontend/.prettierrc"
   workflow_dispatch:
 
 permissions:
@@ -26,7 +32,7 @@ concurrency:
 
 jobs:
   fmt:
-    name: Rustfmt
+    name: format code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -41,6 +47,19 @@ jobs:
       - name: Run cargo fmt
         run: cargo fmt --all
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install frontend dependencies
+        working-directory: meme_generator_frontend
+        run: npm ci
+
+      - name: Run Prettier
+        working-directory: meme_generator_frontend
+        run: npm run format
+
       - uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: "style: auto format code with cargo fmt"
+          commit_message: "style: auto format code"

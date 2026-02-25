@@ -45,7 +45,10 @@ export async function searchMemes(query: string, includeTags = false): Promise<s
   return request<string[]>(`/meme/search?${params}`)
 }
 
-export async function getMemePreview(key: string, options?: Record<string, any>): Promise<ImageResponse> {
+export async function getMemePreview(
+  key: string,
+  options?: Record<string, any>,
+): Promise<ImageResponse> {
   if (options && Object.keys(options).length > 0) {
     return request<ImageResponse>(`/memes/${key}/preview`, {
       method: 'POST',
@@ -74,7 +77,7 @@ export async function generateMeme(
   key: string,
   images: { name: string; id: string }[],
   texts: string[],
-  options: Record<string, any>
+  options: Record<string, any>,
 ): Promise<ImageResponse> {
   return request<ImageResponse>(`/memes/${key}`, {
     method: 'POST',

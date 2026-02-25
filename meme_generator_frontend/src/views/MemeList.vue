@@ -30,13 +30,11 @@ const tagFading = ref(false)
 function shuffleTags() {
   const all = allTags.value
   // Keep selected tag if any, fill rest randomly
-  const pool = selectedTag.value
-    ? all.filter((t) => t !== selectedTag.value)
-    : [...all]
+  const pool = selectedTag.value ? all.filter((t) => t !== selectedTag.value) : [...all]
   // Fisher-Yates shuffle
   for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]]
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[pool[i], pool[j]] = [pool[j], pool[i]]
   }
   const picked = pool.slice(0, selectedTag.value ? TAG_DISPLAY_COUNT - 1 : TAG_DISPLAY_COUNT)
   if (selectedTag.value) picked.unshift(selectedTag.value)
@@ -66,7 +64,9 @@ const displayedMemes = computed(() => {
     memes = memes.filter((m) => keySet.has(m.key))
     // Sort by search result order when in search mode
     if (sortMode.value === 'default') {
-      memes.sort((a, b) => searchResults.value!.indexOf(a.key) - searchResults.value!.indexOf(b.key))
+      memes.sort(
+        (a, b) => searchResults.value!.indexOf(a.key) - searchResults.value!.indexOf(b.key),
+      )
     }
   }
 
@@ -111,6 +111,11 @@ watch(searchQuery, (val) => {
 
 function selectTag(tag: string) {
   selectedTag.value = selectedTag.value === tag ? null : tag
+}
+
+function selectSort(key: string) {
+  sortMode.value = key as typeof sortMode.value
+  showSortMenu.value = false
 }
 
 function goToMeme(key: string) {
@@ -168,54 +173,65 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
     <!-- Hero section -->
-    <div class="text-center mb-10">
-      <h2 class="text-3xl font-bold text-gray-900 mb-3">选择一个模板开始制作</h2>
-      <p class="text-gray-500 text-lg">从 {{ allMemes.length }} 个表情包模板中挑选</p>
+    <div class="mb-10 text-center">
+      <h2 class="mb-3 text-3xl font-bold text-gray-900">选择一个模板开始制作</h2>
+      <p class="text-lg text-gray-500">从 {{ allMemes.length }} 个表情包模板中挑选</p>
     </div>
 
     <!-- Search bar -->
-    <div class="max-w-2xl mx-auto mb-8">
+    <div class="mx-auto mb-8 max-w-2xl">
       <div class="flex gap-1">
         <div class="relative flex-1">
-        <svg
-          class="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="搜索表情包（关键词、标签）..."
-          class="input pl-11 pr-10 py-3 text-base rounded-xl w-full"
-        />
-        <button
-          v-if="searchQuery"
-          @click="searchQuery = ''"
-          class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <svg
+            class="absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
-        </button>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="搜索表情包（关键词、标签）..."
+            class="input w-full rounded-xl py-3 pl-11 pr-10 text-base"
+          />
+          <button
+            v-if="searchQuery"
+            @click="searchQuery = ''"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
         <button
           @click="goToRandomMeme"
-          class="dice-btn shrink-0 w-12 h-12 rounded-xl
-                 text-gray-400 hover:text-gray-700
-                 flex items-center justify-center transition-colors duration-200"
+          class="dice-btn flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-gray-400 transition-colors duration-200 hover:text-gray-700"
           title="随机表情"
         >
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <path d="M16 3h5v5" />
             <path d="M4 20L21 3" />
             <path d="M21 16v5h-5" />
@@ -227,7 +243,7 @@ onUnmounted(() => {
     </div>
 
     <!-- Tags filter -->
-    <div v-if="allTags.length" class="flex items-center justify-center gap-2 mb-8">
+    <div v-if="allTags.length" class="mb-8 flex items-center justify-center gap-2">
       <div
         class="flex items-center gap-2 transition-opacity duration-200"
         :class="tagFading ? 'opacity-0' : 'opacity-100'"
@@ -237,7 +253,7 @@ onUnmounted(() => {
           :key="tag"
           @click="selectTag(tag)"
           :class="[
-            'px-4 py-1.5 rounded-lg text-[13px] font-medium whitespace-nowrap transition-colors duration-150',
+            'whitespace-nowrap rounded-lg px-4 py-1.5 text-[13px] font-medium transition-colors duration-150',
             selectedTag === tag
               ? 'bg-gray-900 text-white'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
@@ -248,44 +264,64 @@ onUnmounted(() => {
       </div>
       <button
         @click="refreshTags"
-        class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600
-               flex items-center justify-center transition-all duration-200 shrink-0"
+        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-400 transition-all duration-200 hover:bg-gray-200 hover:text-gray-600"
         title="换一批"
       >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h4.586M20 20v-5h-4.586M4.929 9A9 9 0 0119.071 9M19.071 15A9 9 0 014.929 15" />
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 4v5h4.586M20 20v-5h-4.586M4.929 9A9 9 0 0119.071 9M19.071 15A9 9 0 014.929 15"
+          />
         </svg>
       </button>
     </div>
 
     <!-- Sort bar -->
-    <div class="flex items-center justify-end mb-6">
+    <div class="mb-6 flex items-center justify-end">
       <div class="relative">
         <button
           @click="showSortMenu = !showSortMenu"
-          class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition-colors"
+          class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-100"
         >
-          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+          <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+            />
           </svg>
           <span>{{ sortLabels[sortMode] }}</span>
-          <svg class="w-3.5 h-3.5 text-gray-400 transition-transform" :class="showSortMenu ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          <svg
+            class="h-3.5 w-3.5 text-gray-400 transition-transform"
+            :class="showSortMenu ? 'rotate-180' : ''"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
         <Transition name="fade">
           <div
             v-if="showSortMenu"
-            class="absolute right-0 top-full mt-1 w-36 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-30"
+            class="absolute right-0 top-full z-30 mt-1 w-36 rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
           >
             <button
               v-for="(label, key) in sortLabels"
               :key="key"
-              @click="sortMode = key as typeof sortMode; showSortMenu = false"
+              @click="selectSort(key as string)"
               :class="[
-                'w-full text-left px-3 py-2 text-sm transition-colors',
+                'w-full px-3 py-2 text-left text-sm transition-colors',
                 sortMode === key
-                  ? 'text-primary-600 bg-primary-50 font-medium'
+                  ? 'bg-primary-50 font-medium text-primary-600'
                   : 'text-gray-600 hover:bg-gray-50',
               ]"
             >
@@ -299,8 +335,15 @@ onUnmounted(() => {
     <!-- Loading -->
     <div v-if="loading" class="flex justify-center py-20">
       <div class="flex items-center gap-3 text-gray-500">
-        <svg class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+        <svg class="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          />
           <path
             class="opacity-75"
             fill="currentColor"
@@ -312,16 +355,16 @@ onUnmounted(() => {
     </div>
 
     <!-- Empty state -->
-    <div v-else-if="displayedMemes.length === 0" class="text-center py-20">
-      <div class="text-5xl mb-4">🔍</div>
-      <h3 class="text-lg font-medium text-gray-900 mb-2">没有找到匹配的表情包</h3>
+    <div v-else-if="displayedMemes.length === 0" class="py-20 text-center">
+      <div class="mb-4 text-5xl">🔍</div>
+      <h3 class="mb-2 text-lg font-medium text-gray-900">没有找到匹配的表情包</h3>
       <p class="text-gray-500">尝试使用其他关键词搜索</p>
     </div>
 
     <!-- Meme grid -->
     <div
       v-else
-      class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+      class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
     >
       <MemeCard
         v-for="meme in displayedMemes"
@@ -334,7 +377,10 @@ onUnmounted(() => {
     </div>
 
     <!-- Result count -->
-    <div v-if="!loading && displayedMemes.length > 0" class="text-center mt-8 text-sm text-gray-400">
+    <div
+      v-if="!loading && displayedMemes.length > 0"
+      class="mt-8 text-center text-sm text-gray-400"
+    >
       {{ displayedMemes.length }} 个结果
     </div>
   </div>

@@ -42,11 +42,7 @@ export interface MemeOptionFloat {
   parser_flags: ParserFlags
 }
 
-export type MemeOption =
-  | MemeOptionBoolean
-  | MemeOptionString
-  | MemeOptionInteger
-  | MemeOptionFloat
+export type MemeOption = MemeOptionBoolean | MemeOptionString | MemeOptionInteger | MemeOptionFloat
 
 export interface MemeParams {
   min_images: number
