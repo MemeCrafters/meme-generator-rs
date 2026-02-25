@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-gray-800 antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      'Helvetica Neue', Arial, sans-serif;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium
+      transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
+      disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500
+      active:bg-primary-700 shadow-sm hover:shadow-md;
+  }
+
+  .btn-secondary {
+    @apply btn bg-white text-gray-700 border border-gray-300
+      hover:bg-gray-50 focus:ring-primary-500 active:bg-gray-100;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-500 text-white hover:bg-red-600 focus:ring-red-500
+      active:bg-red-700;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-100
+      transition-all duration-200 hover:shadow-md;
+  }
+
+  .input {
+    @apply block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm
+      placeholder-gray-400 shadow-sm transition-colors duration-200
+      focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .badge-blue {
+    @apply badge bg-primary-50 text-primary-700;
+  }
+
+  .badge-gray {
+    @apply badge bg-gray-100 text-gray-600;
+  }
+
+  .badge-green {
+    @apply badge bg-green-50 text-green-700;
+  }
+}
+
+/* Page transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s ease;
+}
+.slide-enter-from {
+  transform: translateY(10px);
+  opacity: 0;
+}
+.slide-leave-to {
+  transform: translateY(-10px);
+  opacity: 0;
+}
+
+/* Hide scrollbar for tag strip */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
+}
+
+/* Dice button hover animation */
+@keyframes dice-shake {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(15deg); }
+  40% { transform: rotate(-15deg); }
+  60% { transform: rotate(8deg); }
+  80% { transform: rotate(-8deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.dice-btn:hover svg {
+  animation: dice-shake 0.5s ease-in-out;
+}
+
+

@@ -17,3 +17,6 @@ dist
 .idea
 *.node
 npm
+*.local
+*.tsbuildinfo
+.vite/
