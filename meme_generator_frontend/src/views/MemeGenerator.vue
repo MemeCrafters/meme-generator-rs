@@ -94,6 +94,7 @@ const resultId = ref('')
 const images = ref<ImageItem[]>([])
 const texts = ref<string[]>([])
 const options = reactive<Record<string, any>>({})
+const optionEnabled = reactive<Record<string, boolean>>({})
 
 const canGenerate = computed(() => {
   if (!memeInfo.value) return false
@@ -130,19 +131,17 @@ function initFormState() {
 
   // Init options
   for (const opt of p.options) {
-    switch (opt.type) {
-      case 'boolean':
-        options[opt.name] = opt.default ?? false
-        break
-      case 'string':
-        options[opt.name] = opt.default ?? ''
-        break
-      case 'integer':
-        options[opt.name] = opt.default ?? 0
-        break
-      case 'float':
-        options[opt.name] = opt.default ?? 0
-        break
+    if (opt.default != null) {
+      options[opt.name] = opt.default
+      optionEnabled[opt.name] = true
+    } else {
+      switch (opt.type) {
+        case 'boolean': options[opt.name] = false; break
+        case 'string': options[opt.name] = ''; break
+        case 'integer': options[opt.name] = opt.minimum ?? 0; break
+        case 'float': options[opt.name] = opt.minimum ?? 0; break
+      }
+      optionEnabled[opt.name] = false
     }
   }
 }
@@ -187,16 +186,8 @@ async function generate() {
     const filteredTexts = texts.value.filter((t) => t.trim() !== '' || memeInfo.value!.params.min_texts > 0)
     const finalTexts = filteredTexts.length > 0 ? filteredTexts : texts.value
 
-    // Build options, only send non-default and non-empty values
-    const finalOptions: Record<string, any> = {}
-    for (const opt of memeInfo.value.params.options) {
-      const val = options[opt.name]
-      // Skip empty strings (unselected dropdowns)
-      if (val === undefined || val === null || val === '') continue
-      // Skip values equal to default
-      if (val === opt.default) continue
-      finalOptions[opt.name] = val
-    }
+    // Build options, only send enabled options
+    const finalOptions = buildFinalOptions()
 
     const resp = await generateMeme(
       memeInfo.value.key,
@@ -224,6 +215,47 @@ async function downloadResult() {
   a.click()
   document.body.removeChild(a)
 }
+
+// Auto-refresh preview when options change
+const refreshingPreview = ref(false)
+let optionChangeTimeout: ReturnType<typeof setTimeout> | null = null
+
+function buildFinalOptions(): Record<string, any> {
+  if (!memeInfo.value) return {}
+  const finalOptions: Record<string, any> = {}
+  for (const opt of memeInfo.value.params.options) {
+    if (!optionEnabled[opt.name]) continue
+    const val = options[opt.name]
+    if (val === undefined || val === null || val === '') continue
+    finalOptions[opt.name] = val
+  }
+  return finalOptions
+}
+
+async function refreshPreview() {
+  if (!memeInfo.value || refreshingPreview.value) return
+  refreshingPreview.value = true
+  try {
+    const resp = await getMemePreview(memeInfo.value.key, buildFinalOptions())
+    previewUrl.value = getImageUrl(resp.image_id)
+  } catch {
+    // Preview refresh failed silently
+  } finally {
+    refreshingPreview.value = false
+  }
+}
+
+watch(
+  [() => ({ ...options }), () => ({ ...optionEnabled })],
+  () => {
+    if (!memeInfo.value) return
+    if (optionChangeTimeout) clearTimeout(optionChangeTimeout)
+    optionChangeTimeout = setTimeout(() => {
+      refreshPreview()
+    }, 500)
+  },
+  { deep: true }
+)
 
 onMounted(async () => {
   try {
@@ -358,7 +390,9 @@ onMounted(async () => {
                 :key="opt.name"
                 :option="opt"
                 :modelValue="options[opt.name]"
+                :enabled="optionEnabled[opt.name]"
                 @update:modelValue="(val: any) => (options[opt.name] = val)"
+                @update:enabled="(val: boolean) => (optionEnabled[opt.name] = val)"
               />
             </div>
           </div>

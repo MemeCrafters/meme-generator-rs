@@ -45,7 +45,14 @@ export async function searchMemes(query: string, includeTags = false): Promise<s
   return request<string[]>(`/meme/search?${params}`)
 }
 
-export async function getMemePreview(key: string): Promise<ImageResponse> {
+export async function getMemePreview(key: string, options?: Record<string, any>): Promise<ImageResponse> {
+  if (options && Object.keys(options).length > 0) {
+    return request<ImageResponse>(`/memes/${key}/preview`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ options }),
+    })
+  }
   return request<ImageResponse>(`/memes/${key}/preview`)
 }
 

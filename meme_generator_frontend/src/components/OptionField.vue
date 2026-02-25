@@ -4,23 +4,40 @@ import type { MemeOption } from '../types'
 const props = defineProps<{
   option: MemeOption
   modelValue: any
+  enabled: boolean
 }>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: any]
+  'update:enabled': [value: boolean]
 }>()
 
 function onInput(value: any) {
+  if (!props.enabled) {
+    emit('update:enabled', true)
+  }
   emit('update:modelValue', value)
+}
+
+function toggleEnabled() {
+  emit('update:enabled', !props.enabled)
 }
 </script>
 
 <template>
   <div>
-    <label class="block text-sm font-medium text-gray-700 mb-1">
+    <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1 cursor-pointer select-none">
+      <input
+        type="checkbox"
+        :checked="enabled"
+        @change="toggleEnabled"
+        class="w-4 h-4 rounded border-gray-300 text-primary-500 focus:ring-primary-500 cursor-pointer"
+      />
       {{ option.description || option.name }}
+      <span v-if="!enabled" class="text-xs text-gray-400 font-normal">（未指定）</span>
     </label>
 
+    <div :class="{ 'opacity-40 pointer-events-none': !enabled }">
     <!-- Boolean -->
     <div v-if="option.type === 'boolean'" class="flex items-center">
       <button
@@ -104,6 +121,7 @@ function onInput(value: any) {
         step="0.01"
         class="input w-20 text-center"
       />
+    </div>
     </div>
   </div>
 </template>

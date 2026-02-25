@@ -307,13 +307,32 @@ async fn meme_search(Query(query): Query<SearchQuery>) -> Response {
     Json(keys).into_response()
 }
 
-async fn meme_preview(Path(key): Path<String>) -> Response {
+async fn meme_preview_get(Path(key): Path<String>) -> Response {
     let meme = match get_meme(&key) {
         Some(meme) => meme,
         None => return (StatusCode::NOT_FOUND, "Meme not found").into_response(),
     };
 
     let result = spawn_blocking(move || meme.generate_preview(HashMap::new()))
+        .await
+        .unwrap();
+    handle_image_result(result).await
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+struct PreviewRequest {
+    #[serde(default)]
+    options: HashMap<String, OptionValue>,
+}
+
+async fn meme_preview(Path(key): Path<String>, payload: Option<Json<PreviewRequest>>) -> Response {
+    let meme = match get_meme(&key) {
+        Some(meme) => meme,
+        None => return (StatusCode::NOT_FOUND, "Meme not found").into_response(),
+    };
+
+    let options = payload.map(|p| p.0.options).unwrap_or_default();
+    let result = spawn_blocking(move || meme.generate_preview(options))
         .await
         .unwrap();
     handle_image_result(result).await
@@ -442,7 +461,10 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
         .route("/meme/infos", get(meme_infos))
         .route("/meme/search", get(meme_search))
         .route("/memes/{key}/info", get(meme_info))
-        .route("/memes/{key}/preview", get(meme_preview))
+        .route(
+            "/memes/{key}/preview",
+            get(meme_preview_get).post(meme_preview),
+        )
         .route("/memes/{key}", post(meme_generate))
         .route("/tools/render_list", post(render_list))
         .route("/tools/render_statistics", post(render_statistics))
