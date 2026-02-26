@@ -26,7 +26,10 @@ use tokio::{
     task::spawn_blocking,
     time::interval,
 };
-use tower_http::trace::{self, TraceLayer};
+use tower_http::{
+    cors::CorsLayer,
+    trace::{self, TraceLayer},
+};
 use tracing::{Level, info, warn};
 
 use meme_generator::{
@@ -486,7 +489,8 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
             TraceLayer::new_for_http()
                 .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
                 .on_response(trace::DefaultOnResponse::new().level(Level::INFO)),
-        );
+        )
+        .layer(CorsLayer::very_permissive());
 
     let host = host.unwrap_or(CONFIG.server.host);
     let port = port.unwrap_or(CONFIG.server.port);
