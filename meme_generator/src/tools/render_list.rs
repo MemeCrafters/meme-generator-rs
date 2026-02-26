@@ -1,6 +1,5 @@
 use std::{collections::HashMap, sync::LazyLock};
 
-use pinyin::{Pinyin, to_pinyin_vec};
 use serde::{Deserialize, Serialize};
 use skia_safe::{Canvas, Color, Image, PaintJoin, Path, PathBuilder, Rect, textlayout::TextAlign};
 
@@ -13,7 +12,7 @@ use meme_generator_utils::{
     tools::{color_from_hex_code, new_paint, new_stroke_paint, new_surface},
 };
 
-use crate::memes::get_memes;
+use crate::memes::{MemeSortBy, get_memes_sorted};
 
 fn draw_image_icon(color: Color) -> Image {
     let mut surface = new_surface((100, 100));
@@ -243,16 +242,6 @@ impl TextBlock {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum MemeSortBy {
-    Key,
-    Keywords,
-    KeywordsPinyin,
-    DateCreated,
-    DateModified,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct RenderMemeListParams {
     pub meme_properties: HashMap<String, MemeProperties>,
@@ -277,11 +266,9 @@ impl Default for RenderMemeListParams {
 }
 
 pub fn render_meme_list(params: RenderMemeListParams) -> Result<Vec<u8>, Error> {
-    let mut memes = get_memes();
+    let memes = get_memes_sorted(params.sort_by, params.sort_reverse);
 
     let keywords = |meme: &Box<dyn Meme>| meme.info().keywords.join("/");
-    let keywords_pinyin =
-        |meme: &Box<dyn Meme>| to_pinyin_vec(keywords(meme).as_str(), Pinyin::plain).join(" ");
     let shortcuts = |meme: &Box<dyn Meme>| {
         meme.info()
             .shortcuts
@@ -291,23 +278,6 @@ pub fn render_meme_list(params: RenderMemeListParams) -> Result<Vec<u8>, Error> 
             .join("/")
     };
     let tags = |meme: &Box<dyn Meme>| meme.info().tags.into_iter().collect::<Vec<_>>().join("/");
-
-    match params.sort_by {
-        MemeSortBy::Key => memes.sort_by(|a, b| a.key().cmp(&b.key())),
-        MemeSortBy::Keywords => memes.sort_by(|a, b| keywords(a).cmp(&keywords(b))),
-        MemeSortBy::KeywordsPinyin => {
-            memes.sort_by(|a, b| keywords_pinyin(a).cmp(&keywords_pinyin(b)))
-        }
-        MemeSortBy::DateCreated => {
-            memes.sort_by(|a, b| a.info().date_created.cmp(&b.info().date_created))
-        }
-        MemeSortBy::DateModified => {
-            memes.sort_by(|a, b| a.info().date_modified.cmp(&b.info().date_modified))
-        }
-    };
-    if params.sort_reverse {
-        memes.reverse();
-    }
 
     let meme_list = memes
         .iter()

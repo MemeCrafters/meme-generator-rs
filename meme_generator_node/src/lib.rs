@@ -444,16 +444,40 @@ pub fn get_meme(key: String) -> Option<Meme> {
 }
 
 #[napi]
-pub fn get_memes() -> Vec<Meme> {
-    meme_generator::get_memes()
+#[derive(Clone, PartialEq)]
+pub enum MemeSortBy {
+    Key = 0,
+    Keywords = 1,
+    KeywordsPinyin = 2,
+    DateCreated = 3,
+    DateModified = 4,
+}
+
+impl Into<meme_generator::MemeSortBy> for MemeSortBy {
+    fn into(self) -> meme_generator::MemeSortBy {
+        match self {
+            MemeSortBy::Key => meme_generator::MemeSortBy::Key,
+            MemeSortBy::Keywords => meme_generator::MemeSortBy::Keywords,
+            MemeSortBy::KeywordsPinyin => meme_generator::MemeSortBy::KeywordsPinyin,
+            MemeSortBy::DateCreated => meme_generator::MemeSortBy::DateCreated,
+            MemeSortBy::DateModified => meme_generator::MemeSortBy::DateModified,
+        }
+    }
+}
+
+#[napi]
+pub fn get_memes(sort_by: Option<MemeSortBy>, sort_reverse: Option<bool>) -> Vec<Meme> {
+    let sort_by = sort_by.unwrap_or(MemeSortBy::Key);
+    meme_generator::get_memes_sorted(sort_by.into(), sort_reverse.unwrap_or(false))
         .into_iter()
         .map(|meme| Meme { meme })
         .collect()
 }
 
 #[napi]
-pub fn get_meme_keys() -> Vec<&'static str> {
-    meme_generator::get_meme_keys()
+pub fn get_meme_keys(sort_by: Option<MemeSortBy>, sort_reverse: Option<bool>) -> Vec<String> {
+    let sort_by = sort_by.unwrap_or(MemeSortBy::Key);
+    meme_generator::get_meme_keys_sorted(sort_by.into(), sort_reverse.unwrap_or(false))
 }
 
 #[napi]

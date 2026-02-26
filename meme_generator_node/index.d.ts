@@ -15,9 +15,23 @@ export declare function getVersion(): string;
 
 export declare function getMeme(key: string): Meme | null;
 
-export declare function getMemeKeys(): Array<string>;
+export const enum MemeSortBy {
+  Key = 0,
+  Keywords = 1,
+  KeywordsPinyin = 2,
+  DateCreated = 3,
+  DateModified = 4
+}
 
-export declare function getMemes(): Array<Meme>;
+export declare function getMemeKeys(
+  sortBy?: MemeSortBy | undefined | null,
+  sortReverse?: boolean | undefined | null
+): Array<string>;
+
+export declare function getMemes(
+  sortBy?: MemeSortBy | undefined | null,
+  sortReverse?: boolean | undefined | null
+): Array<Meme>;
 
 export declare function searchMemes(
   query: string,
@@ -186,14 +200,6 @@ export namespace Tools {
     disabled?: boolean;
     hot?: boolean;
     new?: boolean;
-  }
-
-  export const enum MemeSortBy {
-    Key = 0,
-    Keywords = 1,
-    KeywordsPinyin = 2,
-    DateCreated = 3,
-    DateModified = 4,
   }
 
   export interface RenderMemeStatisticsParams {

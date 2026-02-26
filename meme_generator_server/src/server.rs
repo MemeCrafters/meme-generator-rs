@@ -30,9 +30,9 @@ use tower_http::trace::{self, TraceLayer};
 use tracing::{Level, info, warn};
 
 use meme_generator::{
-    MEME_HOME, VERSION,
+    MEME_HOME, MemeSortBy, VERSION,
     error::Error,
-    get_meme, get_meme_keys, get_memes,
+    get_meme, get_meme_keys_sorted, get_memes_sorted,
     meme::{self, OptionValue},
     search_memes,
 };
@@ -276,8 +276,16 @@ impl IntoResponse for ErrorResponse {
     }
 }
 
-async fn meme_keys() -> Response {
-    Json(get_meme_keys()).into_response()
+#[derive(Deserialize)]
+struct SortQuery {
+    sort_by: Option<MemeSortBy>,
+    sort_reverse: Option<bool>,
+}
+
+async fn meme_keys(Query(query): Query<SortQuery>) -> Response {
+    let sort_by = query.sort_by.unwrap_or(MemeSortBy::Key);
+    let sort_reverse = query.sort_reverse.unwrap_or(false);
+    Json(get_meme_keys_sorted(sort_by, sort_reverse)).into_response()
 }
 
 async fn meme_info(Path(key): Path<String>) -> Response {
@@ -288,8 +296,10 @@ async fn meme_info(Path(key): Path<String>) -> Response {
     }
 }
 
-async fn meme_infos() -> Response {
-    let infos = get_memes()
+async fn meme_infos(Query(query): Query<SortQuery>) -> Response {
+    let sort_by = query.sort_by.unwrap_or(MemeSortBy::Key);
+    let sort_reverse = query.sort_reverse.unwrap_or(false);
+    let infos = get_memes_sorted(sort_by, sort_reverse)
         .iter()
         .map(|meme| meme.info())
         .collect::<Vec<_>>();

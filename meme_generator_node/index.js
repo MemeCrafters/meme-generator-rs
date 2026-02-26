@@ -27,7 +27,7 @@ import {
   searchMemes,
 } from "./js-binding.js";
 
-export { Meme, getMeme, getMemes, getMemeKeys, searchMemes, getVersion };
+export { Meme, MemeSortBy, getMeme, getMemes, getMemeKeys, searchMemes, getVersion };
 
 export const Resources = {
   checkResources,

@@ -1,16 +1,9 @@
 from enum import Enum
 
-from .. import ImageEncodeError
+from .. import ImageEncodeError, MemeSortBy
 
 class MemeProperties:
     def __new__(cls, disabled: bool = False, hot: bool = False, new: bool = False): ...
-
-class MemeSortBy(Enum):
-    Key = 0
-    Keywords = 1
-    KeywordsPinyin = 2
-    DateCreated = 3
-    DateModified = 4
 
 class MemeStatisticsType(Enum):
     MemeCount = 0

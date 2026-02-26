@@ -4,7 +4,7 @@ use pyo3::prelude::*;
 
 use meme_generator::{error, tools};
 
-use crate::{Error, ImageDecodeError, ImageEncodeError};
+use crate::{Error, ImageDecodeError, ImageEncodeError, MemeSortBy};
 
 mod image_operations;
 
@@ -95,28 +95,6 @@ impl Into<tools::MemeProperties> for MemeProperties {
             disabled: self.disabled,
             hot: self.hot,
             new: self.new,
-        }
-    }
-}
-
-#[pyclass(eq, eq_int, from_py_object)]
-#[derive(Clone, PartialEq)]
-enum MemeSortBy {
-    Key = 0,
-    Keywords = 1,
-    KeywordsPinyin = 2,
-    DateCreated = 3,
-    DateModified = 4,
-}
-
-impl Into<tools::MemeSortBy> for MemeSortBy {
-    fn into(self) -> tools::MemeSortBy {
-        match self {
-            MemeSortBy::Key => tools::MemeSortBy::Key,
-            MemeSortBy::Keywords => tools::MemeSortBy::Keywords,
-            MemeSortBy::KeywordsPinyin => tools::MemeSortBy::KeywordsPinyin,
-            MemeSortBy::DateCreated => tools::MemeSortBy::DateCreated,
-            MemeSortBy::DateModified => tools::MemeSortBy::DateModified,
         }
     }
 }

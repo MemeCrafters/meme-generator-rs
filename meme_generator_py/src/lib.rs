@@ -37,6 +37,7 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<TextOverLength>()?;
     m.add_class::<MemeFeedback>()?;
     m.add_class::<Meme>()?;
+    m.add_class::<MemeSortBy>()?;
     m.add_function(wrap_pyfunction!(get_version, m)?)?;
     m.add_function(wrap_pyfunction!(get_meme, m)?)?;
     m.add_function(wrap_pyfunction!(get_memes, m)?)?;
@@ -523,17 +524,41 @@ fn get_meme(key: &str) -> Option<Meme> {
     meme_generator::get_meme(key).map(|meme| Meme { meme })
 }
 
+#[pyclass(eq, eq_int, from_py_object)]
+#[derive(Clone, PartialEq)]
+enum MemeSortBy {
+    Key = 0,
+    Keywords = 1,
+    KeywordsPinyin = 2,
+    DateCreated = 3,
+    DateModified = 4,
+}
+
+impl Into<meme_generator::MemeSortBy> for MemeSortBy {
+    fn into(self) -> meme_generator::MemeSortBy {
+        match self {
+            MemeSortBy::Key => meme_generator::MemeSortBy::Key,
+            MemeSortBy::Keywords => meme_generator::MemeSortBy::Keywords,
+            MemeSortBy::KeywordsPinyin => meme_generator::MemeSortBy::KeywordsPinyin,
+            MemeSortBy::DateCreated => meme_generator::MemeSortBy::DateCreated,
+            MemeSortBy::DateModified => meme_generator::MemeSortBy::DateModified,
+        }
+    }
+}
+
 #[pyfunction]
-fn get_memes() -> Vec<Meme> {
-    meme_generator::get_memes()
+#[pyo3(signature = (sort_by=MemeSortBy::Key, sort_reverse=false))]
+fn get_memes(sort_by: MemeSortBy, sort_reverse: bool) -> Vec<Meme> {
+    meme_generator::get_memes_sorted(sort_by.into(), sort_reverse)
         .into_iter()
         .map(|meme| Meme { meme })
         .collect()
 }
 
 #[pyfunction]
-fn get_meme_keys() -> Vec<&'static str> {
-    meme_generator::get_meme_keys()
+#[pyo3(signature = (sort_by=MemeSortBy::Key, sort_reverse=false))]
+fn get_meme_keys(sort_by: MemeSortBy, sort_reverse: bool) -> Vec<String> {
+    meme_generator::get_meme_keys_sorted(sort_by.into(), sort_reverse)
 }
 
 #[pyfunction]
