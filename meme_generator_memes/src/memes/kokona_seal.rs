@@ -17,9 +17,7 @@ number_option!(Number, 1, 12);
 
 fn kokona_seal(_: Vec<InputImage>, texts: Vec<String>, options: Number) -> Result<Vec<u8>, Error> {
     let text = &texts[0];
-    let num = options
-        .number
-        .unwrap_or({ rand::rng().random_range(1..=12) });
+    let num = options.number.unwrap_or(rand::rng().random_range(1..=12));
 
     let size = (320, 155);
     let loc = (75, 25);
