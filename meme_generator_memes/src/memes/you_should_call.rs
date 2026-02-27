@@ -28,9 +28,6 @@ fn you_should_call(
         70.0,
         None,
     )?;
-
-    let mut surface = frame.to_surface();
-    let canvas = surface.canvas();
     let img = images[0].image.circle().resize_exact((300, 300));
     canvas.draw_image(&img, (400, 190), None);
     encode_png(surface.image_snapshot())
