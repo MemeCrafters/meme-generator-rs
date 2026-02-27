@@ -35,24 +35,22 @@ fn pornhub(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u
     let padding_y = 10;
     let margin_x = 50;
     let margin_y = 50;
+    let text_h = left_h.max(right_h);
     let frame_w = left_w + right_w + padding_x * 4 + margin_x * 2;
-    let frame_h = left_h.max(right_h) + padding_y * 2 + margin_y * 2;
+    let frame_h = text_h + padding_y * 2 + margin_y * 2;
 
     let mut surface = new_surface((frame_w, frame_h));
     let canvas = surface.canvas();
     canvas.clear(Color::BLACK);
     left_img.draw_on_canvas(
         &canvas,
-        (
-            margin_x + padding_x,
-            margin_y + padding_y + left_h.max(right_h) - left_h,
-        ),
+        (margin_x + padding_x, margin_y + padding_y + text_h - left_h),
     );
     canvas.draw_rrect(
         &RRect::new_rect_xy(
             Rect::from_irect(IRect::from_xywh(
                 margin_x + left_w + padding_x * 2,
-                margin_y,
+                margin_y + text_h - right_h,
                 right_w + padding_x * 2,
                 right_h + padding_y * 2,
             )),
@@ -65,7 +63,7 @@ fn pornhub(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u
         &canvas,
         (
             margin_x + left_w + padding_x * 3,
-            margin_y + padding_y + left_h.max(right_h) - right_h,
+            margin_y + padding_y + text_h - right_h,
         ),
     );
 

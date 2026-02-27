@@ -23,11 +23,12 @@ fn youtube(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u
         200.0,
         text_params!(paint = new_paint(Color::WHITE)),
     );
-    right_img.layout(right_img.longest_line().ceil().max(400.0));
+    let right_w = right_img.longest_line().ceil().max(400.0);
+    right_img.layout(right_w);
 
     let left_w = left_img.longest_line().ceil() as i32;
     let left_h = left_img.height().ceil() as i32;
-    let right_w = right_img.longest_line().ceil() as i32;
+    let right_w = right_w as i32;
     let right_h = right_img.height().ceil() as i32;
 
     let left_padding_x = 30;
@@ -84,7 +85,7 @@ fn youtube(_: Vec<InputImage>, texts: Vec<String>, _: NoOptions) -> Result<Vec<u
     right_img.draw_on_canvas(
         canvas,
         (
-            margin_x + left_w + left_padding_x * 2 + right_padding_x,
+            x0 + right_padding_x,
             frame_h - right_h - padding_y - margin_y,
         ),
     );
