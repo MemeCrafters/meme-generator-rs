@@ -444,6 +444,7 @@ impl Meme {
 
     fn generate(
         &self,
+        py: Python<'_>,
         images: Vec<Image>,
         texts: Vec<String>,
         options: HashMap<String, OptionValue>,
@@ -458,19 +459,29 @@ impl Meme {
             .map(|(name, value)| (name, value.into()))
             .collect::<HashMap<_, _>>();
 
-        let result = self.meme.generate(images, texts, options);
-        handle_result(result)
+        let meme = self.meme;
+        py.detach(move || {
+            let result = meme.generate(images, texts, options);
+            handle_result(result)
+        })
     }
 
     #[pyo3(signature = (options=HashMap::new()))]
-    fn generate_preview(&self, options: HashMap<String, OptionValue>) -> MemeResult {
+    fn generate_preview(
+        &self,
+        py: Python<'_>,
+        options: HashMap<String, OptionValue>,
+    ) -> MemeResult {
         let options = options
             .into_iter()
             .map(|(name, value)| (name, value.into()))
             .collect::<HashMap<_, _>>();
 
-        let result = self.meme.generate_preview(options);
-        handle_result(result)
+        let meme = self.meme;
+        py.detach(move || {
+            let result = meme.generate_preview(options);
+            handle_result(result)
+        })
     }
 }
 

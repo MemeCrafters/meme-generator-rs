@@ -57,109 +57,138 @@ enum ImageInfoResult {
 }
 
 #[pyfunction]
-fn inspect(image: Vec<u8>) -> ImageInfoResult {
-    let result = image_operations::inspect(image);
-    match result {
-        Ok(info) => ImageInfoResult::Ok(ImageInfo {
-            width: info.width,
-            height: info.height,
-            is_multi_frame: info.is_multi_frame,
-            frame_count: info.frame_count,
-            average_duration: info.average_duration,
-        }),
-        Err(error) => match error {
-            error::Error::ImageDecodeError(error) => {
-                ImageInfoResult::Err(Error::ImageDecodeError(ImageDecodeError { error }))
-            }
-            _ => unreachable!(),
-        },
-    }
+fn inspect(py: Python<'_>, image: Vec<u8>) -> ImageInfoResult {
+    py.detach(move || {
+        let result = image_operations::inspect(image);
+        match result {
+            Ok(info) => ImageInfoResult::Ok(ImageInfo {
+                width: info.width,
+                height: info.height,
+                is_multi_frame: info.is_multi_frame,
+                frame_count: info.frame_count,
+                average_duration: info.average_duration,
+            }),
+            Err(error) => match error {
+                error::Error::ImageDecodeError(error) => {
+                    ImageInfoResult::Err(Error::ImageDecodeError(ImageDecodeError { error }))
+                }
+                _ => unreachable!(),
+            },
+        }
+    })
 }
 
 #[pyfunction]
-fn flip_horizontal(image: Vec<u8>) -> ImageResult {
-    let result = image_operations::flip_horizontal(image);
-    handle_image_result(result)
+fn flip_horizontal(py: Python<'_>, image: Vec<u8>) -> ImageResult {
+    py.detach(move || {
+        let result = image_operations::flip_horizontal(image);
+        handle_image_result(result)
+    })
 }
 
 #[pyfunction]
-fn flip_vertical(image: Vec<u8>) -> ImageResult {
-    let result = image_operations::flip_vertical(image);
-    handle_image_result(result)
+fn flip_vertical(py: Python<'_>, image: Vec<u8>) -> ImageResult {
+    py.detach(move || {
+        let result = image_operations::flip_vertical(image);
+        handle_image_result(result)
+    })
 }
 
 #[pyfunction]
 #[pyo3(signature = (image, degrees=90.0))]
-fn rotate(image: Vec<u8>, degrees: Option<f32>) -> ImageResult {
-    let result = image_operations::rotate(image, degrees);
-    handle_image_result(result)
+fn rotate(py: Python<'_>, image: Vec<u8>, degrees: Option<f32>) -> ImageResult {
+    py.detach(move || {
+        let result = image_operations::rotate(image, degrees);
+        handle_image_result(result)
+    })
 }
 
 #[pyfunction]
 #[pyo3(signature = (image, width=None, height=None))]
-fn resize(image: Vec<u8>, width: Option<i32>, height: Option<i32>) -> ImageResult {
-    let result = image_operations::resize(image, width, height);
-    handle_image_result(result)
+fn resize(py: Python<'_>, image: Vec<u8>, width: Option<i32>, height: Option<i32>) -> ImageResult {
+    py.detach(move || {
+        let result = image_operations::resize(image, width, height);
+        handle_image_result(result)
+    })
 }
 
 #[pyfunction]
 #[pyo3(signature = (image, left=None, top=None, right=None, bottom=None))]
 fn crop(
+    py: Python<'_>,
     image: Vec<u8>,
     left: Option<i32>,
     top: Option<i32>,
     right: Option<i32>,
     bottom: Option<i32>,
 ) -> ImageResult {
-    let result = image_operations::crop(image, left, top, right, bottom);
-    handle_image_result(result)
+    py.detach(move || {
+        let result = image_operations::crop(image, left, top, right, bottom);
+        handle_image_result(result)
+    })
 }
 
 #[pyfunction]
-fn grayscale(image: Vec<u8>) -> ImageResult {
-    let result = image_operations::grayscale(image);
-    handle_image_result(result)
+fn grayscale(py: Python<'_>, image: Vec<u8>) -> ImageResult {
+    py.detach(move || {
+        let result = image_operations::grayscale(image);
+        handle_image_result(result)
+    })
 }
 
 #[pyfunction]
-fn invert(image: Vec<u8>) -> ImageResult {
-    let result = image_operations::invert(image);
-    handle_image_result(result)
+fn invert(py: Python<'_>, image: Vec<u8>) -> ImageResult {
+    py.detach(move || {
+        let result = image_operations::invert(image);
+        handle_image_result(result)
+    })
 }
 
 #[pyfunction]
-fn merge_horizontal(images: Vec<Vec<u8>>) -> ImageResult {
-    let result = image_operations::merge_horizontal(images);
-    handle_image_result(result)
+fn merge_horizontal(py: Python<'_>, images: Vec<Vec<u8>>) -> ImageResult {
+    py.detach(move || {
+        let result = image_operations::merge_horizontal(images);
+        handle_image_result(result)
+    })
 }
 
 #[pyfunction]
-fn merge_vertical(images: Vec<Vec<u8>>) -> ImageResult {
-    let result = image_operations::merge_vertical(images);
-    handle_image_result(result)
+fn merge_vertical(py: Python<'_>, images: Vec<Vec<u8>>) -> ImageResult {
+    py.detach(move || {
+        let result = image_operations::merge_vertical(images);
+        handle_image_result(result)
+    })
 }
 
 #[pyfunction]
-fn gif_split(image: Vec<u8>) -> ImagesResult {
-    let result = image_operations::gif_split(image);
-    handle_images_result(result)
+fn gif_split(py: Python<'_>, image: Vec<u8>) -> ImagesResult {
+    py.detach(move || {
+        let result = image_operations::gif_split(image);
+        handle_images_result(result)
+    })
 }
 
 #[pyfunction]
 #[pyo3(signature = (images, duration=0.1))]
-fn gif_merge(images: Vec<Vec<u8>>, duration: Option<f32>) -> ImageResult {
-    let result = image_operations::gif_merge(images, duration);
-    handle_image_result(result)
+fn gif_merge(py: Python<'_>, images: Vec<Vec<u8>>, duration: Option<f32>) -> ImageResult {
+    py.detach(move || {
+        let result = image_operations::gif_merge(images, duration);
+        handle_image_result(result)
+    })
 }
 
 #[pyfunction]
-fn gif_reverse(image: Vec<u8>) -> ImageResult {
-    let result = image_operations::gif_reverse(image);
-    handle_image_result(result)
+fn gif_reverse(py: Python<'_>, image: Vec<u8>) -> ImageResult {
+    py.detach(move || {
+        let result = image_operations::gif_reverse(image);
+        handle_image_result(result)
+    })
 }
 
 #[pyfunction]
-fn gif_change_duration(image: Vec<u8>, duration: f32) -> ImageResult {
-    let result = image_operations::gif_change_duration(image, duration);
-    handle_image_result(result)
+fn gif_change_duration(py: Python<'_>, image: Vec<u8>, duration: f32) -> ImageResult {
+    py.detach(move || {
+        let result = image_operations::gif_change_duration(image, duration);
+        handle_image_result(result)
+    })
 }
