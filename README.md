@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://s2.loli.net/2023/03/26/4URd1BKj3ToycLl.png" width=200 />
+<img src="https://pic1.imgdb.cn/item/69a110b7d9fa54ce3f18b9fe.png" width=200 />
 
 # meme-generator-rs
 
