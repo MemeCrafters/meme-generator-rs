@@ -102,6 +102,7 @@ impl Into<tools::MemeProperties> for MemeProperties {
 #[pyfunction]
 #[pyo3(signature = (meme_properties=HashMap::new(), exclude_memes=Vec::new(), sort_by=MemeSortBy::KeywordsPinyin, sort_reverse=false, text_template="{index}. {keywords}".to_string(), add_category_icon=true))]
 fn render_meme_list(
+    py: Python<'_>,
     meme_properties: HashMap<String, MemeProperties>,
     exclude_memes: Vec<String>,
     sort_by: MemeSortBy,
@@ -109,18 +110,20 @@ fn render_meme_list(
     text_template: String,
     add_category_icon: bool,
 ) -> ImageResult {
-    let result = tools::render_meme_list(tools::RenderMemeListParams {
-        meme_properties: meme_properties
-            .into_iter()
-            .map(|(key, value)| (key, value.into()))
-            .collect(),
-        exclude_memes,
-        sort_by: sort_by.into(),
-        sort_reverse,
-        text_template,
-        add_category_icon,
-    });
-    handle_image_result(result)
+    py.detach(move || {
+        let result = tools::render_meme_list(tools::RenderMemeListParams {
+            meme_properties: meme_properties
+                .into_iter()
+                .map(|(key, value)| (key, value.into()))
+                .collect(),
+            exclude_memes,
+            sort_by: sort_by.into(),
+            sort_reverse,
+            text_template,
+            add_category_icon,
+        });
+        handle_image_result(result)
+    })
 }
 
 #[pyclass(eq, eq_int, from_py_object)]
@@ -141,14 +144,17 @@ impl Into<tools::MemeStatisticsType> for MemeStatisticsType {
 
 #[pyfunction]
 fn render_meme_statistics(
+    py: Python<'_>,
     title: String,
     statistics_type: MemeStatisticsType,
     data: Vec<(String, i32)>,
 ) -> ImageResult {
-    let result = tools::render_meme_statistics(tools::RenderMemeStatisticsParams {
-        title,
-        statistics_type: statistics_type.into(),
-        data,
-    });
-    handle_image_result(result)
+    py.detach(move || {
+        let result = tools::render_meme_statistics(tools::RenderMemeStatisticsParams {
+            title,
+            statistics_type: statistics_type.into(),
+            data,
+        });
+        handle_image_result(result)
+    })
 }

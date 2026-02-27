@@ -16,11 +16,15 @@ pub(crate) fn register_resources_module(parent_module: &Bound<'_, PyModule>) -> 
 }
 
 #[pyfunction]
-fn check_resources() {
-    resources::check_resources_sync(None);
+fn check_resources(py: Python<'_>) {
+    py.detach(|| {
+        resources::check_resources_sync(None);
+    });
 }
 
 #[pyfunction]
-fn check_resources_in_background() {
-    resources::check_resources_in_background(None);
+fn check_resources_in_background(py: Python<'_>) {
+    py.detach(|| {
+        resources::check_resources_in_background(None);
+    });
 }
