@@ -14,6 +14,9 @@ _✨ 表情包生成器，用于制作各种沙雕表情包 ✨_
   <a href="https://pypi.org/project/meme-generator">
     <img src="https://img.shields.io/pypi/v/meme-generator">
   </a>
+  <a href="https://www.npmjs.com/package/@memecrafters/meme-generator">
+    <img src="https://img.shields.io/npm/v/@memecrafters/meme-generator">
+  </a>
   <a href="https://jq.qq.com/?_wv=1027&k=wDVNrMdr">
     <img src="https://img.shields.io/badge/QQ%E7%BE%A4-682145034-orange">
   </a>
