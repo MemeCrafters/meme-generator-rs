@@ -17,7 +17,7 @@ pub static CORE_VERSION: &str = env!("CARGO_PKG_VERSION");
 #[macro_export]
 macro_rules! declare_meme_pack {
     ($register:expr) => {
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub static MEME_PACK_DECLARATION: $crate::registry::MemePackDeclaration =
             $crate::registry::MemePackDeclaration {
                 rustc_version: $crate::registry::RUSTC_VERSION,
