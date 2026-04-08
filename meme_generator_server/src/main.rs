@@ -1,7 +1,7 @@
-#[cfg(not(target_env = "msvc"))]
+#[cfg(all(not(target_env = "msvc"), not(target_os = "android")))]
 use tikv_jemallocator::Jemalloc;
 
-#[cfg(not(target_env = "msvc"))]
+#[cfg(all(not(target_env = "msvc"), not(target_os = "android")))]
 #[global_allocator]
 static GLOBAL: Jemalloc = Jemalloc;
 

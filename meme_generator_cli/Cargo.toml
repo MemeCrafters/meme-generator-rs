@@ -19,7 +19,7 @@ tracing-subscriber.workspace = true
 meme_generator.workspace = true
 meme_generator_server = { path = "../meme_generator_server", optional = true }
 
-[target.'cfg(not(target_env = "msvc"))'.dependencies]
+[target.'cfg(all(not(target_env = "msvc"), not(target_os = "android")))'.dependencies]
 tikv-jemallocator.workspace = true
 
 [features]
