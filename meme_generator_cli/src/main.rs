@@ -1,6 +1,13 @@
 mod cli;
 mod tools;
 
+#[cfg(all(not(target_env = "msvc"), not(target_os = "android")))]
+use tikv_jemallocator::Jemalloc;
+
+#[cfg(all(not(target_env = "msvc"), not(target_os = "android")))]
+#[global_allocator]
+static GLOBAL: Jemalloc = Jemalloc;
+
 use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
 #[cfg(feature = "server")]

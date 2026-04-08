@@ -8,7 +8,8 @@ use tokio::task::spawn_blocking;
 use meme_generator::{error::Error, tools::image_operations};
 
 use crate::server::{
-    create_temp_file, get_temp_file, handle_error, handle_image_result, handle_server_error,
+    SEMAPHORE, create_temp_file, get_temp_file, handle_error, handle_image_result,
+    handle_server_error,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -22,6 +23,7 @@ pub(crate) async fn inspect(Json(payload): Json<ImageRequest>) -> Response {
         Err(err) => return handle_server_error(err).into_response(),
     };
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     match spawn_blocking(move || image_operations::inspect(data))
         .await
         .unwrap()
@@ -37,6 +39,7 @@ pub(crate) async fn flip_horizontal(Json(payload): Json<ImageRequest>) -> Respon
         Err(err) => return handle_server_error(err).into_response(),
     };
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result = spawn_blocking(move || image_operations::flip_horizontal(data))
         .await
         .unwrap();
@@ -49,6 +52,7 @@ pub(crate) async fn flip_vertical(Json(payload): Json<ImageRequest>) -> Response
         Err(err) => return handle_server_error(err).into_response(),
     };
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result = spawn_blocking(move || image_operations::flip_vertical(data))
         .await
         .unwrap();
@@ -67,6 +71,7 @@ pub(crate) async fn rotate(Json(payload): Json<RotateRequest>) -> Response {
         Err(err) => return handle_server_error(err).into_response(),
     };
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result = spawn_blocking(move || image_operations::rotate(data, payload.degrees))
         .await
         .unwrap();
@@ -86,6 +91,7 @@ pub(crate) async fn resize(Json(payload): Json<ResizeRequest>) -> Response {
         Err(err) => return handle_server_error(err).into_response(),
     };
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result =
         spawn_blocking(move || image_operations::resize(data, payload.width, payload.height))
             .await
@@ -108,6 +114,7 @@ pub(crate) async fn crop(Json(payload): Json<CropRequest>) -> Response {
         Err(err) => return handle_server_error(err).into_response(),
     };
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result = spawn_blocking(move || {
         image_operations::crop(
             data,
@@ -128,6 +135,7 @@ pub(crate) async fn grayscale(Json(payload): Json<ImageRequest>) -> Response {
         Err(err) => return handle_server_error(err).into_response(),
     };
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result = spawn_blocking(move || image_operations::grayscale(data))
         .await
         .unwrap();
@@ -140,6 +148,7 @@ pub(crate) async fn invert(Json(payload): Json<ImageRequest>) -> Response {
         Err(err) => return handle_server_error(err).into_response(),
     };
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result = spawn_blocking(move || image_operations::invert(data))
         .await
         .unwrap();
@@ -160,6 +169,7 @@ pub(crate) async fn merge_horizontal(Json(payload): Json<ImagesRequest>) -> Resp
         };
     }
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result = spawn_blocking(move || image_operations::merge_horizontal(images))
         .await
         .unwrap();
@@ -175,6 +185,7 @@ pub(crate) async fn merge_vertical(Json(payload): Json<ImagesRequest>) -> Respon
         };
     }
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result = spawn_blocking(move || image_operations::merge_vertical(images))
         .await
         .unwrap();
@@ -209,6 +220,7 @@ pub(crate) async fn gif_split(Json(payload): Json<ImageRequest>) -> Response {
         Err(err) => return handle_server_error(err).into_response(),
     };
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result = spawn_blocking(move || image_operations::gif_split(data))
         .await
         .unwrap();
@@ -230,6 +242,7 @@ pub(crate) async fn gif_merge(Json(payload): Json<GifMergeRequest>) -> Response 
         };
     }
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result = spawn_blocking(move || image_operations::gif_merge(images, payload.duration))
         .await
         .unwrap();
@@ -242,6 +255,7 @@ pub(crate) async fn gif_reverse(Json(payload): Json<ImageRequest>) -> Response {
         Err(err) => return handle_server_error(err).into_response(),
     };
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result = spawn_blocking(move || image_operations::gif_reverse(data))
         .await
         .unwrap();
@@ -260,6 +274,7 @@ pub(crate) async fn gif_change_duration(Json(payload): Json<GifDurationRequest>)
         Err(err) => return handle_server_error(err).into_response(),
     };
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result =
         spawn_blocking(move || image_operations::gif_change_duration(data, payload.duration))
             .await

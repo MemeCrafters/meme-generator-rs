@@ -1,5 +1,3 @@
-use std::fs::read;
-
 use chrono::{DateTime, Local, TimeZone};
 use regex::Regex;
 use skia_safe::{
@@ -227,7 +225,8 @@ pub fn load_image(path: impl Into<String>) -> Result<Image, Error> {
     if !(image_path.exists() && image_path.is_file()) {
         return Err(Error::ImageAssetMissing(path));
     }
-    let data = Data::new_copy(&read(&image_path).unwrap());
+    let data = Data::from_filename(&image_path)
+        .ok_or_else(|| Error::ImageDecodeError(format!("Failed to read image: {}", path)))?;
     Image::from_encoded(data).ok_or(Error::ImageDecodeError(format!(
         "Failed to decode image: {}",
         path

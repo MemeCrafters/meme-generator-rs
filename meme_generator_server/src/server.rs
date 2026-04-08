@@ -3,7 +3,7 @@ use std::{
     error, fmt,
     net::{IpAddr, SocketAddr},
     path::PathBuf,
-    sync::LazyLock,
+    sync::{Arc, LazyLock},
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
@@ -23,6 +23,7 @@ use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::TcpListener,
     runtime::Runtime,
+    sync::Semaphore,
     task::spawn_blocking,
     time::interval,
 };
@@ -57,6 +58,9 @@ base64_serde_type!(Base64Standard, base64::engine::general_purpose::STANDARD);
 static REQWEST_CLIENT: LazyLock<reqwest::Client> = LazyLock::new(|| reqwest::Client::new());
 
 pub static TEMP_DIR: LazyLock<PathBuf> = LazyLock::new(|| MEME_HOME.join("tmp"));
+
+pub(crate) static SEMAPHORE: LazyLock<Arc<Semaphore>> =
+    LazyLock::new(|| Arc::new(Semaphore::new(CONFIG.server.max_concurrent_tasks)));
 
 fn clear_temp_dir() {
     let _ = std::fs::remove_dir_all(&*TEMP_DIR);
@@ -326,6 +330,7 @@ async fn meme_preview_get(Path(key): Path<String>) -> Response {
         None => return (StatusCode::NOT_FOUND, "Meme not found").into_response(),
     };
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result = spawn_blocking(move || meme.generate_preview(HashMap::new()))
         .await
         .unwrap();
@@ -345,6 +350,8 @@ async fn meme_preview(Path(key): Path<String>, payload: Option<Json<PreviewReque
     };
 
     let options = payload.map(|p| p.0.options).unwrap_or_default();
+
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result = spawn_blocking(move || meme.generate_preview(options))
         .await
         .unwrap();
@@ -367,6 +374,7 @@ async fn meme_generate(Path(key): Path<String>, Json(payload): Json<MemeRequest>
     let texts = payload.texts;
     let options = payload.options;
 
+    let _permit = SEMAPHORE.acquire().await.unwrap();
     let result = spawn_blocking(move || meme.generate(images, texts, options))
         .await
         .unwrap();
@@ -467,9 +475,7 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
 
     let app = Router::new()
         .route("/image/upload", post(upload_image))
-        .layer(DefaultBodyLimit::disable())
         .route("/image/upload/multipart", post(upload_image_multipart))
-        .layer(DefaultBodyLimit::disable())
         .route("/image/{id}", get(get_image))
         .route("/meme/version", get(|| async { VERSION }))
         .route("/meme/keys", get(meme_keys))
@@ -514,6 +520,7 @@ pub async fn run_server(host: Option<IpAddr>, port: Option<u16>) {
                 .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
                 .on_response(trace::DefaultOnResponse::new().level(Level::INFO)),
         )
+        .layer(DefaultBodyLimit::max(CONFIG.server.body_limit))
         .layer(CorsLayer::very_permissive());
 
     let host = host.unwrap_or(CONFIG.server.host);

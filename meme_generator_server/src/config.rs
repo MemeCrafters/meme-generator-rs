@@ -27,6 +27,10 @@ impl Default for Config {
 pub struct ServerConfig {
     pub host: IpAddr,
     pub port: u16,
+    /// Maximum request body size in bytes (default: 20MB)
+    pub body_limit: usize,
+    /// Maximum number of concurrent image generation tasks (default: 16)
+    pub max_concurrent_tasks: usize,
 }
 
 impl Default for ServerConfig {
@@ -34,6 +38,8 @@ impl Default for ServerConfig {
         ServerConfig {
             host: Ipv4Addr::new(0, 0, 0, 0).into(),
             port: 2233,
+            body_limit: 20 * 1024 * 1024,
+            max_concurrent_tasks: 16,
         }
     }
 }
