@@ -389,6 +389,7 @@ pub(crate) async fn handle_image_result(result: Result<Vec<u8>, Error>) -> Respo
 
 pub(crate) fn handle_server_error(error: ServerError) -> ErrorResponse {
     let message = format!("{error}");
+    warn!("Server error: {message}");
     match error {
         ServerError::RequestError(err) => ErrorResponse {
             code: 410,
@@ -406,6 +407,7 @@ pub(crate) fn handle_server_error(error: ServerError) -> ErrorResponse {
 
 pub(crate) fn handle_error(error: Error) -> ErrorResponse {
     let message = format!("{error}");
+    warn!("Meme error: {message}");
     match error {
         Error::ImageDecodeError(err) => ErrorResponse {
             code: 510,
