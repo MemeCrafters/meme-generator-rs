@@ -1,5 +1,3 @@
-use std::fs::read;
-
 use skia_safe::{Codec, Color, Data};
 
 use meme_generator_core::error::Error;
@@ -27,7 +25,8 @@ fn gif_subtitle(
     if !(image_path.exists() && image_path.is_file()) {
         return Err(Error::ImageAssetMissing(path));
     }
-    let data = Data::new_copy(&read(&image_path).unwrap());
+    let data = Data::from_filename(&image_path)
+        .ok_or_else(|| Error::ImageDecodeError(format!("Failed to read image: {}", path)))?;
     let mut codec =
         Codec::from_data(data).ok_or(Error::ImageDecodeError("Skia decode error".to_string()))?;
 

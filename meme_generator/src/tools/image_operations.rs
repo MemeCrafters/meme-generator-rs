@@ -19,7 +19,7 @@ fn input_image(data: Vec<u8>) -> Result<InputImage<'static>, Error> {
         name: String::new(),
         data,
     };
-    InputImage::from(&image)
+    InputImage::from(image)
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

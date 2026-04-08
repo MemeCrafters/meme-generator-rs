@@ -63,14 +63,14 @@ pub struct InputImage<'a> {
     pub(crate) codec: Codec<'a>,
 }
 
-impl<'a> InputImage<'a> {
-    pub fn from(input: &meme::Image) -> Result<InputImage<'static>, Error> {
+impl InputImage<'static> {
+    pub fn from(input: meme::Image) -> Result<InputImage<'static>, Error> {
         let data = Data::new_copy(&input.data);
         let mut codec = Codec::from_data(data)
             .ok_or(Error::ImageDecodeError("Skia decode error".to_string()))?;
         let image = codec.first_frame()?;
         Ok(InputImage {
-            name: input.name.clone(),
+            name: input.name,
             image,
             codec,
         })
@@ -238,7 +238,7 @@ where
         let options = serde_json::from_value(Value::Object(options))
             .map_err(|err| Error::DeserializeError(err.to_string()))?;
         let images = images
-            .iter()
+            .into_iter()
             .map(|image| InputImage::from(image))
             .collect::<Result<Vec<InputImage>, Error>>()?;
         (self.function)(images, texts, options)

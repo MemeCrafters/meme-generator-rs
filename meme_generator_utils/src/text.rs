@@ -4,7 +4,7 @@ use std::{
 };
 
 use skia_safe::{
-    Canvas, Color, FontMgr, FontStyle, Paint, Point, scalar,
+    Canvas, Color, Data, FontMgr, FontStyle, Paint, Point, Typeface, scalar,
     textlayout::{
         FontCollection, Paragraph, ParagraphBuilder, ParagraphStyle, TextAlign, TextDecoration,
         TextStyle, TypefaceFontProvider,
@@ -24,6 +24,13 @@ struct FontManager {
     font_collection: FontCollection,
 }
 
+/// Create a Typeface from a font file using mmap (Data::from_filename)
+/// instead of fs::read, avoiding an extra heap allocation per font.
+fn typeface_from_file(font_mgr: &FontMgr, path: &std::path::Path) -> Option<Typeface> {
+    let data = Data::from_filename(path)?;
+    font_mgr.new_from_data(data.as_bytes(), None)
+}
+
 fn construct_font_provider() -> TypefaceFontProvider {
     let mut font_provider = TypefaceFontProvider::new();
     let font_mgr = FontMgr::new();
@@ -41,12 +48,10 @@ fn construct_font_provider() -> TypefaceFontProvider {
                         if !["ttf", "ttc", "otf"].contains(&ext) {
                             continue;
                         }
-                        if let Ok(bytes) = std::fs::read(path.clone()) {
-                            if let Some(font) = font_mgr.new_from_data(&bytes, None) {
-                                font_provider.register_typeface(font, None);
-                            } else {
-                                warn!("Failed to create typeface from font file: {path:?}",);
-                            }
+                        if let Some(font) = typeface_from_file(&font_mgr, &path) {
+                            font_provider.register_typeface(font, None);
+                        } else {
+                            warn!("Failed to create typeface from font file: {path:?}");
                         }
                     }
                 }
