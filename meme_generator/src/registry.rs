@@ -170,6 +170,10 @@ pub(crate) fn load_memes() -> HashMap<String, Box<dyn Meme>> {
         meme_generator_memes::register_memes(&mut registry);
     }
 
+    if CONFIG.meme.load_template_memes {
+        meme_generator_template::load_templates(&mut registry);
+    }
+
     if CONFIG.meme.load_external_memes {
         if let Err(err) = load_external_memes(&mut registry) {
             warn!("Error while loading external memes: {}", err);

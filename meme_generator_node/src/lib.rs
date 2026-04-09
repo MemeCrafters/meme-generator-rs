@@ -193,6 +193,12 @@ pub struct MemeFeedback {
     pub feedback: String,
 }
 
+#[napi(object)]
+#[derive(Clone)]
+pub struct TemplateError {
+    pub detail: String,
+}
+
 #[napi]
 #[derive(Clone)]
 pub enum Error {
@@ -204,6 +210,7 @@ pub enum Error {
     TextNumberMismatch(TextNumberMismatch),
     TextOverLength(TextOverLength),
     MemeFeedback(MemeFeedback),
+    TemplateError(TemplateError),
 }
 
 #[napi]
@@ -428,6 +435,9 @@ fn handle_result(result: Result<Vec<u8>, error::Error>) -> MemeResult {
             }
             error::Error::MemeFeedback(feedback) => {
                 MemeResult::Err(Error::MemeFeedback(MemeFeedback { feedback }))
+            }
+            error::Error::TemplateError(detail) => {
+                MemeResult::Err(Error::TemplateError(TemplateError { detail }))
             }
         },
     }

@@ -134,7 +134,8 @@ export type Error =
   | { type: "ImageNumberMismatch"; field0: ImageNumberMismatch }
   | { type: "TextNumberMismatch"; field0: TextNumberMismatch }
   | { type: "TextOverLength"; field0: TextOverLength }
-  | { type: "MemeFeedback"; field0: MemeFeedback };
+  | { type: "MemeFeedback"; field0: MemeFeedback }
+  | { type: "TemplateError"; field0: TemplateError };
 
 export interface ImageDecodeError {
   error: string;
@@ -170,6 +171,10 @@ export interface TextOverLength {
 
 export interface MemeFeedback {
   feedback: string;
+}
+
+export interface TemplateError {
+  detail: string;
 }
 
 export namespace Resources {

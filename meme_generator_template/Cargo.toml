@@ -1,7 +1,7 @@
 [package]
-name = "meme_generator_memes"
-description = "Meme generator built-in memes"
-version.workspace = true
+name = "meme_generator_template"
+description = "YAML template interpreter for meme generator"
+version = "0.0.1"
 authors.workspace = true
 license.workspace = true
 homepage.workspace = true
@@ -9,16 +9,15 @@ repository.workspace = true
 edition.workspace = true
 
 [dependencies]
-inventory = "0.3"
-qrcode = { version = "0.14", default-features = false }
+indexmap = { version = "2", features = ["serde"] }
+yaml_serde  = "0.10"
 
 chrono.workspace = true
 rand.workspace = true
 serde.workspace = true
+serde_json.workspace = true
 skia-safe.workspace = true
+tracing.workspace = true
 
 meme_generator_core.workspace = true
 meme_generator_utils.workspace = true
-
-[features]
-embed-freetype = ["skia-safe/embed-freetype"]

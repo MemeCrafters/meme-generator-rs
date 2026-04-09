@@ -10,6 +10,7 @@ pub enum Error {
     TextNumberMismatch(u8, u8, u8),
     TextOverLength(String),
     MemeFeedback(String),
+    TemplateError(String),
 }
 
 impl fmt::Display for Error {
@@ -29,6 +30,7 @@ impl fmt::Display for Error {
             ),
             Error::TextOverLength(text) => write!(f, "Text is too long: {text}"),
             Error::MemeFeedback(feedback) => write!(f, "{feedback}"),
+            Error::TemplateError(detail) => write!(f, "Template error: {detail}"),
         }
     }
 }
