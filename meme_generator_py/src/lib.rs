@@ -36,6 +36,7 @@ fn meme_generator_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<TextNumberMismatch>()?;
     m.add_class::<TextOverLength>()?;
     m.add_class::<MemeFeedback>()?;
+    m.add_class::<TemplateError>()?;
     m.add_class::<Meme>()?;
     m.add_class::<MemeSortBy>()?;
     m.add_function(wrap_pyfunction!(get_version, m)?)?;
@@ -297,6 +298,13 @@ struct MemeFeedback {
     feedback: String,
 }
 
+#[pyclass(skip_from_py_object)]
+#[derive(Clone)]
+struct TemplateError {
+    #[pyo3(get)]
+    detail: String,
+}
+
 #[derive(IntoPyObject, Clone)]
 enum Error {
     ImageDecodeError(ImageDecodeError),
@@ -307,6 +315,7 @@ enum Error {
     TextNumberMismatch(TextNumberMismatch),
     TextOverLength(TextOverLength),
     MemeFeedback(MemeFeedback),
+    TemplateError(TemplateError),
 }
 
 #[derive(IntoPyObject, Clone)]
@@ -520,6 +529,9 @@ fn handle_result(result: Result<Vec<u8>, error::Error>) -> MemeResult {
             }
             error::Error::MemeFeedback(feedback) => {
                 MemeResult::Err(Error::MemeFeedback(MemeFeedback { feedback }))
+            }
+            error::Error::TemplateError(detail) => {
+                MemeResult::Err(Error::TemplateError(TemplateError { detail }))
             }
         },
     }

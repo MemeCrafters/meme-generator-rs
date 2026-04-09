@@ -457,6 +457,11 @@ pub(crate) fn handle_error(error: Error) -> ErrorResponse {
             message,
             data: json!({ "feedback": feedback }),
         },
+        Error::TemplateError(detail) => ErrorResponse {
+            code: 580,
+            message,
+            data: json!({ "detail": detail }),
+        },
     }
 }
 

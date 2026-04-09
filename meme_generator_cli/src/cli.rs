@@ -755,6 +755,9 @@ fn handle_result(result: Result<Vec<u8>, Error>) {
         Err(Error::MemeFeedback(feedback)) => {
             eprintln!("{feedback}");
         }
+        Err(Error::TemplateError(detail)) => {
+            eprintln!("模板错误：{detail}");
+        }
         Ok(result) => {
             let kind = infer::get(&result).unwrap();
             let extension = kind.extension();

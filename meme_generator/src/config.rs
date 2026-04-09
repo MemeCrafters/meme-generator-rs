@@ -25,6 +25,7 @@ impl Default for Config {
 pub struct MemeConfig {
     pub load_builtin_memes: bool,
     pub load_external_memes: bool,
+    pub load_template_memes: bool,
     pub meme_disabled_list: Vec<String>,
 }
 
@@ -33,6 +34,7 @@ impl Default for MemeConfig {
         MemeConfig {
             load_builtin_memes: true,
             load_external_memes: false,
+            load_template_memes: false,
             meme_disabled_list: vec![],
         }
     }

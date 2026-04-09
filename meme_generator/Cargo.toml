@@ -26,6 +26,7 @@ tracing.workspace = true
 
 meme_generator_core.workspace = true
 meme_generator_memes = { version = "0.2", path = "../meme_generator_memes" }
+meme_generator_template.workspace = true
 meme_generator_utils.workspace = true
 
 [features]

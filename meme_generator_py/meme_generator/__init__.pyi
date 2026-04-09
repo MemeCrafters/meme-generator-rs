@@ -1,5 +1,5 @@
-from enum import Enum
 from datetime import datetime
+from enum import Enum
 
 class ParserFlags:
     short: bool
@@ -91,6 +91,9 @@ class TextOverLength:
 class MemeFeedback:
     feedback: str
 
+class TemplateError:
+    detail: str
+
 class Meme:
     @property
     def key(self) -> str: ...
@@ -111,6 +114,7 @@ class Meme:
         | TextNumberMismatch
         | TextOverLength
         | MemeFeedback
+        | TemplateError
     ): ...
     def generate_preview(
         self,
@@ -122,6 +126,7 @@ class Meme:
         | DeserializeError
         | TextOverLength
         | MemeFeedback
+        | TemplateError
     ): ...
 
 class MemeSortBy(Enum):
@@ -133,6 +138,10 @@ class MemeSortBy(Enum):
 
 def get_version() -> str: ...
 def get_meme(key: str) -> Meme: ...
-def get_memes(sort_by: MemeSortBy = MemeSortBy.Key, sort_reverse: bool = False) -> list[Meme]: ...
-def get_meme_keys(sort_by: MemeSortBy = MemeSortBy.Key, sort_reverse: bool = False) -> list[str]: ...
+def get_memes(
+    sort_by: MemeSortBy = MemeSortBy.Key, sort_reverse: bool = False
+) -> list[Meme]: ...
+def get_meme_keys(
+    sort_by: MemeSortBy = MemeSortBy.Key, sort_reverse: bool = False
+) -> list[str]: ...
 def search_memes(query: str, include_tags: bool = False) -> list[str]: ...
