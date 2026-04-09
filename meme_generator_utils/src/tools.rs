@@ -1,3 +1,5 @@
+use std::sync::LazyLock;
+
 use chrono::{DateTime, Local, TimeZone};
 use regex::Regex;
 use skia_safe::{
@@ -9,6 +11,8 @@ use skia_safe::{
 use meme_generator_core::error::Error;
 
 use crate::config::IMAGES_DIR;
+
+pub static GRID_PATTERN_IMAGE: LazyLock<Image> = LazyLock::new(grid_pattern_image);
 
 pub fn new_surface(size: impl Into<ISize>) -> Surface {
     surfaces::raster_n32_premul(size).unwrap()
@@ -233,7 +237,7 @@ pub fn load_image(path: impl Into<String>) -> Result<Image, Error> {
     )))
 }
 
-pub fn grid_pattern_image() -> Image {
+fn grid_pattern_image() -> Image {
     let mut surface = new_surface(ISize::new(500, 500));
     let canvas = surface.canvas();
     canvas.clear(Color::WHITE);

@@ -10,7 +10,7 @@ use meme_generator_core::{
     meme::{self, Meme, MemeInfo, MemeOption, MemeParams, MemeShortcut, OptionValue},
 };
 
-use crate::{decoder::CodecExt, encoder::encode_png, tools::grid_pattern_image};
+use crate::{decoder::CodecExt, encoder::encode_png, tools::GRID_PATTERN_IMAGE};
 
 pub use meme_options_derive::MemeOptions;
 
@@ -247,7 +247,7 @@ where
     fn generate_preview(&self, options: HashMap<String, OptionValue>) -> Result<Vec<u8>, Error> {
         let mut images = Vec::new();
         if self.min_images > 0 {
-            let image = encode_png(grid_pattern_image())?;
+            let image = encode_png(GRID_PATTERN_IMAGE.clone())?;
             for i in 0..self.min_images {
                 let name = if self.min_images == 1 {
                     "{name}".to_string()
