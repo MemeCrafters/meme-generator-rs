@@ -1,0 +1,30 @@
+version: "1.0"
+
+metadata:
+  key: "bronya_holdsign"
+  keywords: ["布洛妮娅举牌", "大鸭鸭举牌"]
+  tags: ["布洛妮娅·扎伊切克", "崩坏3", "米哈游"]
+  date_created: "2022-10-27"
+  date_modified: "2023-03-30"
+  params:
+    min_texts: 1
+    max_texts: 1
+    default_texts: ["V我50"]
+
+resources:
+  bg: "bronya_holdsign/0.jpg"
+
+elements:
+  content:
+    type: text
+    text: "{input.texts[0]}"
+    font_size: [25, 60]
+    bound: [450, 255]
+    color: "#6f5f5f"
+
+canvas: resources.bg.size
+
+layers:
+  - use: resources.bg
+  - use: elements.content
+    position: [190, 675]

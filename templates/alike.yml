@@ -1,0 +1,46 @@
+version: "1.0"
+
+metadata:
+  key: "alike"
+  keywords: ["一样"]
+  date_created: "2022-01-02"
+  date_modified: "2023-02-22"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+elements:
+  text_left:
+    type: text
+    text: "你怎么跟"
+    font_size: 40
+    bound: [175, 130]
+    text_align: right
+  text_right:
+    type: text
+    text: "一样"
+    font_size: 40
+    bound: [95, 130]
+    text_align: left
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - square
+      - resize_exact: [150, 150]
+
+canvas:
+  size: [470, 180]
+  background: white
+
+layers:
+  - use: elements.text_left
+    position: [10, 30]
+  - use: elements.text_right
+    position: [365, 30]
+  - use: elements.avatar
+    position: [200, 15]

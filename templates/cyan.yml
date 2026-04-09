@@ -1,0 +1,46 @@
+version: "1.0"
+
+metadata:
+  key: "cyan"
+  keywords: ["群青"]
+  date_created: "2022-02-02"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    operations:
+      - square
+      - resize_exact: [500, 500]
+      - colorize: "#4E72B8"
+  text1:
+    type: text
+    text: "群\n青"
+    font_size: 80
+    color: white
+    stroke: { color: "#4E72B8", width: 6 }
+    bound: [80, 240]
+  text2:
+    type: text
+    text: "YOASOBI"
+    font_size: 40
+    color: white
+    stroke: { color: "#4E72B8", width: 5 }
+    text_align: right
+    bound: [280, 80]
+
+canvas: elements.avatar.size
+
+layers:
+  - use: elements.avatar
+  - use: elements.text1
+    position: [400, 40]
+  - use: elements.text2
+    position: [200, 270]

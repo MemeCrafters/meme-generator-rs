@@ -1,0 +1,55 @@
+version: "1.0"
+
+metadata:
+  key: "clown_mask"
+  keywords: ["小丑面具"]
+  date_created: "2024-09-20"
+  date_modified: "2024-09-20"
+  params:
+    min_images: 1
+    max_images: 1
+    options:
+      - name: mode
+        type: string
+        description: "小丑在前/后"
+        choices: ["front", "behind"]
+
+resources:
+  frame_front: "clown_mask/0.png"
+  frame_behind_1: "clown_mask/1.png"
+  frame_behind_2: "clown_mask/2.png"
+
+elements:
+  avatar_front:
+    type: image
+    from: input.images[0]
+    if: options.mode == 'front'
+    operations:
+      - circle
+      - resize_exact: [440, 440]
+      - rotate_crop: -15
+  avatar_behind:
+    type: image
+    from: input.images[0]
+    if: options.mode == 'behind'
+    operations:
+      - circle
+      - perspective: [[282, 0], [496, 154], [214, 546], [0, 392]]
+      - rotate_crop: -6
+
+canvas: [690, 690]
+
+layers:
+  - use: elements.avatar_front
+    position: [16, 104]
+    if: options.mode == 'front'
+  - use: resources.frame_front
+    if: options.mode == 'front'
+  - use: resources.frame_behind_1
+    if: options.mode == 'behind'
+  - use: elements.avatar_behind
+    position: [214, 100]
+    if: options.mode == 'behind'
+  - use: resources.frame_behind_2
+    position: [-85, 20]
+    if: options.mode == 'behind'

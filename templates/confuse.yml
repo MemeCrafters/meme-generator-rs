@@ -1,0 +1,45 @@
+version: "1.0"
+
+metadata:
+  key: "confuse"
+  keywords: ["迷惑"]
+  date_created: "2022-09-04"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  masks:
+    pattern: "confuse/{index:02}.png"
+    count: 100
+
+frames:
+  count: 100
+  duration: 0.02
+  align: extend_loop
+
+elements:
+  user_img:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - resize_width: min(input.images[0].width, 500)
+  mask:
+    type: image
+    from: resources.masks[frames.index]
+    scope: dynamic
+    operations:
+      - resize_fit: { size: elements.user_img.size, fit: cover }
+
+canvas:
+  size: elements.user_img.size
+  background: white
+
+layers:
+  - use: elements.user_img
+  - use: elements.mask

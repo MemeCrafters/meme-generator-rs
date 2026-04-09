@@ -1,0 +1,32 @@
+version: "1.0"
+
+metadata:
+  key: "add_chaos"
+  keywords: ["添乱", "给社会添乱"]
+  date_created: "2023-06-21"
+  date_modified: "2023-06-21"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  banner: "add_chaos/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - resize_width: 240
+
+canvas:
+  size: elements.avatar.size
+  background: white
+
+layers:
+  - use: elements.avatar
+  - use: resources.banner

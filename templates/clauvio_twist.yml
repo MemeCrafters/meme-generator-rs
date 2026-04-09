@@ -1,0 +1,129 @@
+version: "1.0"
+
+metadata:
+  key: "clauvio_twist"
+  keywords: ["鼠鼠搓"]
+  date_created: "2024-07-26"
+  date_modified: "2024-07-26"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frames:
+    pattern: "clauvio_twist/{index:02}.png"
+    count: 40
+
+frames:
+  count: 40
+  duration: 0.05
+  align: extend_loop
+  vars:
+    angle:
+      type: number
+      values:
+        - 0
+        - 0
+        - 0
+        - 2
+        - 4
+        - 8
+        - 12
+        - 30
+        - 75
+        - 115
+        - 130
+        - 125
+        - 120
+        - 115
+        - 110
+        - 85
+        - 70
+        - 45
+        - 37
+        - 10
+        - 0
+        - 0
+        - 0
+        - 2
+        - 4
+        - 8
+        - 12
+        - 30
+        - 75
+        - 115
+        - 130
+        - 125
+        - 120
+        - 115
+        - 110
+        - 85
+        - 70
+        - 45
+        - 37
+        - 10
+    pos:
+      type: "number[2]"
+      values:
+        - [45, 144]
+        - [45, 144]
+        - [45, 144]
+        - [45, 141]
+        - [45, 141]
+        - [40, 141]
+        - [38, 142]
+        - [32, 148]
+        - [25, 158]
+        - [0, 160]
+        - [0, 160]
+        - [0, 155]
+        - [0, 150]
+        - [0, 148]
+        - [5, 146]
+        - [14, 146]
+        - [19, 146]
+        - [28, 144]
+        - [38, 141]
+        - [42, 144]
+        - [45, 144]
+        - [45, 144]
+        - [45, 144]
+        - [45, 141]
+        - [45, 141]
+        - [40, 141]
+        - [38, 142]
+        - [32, 148]
+        - [25, 158]
+        - [0, 160]
+        - [0, 160]
+        - [0, 155]
+        - [0, 150]
+        - [0, 148]
+        - [5, 146]
+        - [14, 146]
+        - [19, 146]
+        - [28, 144]
+        - [38, 141]
+        - [42, 144]
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - circle
+      - resize_exact: [100, 100]
+      - rotate_crop: -frames.angle
+
+canvas:
+  size: resources.frames[0].size
+  background: white
+
+layers:
+  - use: resources.frames[frames.index]
+  - use: elements.avatar
+    position: frames.pos

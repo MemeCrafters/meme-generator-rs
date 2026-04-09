@@ -1,0 +1,45 @@
+version: "1.0"
+
+metadata:
+  key: "coupon"
+  keywords: ["兑换券"]
+  date_created: "2022-03-12"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+    min_texts: 0
+    max_texts: 1
+
+resources:
+  frame: "coupon/0.png"
+
+elements:
+  text_content:
+    type: text
+    text: "{if(input.texts.length >= 1, input.texts[0], input.names[0] + '陪睡券\n（永久有效）')}"
+    font_size: [15, 30]
+    bound: [250, 100]
+  text_canvas:
+    type: canvas
+    size: [250, 100]
+    layers:
+      - use: elements.text_content
+    operations:
+      - rotate: -22
+  avatar:
+    type: image
+    from: input.images[0]
+    operations:
+      - circle
+      - resize_fit: { size: [60, 60], fit: cover }
+      - rotate: -22
+
+canvas: resources.frame.size
+
+layers:
+  - use: resources.frame
+  - use: elements.avatar
+    position: [164, 85]
+  - use: elements.text_canvas
+    position: [94, 108]

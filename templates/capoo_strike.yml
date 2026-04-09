@@ -1,0 +1,65 @@
+version: "1.0"
+
+metadata:
+  key: "capoo_strike"
+  keywords: ["咖波撞", "咖波头槌"]
+  tags: ["猫猫虫", "咖波"]
+  date_created: "2023-03-28"
+  date_modified: "2023-03-28"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frames:
+    pattern: "capoo_strike/{index}.png"
+    count: 7
+
+frames:
+  count: 7
+  duration: 0.05
+  align: extend_loop
+  vars:
+    points:
+      type: "number[4][2]"
+      values:
+        - [[0, 4], [153, 0], [138, 105], [0, 157]]
+        - [[1, 13], [151, 0], [130, 104], [0, 156]]
+        - [[9, 10], [156, 0], [152, 108], [0, 155]]
+        - [[0, 21], [150, 0], [146, 115], [7, 145]]
+        - [[0, 19], [156, 0], [199, 109], [31, 145]]
+        - [[0, 28], [156, 0], [171, 115], [12, 154]]
+        - [[0, 25], [157, 0], [169, 113], [13, 147]]
+    pos:
+      type: "number[2]"
+      values:
+        - [28, 47]
+        - [28, 48]
+        - [18, 51]
+        - [17, 53]
+        - [2, 62]
+        - [16, 58]
+        - [18, 63]
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - resize_fit:
+          size: [200, 160]
+          fit: cover
+      - perspective: frames.points
+
+canvas:
+  size: resources.frames[0].size
+  background: white
+
+layers:
+  - use: elements.avatar
+    position: frames.pos
+  - use: resources.frames[frames.index]

@@ -1,0 +1,83 @@
+version: "1.0"
+
+metadata:
+  key: "capoo_draw"
+  keywords: ["咖波画"]
+  tags: ["猫猫虫", "咖波"]
+  date_created: "2023-03-31"
+  date_modified: "2023-04-28"
+  params:
+    min_images: 1
+    max_images: 1
+
+resources:
+  frames:
+    pattern: "capoo_draw/{index}.png"
+    count: 6
+
+frames:
+  count: 16
+  duration: 0.1
+  vars:
+    frame_idx:
+      type: number
+      values: [0, 1, 2, 1, 2, 3, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5]
+    points:
+      type: "number[4][2]"
+      values:
+        - [[0, 0], [0, 0], [0, 0], [0, 0]]
+        - [[0, 0], [0, 0], [0, 0], [0, 0]]
+        - [[0, 0], [0, 0], [0, 0], [0, 0]]
+        - [[0, 0], [0, 0], [0, 0], [0, 0]]
+        - [[0, 0], [0, 0], [0, 0], [0, 0]]
+        - [[0, 0], [0, 0], [0, 0], [0, 0]]
+        - [[27, 0], [207, 12], [179, 142], [0, 117]]
+        - [[28, 0], [207, 13], [180, 137], [0, 117]]
+        - [[27, 0], [207, 12], [179, 142], [0, 117]]
+        - [[28, 0], [207, 13], [180, 137], [0, 117]]
+        - [[27, 0], [207, 12], [179, 142], [0, 117]]
+        - [[28, 0], [207, 13], [180, 137], [0, 117]]
+        - [[27, 0], [207, 12], [179, 142], [0, 117]]
+        - [[28, 0], [207, 13], [180, 137], [0, 117]]
+        - [[27, 0], [207, 12], [179, 142], [0, 117]]
+        - [[28, 0], [207, 13], [180, 137], [0, 117]]
+    pos:
+      type: "number[2]"
+      values:
+        - [0, 0]
+        - [0, 0]
+        - [0, 0]
+        - [0, 0]
+        - [0, 0]
+        - [0, 0]
+        - [30, 16]
+        - [34, 17]
+        - [30, 16]
+        - [34, 17]
+        - [30, 16]
+        - [34, 17]
+        - [30, 16]
+        - [34, 17]
+        - [30, 16]
+        - [34, 17]
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - resize_fit: { size: [175, 120], fit: cover }
+      - op: perspective
+        args: frames.points
+        if: frames.index >= 6
+
+canvas:
+  size: resources.frames[0].size
+  background: white
+
+layers:
+  - use: elements.avatar
+    position: frames.pos
+    if: frames.index >= 6
+  - use: resources.frames[frames.frame_idx]

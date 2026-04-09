@@ -1,0 +1,41 @@
+version: "1.0"
+
+metadata:
+  key: "ayachi_holdsign"
+  keywords: ["宁宁举牌"]
+  tags: ["绫地宁宁", "魔女的夜宴", "柚子社"]
+  date_created: "2025-04-28"
+  date_modified: "2025-04-28"
+  params:
+    min_texts: 1
+    max_texts: 1
+    default_texts:
+      - "我控制不住自己啊"
+
+resources:
+  frame: "ayachi_holdsign/0.png"
+
+elements:
+  text:
+    type: text
+    text: "{input.texts[0]}"
+    font_size: [80, 150]
+    bound: [560, 310]
+    color: "#51201b"
+    font_families: ["FZShaoEr-M11S"]
+    text_align: center
+  text_canvas:
+    type: canvas
+    size: [600, 350]
+    layers:
+      - use: elements.text
+        position: [20, 20]
+    operations:
+      - perspective: [[0, 235], [523, 0], [659, 297], [170, 536]]
+
+canvas: resources.frame.size
+
+layers:
+  - use: resources.frame
+  - use: elements.text_canvas
+    position: [125, 307]

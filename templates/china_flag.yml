@@ -1,0 +1,33 @@
+version: "1.0"
+
+metadata:
+  key: "china_flag"
+  keywords: ["国旗"]
+  date_created: "2022-03-09"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  overlay: "china_flag/0.png"
+
+elements:
+  base:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - square
+      - resize_exact: resources.overlay.size
+
+canvas:
+  size: resources.overlay.size
+  background: white
+
+layers:
+  - use: elements.base
+  - use: resources.overlay

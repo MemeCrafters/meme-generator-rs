@@ -1,0 +1,91 @@
+version: "1.0"
+
+metadata:
+  key: "chino_throw"
+  keywords: ["智乃扔", "智乃抛"]
+  tags: ["香风智乃", "请问您今天要来点兔子吗"]
+  date_created: "2025-05-23"
+  date_modified: "2025-05-23"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frames:
+    pattern: "chino_throw/{index:02}.png"
+    count: 21
+
+frames:
+  count: 21
+  duration: 0.07
+  align: extend_last
+  vars:
+    size:
+      type: "number[2]"
+      values:
+        - [240, 186]
+        - [240, 186]
+        - [240, 186]
+        - [240, 186]
+        - [240, 186]
+        - [250, 220]
+        - [234, 228]
+        - [236, 226]
+        - [236, 226]
+        - [138, 123]
+        - [128, 112]
+        - [103, 95]
+        - [190, 146]
+        - [142, 163]
+        - [500, 500]
+        - [500, 500]
+        - [500, 500]
+        - [500, 500]
+        - [500, 500]
+        - [500, 500]
+        - [500, 500]
+    pos:
+      type: "number[2]"
+      values:
+        - [133, 299]
+        - [133, 299]
+        - [133, 299]
+        - [133, 299]
+        - [133, 299]
+        - [93, 260]
+        - [74, 226]
+        - [95, 176]
+        - [95, 176]
+        - [70, 45]
+        - [104, 51]
+        - [126, 57]
+        - [49, 23]
+        - [0, 0]
+        - [0, 0]
+        - [0, 0]
+        - [0, 0]
+        - [0, 0]
+        - [0, 0]
+        - [0, 0]
+        - [0, 0]
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - square
+      - resize_exact: frames.size
+
+canvas:
+  size: resources.frames[0].size
+  background: white
+
+layers:
+  - use: elements.avatar
+    position: frames.pos
+  - use: resources.frames[frames.index]

@@ -1,0 +1,60 @@
+version: "1.0"
+
+metadata:
+  key: "beat_head"
+  keywords: ["拍头"]
+  date_created: "2023-03-08"
+  date_modified: "2023-03-08"
+  params:
+    min_images: 1
+    max_images: 1
+    min_texts: 0
+    max_texts: 1
+    default_texts: ["怎么说话的你"]
+
+resources:
+  frames:
+    pattern: "beat_head/{index}.png"
+    count: 3
+
+frames:
+  count: 3
+  duration: 0.05
+  vars:
+    pos:
+      type: "number[2]"
+      values:
+        - [160, 121]
+        - [172, 124]
+        - [208, 166]
+    size:
+      type: "number[2]"
+      values:
+        - [76, 76]
+        - [69, 69]
+        - [52, 52]
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - circle
+      - resize_exact: frames.size
+  label:
+    type: text
+    text: "{input.texts[0]}"
+    font_size: [10, 50]
+    bound: [141, 54]
+
+canvas:
+  size: resources.frames[0].size
+  background: white
+
+layers:
+  - use: elements.avatar
+    position: frames.pos
+  - use: resources.frames[frames.index]
+  - use: elements.label
+    position: [175, 28]

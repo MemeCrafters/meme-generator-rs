@@ -1,0 +1,46 @@
+version: "1.0"
+
+metadata:
+  key: "atri_pillow"
+  keywords: ["亚托莉枕头"]
+  tags: ["亚托莉", "ATRI", "萝卜子"]
+  date_created: "2024-06-01"
+  date_modified: "2024-06-01"
+  params:
+    min_texts: 0
+    max_texts: 1
+    default_texts: ["ATRI"]
+    options:
+      - name: mode
+        type: string
+        choices: ["yes", "no"]
+
+resources:
+  frame: "atri_pillow/{options.mode}.png"
+  border: "atri_pillow/border.png"
+
+elements:
+  text:
+    type: text
+    text: "{input.texts[0]}"
+    font_size: [30, 120]
+    bound: [260, 110]
+    color: "{if(options.mode == 'yes', '#FF00004D', '#004DFF4D')}"
+    font_families: ["FZShaoEr-M11S"]
+  text_canvas:
+    type: canvas
+    size: [300, 150]
+    layers:
+      - use: elements.text
+        position: [20, 20]
+    operations:
+      - rotate_crop: 4
+
+canvas: resources.frame.size
+
+layers:
+  - use: resources.frame
+  - use: elements.text_canvas
+    position: [302, 288]
+  - use: resources.border
+    position: [0, 416]

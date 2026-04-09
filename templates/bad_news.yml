@@ -1,0 +1,29 @@
+version: "1.0"
+
+metadata:
+  key: "bad_news"
+  keywords: ["悲报"]
+  date_created: "2022-10-15"
+  date_modified: "2023-02-14"
+  params:
+    min_texts: 1
+    max_texts: 1
+    default_texts: ["喜报"]
+
+resources:
+  bg: "bad_news/0.png"
+
+elements:
+  content:
+    type: text
+    text: "{input.texts[0]}"
+    font_size: [30, 60]
+    bound: ["resources.bg.width - 100", "resources.bg.height - 200"]
+    stroke: { color: white, width: 5 }
+
+canvas: resources.bg.size
+
+layers:
+  - use: resources.bg
+  - use: elements.content
+    position: [50, 100]

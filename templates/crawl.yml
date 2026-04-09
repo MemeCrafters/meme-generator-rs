@@ -1,0 +1,34 @@
+version: "1.0"
+
+metadata:
+  key: "crawl"
+  keywords: ["爬"]
+  date_created: "2021-05-05"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+    options:
+      - name: number
+        type: integer
+        minimum: 1
+        maximum: 92
+        parser_flags: { short: true, long: true }
+
+resources:
+  frame: "crawl/{options.number:02}.jpg"
+
+elements:
+  user_img:
+    type: image
+    from: input.images[0]
+    operations:
+      - circle
+      - resize_exact: [100, 100]
+
+canvas: resources.frame.size
+
+layers:
+  - use: resources.frame
+  - use: elements.user_img
+    position: [0, 400]

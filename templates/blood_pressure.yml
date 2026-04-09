@@ -1,0 +1,33 @@
+version: "1.0"
+
+metadata:
+  key: "blood_pressure"
+  keywords: ["高血压"]
+  date_created: "2022-08-22"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frame: "blood_pressure/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - resize_fit: { size: [414, 450], fit: cover }
+
+canvas:
+  size: resources.frame.size
+  background: white
+
+layers:
+  - use: elements.avatar
+    position: [16, 17]
+  - use: resources.frame

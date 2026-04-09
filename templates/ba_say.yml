@@ -1,0 +1,71 @@
+version: "1.0"
+
+metadata:
+  key: "ba_say"
+  keywords: ["ba说"]
+  tags:
+    [
+      "天童爱丽丝",
+      "久田泉奈",
+      "key",
+      "春原心奈",
+      "春原心菜",
+      "伊落玛丽",
+      "冰室濑名",
+      "早濑优香",
+      "蔚蓝档案",
+      "碧蓝档案",
+    ]
+  date_created: "2024-12-12"
+  date_modified: "2024-12-12"
+  params:
+    min_texts: 1
+    max_texts: 1
+    default_texts: ["那我问你"]
+    options:
+      - name: character
+        type: string
+        choices: ["arisu", "izuna", "key", "kokona", "mari", "sena", "yuuka"]
+        parser_flags: { short: true, long: true }
+      - name: position
+        type: string
+        choices: ["left", "right"]
+        parser_flags: { short: true, long: true }
+    shortcuts:
+      - pattern: "爱丽丝说"
+        options: { character: "arisu" }
+      - pattern: "泉奈说"
+        options: { character: "izuna" }
+      - pattern: "key说"
+        options: { character: "key" }
+      - pattern: "心奈说"
+        options: { character: "kokona" }
+      - pattern: "玛丽说"
+        options: { character: "mari" }
+      - pattern: "濑名说"
+        options: { character: "sena" }
+      - pattern: "优香说"
+        options: { character: "yuuka" }
+
+resources:
+  frame: "ba_say/{options.character}.png"
+
+elements:
+  frame:
+    type: image
+    from: resources.frame
+    operations:
+      - op: flip_horizontal
+        if: "options.position == 'left'"
+  text:
+    type: text
+    text: "{input.texts[0]}"
+    font_size: [20, 100]
+    bound: [520, 200]
+
+canvas: resources.frame.size
+
+layers:
+  - use: elements.frame
+  - use: elements.text
+    position: "if(options.position == 'left', [60, 0], [500, 0])"

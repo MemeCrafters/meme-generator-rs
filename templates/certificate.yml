@@ -1,0 +1,83 @@
+version: "1.0"
+
+metadata:
+  key: "certificate"
+  keywords: ["奖状", "证书"]
+  date_created: "2024-06-01"
+  date_modified: "2026-04-06"
+  params:
+    min_texts: 4
+    max_texts: 4
+    default_texts:
+      - "小王"
+      - "在本学年第一学期中表现优秀，被我校决定评为"
+      - "优秀学生"
+      - "一年一班"
+    options:
+      - name: year
+        type: string
+        description: "年"
+        parser_flags: { long: true }
+      - name: month
+        type: string
+        description: "月"
+        parser_flags: { long: true }
+      - name: day
+        type: string
+        description: "日"
+        parser_flags: { long: true }
+
+resources:
+  frame: "certificate/0.png"
+
+elements:
+  name:
+    type: text
+    text: "[u]    {input.texts[0]}    [/u] 同学"
+    font_size: 90
+    bbcode: true
+  body:
+    type: text
+    text: "    {input.texts[1]}"
+    font_size: [40, 80]
+    bound: [1820, 230]
+    text_align: left
+  award:
+    type: text
+    text: "{input.texts[2]}"
+    font_size: [60, 150]
+    font_style: bold
+    bound: [1535, 280]
+    color: "#ff0000"
+  class:
+    type: text
+    text: "{input.texts[3]}"
+    font_size: [20, 60]
+    bound: [520, 120]
+  extra:
+    type: text
+    text: "特发此状，以资鼓励"
+    font_size: 75
+  date:
+    type: text
+    text: "[u] {if(has(options, 'year'), options.year, date('%Y'))} [/u]年[u] {if(has(options, 'month'), options.month, date('%-m'))} [/u]月[u] {if(has(options, 'day'), options.day, date('%-d'))} [/u]日"
+    font_size: 60
+    bound: [600, 100]
+    bbcode: true
+
+canvas: resources.frame.size
+
+layers:
+  - use: resources.frame
+  - use: elements.name
+    position: [450, 670]
+  - use: elements.body
+    position: [450, 850]
+  - use: elements.award
+    position: [565, 1040]
+  - use: elements.class
+    position: [1450, 1400]
+  - use: elements.extra
+    position: [700, 1470]
+  - use: elements.date
+    position: [1410, 1500]

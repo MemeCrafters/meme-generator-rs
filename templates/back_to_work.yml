@@ -1,0 +1,34 @@
+version: "1.0"
+
+metadata:
+  key: "back_to_work"
+  keywords: ["继续干活", "打工人"]
+  date_created: "2022-03-10"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frame: "back_to_work/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - resize_fit: { size: [220, 310], fit: cover }
+      - rotate: -25
+
+canvas:
+  size: resources.frame.size
+  background: white
+
+layers:
+  - use: elements.avatar
+    position: [56, 32]
+  - use: resources.frame

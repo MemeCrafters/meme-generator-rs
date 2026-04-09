@@ -1,0 +1,47 @@
+version: "1.0"
+
+metadata:
+  key: "caused_by_this"
+  keywords: ["这个引起的"]
+  date_created: "2024-06-01"
+  date_modified: "2024-06-01"
+  params:
+    min_images: 1
+    max_images: 1
+    min_texts: 0
+    max_texts: 1
+    default_texts:
+      - "心脏病 高血压 心律不齐 心肌梗塞 失眠 脱发 呼吸困难 胸闷气短 缺氧 躁郁 焦虑 脑供血不足 心慌心悸 心脑血管炸裂"
+    shortcuts:
+      - pattern: "你的(?P<text>.+?)(?:主要)?都?是由?这个引起的"
+        humanized: "你的xx主要都是由这个引起的"
+        texts: ["{text}"]
+
+config:
+  gif_input: true
+
+resources:
+  frame: "caused_by_this/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    operations:
+      - resize_fit: { size: [550, 360], fit: cover }
+  text:
+    type: text
+    text: "{input.texts[0]}"
+    font_size: [10, 60]
+    bound: [530, 240]
+
+canvas:
+  size: resources.frame.size
+  background: white
+
+layers:
+  - use: elements.avatar
+    position: [122, 9]
+  - use: resources.frame
+  - use: elements.text
+    position: [240, 760]

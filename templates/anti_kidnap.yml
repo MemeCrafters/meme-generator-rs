@@ -1,0 +1,31 @@
+version: "1.0"
+
+metadata:
+  key: "anti_kidnap"
+  keywords: ["防诱拐"]
+  date_created: "2022-07-09"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frame: "anti_kidnap/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - resize_fit: { size: [450, 450], fit: cover }
+
+canvas: resources.frame.size
+
+layers:
+  - use: elements.avatar
+    position: [30, 78]
+  - use: resources.frame

@@ -1,0 +1,44 @@
+version: "1.0"
+
+metadata:
+  key: "acg_entrance"
+  keywords: ["二次元入口"]
+  date_created: "2023-06-23"
+  date_modified: "2023-06-23"
+  params:
+    min_images: 1
+    max_images: 1
+    min_texts: 0
+    max_texts: 1
+    default_texts: ["走，跟我去二次元吧"]
+
+config:
+  gif_input: true
+
+resources:
+  frame: "acg_entrance/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - resize_fit: { size: [290, 410], fit: cover }
+  text:
+    type: text
+    text: "{input.texts[0]}"
+    font_size: [25, 50]
+    bound: [580, 90]
+    color: white
+
+canvas:
+  size: resources.frame.size
+  background: white
+
+layers:
+  - use: elements.avatar
+    position: [190, 265]
+  - use: resources.frame
+  - use: elements.text
+    position: [30, 720]

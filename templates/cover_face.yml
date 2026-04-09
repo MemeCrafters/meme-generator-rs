@@ -1,0 +1,35 @@
+version: "1.0"
+
+metadata:
+  key: "cover_face"
+  keywords: ["捂脸"]
+  date_created: "2022-03-30"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frame: "cover_face/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - square
+      - resize_exact: [450, 450]
+      - perspective: [[15, 15], [448, 0], [445, 456], [0, 465]]
+
+canvas:
+  size: resources.frame.size
+  background: white
+
+layers:
+  - use: elements.avatar
+    position: [120, 150]
+  - use: resources.frame

@@ -1,0 +1,44 @@
+version: "1.0"
+
+metadata:
+  key: "always_like"
+  keywords: ["我永远喜欢"]
+  date_created: "2022-03-14"
+  date_modified: "2024-12-17"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frame: "always_like/0.png"
+
+elements:
+  text:
+    type: text
+    text: "我永远喜欢{input.names[0]}"
+    font_size: [30, 70]
+    bound: ["resources.frame.width - 40", 100]
+    font_style: bold
+  frame_with_text:
+    type: canvas
+    size: resources.frame.size
+    layers:
+      - use: resources.frame
+      - use: elements.text
+        position: [20, 470]
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - resize_fit: { size: [350, 400], fit: contain }
+
+canvas: resources.frame.size
+
+layers:
+  - use: elements.frame_with_text
+  - use: elements.avatar
+    position: [35, 55]

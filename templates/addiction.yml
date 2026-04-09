@@ -1,0 +1,30 @@
+version: "1.0"
+
+metadata:
+  key: "addiction"
+  keywords: ["上瘾", "毒瘾发作"]
+  date_created: "2022-08-17"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frame: "addiction/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - resize_fit: { size: [91, 91], fit: cover }
+
+canvas: resources.frame.size
+
+layers:
+  - use: resources.frame
+  - use: elements.avatar

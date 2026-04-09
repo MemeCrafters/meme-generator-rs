@@ -1,0 +1,47 @@
+version: "1.0"
+
+metadata:
+  key: "capoo_stew"
+  keywords: ["咖波炖"]
+  tags: ["猫猫虫", "咖波"]
+  date_created: "2024-08-23"
+  date_modified: "2024-08-23"
+  params:
+    min_images: 1
+    max_images: 1
+
+resources:
+  frames:
+    pattern: "capoo_stew/{index}.png"
+    count: 5
+
+frames:
+  count: 5
+  duration: 0.08
+  vars:
+    pos:
+      type: "number[2]"
+      values:
+        - [88, 47]
+        - [88, 47]
+        - [88, 45]
+        - [88, 45]
+        - [88, 47]
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: dynamic
+    operations:
+      - circle
+      - resize_exact: [80, 80]
+
+canvas:
+  size: resources.frames[0].size
+  background: white
+
+layers:
+  - use: elements.avatar
+    position: frames.pos
+  - use: resources.frames[frames.index]
