@@ -694,9 +694,9 @@ pub fn execute_template(
     // Initialize elements map in context
     ctx.insert("elements".to_string(), Value::Map(HashMap::new()));
 
-    // Process static elements
-    let static_elements = process_elements(&template.elements, &mut ctx, &Scope::Static)?;
-    set_elements(&mut ctx, &static_elements);
+    // Process once-scoped elements
+    let once_elements = process_elements(&template.elements, &mut ctx, &Scope::Once)?;
+    set_elements(&mut ctx, &once_elements);
 
     // Determine execution mode
     match (&template.frames, template.config.gif_input) {
@@ -719,10 +719,10 @@ pub fn execute_template(
                     // Set frame variables
                     set_frame_vars(&mut frame_ctx, frame_idx, frames)?;
 
-                    // Process frame-scoped elements
-                    let dynamic_elements =
-                        process_elements(&template.elements, &mut frame_ctx, &Scope::Dynamic)?;
-                    set_elements(&mut frame_ctx, &dynamic_elements);
+                    // Process per-frame elements
+                    let frame_elements =
+                        process_elements(&template.elements, &mut frame_ctx, &Scope::Frame)?;
+                    set_elements(&mut frame_ctx, &frame_elements);
 
                     render_frame(template, &mut frame_ctx)
                 },
@@ -739,9 +739,9 @@ pub fn execute_template(
 
                 set_frame_vars(&mut frame_ctx, frame_idx, frames)?;
 
-                let dynamic_elements =
-                    process_elements(&template.elements, &mut frame_ctx, &Scope::Dynamic)?;
-                set_elements(&mut frame_ctx, &dynamic_elements);
+                let frame_elements =
+                    process_elements(&template.elements, &mut frame_ctx, &Scope::Frame)?;
+                set_elements(&mut frame_ctx, &frame_elements);
 
                 let image = render_frame(template, &mut frame_ctx)?;
                 encoder.add_frame(image, frames.duration)?;
@@ -749,25 +749,25 @@ pub fn execute_template(
             encoder.finish()
         }
 
-        // Static output, accepts GIF input
+        // Output with GIF input support
         (None, true) => {
             make_png_or_gif(images, |frame_images| {
                 let mut frame_ctx = ctx.clone();
                 update_input_images(&mut frame_ctx, &frame_images);
 
-                // Re-process dynamic elements with per-frame input
-                let dynamic_elements =
-                    process_elements(&template.elements, &mut frame_ctx, &Scope::Dynamic)?;
-                set_elements(&mut frame_ctx, &dynamic_elements);
+                // Process per-frame elements with decomposed input
+                let frame_elements =
+                    process_elements(&template.elements, &mut frame_ctx, &Scope::Frame)?;
+                set_elements(&mut frame_ctx, &frame_elements);
 
                 render_frame(template, &mut frame_ctx)
             })
         }
 
-        // Pure static (PNG)
+        // Pure single-image output (PNG)
         (None, false) => {
-            let dynamic_elements = process_elements(&template.elements, &mut ctx, &Scope::Dynamic)?;
-            set_elements(&mut ctx, &dynamic_elements);
+            let frame_elements = process_elements(&template.elements, &mut ctx, &Scope::Frame)?;
+            set_elements(&mut ctx, &frame_elements);
             let image = render_frame(template, &mut ctx)?;
             encode_png(image)
         }
