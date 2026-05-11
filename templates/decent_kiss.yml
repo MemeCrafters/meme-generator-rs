@@ -1,0 +1,33 @@
+version: "1.0"
+
+metadata:
+  key: "decent_kiss"
+  keywords: ["像样的亲亲"]
+  date_created: "2022-04-14"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frame: "decent_kiss/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: frame
+    operations:
+      - resize_fit: { size: [589, 340], fit: cover }
+
+canvas:
+  size: resources.frame.size
+  background: white
+
+layers:
+  - use: elements.avatar
+    position: [0, 91]
+  - use: resources.frame

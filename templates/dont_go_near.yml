@@ -1,0 +1,32 @@
+version: "1.0"
+
+metadata:
+  key: "dont_go_near"
+  keywords: ["不要靠近"]
+  date_created: "2022-01-02"
+  date_modified: "2023-04-20"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frame: "dont_go_near/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: frame
+    operations:
+      - square
+      - resize_exact: [170, 170]
+
+canvas: resources.frame.size
+
+layers:
+  - use: resources.frame
+  - use: elements.avatar
+    position: [23, 231]

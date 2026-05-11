@@ -1,0 +1,34 @@
+version: "1.0"
+
+metadata:
+  key: "dog_of_vtb"
+  keywords: ["管人痴"]
+  date_created: "2023-04-18"
+  date_modified: "2023-04-18"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frame: "dog_of_vtb/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: frame
+    operations:
+      - resize_fit: { size: [600, 450], fit: cover }
+      - perspective: [[0, 0], [579, 0], [584, 430], [5, 440]]
+
+canvas:
+  size: resources.frame.size
+  background: white
+
+layers:
+  - use: elements.avatar
+    position: [97, 32]
+  - use: resources.frame

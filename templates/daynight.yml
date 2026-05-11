@@ -1,0 +1,39 @@
+version: "1.0"
+
+metadata:
+  key: "daynight"
+  keywords: ["白天黑夜", "白天晚上"]
+  date_created: "2023-10-03"
+  date_modified: "2023-10-03"
+  params:
+    min_images: 2
+    max_images: 2
+
+resources:
+  frame: "daynight/0.png"
+
+config:
+  gif_input: true
+
+elements:
+  avatar0:
+    type: image
+    from: input.images[0]
+    scope: frame
+    operations:
+      - resize_fit: { size: [333, 360], fit: cover }
+  avatar1:
+    type: image
+    from: input.images[1]
+    scope: frame
+    operations:
+      - resize_fit: { size: [333, 360], fit: cover }
+
+canvas: resources.frame.size
+
+layers:
+  - use: resources.frame
+  - use: elements.avatar0
+    position: [349, 0]
+  - use: elements.avatar1
+    position: [349, 361]

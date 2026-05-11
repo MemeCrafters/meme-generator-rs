@@ -1,0 +1,28 @@
+version: "1.0"
+
+metadata:
+  key: "ascension"
+  keywords: ["升天"]
+  date_created: "2022-10-17"
+  date_modified: "2023-02-14"
+  params:
+    min_texts: 1
+    max_texts: 1
+    default_texts: ["学的是机械"]
+
+resources:
+  bg: "ascension/0.png"
+
+elements:
+  text:
+    type: text
+    text: "你原本应该要去地狱的，但因为你生前{input.texts[0]}，我们就当作你已经服完刑期了"
+    font_size: [20, 50]
+    bound: [442, 105]
+
+canvas: resources.bg.size
+
+layers:
+  - use: resources.bg
+  - use: elements.text
+    position: [40, 30]

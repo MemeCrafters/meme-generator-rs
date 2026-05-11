@@ -1,0 +1,56 @@
+version: "1.0"
+
+metadata:
+  key: "beat_up"
+  keywords: ["揍"]
+  tags: ["tom", "jerry"]
+  date_created: "2024-04-09"
+  date_modified: "2024-04-09"
+  params:
+    min_images: 2
+    max_images: 2
+
+resources:
+  frames:
+    pattern: "beat_up/{index}.png"
+    count: 3
+
+frames:
+  count: 3
+  duration: 0.1
+  vars:
+    self_pos:
+      type: "number[2]"
+      values:
+        - [100, 43]
+        - [110, 46]
+        - [101, 40]
+    user_pos:
+      type: "number[2]"
+      values:
+        - [99, 136]
+        - [99, 136]
+        - [89, 140]
+
+elements:
+  self_head:
+    type: image
+    from: input.images[0]
+    operations:
+      - circle
+      - resize_exact: [55, 55]
+  user_head:
+    type: image
+    from: input.images[1]
+    operations:
+      - circle
+      - resize_exact: [45, 45]
+
+canvas: resources.frames[0].size
+
+layers:
+  - use: resources.frames[frames.index]
+  - use: elements.self_head
+    position: frames.self_pos
+  - use: elements.user_head
+    position: frames.user_pos

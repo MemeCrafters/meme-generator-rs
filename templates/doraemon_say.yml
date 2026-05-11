@@ -1,0 +1,28 @@
+version: "1.0"
+
+metadata:
+  key: "doraemon_say"
+  keywords: ["哆啦A梦说"]
+  date_created: "2022-11-16"
+  date_modified: "2023-02-14"
+  params:
+    min_texts: 1
+    max_texts: 1
+    default_texts: ["开银趴不喊我是吧"]
+
+resources:
+  bg: "doraemon_say/0.png"
+
+elements:
+  text:
+    type: text
+    text: "{input.texts[0]}"
+    font_size: [20, 80]
+    bound: [112, 153]
+
+canvas: resources.bg.size
+
+layers:
+  - use: resources.bg
+  - use: elements.text
+    position: [228, 11]

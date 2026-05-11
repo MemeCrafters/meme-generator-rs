@@ -1,0 +1,33 @@
+version: "1.0"
+
+metadata:
+  key: "dinosaur"
+  keywords: ["恐龙", "小恐龙"]
+  date_created: "2023-01-06"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frame: "dinosaur/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: frame
+    operations:
+      - resize_fit: { size: [680, 578], fit: cover }
+
+canvas:
+  size: resources.frame.size
+  background: white
+
+layers:
+  - use: elements.avatar
+    position: [294, 369]
+  - use: resources.frame

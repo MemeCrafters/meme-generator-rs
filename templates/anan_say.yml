@@ -1,0 +1,38 @@
+version: "1.0"
+
+metadata:
+  key: "anan_say"
+  keywords: ["安安说"]
+  tags: ["夏目安安", "魔法少女的魔女审判"]
+  date_created: "2025-11-08"
+  date_modified: "2025-11-08"
+  params:
+    min_texts: 1
+    max_texts: 1
+    default_texts:
+      - "吾辈很开心"
+    options:
+      - name: expression
+        type: string
+        choices: ["angry", "black", "happy", "shy", "speechless"]
+        parser_flags: { short: true, long: true }
+
+resources:
+  frame: "anan_say/{options.expression}.png"
+  hand: "anan_say/hand.png"
+
+elements:
+  text:
+    type: text
+    text: "{input.texts[0]}"
+    font_size: [20, 60]
+    bound: [307, 180]
+    font_style: bold
+
+canvas: resources.frame.size
+
+layers:
+  - use: resources.frame
+  - use: elements.text
+    position: [105, 445]
+  - use: resources.hand

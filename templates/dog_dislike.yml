@@ -1,0 +1,80 @@
+version: "1.0"
+
+metadata:
+  key: "dog_dislike"
+  keywords: ["狗都不玩"]
+  date_created: "2023-11-16"
+  date_modified: "2023-11-16"
+  params:
+    min_images: 1
+    max_images: 1
+    options:
+      - name: circle
+        type: boolean
+        default: false
+        description: "将图片变为圆形"
+        parser_flags: { short: true, long: true }
+
+resources:
+  frames:
+    pattern: "dog_dislike/{index:02}.png"
+    count: 34
+
+frames:
+  count: 34
+  duration: 0.08
+  vars:
+    pos:
+      type: "number[2]"
+      values:
+        - [36, 408]
+        - [36, 410]
+        - [40, 375]
+        - [40, 355]
+        - [36, 325]
+        - [28, 305]
+        - [28, 305]
+        - [28, 305]
+        - [28, 305]
+        - [28, 285]
+        - [28, 285]
+        - [28, 285]
+        - [28, 285]
+        - [28, 290]
+        - [30, 295]
+        - [30, 300]
+        - [30, 300]
+        - [30, 300]
+        - [30, 300]
+        - [30, 300]
+        - [30, 300]
+        - [28, 298]
+        - [26, 296]
+        - [24, 294]
+        - [28, 294]
+        - [26, 294]
+        - [24, 294]
+        - [35, 294]
+        - [115, 330]
+        - [150, 355]
+        - [180, 420]
+        - [180, 450]
+        - [150, 450]
+        - [150, 450]
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    operations:
+      - square
+      - resize_exact: [122, 122]
+      - op: circle
+        if: options.circle
+
+canvas: [320, 432]
+
+layers:
+  - use: resources.frames[frames.index]
+  - use: elements.avatar
+    position: frames.pos

@@ -1,0 +1,36 @@
+version: "1.0"
+
+metadata:
+  key: "distracted"
+  keywords: ["注意力涣散"]
+  tags: ["明日方舟"]
+  date_created: "2022-04-20"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frame: "distracted/1.png"
+  label: "distracted/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: frame
+    operations:
+      - resize_fit: { size: resources.frame.size, fit: cover }
+
+canvas:
+  size: resources.frame.size
+  background: white
+
+layers:
+  - use: elements.avatar
+  - use: resources.frame
+  - use: resources.label
+    position: [140, 320]

@@ -1,0 +1,49 @@
+version: "1.0"
+
+metadata:
+  key: "bubble_tea"
+  keywords: ["奶茶"]
+  date_created: "2022-08-22"
+  date_modified: "2023-03-10"
+  params:
+    min_images: 1
+    max_images: 1
+    options:
+      - name: position
+        type: string
+        default: "left"
+        choices: ["left", "right", "both"]
+        description: "奶茶的位置"
+        parser_flags: { short: true, long: true }
+
+config:
+  gif_input: true
+
+resources:
+  overlay: "bubble_tea/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    operations:
+      - resize_fit: { size: resources.overlay.size, fit: cover }
+  overlay_left:
+    type: image
+    from: resources.overlay
+  overlay_right:
+    type: image
+    from: resources.overlay
+    operations:
+      - flip_horizontal
+
+canvas:
+  size: resources.overlay.size
+  background: white
+
+layers:
+  - use: elements.avatar
+  - use: elements.overlay_left
+    if: "options.position == 'left' || options.position == 'both'"
+  - use: elements.overlay_right
+    if: "options.position == 'right' || options.position == 'both'"

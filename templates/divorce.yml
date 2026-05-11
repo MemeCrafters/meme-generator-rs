@@ -1,0 +1,32 @@
+version: "1.0"
+
+metadata:
+  key: "divorce"
+  keywords: ["离婚协议", "离婚申请"]
+  date_created: "2023-01-07"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+
+config:
+  gif_input: true
+
+resources:
+  frame: "divorce/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    scope: frame
+    operations:
+      - resize_fit: { size: resources.frame.size, fit: cover }
+
+canvas:
+  size: resources.frame.size
+  background: white
+
+layers:
+  - use: elements.avatar
+  - use: resources.frame

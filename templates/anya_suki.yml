@@ -1,0 +1,45 @@
+version: "1.0"
+
+metadata:
+  key: "anya_suki"
+  keywords: ["阿尼亚喜欢"]
+  tags: ["阿尼亚·福杰", "间谍过家家"]
+  date_created: "2022-06-02"
+  date_modified: "2023-02-14"
+  params:
+    min_images: 1
+    max_images: 1
+    min_texts: 0
+    max_texts: 1
+    default_texts: ["阿尼亚喜欢这个"]
+
+config:
+  gif_input: true
+
+resources:
+  frame: "anya_suki/0.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    operations:
+      - resize_fit: { size: [305, 235], fit: cover }
+  text:
+    type: text
+    text: "{input.texts[0]}"
+    font_size: [20, 40]
+    bound: [465, 50]
+    color: white
+    stroke: { color: black, width: 4 }
+
+canvas:
+  size: resources.frame.size
+  background: white
+
+layers:
+  - use: elements.avatar
+    position: [106, 72]
+  - use: resources.frame
+  - use: elements.text
+    position: [5, 440]

@@ -1,0 +1,59 @@
+version: "1.0"
+
+metadata:
+  key: "abstinence"
+  keywords: ["戒导"]
+  date_created: "2024-12-13"
+  date_modified: "2024-12-14"
+  params:
+    min_images: 1
+    max_images: 1
+    options:
+      - name: year
+        type: string
+        description: "年"
+        parser_flags: { long: true }
+      - name: month
+        type: string
+        description: "月"
+        parser_flags: { long: true }
+      - name: day
+        type: string
+        description: "日"
+        parser_flags: { long: true }
+
+resources:
+  base: "abstinence/base.png"
+  stamp: "abstinence/stamp.png"
+
+elements:
+  avatar:
+    type: image
+    from: input.images[0]
+    operations:
+      - resize_fit: { size: [270, 360], fit: contain }
+  name_text:
+    type: text
+    text: "戒导人：[u]{input.names[0]}[/u]"
+    font_size: [10, 20]
+    bound: [610, 150]
+    bbcode: true
+  date_text:
+    type: text
+    text: "[u] {if(has(options, 'year'), options.year, date('%Y'))} [/u]年[u] {if(has(options, 'month'), options.month, date('%-m'))} [/u]月[u] {if(has(options, 'day'), options.day, date('%-d'))} [/u]日"
+    font_size: 20
+    bound: [610, 50]
+    bbcode: true
+
+canvas: resources.base.size
+
+layers:
+  - use: resources.base
+  - use: elements.avatar
+    position: [80, 380]
+  - use: elements.name_text
+    position: [150, 650]
+  - use: elements.date_text
+    position: [150, 750]
+  - use: resources.stamp
+    position: [310, 660]

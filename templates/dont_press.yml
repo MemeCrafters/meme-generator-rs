@@ -1,0 +1,28 @@
+version: "1.0"
+
+metadata:
+  key: "dont_press"
+  keywords: ["不要按"]
+  date_created: "2024-11-13"
+  date_modified: "2024-11-13"
+  params:
+    min_texts: 1
+    max_texts: 1
+    default_texts: ["世界毁灭"]
+
+resources:
+  bg: "dont_press/0.png"
+
+elements:
+  text:
+    type: text
+    text: "{input.texts[0]}"
+    font_size: [20, 50]
+    bound: [140, 55]
+
+canvas: resources.bg.size
+
+layers:
+  - use: resources.bg
+  - use: elements.text
+    position: [60, 170]
